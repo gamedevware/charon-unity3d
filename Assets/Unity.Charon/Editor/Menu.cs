@@ -23,7 +23,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using Assets.Unity.Charon.Editor.Json;
 using Assets.Unity.Charon.Editor.Tasks;
@@ -210,7 +209,7 @@ namespace Assets.Unity.Charon.Editor
 		{
 			switch (ToolsUtils.CheckTools())
 			{
-				case ToolsCheckResult.MissingMono: yield return UpdateMonoWindow.ShowAsync(); break;
+				case ToolsCheckResult.MissingMono: yield return UpdateRuntimeWindow.ShowAsync(); break;
 				case ToolsCheckResult.MissingTools: yield return UpdateToolsWindow.ShowAsync(); break;
 				case ToolsCheckResult.Ok: break;
 				default: throw new InvalidOperationException("Unknown Tools check result.");
@@ -282,7 +281,7 @@ namespace Assets.Unity.Charon.Editor
 		{
 			switch (ToolsUtils.CheckTools())
 			{
-				case ToolsCheckResult.MissingMono: yield return UpdateMonoWindow.ShowAsync(); break;
+				case ToolsCheckResult.MissingMono: yield return UpdateRuntimeWindow.ShowAsync(); break;
 				case ToolsCheckResult.MissingTools: yield return UpdateToolsWindow.ShowAsync(); break;
 				case ToolsCheckResult.Ok: break;
 				default: throw new InvalidOperationException("Unknown Tools check result.");
@@ -462,7 +461,7 @@ namespace Assets.Unity.Charon.Editor
 		{
 			switch (ToolsUtils.CheckTools())
 			{
-				case ToolsCheckResult.MissingMono: yield return UpdateMonoWindow.ShowAsync(); break;
+				case ToolsCheckResult.MissingMono: yield return UpdateRuntimeWindow.ShowAsync(); break;
 				case ToolsCheckResult.MissingTools: yield return UpdateToolsWindow.ShowAsync(); break;
 				case ToolsCheckResult.Ok: break;
 				default: throw new InvalidOperationException("Unknown Tools check result.");
@@ -504,7 +503,7 @@ namespace Assets.Unity.Charon.Editor
 		{
 			switch (ToolsUtils.CheckTools())
 			{
-				case ToolsCheckResult.MissingMono: yield return UpdateMonoWindow.ShowAsync(); break;
+				case ToolsCheckResult.MissingMono: yield return UpdateRuntimeWindow.ShowAsync(); break;
 				case ToolsCheckResult.MissingTools: yield return UpdateToolsWindow.ShowAsync(); break;
 				case ToolsCheckResult.Ok: break;
 				default: throw new InvalidOperationException("Unknown Tools check result.");
@@ -594,7 +593,7 @@ namespace Assets.Unity.Charon.Editor
 		{
 			switch (ToolsUtils.CheckTools())
 			{
-				case ToolsCheckResult.MissingMono: yield return UpdateMonoWindow.ShowAsync(); break;
+				case ToolsCheckResult.MissingMono: yield return UpdateRuntimeWindow.ShowAsync(); break;
 				case ToolsCheckResult.MissingTools: yield return UpdateToolsWindow.ShowAsync(); break;
 				case ToolsCheckResult.Ok: break;
 				default: throw new InvalidOperationException("Unknown Tools check result.");

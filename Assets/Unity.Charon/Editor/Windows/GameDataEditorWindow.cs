@@ -159,7 +159,7 @@ namespace Assets.Unity.Charon.Editor.Windows
 		{
 			switch (ToolsUtils.CheckTools())
 			{
-				case ToolsCheckResult.MissingMono: yield return UpdateMonoWindow.ShowAsync(); break;
+				case ToolsCheckResult.MissingMono: yield return UpdateRuntimeWindow.ShowAsync(); break;
 				case ToolsCheckResult.MissingTools: yield return UpdateToolsWindow.ShowAsync(); break;
 				case ToolsCheckResult.Ok: break;
 				default: throw new InvalidOperationException("Unknown Tools check result.");

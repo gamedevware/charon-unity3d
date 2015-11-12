@@ -34,7 +34,7 @@ using UnityEngine;
 
 namespace Assets.Unity.Charon.Editor.Windows
 {
-	class UpdateMonoWindow : EditorWindow
+	class UpdateRuntimeWindow : EditorWindow
 	{
 #if UNITY_EDITOR_WIN
 		private const string MONO_EXECUTABLE_NAME = "mono.exe";
@@ -53,7 +53,7 @@ namespace Assets.Unity.Charon.Editor.Windows
 		private event EventHandler Done;
 		private event EventHandler<ErrorEventArgs> Cancel;
 
-		public UpdateMonoWindow()
+		public UpdateRuntimeWindow()
 		{
 			this.titleContent = new GUIContent(".NET Runtime Update");
 			this.maxSize = minSize = new Vector2(420, 190);
@@ -224,7 +224,7 @@ namespace Assets.Unity.Charon.Editor.Windows
 		public static IAsyncResult ShowAsync()
 		{
 			var promise = new Promise();
-			var window = EditorWindow.GetWindow<UpdateMonoWindow>(utility: true);
+			var window = EditorWindow.GetWindow<UpdateRuntimeWindow>(utility: true);
 
 
 			window.Done += (sender, args) => promise.TrySetCompleted();
