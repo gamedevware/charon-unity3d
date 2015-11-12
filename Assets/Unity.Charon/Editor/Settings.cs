@@ -36,7 +36,6 @@ namespace Assets.Unity.Charon.Editor
 
 		public static Settings Current;
 
-		public string MonoPath;
 		public string ToolsPath;
 		public string BrowserPath;
 		public Browser Browser;
@@ -125,16 +124,11 @@ namespace Assets.Unity.Charon.Editor
 				this.ToolsPort = 65535;
 				this.Version++;
 			}
-			if (Directory.Exists(this.MonoPath) == false)
-			{
-				this.MonoPath = null;
-			}
 		}
 
 		public override string ToString()
 		{
-			return "Mono Path: " + this.MonoPath + Environment.NewLine + " " +
-				   "Tools Path: " + this.ToolsPath + Environment.NewLine + " " +
+			return "Tools Path: " + this.ToolsPath + Environment.NewLine + " " +
 				   "Tool Port: " + this.ToolsPort + Environment.NewLine + " " +
 				   "Game Data Paths: " + string.Join(", ", this.GameDataPaths.ToArray()) + Environment.NewLine + " ";
 		}

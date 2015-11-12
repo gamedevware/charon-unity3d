@@ -208,7 +208,7 @@ namespace Assets.Unity.Charon.Editor
 
 		public static IEnumerable ScanForGameDataAsync(Action<string, float> progressCallback = null)
 		{
-			switch (FileUtils.CheckTools())
+			switch (ToolsUtils.CheckTools())
 			{
 				case ToolsCheckResult.MissingMono: yield return UpdateMonoWindow.ShowAsync(); break;
 				case ToolsCheckResult.MissingTools: yield return UpdateToolsWindow.ShowAsync(); break;
@@ -249,7 +249,7 @@ namespace Assets.Unity.Charon.Editor
 				var errorText = new StringBuilder();
 				var checkProcess = new ExecuteCommandTask
 				(
-					FileUtils.GetToolsPath(),
+					ToolsUtils.GetToolsPath(),
 					null,
 					(s, ea) => { if (string.IsNullOrEmpty(ea.Data) == false) errorText.Append(ea.Data); },
 					"VALIDATE", fullGameDataPath,
@@ -280,7 +280,7 @@ namespace Assets.Unity.Charon.Editor
 		}
 		public static IEnumerable GenerateCodeAndAssetsAsync(string path = null, Action<string, float> progressCallback = null)
 		{
-			switch (FileUtils.CheckTools())
+			switch (ToolsUtils.CheckTools())
 			{
 				case ToolsCheckResult.MissingMono: yield return UpdateMonoWindow.ShowAsync(); break;
 				case ToolsCheckResult.MissingTools: yield return UpdateToolsWindow.ShowAsync(); break;
@@ -333,7 +333,7 @@ namespace Assets.Unity.Charon.Editor
 							if (progressCallback != null) progressCallback("Running generation tools for " + gameDataPath, (float)i / total);
 							var generateProcess = new ExecuteCommandTask
 							(
-								FileUtils.GetToolsPath(),
+								ToolsUtils.GetToolsPath(),
 								null,
 								(sender, args) => { if (!string.IsNullOrEmpty(args.Data)) errorText.Append(args.Data); },
 								generator == GameDataSettings.CodeGenerator.CSharp ? "GENERATECSHARPCODE" : "GENERATEUNITYCSHARPCODE",
@@ -460,7 +460,7 @@ namespace Assets.Unity.Charon.Editor
 		}
 		public static IEnumerable MigrateAsync(string path = null, Action<string, float> progressCallback = null)
 		{
-			switch (FileUtils.CheckTools())
+			switch (ToolsUtils.CheckTools())
 			{
 				case ToolsCheckResult.MissingMono: yield return UpdateMonoWindow.ShowAsync(); break;
 				case ToolsCheckResult.MissingTools: yield return UpdateToolsWindow.ShowAsync(); break;
@@ -482,7 +482,7 @@ namespace Assets.Unity.Charon.Editor
 				if (progressCallback != null) progressCallback("Running migration tools for " + gameDataPath, (float)i / total);
 				var migrateProcess = new ExecuteCommandTask
 				(
-					FileUtils.GetToolsPath(),
+					ToolsUtils.GetToolsPath(),
 					null,
 					(sender, args) => { if (!string.IsNullOrEmpty(args.Data)) errorText.Append(args.Data); },
 					"MIGRATE",
@@ -502,7 +502,7 @@ namespace Assets.Unity.Charon.Editor
 		}
 		public static IEnumerable ValidateAsync(string path = null, Action<string, float> progressCallback = null)
 		{
-			switch (FileUtils.CheckTools())
+			switch (ToolsUtils.CheckTools())
 			{
 				case ToolsCheckResult.MissingMono: yield return UpdateMonoWindow.ShowAsync(); break;
 				case ToolsCheckResult.MissingTools: yield return UpdateToolsWindow.ShowAsync(); break;
@@ -526,7 +526,7 @@ namespace Assets.Unity.Charon.Editor
 				if (progressCallback != null) progressCallback("Running validation tool for " + gameDataPath, (float)i / total);
 				var validateProcess = new ExecuteCommandTask
 				(
-					FileUtils.GetToolsPath(),
+					ToolsUtils.GetToolsPath(),
 					(sender, args) => { if (!string.IsNullOrEmpty(args.Data)) outputText.Append(args.Data); },
 					(sender, args) => { if (!string.IsNullOrEmpty(args.Data)) errorText.Append(args.Data); },
 					"VALIDATE", Path.GetFullPath(gameDataPath),
@@ -592,7 +592,7 @@ namespace Assets.Unity.Charon.Editor
 		}
 		public static IEnumerable ExtractT4Templates(string extractionPath)
 		{
-			switch (FileUtils.CheckTools())
+			switch (ToolsUtils.CheckTools())
 			{
 				case ToolsCheckResult.MissingMono: yield return UpdateMonoWindow.ShowAsync(); break;
 				case ToolsCheckResult.MissingTools: yield return UpdateToolsWindow.ShowAsync(); break;
@@ -605,7 +605,7 @@ namespace Assets.Unity.Charon.Editor
 			if (Settings.Current.Verbose) Debug.Log(string.Format("Extracting T4 Templates to '{0}'...", extractionPath));
 			var generateProcess = new ExecuteCommandTask
 			(
-				FileUtils.GetToolsPath(),
+				ToolsUtils.GetToolsPath(),
 				(sender, args) => { if (!string.IsNullOrEmpty(args.Data)) outputText.Append(args.Data); },
 				(sender, args) => { if (!string.IsNullOrEmpty(args.Data)) errorText.Append(args.Data); },
 				"DUMPCODEGENERATOR", Path.GetFullPath(extractionPath),

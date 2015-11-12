@@ -20,6 +20,7 @@
 using System;
 using System.IO;
 using System.Text;
+using Assets.Unity.Charon.Editor.Utils;
 using UnityEditor;
 using UnityEngine;
 
@@ -74,7 +75,7 @@ namespace Assets.Unity.Charon.Editor
 						case GameDataSettings.CodeGenerator.CSharp:
 							generateCSharpCode:
 							output
-								.Append("\"").Append("../").Append(FileUtils.GetToolsPath()).Append("\"")
+								.Append("\"").Append("../").Append(ToolsUtils.GetToolsPath()).Append("\"")
 								.Append(" ")
 								.Append(generator == GameDataSettings.CodeGenerator.CSharp ? "GENERATECSHARPCODE" : "GENERATEUNITYCSHARPCODE")
 								.Append(" ")

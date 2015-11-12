@@ -22,7 +22,6 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading;
-using Assets.Unity.Charon.Editor.Utils;
 using UnityEngine;
 
 namespace Assets.Unity.Charon.Editor
@@ -81,24 +80,6 @@ namespace Assets.Unity.Charon.Editor
 			}
 
 			return new string('0', 32); // never happens
-		}
-		public static string GetToolsPath()
-		{
-			var toolsPath = Settings.Current.ToolsPath;
-#if !UNITY_EDITOR_WIN
-			toolsPath = Settings.Current.MonoPath + " " + Settings.Current.ToolsPath;
-#endif
-			return toolsPath;
-		}
-		public static ToolsCheckResult CheckTools()
-		{
-			if (!File.Exists(Settings.Current.ToolsPath))
-				return ToolsCheckResult.MissingTools;
-#if !UNITY_EDITOR_WIN
-			if (!File.Exists(Settings.Current.MonoPath))
-				return ToolsCheckResult.MissingMono;
-#endif
-			return ToolsCheckResult.Ok;
 		}
 	}
 }

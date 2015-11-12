@@ -47,18 +47,6 @@ namespace Assets.Unity.Charon.Editor.Windows
 			EditorGUILayout.LabelField("License Key", "");
 			GUILayout.Space(10);
 			GUILayout.Label("Settings", EditorStyles.boldLabel);
-			EditorGUILayout.BeginHorizontal();
-			{
-				Settings.Current.MonoPath = EditorGUILayout.TextField("Mono Path", Settings.Current.MonoPath);
-				if (GUILayout.Button("Browse...", EditorStyles.toolbarButton, GUILayout.Width(70), GUILayout.Height(18)))
-				{
-					Settings.Current.MonoPath = EditorUtility.OpenFolderPanel("Path to Mono binaries", "", "bin");
-					GUI.changed = true;
-					this.Repaint();
-				}
-				GUILayout.Space(5);
-			}
-			EditorGUILayout.EndHorizontal();
 			GUI.enabled = System.IO.File.Exists(Settings.Current.ToolsPath) == false;
 			Settings.Current.ToolsPath = EditorGUILayout.TextField("Tools Path", Settings.Current.ToolsPath);
 			GUI.enabled = true;
@@ -98,7 +86,7 @@ namespace Assets.Unity.Charon.Editor.Windows
 
 		protected void Update()
 		{
-			switch (FileUtils.CheckTools())
+			switch (ToolsUtils.CheckTools())
 			{
 				case ToolsCheckResult.MissingMono:
 					this.ToolsVersion = "Missing Mono!";
@@ -110,7 +98,7 @@ namespace Assets.Unity.Charon.Editor.Windows
 					if (this.checkToolsVersion == null)
 					{
 						this.checkToolsVersion = new ExecuteCommandTask(
-							FileUtils.GetToolsPath(),
+							ToolsUtils.GetToolsPath(),
 							(s, ea) => { if (!string.IsNullOrEmpty(ea.Data)) this.ToolsVersion = ea.Data; },
 							(s, ea) => { if (!string.IsNullOrEmpty(ea.Data)) this.ToolsVersion = ea.Data; },
 							"VERSION");

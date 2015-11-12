@@ -157,7 +157,7 @@ namespace Assets.Unity.Charon.Editor.Windows
 
 		private IEnumerable LoadEditor(string gameDataPath, string reference)
 		{
-			switch (FileUtils.CheckTools())
+			switch (ToolsUtils.CheckTools())
 			{
 				case ToolsCheckResult.MissingMono: yield return UpdateMonoWindow.ShowAsync(); break;
 				case ToolsCheckResult.MissingTools: yield return UpdateToolsWindow.ShowAsync(); break;
@@ -216,7 +216,7 @@ namespace Assets.Unity.Charon.Editor.Windows
 			}
 
 #if UNITY_EDITOR_WIN
-			shadowCopyOfTools = Settings.Current.MonoPath + " " + shadowCopyOfTools;
+			shadowCopyOfTools = ToolsUtils.MonoPath + " " + shadowCopyOfTools;
 #endif
 			this.editorProcess = new ExecuteCommandTask
 			(

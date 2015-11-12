@@ -17,10 +17,8 @@
     along with this program.  If not, see http://www.gnu.org/licenses.
 */
 
-using System;
 using System.Reflection;
 using UnityEditor;
-using UnityEditor.Callbacks;
 using UnityEngine;
 
 namespace Assets.Unity.Charon.Editor.Windows
