@@ -19,6 +19,7 @@
 
 using System;
 using Assets.Unity.Charon.Editor.Tasks;
+using Assets.Unity.Charon.Editor.Utils;
 using UnityEditor;
 using UnityEngine;
 
@@ -97,14 +98,25 @@ namespace Assets.Unity.Charon.Editor.Windows
 
 		protected void Update()
 		{
-			if (this.checkToolsVersion == null)
+			switch (FileUtils.CheckTools())
 			{
-				this.checkToolsVersion = new ExecuteCommandTask(
-					Settings.Current.ToolsPath,
-					(s, ea) => { if (!string.IsNullOrEmpty(ea.Data)) this.ToolsVersion = ea.Data; },
-					(s, ea) => { if (!string.IsNullOrEmpty(ea.Data)) this.ToolsVersion = ea.Data; },
-					"VERSION");
-				this.checkToolsVersion.Start();
+				case ToolsCheckResult.MissingMono:
+					this.ToolsVersion = "Missing Mono!";
+					break;
+				case ToolsCheckResult.MissingTools:
+					this.ToolsVersion = "Missing Tools!";
+					break;
+				case ToolsCheckResult.Ok:
+					if (this.checkToolsVersion == null)
+					{
+						this.checkToolsVersion = new ExecuteCommandTask(
+							FileUtils.GetToolsPath(),
+							(s, ea) => { if (!string.IsNullOrEmpty(ea.Data)) this.ToolsVersion = ea.Data; },
+							(s, ea) => { if (!string.IsNullOrEmpty(ea.Data)) this.ToolsVersion = ea.Data; },
+							"VERSION");
+						this.checkToolsVersion.Start();
+					}
+					break;
 			}
 		}
 	}

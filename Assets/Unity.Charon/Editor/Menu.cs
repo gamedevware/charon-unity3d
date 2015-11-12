@@ -27,6 +27,7 @@ using System.Reflection;
 using System.Text;
 using Assets.Unity.Charon.Editor.Json;
 using Assets.Unity.Charon.Editor.Tasks;
+using Assets.Unity.Charon.Editor.Utils;
 using Assets.Unity.Charon.Editor.Windows;
 using UnityEditor;
 using UnityEngine;
@@ -44,7 +45,7 @@ namespace Assets.Unity.Charon.Editor
 			var scanCoroutine = CoroutineScheduler.Schedule
 			(
 				ScanForGameDataAsync(
-					progressCallback: ProgressUtils.ShowProgressBar("Scaning Assets..."))
+					progressCallback: ProgressUtils.ShowProgressBar("Scanning Assets..."))
 			);
 			scanCoroutine.ContinueWith(ProgressUtils.HideProgressBar, null);
 			FocusConsoleWindow();
@@ -207,6 +208,14 @@ namespace Assets.Unity.Charon.Editor
 
 		public static IEnumerable ScanForGameDataAsync(Action<string, float> progressCallback = null)
 		{
+			switch (FileUtils.CheckTools())
+			{
+				case ToolsCheckResult.MissingMono: yield return UpdateMonoWindow.ShowAsync(); break;
+				case ToolsCheckResult.MissingTools: yield return UpdateToolsWindow.ShowAsync(); break;
+				case ToolsCheckResult.Ok: break;
+				default: throw new InvalidOperationException("Unknown Tools check result.");
+			}
+
 			if (progressCallback != null) progressCallback("Scanning assets", 0);
 			var gameDataFiles = (from id in AssetDatabase.FindAssets("t:TextAsset")
 								 let path = AssetDatabase.GUIDToAssetPath(id)
@@ -240,7 +249,7 @@ namespace Assets.Unity.Charon.Editor
 				var errorText = new StringBuilder();
 				var checkProcess = new ExecuteCommandTask
 				(
-					Settings.Current.ToolsPath,
+					FileUtils.GetToolsPath(),
 					null,
 					(s, ea) => { if (string.IsNullOrEmpty(ea.Data) == false) errorText.Append(ea.Data); },
 					"VALIDATE", fullGameDataPath,
@@ -271,6 +280,14 @@ namespace Assets.Unity.Charon.Editor
 		}
 		public static IEnumerable GenerateCodeAndAssetsAsync(string path = null, Action<string, float> progressCallback = null)
 		{
+			switch (FileUtils.CheckTools())
+			{
+				case ToolsCheckResult.MissingMono: yield return UpdateMonoWindow.ShowAsync(); break;
+				case ToolsCheckResult.MissingTools: yield return UpdateToolsWindow.ShowAsync(); break;
+				case ToolsCheckResult.Ok: break;
+				default: throw new InvalidOperationException("Unknown Tools check result.");
+			}
+
 			var paths = !string.IsNullOrEmpty(path) ? new string[] { path } : Settings.Current.GameDataPaths.ToArray();
 			var total = paths.Length;
 			var forceReImportList = new List<string>();
@@ -316,7 +333,7 @@ namespace Assets.Unity.Charon.Editor
 							if (progressCallback != null) progressCallback("Running generation tools for " + gameDataPath, (float)i / total);
 							var generateProcess = new ExecuteCommandTask
 							(
-								Settings.Current.ToolsPath,
+								FileUtils.GetToolsPath(),
 								null,
 								(sender, args) => { if (!string.IsNullOrEmpty(args.Data)) errorText.Append(args.Data); },
 								generator == GameDataSettings.CodeGenerator.CSharp ? "GENERATECSHARPCODE" : "GENERATEUNITYCSHARPCODE",
@@ -443,6 +460,14 @@ namespace Assets.Unity.Charon.Editor
 		}
 		public static IEnumerable MigrateAsync(string path = null, Action<string, float> progressCallback = null)
 		{
+			switch (FileUtils.CheckTools())
+			{
+				case ToolsCheckResult.MissingMono: yield return UpdateMonoWindow.ShowAsync(); break;
+				case ToolsCheckResult.MissingTools: yield return UpdateToolsWindow.ShowAsync(); break;
+				case ToolsCheckResult.Ok: break;
+				default: throw new InvalidOperationException("Unknown Tools check result.");
+			}
+
 			var paths = !string.IsNullOrEmpty(path) ? new string[] { path } : Settings.Current.GameDataPaths.ToArray();
 			var total = paths.Length;
 			for (var i = 0; i < paths.Length; i++)
@@ -457,7 +482,7 @@ namespace Assets.Unity.Charon.Editor
 				if (progressCallback != null) progressCallback("Running migration tools for " + gameDataPath, (float)i / total);
 				var migrateProcess = new ExecuteCommandTask
 				(
-					Settings.Current.ToolsPath,
+					FileUtils.GetToolsPath(),
 					null,
 					(sender, args) => { if (!string.IsNullOrEmpty(args.Data)) errorText.Append(args.Data); },
 					"MIGRATE",
@@ -477,6 +502,14 @@ namespace Assets.Unity.Charon.Editor
 		}
 		public static IEnumerable ValidateAsync(string path = null, Action<string, float> progressCallback = null)
 		{
+			switch (FileUtils.CheckTools())
+			{
+				case ToolsCheckResult.MissingMono: yield return UpdateMonoWindow.ShowAsync(); break;
+				case ToolsCheckResult.MissingTools: yield return UpdateToolsWindow.ShowAsync(); break;
+				case ToolsCheckResult.Ok: break;
+				default: throw new InvalidOperationException("Unknown Tools check result.");
+			}
+
 			var reports = new Dictionary<string, object>();
 			var paths = !string.IsNullOrEmpty(path) ? new string[] { path } : Settings.Current.GameDataPaths.ToArray();
 			var total = paths.Length;
@@ -493,7 +526,7 @@ namespace Assets.Unity.Charon.Editor
 				if (progressCallback != null) progressCallback("Running validation tool for " + gameDataPath, (float)i / total);
 				var validateProcess = new ExecuteCommandTask
 				(
-					Settings.Current.ToolsPath,
+					FileUtils.GetToolsPath(),
 					(sender, args) => { if (!string.IsNullOrEmpty(args.Data)) outputText.Append(args.Data); },
 					(sender, args) => { if (!string.IsNullOrEmpty(args.Data)) errorText.Append(args.Data); },
 					"VALIDATE", Path.GetFullPath(gameDataPath),
@@ -559,12 +592,20 @@ namespace Assets.Unity.Charon.Editor
 		}
 		public static IEnumerable ExtractT4Templates(string extractionPath)
 		{
+			switch (FileUtils.CheckTools())
+			{
+				case ToolsCheckResult.MissingMono: yield return UpdateMonoWindow.ShowAsync(); break;
+				case ToolsCheckResult.MissingTools: yield return UpdateToolsWindow.ShowAsync(); break;
+				case ToolsCheckResult.Ok: break;
+				default: throw new InvalidOperationException("Unknown Tools check result.");
+			}
+
 			var outputText = new StringBuilder();
 			var errorText = new StringBuilder();
 			if (Settings.Current.Verbose) Debug.Log(string.Format("Extracting T4 Templates to '{0}'...", extractionPath));
 			var generateProcess = new ExecuteCommandTask
 			(
-				Settings.Current.ToolsPath,
+				FileUtils.GetToolsPath(),
 				(sender, args) => { if (!string.IsNullOrEmpty(args.Data)) outputText.Append(args.Data); },
 				(sender, args) => { if (!string.IsNullOrEmpty(args.Data)) errorText.Append(args.Data); },
 				"DUMPCODEGENERATOR", Path.GetFullPath(extractionPath),
@@ -599,7 +640,6 @@ namespace Assets.Unity.Charon.Editor
 			}
 			yield return gameDataFile;
 		}
-
 	}
 }
 

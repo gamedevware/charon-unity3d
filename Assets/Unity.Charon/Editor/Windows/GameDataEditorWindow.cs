@@ -21,6 +21,7 @@ using System;
 using System.Collections;
 using System.IO;
 using Assets.Unity.Charon.Editor.Tasks;
+using Assets.Unity.Charon.Editor.Utils;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEngine;
@@ -30,7 +31,7 @@ namespace Assets.Unity.Charon.Editor.Windows
 {
 	class GameDataEditorWindow : WebViewEditorWindow, IHasCustomMenu
 	{
-		private readonly static string ToolShadowCopyPath = FileUtil.GetUniqueTempPathInProject();
+		public readonly static string ToolShadowCopyPath = FileUtil.GetUniqueTempPathInProject();
 		private static bool assemblyReloadLocked;
 
 		[SerializeField]
@@ -156,6 +157,14 @@ namespace Assets.Unity.Charon.Editor.Windows
 
 		private IEnumerable LoadEditor(string gameDataPath, string reference)
 		{
+			switch (FileUtils.CheckTools())
+			{
+				case ToolsCheckResult.MissingMono: yield return UpdateMonoWindow.ShowAsync(); break;
+				case ToolsCheckResult.MissingTools: yield return UpdateToolsWindow.ShowAsync(); break;
+				case ToolsCheckResult.Ok: break;
+				default: throw new InvalidOperationException("Unknown Tools check result.");
+			}
+
 			if (this.editorProcess != null)
 				yield return this.editorProcess.Close();
 
@@ -206,6 +215,9 @@ namespace Assets.Unity.Charon.Editor.Windows
 				}
 			}
 
+#if UNITY_EDITOR_WIN
+			shadowCopyOfTools = Settings.Current.MonoPath + " " + shadowCopyOfTools;
+#endif
 			this.editorProcess = new ExecuteCommandTask
 			(
 				shadowCopyOfTools,

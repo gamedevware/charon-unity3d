@@ -21,6 +21,8 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Threading;
+using Assets.Unity.Charon.Editor.Utils;
 using UnityEngine;
 
 namespace Assets.Unity.Charon.Editor
@@ -29,7 +31,7 @@ namespace Assets.Unity.Charon.Editor
 	{
 		public static string MakeProjectRelative(string path)
 		{
-			if (string.IsNullOrEmpty(path)) return null;
+			if (String.IsNullOrEmpty(path)) return null;
 			var oldPath = path;
 			var fullPath = Path.GetFullPath(Environment.CurrentDirectory).Replace("\\", "/");
 			path = Path.GetFullPath(path).Replace("\\", "/");
@@ -51,7 +53,6 @@ namespace Assets.Unity.Charon.Editor
 
 			return path;
 		}
-
 		public static string ComputeMd5Hash(string path, int tries = 5)
 		{
 			if (path == null) throw new ArgumentNullException("path");
@@ -76,10 +77,28 @@ namespace Assets.Unity.Charon.Editor
 					if (attempt == tries)
 						throw;
 				}
-				System.Threading.Thread.Sleep(100);
+				Thread.Sleep(100);
 			}
 
 			return new string('0', 32); // never happens
+		}
+		public static string GetToolsPath()
+		{
+			var toolsPath = Settings.Current.ToolsPath;
+#if !UNITY_EDITOR_WIN
+			toolsPath = Settings.Current.MonoPath + " " + Settings.Current.ToolsPath;
+#endif
+			return toolsPath;
+		}
+		public static ToolsCheckResult CheckTools()
+		{
+			if (!File.Exists(Settings.Current.ToolsPath))
+				return ToolsCheckResult.MissingTools;
+#if !UNITY_EDITOR_WIN
+			if (!File.Exists(Settings.Current.MonoPath))
+				return ToolsCheckResult.MissingMono;
+#endif
+			return ToolsCheckResult.Ok;
 		}
 	}
 }
