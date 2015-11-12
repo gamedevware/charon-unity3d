@@ -20,7 +20,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -248,12 +247,13 @@ namespace Assets.Unity.Charon.Editor
 				var errorText = new StringBuilder();
 				var checkProcess = new ExecuteCommandTask
 				(
-					ToolsUtils.GetToolsPath(),
+					Settings.Current.ToolsPath,
 					null,
 					(s, ea) => { if (string.IsNullOrEmpty(ea.Data) == false) errorText.Append(ea.Data); },
 					"VALIDATE", fullGameDataPath,
 					Settings.Current.Verbose ? "--verbose" : ""
 				);
+				checkProcess.RequireDotNetRuntime();
 				checkProcess.Start();
 
 				yield return checkProcess;
@@ -332,7 +332,7 @@ namespace Assets.Unity.Charon.Editor
 							if (progressCallback != null) progressCallback("Running generation tools for " + gameDataPath, (float)i / total);
 							var generateProcess = new ExecuteCommandTask
 							(
-								ToolsUtils.GetToolsPath(),
+								Settings.Current.ToolsPath,
 								null,
 								(sender, args) => { if (!string.IsNullOrEmpty(args.Data)) errorText.Append(args.Data); },
 								generator == GameDataSettings.CodeGenerator.CSharp ? "GENERATECSHARPCODE" : "GENERATEUNITYCSHARPCODE",
@@ -349,6 +349,7 @@ namespace Assets.Unity.Charon.Editor
 								Path.GetFullPath(codeGenerationPath),
 								Settings.Current.Verbose ? "--verbose" : ""
 							);
+							generateProcess.RequireDotNetRuntime();
 							generateProcess.Start();
 							yield return generateProcess;
 
@@ -481,13 +482,14 @@ namespace Assets.Unity.Charon.Editor
 				if (progressCallback != null) progressCallback("Running migration tools for " + gameDataPath, (float)i / total);
 				var migrateProcess = new ExecuteCommandTask
 				(
-					ToolsUtils.GetToolsPath(),
+					Settings.Current.ToolsPath,
 					null,
 					(sender, args) => { if (!string.IsNullOrEmpty(args.Data)) errorText.Append(args.Data); },
 					"MIGRATE",
 					Path.GetFullPath(gameDataPath),
 					Settings.Current.Verbose ? "--verbose" : ""
 				);
+				migrateProcess.RequireDotNetRuntime();
 				migrateProcess.Start();
 				yield return migrateProcess;
 
@@ -525,7 +527,7 @@ namespace Assets.Unity.Charon.Editor
 				if (progressCallback != null) progressCallback("Running validation tool for " + gameDataPath, (float)i / total);
 				var validateProcess = new ExecuteCommandTask
 				(
-					ToolsUtils.GetToolsPath(),
+					Settings.Current.ToolsPath,
 					(sender, args) => { if (!string.IsNullOrEmpty(args.Data)) outputText.Append(args.Data); },
 					(sender, args) => { if (!string.IsNullOrEmpty(args.Data)) errorText.Append(args.Data); },
 					"VALIDATE", Path.GetFullPath(gameDataPath),
@@ -533,6 +535,7 @@ namespace Assets.Unity.Charon.Editor
 					"--outputFormat", "json",
 					Settings.Current.Verbose ? "--verbose" : ""
 				);
+				validateProcess.RequireDotNetRuntime();
 				validateProcess.Start();
 				yield return validateProcess;
 
@@ -604,12 +607,13 @@ namespace Assets.Unity.Charon.Editor
 			if (Settings.Current.Verbose) Debug.Log(string.Format("Extracting T4 Templates to '{0}'...", extractionPath));
 			var generateProcess = new ExecuteCommandTask
 			(
-				ToolsUtils.GetToolsPath(),
+				Settings.Current.ToolsPath,
 				(sender, args) => { if (!string.IsNullOrEmpty(args.Data)) outputText.Append(args.Data); },
 				(sender, args) => { if (!string.IsNullOrEmpty(args.Data)) errorText.Append(args.Data); },
 				"DUMPCODEGENERATOR", Path.GetFullPath(extractionPath),
 				Settings.Current.Verbose ? "--verbose" : ""
 			);
+			generateProcess.RequireDotNetRuntime();
 			generateProcess.Start();
 			yield return generateProcess;
 

@@ -98,10 +98,11 @@ namespace Assets.Unity.Charon.Editor.Windows
 					if (this.checkToolsVersion == null)
 					{
 						this.checkToolsVersion = new ExecuteCommandTask(
-							ToolsUtils.GetToolsPath(),
+							Settings.Current.ToolsPath,
 							(s, ea) => { if (!string.IsNullOrEmpty(ea.Data)) this.ToolsVersion = ea.Data; },
 							(s, ea) => { if (!string.IsNullOrEmpty(ea.Data)) this.ToolsVersion = ea.Data; },
 							"VERSION");
+						this.checkToolsVersion.RequireDotNetRuntime();
 						this.checkToolsVersion.Start();
 					}
 					break;

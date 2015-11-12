@@ -61,7 +61,6 @@ namespace Assets.Unity.Charon.Editor
 						continue;
 
 					var generationOptions = gameDataSettings.Options;
-
 					var generator = (GameDataSettings.CodeGenerator)gameDataSettings.Generator;
 					switch (generator)
 					{
@@ -74,8 +73,11 @@ namespace Assets.Unity.Charon.Editor
 							goto generateCSharpCode;
 						case GameDataSettings.CodeGenerator.CSharp:
 							generateCSharpCode:
+							if (string.IsNullOrEmpty(ToolsUtils.MonoPath) == false)
+								output.Append("\"").Append("../").Append(ToolsUtils.MonoPath).Append("\" ");
+
 							output
-								.Append("\"").Append("../").Append(ToolsUtils.GetToolsPath()).Append("\"")
+								.Append("\"").Append("../").Append(Settings.Current.ToolsPath).Append("\"")
 								.Append(" ")
 								.Append(generator == GameDataSettings.CodeGenerator.CSharp ? "GENERATECSHARPCODE" : "GENERATEUNITYCSHARPCODE")
 								.Append(" ")

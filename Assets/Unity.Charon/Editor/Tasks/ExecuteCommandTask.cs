@@ -22,6 +22,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using Assets.Unity.Charon.Editor.Utils;
 
 namespace Assets.Unity.Charon.Editor.Tasks
 {
@@ -48,6 +49,7 @@ namespace Assets.Unity.Charon.Editor.Tasks
 			{
 				Arguments = ConcatArguments(arguments),
 				UseShellExecute = false,
+				WorkingDirectory = Path.GetFullPath("./"),
 				CreateNoWindow = true
 			};
 		}
@@ -179,7 +181,6 @@ namespace Assets.Unity.Charon.Editor.Tasks
 			}
 			return true;
 		}
-
 		public Promise Close()
 		{
 			this.aborted = true;
@@ -202,6 +203,14 @@ namespace Assets.Unity.Charon.Editor.Tasks
 				return new Coroutine(KillAsync(currentProcess));
 			else
 				return Promise.Fulfilled;
+		}
+		public void RequireDotNetRuntime()
+		{
+			if (string.IsNullOrEmpty(ToolsUtils.MonoPath))
+				return;
+
+			this.StartInfo.Arguments = "\"" + this.startInfo.FileName + "\" " + this.StartInfo.Arguments;
+			this.StartInfo.FileName = ToolsUtils.MonoPath;
 		}
 
 		private string ConcatArguments(string[] arguments)

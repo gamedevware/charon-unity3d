@@ -215,9 +215,6 @@ namespace Assets.Unity.Charon.Editor.Windows
 				}
 			}
 
-#if UNITY_EDITOR_WIN
-			shadowCopyOfTools = ToolsUtils.MonoPath + " " + shadowCopyOfTools;
-#endif
 			this.editorProcess = new ExecuteCommandTask
 			(
 				shadowCopyOfTools,
@@ -241,7 +238,7 @@ namespace Assets.Unity.Charon.Editor.Windows
 				System.Diagnostics.Process.GetCurrentProcess().Id.ToString(),
 				Settings.Current.Verbose ? "--verbose" : ""
 			);
-
+			this.editorProcess.RequireDotNetRuntime();
 			this.editorProcess.Start();
 
 			// re-paint on exit or crash
