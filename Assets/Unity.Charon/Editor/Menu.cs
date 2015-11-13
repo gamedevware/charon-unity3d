@@ -145,7 +145,7 @@ namespace Assets.Unity.Charon.Editor
 		private static void VerboseLogs()
 		{
 			Settings.Current.Verbose = !Settings.Current.Verbose;
-			UnityEditor.Menu.SetChecked(ToolsPrefix + "Verbose Logs", Settings.Current.Verbose);
+			UnityEditor.Menu.SetChecked(TroubleshootingPrefix + Resources.UI_UNITYPLUGIN_MENUVERBOSELOGS, Settings.Current.Verbose);
 			Settings.Current.Save();
 		}
 
@@ -153,7 +153,7 @@ namespace Assets.Unity.Charon.Editor
 		private static void RecoveryScripts()
 		{
 			Settings.Current.SuppressRecoveryScripts = !Settings.Current.SuppressRecoveryScripts;
-			UnityEditor.Menu.SetChecked(ToolsPrefix + "Recovery Scripts", !Settings.Current.SuppressRecoveryScripts);
+			UnityEditor.Menu.SetChecked(TroubleshootingPrefix + Resources.UI_UNITYPLUGIN_MENURECOVERYSCRIPTS, !Settings.Current.SuppressRecoveryScripts);
 			Settings.Current.Save();
 		}
 
@@ -172,7 +172,7 @@ namespace Assets.Unity.Charon.Editor
 		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUABOUT)]
 		private static void About()
 		{
-			EditorWindow.GetWindow<AboutCharonWindow>(utility: true);
+            EditorWindow.GetWindow<AboutCharonWindow>(utility: true);
 		}
 
 		[MenuItem("Assets/Create/GameData")]
