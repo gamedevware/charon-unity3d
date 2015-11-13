@@ -66,12 +66,12 @@ namespace Assets.Unity.Charon.Editor
 			}
 			settings.Validate();
 
-			if ((EditorGUIUtility.SerializeMainMenuToString() ?? "").Contains("Charon"))
-				UnityEditor.Menu.SetChecked("Tools/Charon/Verbose Logs", settings.Verbose);
+			if ((EditorGUIUtility.SerializeMainMenuToString() ?? "").Contains(Resources.UI_UNITYPLUGIN_MENUVERBOSELOGS))
+				UnityEditor.Menu.SetChecked(Menu.TroubleshootingPrefix + Resources.UI_UNITYPLUGIN_MENUVERBOSELOGS, settings.Verbose);
 
 
-			if ((EditorGUIUtility.SerializeMainMenuToString() ?? "").Contains("Charon"))
-				UnityEditor.Menu.SetChecked("Tools/Charon/Recovery Scripts", !settings.SuppressRecoveryScripts);
+			if ((EditorGUIUtility.SerializeMainMenuToString() ?? "").Contains(Resources.UI_UNITYPLUGIN_MENURECOVERYSCRIPTS))
+				UnityEditor.Menu.SetChecked(Menu.TroubleshootingPrefix + Resources.UI_UNITYPLUGIN_MENURECOVERYSCRIPTS, !settings.SuppressRecoveryScripts);
 
 			Current = settings;
 		}

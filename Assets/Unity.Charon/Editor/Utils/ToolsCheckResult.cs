@@ -22,7 +22,7 @@ namespace Assets.Unity.Charon.Editor.Utils
 	public enum ToolsCheckResult
 	{
 		Ok,
-		MissingMono,
+		MissingRuntime,
 		MissingTools
 	}
 }

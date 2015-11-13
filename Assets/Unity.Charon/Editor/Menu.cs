@@ -35,7 +35,10 @@ namespace Assets.Unity.Charon.Editor
 {
 	static class Menu
 	{
-		[MenuItem("Tools/Charon/Scan for new Assets")]
+		public const string ToolsPrefix = "Tools/Charon/";
+		public const string TroubleshootingPrefix = ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUTROUBLESHOOTING + "/";
+
+		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUSCANFORNEWASSETS)]
 		private static void ScanForGameData()
 		{
 			if (!ScanForGameDataCheck()) return;
@@ -43,22 +46,22 @@ namespace Assets.Unity.Charon.Editor
 			var scanCoroutine = CoroutineScheduler.Schedule
 			(
 				ScanForGameDataAsync(
-					progressCallback: ProgressUtils.ShowProgressBar("Scanning Assets..."))
+					progressCallback: ProgressUtils.ShowProgressBar(Resources.UI_UNITYPLUGIN_MENUSCANNINGASSETS))
 			);
 			scanCoroutine.ContinueWith(ProgressUtils.HideProgressBar, null);
 			FocusConsoleWindow();
 		}
-		[MenuItem("Tools/Charon/Scan for new Assets", true)]
+		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUSCANFORNEWASSETS, true)]
 		private static bool ScanForGameDataCheck()
 		{
 			// why not here :D
-			UnityEditor.Menu.SetChecked("Tools/Charon/Verbose Logs", Settings.Current.Verbose);
-			UnityEditor.Menu.SetChecked("Tools/Charon/Recovery Scripts", !Settings.Current.SuppressRecoveryScripts);
+			UnityEditor.Menu.SetChecked(TroubleshootingPrefix + Resources.UI_UNITYPLUGIN_MENUVERBOSELOGS, Settings.Current.Verbose);
+			UnityEditor.Menu.SetChecked(TroubleshootingPrefix + Resources.UI_UNITYPLUGIN_MENURECOVERYSCRIPTS, !Settings.Current.SuppressRecoveryScripts);
 
 			return !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling;
 		}
 
-		[MenuItem("Tools/Charon/Generate Code and Assets")]
+		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUGENERATECODEANDASSETS)]
 		private static void GenerateCodeAndAssets()
 		{
 			if (!GenerateCodeAndAssetsCheck()) return;
@@ -66,37 +69,37 @@ namespace Assets.Unity.Charon.Editor
 			var generateCoroutine = CoroutineScheduler.Schedule
 			(
 				GenerateCodeAndAssetsAsync(
-					progressCallback: ProgressUtils.ShowProgressBar("Generating Code and Assets..."))
+					progressCallback: ProgressUtils.ShowProgressBar(Resources.UI_UNITYPLUGIN_GENERATINGCODEANDASSETS))
 			);
 			generateCoroutine.ContinueWith(ProgressUtils.HideProgressBar, null);
 			FocusConsoleWindow();
 		}
-		[MenuItem("Tools/Charon/Generate Code and Assets", true)]
+		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUGENERATECODEANDASSETS, true)]
 		private static bool GenerateCodeAndAssetsCheck()
 		{
 			return !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling;
 		}
 
-		[MenuItem("Tools/Charon/Validate Assets")]
+		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUVALIDATEASSETS)]
 		private static void ValidateAll()
 		{
 			if (!ValidateAllCheck()) return;
 
 			var validateCoroutine = CoroutineScheduler.Schedule<Dictionary<string, object>>(
 				ValidateAsync(
-					progressCallback: ProgressUtils.ShowProgressBar("Validating Assets...")
+					progressCallback: ProgressUtils.ShowProgressBar(Resources.UI_UNITYPLUGIN_VALIDATINGASSETS)
 				)
 			);
 			validateCoroutine.ContinueWith(ProgressUtils.HideProgressBar, null);
 			FocusConsoleWindow();
 		}
-		[MenuItem("Tools/Charon/Validate Assets", true)]
+		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUVALIDATEASSETS, true)]
 		private static bool ValidateAllCheck()
 		{
 			return !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling;
 		}
 
-		[MenuItem("Tools/Charon/Migrate Assets")]
+		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUMIGRATEASSETS)]
 		private static void MigrateAll()
 		{
 			if (!MigrateAllCheck()) return;
@@ -104,25 +107,25 @@ namespace Assets.Unity.Charon.Editor
 			var migrateCoroutine = CoroutineScheduler.Schedule
 			(
 				MigrateAsync(
-					  progressCallback: ProgressUtils.ShowProgressBar("Migrating Assets...")
+					  progressCallback: ProgressUtils.ShowProgressBar(Resources.UI_UNITYPLUGIN_MIGRATINGASSETS)
 				)
 			);
 			migrateCoroutine.ContinueWith(ProgressUtils.HideProgressBar, null);
 			FocusConsoleWindow();
 		}
-		[MenuItem("Tools/Charon/Migrate Assets", true)]
+		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUMIGRATEASSETS, true)]
 		private static bool MigrateAllCheck()
 		{
 			return !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling;
 		}
 
-		[MenuItem("Tools/Charon/Extract T4 Templates")]
+		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUEXTRACTT4TEMPLATES)]
 		private static void ExtractT4Templates()
 		{
 			if (!ExtractT4TemplatesCheck())
 				return;
 
-			var extractionPath = EditorUtility.OpenFolderPanel("Specify extraction location...", "", "");
+			var extractionPath = EditorUtility.OpenFolderPanel(Resources.UI_UNITYPLUGIN_SPECIFYEXTRACTIONLOCTITLE, "", "");
 			if (string.IsNullOrEmpty(extractionPath))
 				return;
 
@@ -132,29 +135,41 @@ namespace Assets.Unity.Charon.Editor
 			);
 			FocusConsoleWindow();
 		}
-		[MenuItem("Tools/Charon/Extract T4 Templates", true)]
+		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUEXTRACTT4TEMPLATES, true)]
 		private static bool ExtractT4TemplatesCheck()
 		{
 			return !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling;
 		}
 
-		[MenuItem("Tools/Charon/Verbose Logs")]
+		[MenuItem(TroubleshootingPrefix + Resources.UI_UNITYPLUGIN_MENUVERBOSELOGS)]
 		private static void VerboseLogs()
 		{
 			Settings.Current.Verbose = !Settings.Current.Verbose;
-			UnityEditor.Menu.SetChecked("Tools/Charon/Verbose Logs", Settings.Current.Verbose);
+			UnityEditor.Menu.SetChecked(ToolsPrefix + "Verbose Logs", Settings.Current.Verbose);
 			Settings.Current.Save();
 		}
 
-		[MenuItem("Tools/Charon/Recovery Scripts")]
+		[MenuItem(TroubleshootingPrefix + Resources.UI_UNITYPLUGIN_MENURECOVERYSCRIPTS)]
 		private static void RecoveryScripts()
 		{
 			Settings.Current.SuppressRecoveryScripts = !Settings.Current.SuppressRecoveryScripts;
-			UnityEditor.Menu.SetChecked("Tools/Charon/Recovery Scripts", !Settings.Current.SuppressRecoveryScripts);
+			UnityEditor.Menu.SetChecked(ToolsPrefix + "Recovery Scripts", !Settings.Current.SuppressRecoveryScripts);
 			Settings.Current.Save();
 		}
 
-		[MenuItem("Tools/Charon/About...")]
+		[MenuItem(TroubleshootingPrefix + Resources.UI_UNITYPLUGIN_MENUSUBMITISSUE)]
+		private static void SubmitIssue()
+		{
+			Application.OpenURL("https://github.com/deniszykov/charon-unity3d/issues");
+		}
+
+		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUDOCUMENTATION)]
+		private static void ShowDocumentation()
+		{
+			Application.OpenURL("https://github.com/deniszykov/charon-unity3d/blob/master/README.md");
+		}
+
+		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUABOUT)]
 		private static void About()
 		{
 			EditorWindow.GetWindow<AboutCharonWindow>(utility: true);
@@ -208,13 +223,13 @@ namespace Assets.Unity.Charon.Editor
 		{
 			switch (ToolsUtils.CheckTools())
 			{
-				case ToolsCheckResult.MissingMono: yield return UpdateRuntimeWindow.ShowAsync(); break;
+				case ToolsCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
 				case ToolsCheckResult.MissingTools: yield return UpdateToolsWindow.ShowAsync(); break;
 				case ToolsCheckResult.Ok: break;
 				default: throw new InvalidOperationException("Unknown Tools check result.");
 			}
 
-			if (progressCallback != null) progressCallback("Scanning assets", 0);
+			if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_MENUSCANNINGASSETS, 0);
 			var gameDataFiles = (from id in AssetDatabase.FindAssets("t:TextAsset")
 								 let path = AssetDatabase.GUIDToAssetPath(id)
 								 where path != null && path.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
@@ -234,7 +249,7 @@ namespace Assets.Unity.Charon.Editor
 			{
 				var gameDataPath = paths[i];
 				var fullGameDataPath = Path.GetFullPath(gameDataPath);
-				if (progressCallback != null) progressCallback("Current target is " + gameDataPath, (float)i / total);
+				if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_PROGRESSCURRENTTARGETIS, gameDataPath), (float)i / total);
 				if (!File.Exists(fullGameDataPath))
 				{
 					Debug.LogWarning(string.Format("TextAsset at '{0}' is not found.", gameDataPath));
@@ -243,7 +258,7 @@ namespace Assets.Unity.Charon.Editor
 				}
 
 				if (Settings.Current.Verbose) Debug.Log(string.Format("Checking '{0}'...", gameDataPath));
-				if (progressCallback != null) progressCallback("Running validation tool for " + gameDataPath, (float)i / total);
+				if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_SCANRUNVALIDATIONFOR, gameDataPath), (float)i / total);
 				var errorText = new StringBuilder();
 				var checkProcess = new ExecuteCommandTask
 				(
@@ -260,9 +275,8 @@ namespace Assets.Unity.Charon.Editor
 				if (Settings.Current.Verbose) Debug.Log(string.Format("Check complete exit code: '{0}'", checkProcess.ExitCode));
 				if (checkProcess.ExitCode != 0)
 				{
-					Debug.LogWarning(string.Format("TextAsset '{0}' is skipped because of validation error.", gameDataPath));
-					if (Settings.Current.Verbose)
-						Debug.LogWarning("Validation error: " + Environment.NewLine + errorText);
+					Debug.LogWarning(string.Format(Resources.UI_UNITYPLUGIN_SCANASSETSKIPPED, gameDataPath));
+					if (Settings.Current.Verbose) Debug.LogWarning("Validation error: " + Environment.NewLine + errorText);
 					Settings.Current.GameDataPaths.Remove(gameDataPath);
 				}
 				else
@@ -271,9 +285,9 @@ namespace Assets.Unity.Charon.Editor
 					found++;
 				}
 			}
-			if (progressCallback != null) progressCallback("Done", 1);
+			if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESSDONE, 1);
 
-			Debug.Log(string.Format("Scan complete: {0} files are located. Total {1} files are tracked.", found, Settings.Current.GameDataPaths.Count));
+			Debug.Log(string.Format(Resources.UI_UNITYPLUGIN_SCANCOMPLETE, found, Settings.Current.GameDataPaths.Count));
 			Settings.Current.Version++;
 			Settings.Current.Save();
 		}
@@ -281,7 +295,7 @@ namespace Assets.Unity.Charon.Editor
 		{
 			switch (ToolsUtils.CheckTools())
 			{
-				case ToolsCheckResult.MissingMono: yield return UpdateRuntimeWindow.ShowAsync(); break;
+				case ToolsCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
 				case ToolsCheckResult.MissingTools: yield return UpdateToolsWindow.ShowAsync(); break;
 				case ToolsCheckResult.Ok: break;
 				default: throw new InvalidOperationException("Unknown Tools check result.");
@@ -295,7 +309,7 @@ namespace Assets.Unity.Charon.Editor
 				var gameDataPath = paths[i];
 				if (File.Exists(gameDataPath) == false)
 					continue;
-				if (progressCallback != null) progressCallback("Current target is " + gameDataPath, (float)i / total);
+				if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_PROGRESSCURRENTTARGETIS, gameDataPath), (float)i / total);
 
 
 				var gameDataObj = AssetDatabase.LoadAssetAtPath(gameDataPath, typeof(TextAsset));
@@ -329,7 +343,7 @@ namespace Assets.Unity.Charon.Editor
 						case GameDataSettings.CodeGenerator.CSharp:
 							generateCSharpCode:
 							if (Settings.Current.Verbose) Debug.Log(string.Format("Generating C# code for '{0}'...", gameDataPath));
-							if (progressCallback != null) progressCallback("Running generation tools for " + gameDataPath, (float)i / total);
+							if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_GENERATECODEFOR, gameDataPath), (float)i / total);
 							var generateProcess = new ExecuteCommandTask
 							(
 								Settings.Current.ToolsPath,
@@ -356,7 +370,7 @@ namespace Assets.Unity.Charon.Editor
 							if (Settings.Current.Verbose) Debug.Log(string.Format("Generation complete, exit code: '{0}'", generateProcess.ExitCode));
 							if (generateProcess.ExitCode != 0)
 							{
-								Debug.LogWarning(string.Format("Code generation for '{0}' failed due errors: {1}.", gameDataPath, errorText));
+								Debug.LogWarning(string.Format(Resources.UI_UNITYPLUGIN_GENERATEFAILEDDUEERRORS, gameDataPath, errorText));
 							}
 							else
 							{
@@ -367,7 +381,7 @@ namespace Assets.Unity.Charon.Editor
 								if (gameDataSettings.LineEnding != 0 ||
 									gameDataSettings.Identation != 0)
 								{
-									if (progressCallback != null) progressCallback("Re-formatting generated code for " + gameDataPath, (float)i / total);
+									if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_GENERATEREFORMATCODE, gameDataPath), (float)i / total);
 
 									var code = new StringBuilder(File.ReadAllText(codeGenerationPath));
 									switch ((GameDataSettings.LineEndings)gameDataSettings.LineEnding)
@@ -405,10 +419,10 @@ namespace Assets.Unity.Charon.Editor
 					}
 				}
 			}
-			if (progressCallback != null) progressCallback("Refreshing assets", 0.99f);
+			if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_GENERATEREFRESHINGASSETS, 0.99f);
 			foreach (var forceReImportPath in forceReImportList)
 				AssetDatabase.ImportAsset(forceReImportPath, ImportAssetOptions.ForceUpdate);
-			if (progressCallback != null) progressCallback("Done", 1.0f);
+			if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESSDONE, 1);
 		}
 		public static IEnumerable GenerateAssetsAsync(string[] paths, Action<string, float> progressCallback = null)
 		{
@@ -418,7 +432,7 @@ namespace Assets.Unity.Charon.Editor
 				var gameDataPath = paths[i];
 				if (File.Exists(gameDataPath) == false)
 					continue;
-				if (progressCallback != null) progressCallback("Current target is " + gameDataPath, (float)i / total);
+				if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_PROGRESSCURRENTTARGETIS, gameDataPath), (float)i / total);
 
 
 				var gameDataObj = AssetDatabase.LoadAssetAtPath(gameDataPath, typeof(TextAsset));
@@ -443,7 +457,7 @@ namespace Assets.Unity.Charon.Editor
 									   Type.GetType(gameDataSettings.Namespace + "." + gameDataSettings.GameDataClassName + ", Assembly-CSharp-Editor", throwOnError: false);
 					if (gameDataType == null)
 					{
-						Debug.LogError("Asset generation failed: unable to find GameData's type in CSharp assemblies. Make sure there is no compilation errors.");
+						Debug.LogError(Resources.UI_UNITYPLUGIN_GENERATEASSETCANTFINDGAMEDATACLASS);
 						continue;
 					}
 
@@ -454,15 +468,15 @@ namespace Assets.Unity.Charon.Editor
 					AssetDatabase.SaveAssets();
 				}
 			}
-			if (progressCallback != null) progressCallback("Refreshing assets", 0.99f);
+			if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_GENERATEREFRESHINGASSETS, 0.99f);
 			AssetDatabase.Refresh(ImportAssetOptions.Default);
-			if (progressCallback != null) progressCallback("Done", 1.0f);
+			if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESSDONE, 1);
 		}
 		public static IEnumerable MigrateAsync(string path = null, Action<string, float> progressCallback = null)
 		{
 			switch (ToolsUtils.CheckTools())
 			{
-				case ToolsCheckResult.MissingMono: yield return UpdateRuntimeWindow.ShowAsync(); break;
+				case ToolsCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
 				case ToolsCheckResult.MissingTools: yield return UpdateToolsWindow.ShowAsync(); break;
 				case ToolsCheckResult.Ok: break;
 				default: throw new InvalidOperationException("Unknown Tools check result.");
@@ -475,11 +489,11 @@ namespace Assets.Unity.Charon.Editor
 				var gameDataPath = paths[i];
 				if (File.Exists(gameDataPath) == false)
 					continue;
-				if (progressCallback != null) progressCallback("Current target is " + gameDataPath, (float)i / total);
+				if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_PROGRESSCURRENTTARGETIS, gameDataPath), (float)i / total);
 
 				var errorText = new StringBuilder();
 				if (Settings.Current.Verbose) Debug.Log(string.Format("Migrating GameData at '{0}'...", gameDataPath));
-				if (progressCallback != null) progressCallback("Running migration tools for " + gameDataPath, (float)i / total);
+				if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_MIGRATERUNMIGRATIONFOR, gameDataPath), (float)i / total);
 				var migrateProcess = new ExecuteCommandTask
 				(
 					Settings.Current.ToolsPath,
@@ -495,17 +509,17 @@ namespace Assets.Unity.Charon.Editor
 
 				if (Settings.Current.Verbose) Debug.Log(string.Format("Migration complete, exit code: '{0}'", migrateProcess.ExitCode));
 				if (migrateProcess.ExitCode != 0)
-					Debug.LogWarning(string.Format("Migration of '{0}' has failed due errors: {1}.", gameDataPath, errorText));
-				else if (Settings.Current.Verbose)
-					Debug.Log(string.Format("Migration of '{0}' is complete.", gameDataPath));
+					Debug.LogWarning(string.Format(Resources.UI_UNITYPLUGIN_MIGRATEFAILEDDUEERRORS, gameDataPath, errorText));
+				else
+					Debug.Log(string.Format(Resources.UI_UNITYPLUGIN_MIGRATECOMPLETE, gameDataPath));
 			}
-			if (progressCallback != null) progressCallback("Done", 1.0f);
+			if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESSDONE, 1);
 		}
 		public static IEnumerable ValidateAsync(string path = null, Action<string, float> progressCallback = null)
 		{
 			switch (ToolsUtils.CheckTools())
 			{
-				case ToolsCheckResult.MissingMono: yield return UpdateRuntimeWindow.ShowAsync(); break;
+				case ToolsCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
 				case ToolsCheckResult.MissingTools: yield return UpdateToolsWindow.ShowAsync(); break;
 				case ToolsCheckResult.Ok: break;
 				default: throw new InvalidOperationException("Unknown Tools check result.");
@@ -519,12 +533,12 @@ namespace Assets.Unity.Charon.Editor
 				var gameDataPath = paths[i];
 				if (File.Exists(gameDataPath) == false)
 					continue;
-				if (progressCallback != null) progressCallback("Current target is " + gameDataPath, (float)i / total);
+				if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_PROGRESSCURRENTTARGETIS, gameDataPath), (float)i / total);
 
 				var errorText = new StringBuilder();
 				var outputText = new StringBuilder();
 				if (Settings.Current.Verbose) Debug.Log(string.Format("Validating GameData at '{0}'...", gameDataPath));
-				if (progressCallback != null) progressCallback("Running validation tool for " + gameDataPath, (float)i / total);
+				if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_VALIDATERUNFOR, gameDataPath), (float)i / total);
 				var validateProcess = new ExecuteCommandTask
 				(
 					Settings.Current.ToolsPath,
@@ -543,7 +557,7 @@ namespace Assets.Unity.Charon.Editor
 				if (validateProcess.ExitCode != 0)
 				{
 					reports.Add(gameDataPath, errorText.ToString());
-					Debug.LogWarning(string.Format("Validation of '{0}' has failed due errors: {1}.", gameDataPath, errorText));
+					Debug.LogWarning(string.Format(Resources.UI_UNITYPLUGIN_VALIDATEFAILEDDUEERRORS, gameDataPath, errorText));
 				}
 				else
 				{
@@ -579,24 +593,24 @@ namespace Assets.Unity.Charon.Editor
 							}
 						}
 
-						Debug.Log(string.Format("Validation of '{0}' is complete. Result: {1}, Errors: {2}.", gameDataPath, success ? "success" : "failure", totalErrors));
+						Debug.Log(string.Format(Resources.UI_UNITYPLUGIN_VALIDATECOMPLETE, gameDataPath, success ? "success" : "failure", totalErrors));
 
 					}
 					catch (Exception e)
 					{
-						Debug.LogWarning(string.Format("Validation of '{0}' has failed due errors: {1}.", gameDataPath, e));
+						Debug.LogWarning(string.Format(Resources.UI_UNITYPLUGIN_VALIDATEFAILEDDUEERRORS, gameDataPath, e));
 						reports[gameDataPath] = e.Unwrap().ToString();
 					}
 				}
 			}
-			if (progressCallback != null) progressCallback("Done", 1.0f);
+			if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESSDONE, 1);
 			yield return reports;
 		}
 		public static IEnumerable ExtractT4Templates(string extractionPath)
 		{
 			switch (ToolsUtils.CheckTools())
 			{
-				case ToolsCheckResult.MissingMono: yield return UpdateRuntimeWindow.ShowAsync(); break;
+				case ToolsCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
 				case ToolsCheckResult.MissingTools: yield return UpdateToolsWindow.ShowAsync(); break;
 				case ToolsCheckResult.Ok: break;
 				default: throw new InvalidOperationException("Unknown Tools check result.");
@@ -618,9 +632,9 @@ namespace Assets.Unity.Charon.Editor
 			yield return generateProcess;
 
 			if (errorText.Length > 0)
-				Debug.LogWarning("T4 Template extraction failed: " + errorText);
+				Debug.LogWarning(string.Format(Resources.UI_UNITYPLUGIN_T4EXTRACTIONFAILED, errorText));
 			else
-				Debug.Log("T4 Template extracted successfully. " + outputText);
+				Debug.Log(Resources.UI_UNITYPLUGIN_T4EXTRACTIONCOMPLETE + "\r\n" + outputText);
 		}
 		public static IEnumerable TouchGameDataFile(string path)
 		{

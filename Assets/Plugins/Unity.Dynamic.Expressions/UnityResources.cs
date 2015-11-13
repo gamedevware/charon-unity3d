@@ -26,49 +26,52 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+// ReSharper disable once CheckNamespace
+// ReSharper disable once EmptyNamespace
+// ReSharper disable IdentifierTypo
 namespace Unity.Dynamic.Expressions.Properties {
 
 #if UNITY_5 || UNITY_4
     public class Resources
 	{
-        public static string EXCEPTION_BOUNDEXPR_ARGSDOESNTMATCHPARAMS { get { return "Count of passed arguments doesn't match parameters count."; } }
-        public static string EXCEPTION_BOUNDEXPR_BODYRESULTDOESNTMATCHRESULTTYPE { get { return "Body's result type doesn't match expression's result type."; } }
-        public static string EXCEPTION_BOUNDEXPR_CANTCONVERTARG { get { return "Can't convert argument '{0}' ('{2}') to required type '{1}'."; } }
-        public static string EXCEPTION_BOUNDEXPR_WRONGNUMPARAMS { get { return "Wrong number of parameters. Make sure parameter count matches expression's signature."; } }
-        public static string EXCEPTION_BOUNDEXPR_WRONGPARAMETERTYPE { get { return "One of parameters has invalid type. Make sure parameter types matches expression's signature."; } }
-        public static string EXCEPTION_BUILD_MISSINGATTRONNODE { get { return "Missing or wrong '{0}' attribute on one of expression nodes."; } }
-        public static string EXCEPTION_BUILD_UNABLETOBINDCALL { get { return "Unable to bind call '{0}' with arguments '{1}' to object of type '{2}'."; } }
-        public static string EXCEPTION_BUILD_UNABLETOBINDDELEG { get { return "Unable to bind delegate '{0}' with arguments '{1}'."; } }
-        public static string EXCEPTION_BUILD_UNABLETOBINDINDEXER { get { return "Unable to bind indexer with arguments '{0}' to object of type '{1}'."; } }
-        public static string EXCEPTION_BUILD_UNABLETOCREATEEXPRWITHPARAMS { get { return "Unable to create '{0}' expression with these'{1}' parameters."; } }
-        public static string EXCEPTION_BUILD_UNABLETOINVOKENONDELEG { get { return "Unable to invoke non-delegate type '{0}' with arguments '{1}'."; } }
-        public static string EXCEPTION_BUILD_UNABLETORESOLVEMEMBERONTYPE { get { return "Unable to find public property or field '{0}' on '{1}'."; } }
-        public static string EXCEPTION_BUILD_UNABLETORESOLVENAME { get { return "Unable to resolve '{0}'. There is no formal parameter with this name."; } }
-        public static string EXCEPTION_BUILD_UNABLETORESOLVETYPE { get { return "Unable to resolve type '{0}'. Known types are: '{1}'."; } }
-        public static string EXCEPTION_BUILD_UNABLETORESOLVETYPEMULTIPLE { get { return "Unable to resolve type '{0}'. Can't choose from: '{1}'."; } }
-        public static string EXCEPTION_BUILD_UNKNOWNEXPRTYPE { get { return "Unknown expression type '{0}'."; } }
-        public static string EXCEPTION_COMPIL_NOBINARYOPONTYPE { get { return "No binary operation '{0}' is defined on type '{1}'."; } }
-        public static string EXCEPTION_COMPIL_NOUNARYOPONTYPE { get { return "No unary operation '{0}' is defined on type '{1}'."; } }
-        public static string EXCEPTION_COMPIL_UNKNOWNBINARYEXPRTYPE { get { return "Unknown binary expression type '{0}'."; } }
-        public static string EXCEPTION_COMPIL_UNKNOWNEXPRTYPE { get { return "Unknown expression type {0}."; } }
-        public static string EXCEPTION_COMPIL_UNKNOWNUNARYEXPRTYPE { get { return "Unknown unary expression type '{0}'."; } }
-        public static string EXCEPTION_LIST_LISTISEMPTY { get { return "List is empty."; } }
-        public static string EXCEPTION_PARSER_BINARYOPREQOPERAND { get { return "A binary operation requires two parameters."; } }
-        public static string EXCEPTION_PARSER_COLONISEXPRECTED { get { return "A colon ':' symbol is expected in conditional '?' expression."; } }
-        public static string EXCEPTION_PARSER_EXPRESSIONISEMPTY { get { return "Expression is empty"; } }
-        public static string EXCEPTION_PARSER_INVALIDCHILDCOUNTOFNODE { get { return "An invalid children count '{1}' of node '{0}' while {2} is expected."; } }
-        public static string EXCEPTION_PARSER_INVALIDCHILDTYPESOFNODE { get { return "An invalid type of children nodes '{1}' of node '{0}' while '{2}' is expected."; } }
-        public static string EXCEPTION_PARSER_OPREQUIRESOPERAND { get { return "A '{0}' operator requires an operand."; } }
-        public static string EXCEPTION_PARSER_OPREQUIRESSECONDOPERAND { get { return "A '{0}' operator requires a second operand."; } }
-        public static string EXCEPTION_PARSER_TERNARYOPREQOPERAND { get { return "A ternary operation requires three parameters."; } }
-        public static string EXCEPTION_PARSER_UNARYOPREQOPERAND { get { return "An unary operation requires one parameter."; } }
-        public static string EXCEPTION_PARSER_UNEXPECTEDTOKEN { get { return "Unexpected token '{0}' in current context."; } }
-        public static string EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEBUILDINGTREE { get { return "Unexpected parser node met '{0}' while building expression tree."; } }
-        public static string EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEOTHEREXPECTED { get { return "A one of these '{0}' tokens are expected."; } }
-        public static string EXCEPTION_STRINGUTILS_UNEXPECTEDESCAPESEQ { get { return "Unknown escape sequence '{0}'."; } }
-        public static string EXCEPTION_TOKENIZER_UNEXPECTEDSYMBOL { get { return "Unexpected symbol '{0}'."; } }
-        public static string EXCEPTION_UNBOUNDEXPR_DUPLICATEPARAMNAME { get { return "Duplicate parameter name '{0}'."; } }
-        public static string EXCEPTION_UNBOUNDEXPR_TYPESDOESNTMATCHNAMES { get { return "Length of types array doesn't match length of names array."; } }
+        public const string EXCEPTION_BOUNDEXPR_ARGSDOESNTMATCHPARAMS = "Count of passed arguments doesn't match parameters count.";
+        public const string EXCEPTION_BOUNDEXPR_BODYRESULTDOESNTMATCHRESULTTYPE = "Body's result type doesn't match expression's result type.";
+        public const string EXCEPTION_BOUNDEXPR_CANTCONVERTARG = "Can't convert argument '{0}' ('{2}') to required type '{1}'.";
+        public const string EXCEPTION_BOUNDEXPR_WRONGNUMPARAMS = "Wrong number of parameters. Make sure parameter count matches expression's signature.";
+        public const string EXCEPTION_BOUNDEXPR_WRONGPARAMETERTYPE = "One of parameters has invalid type. Make sure parameter types matches expression's signature.";
+        public const string EXCEPTION_BUILD_MISSINGATTRONNODE = "Missing or wrong '{0}' attribute on one of expression nodes.";
+        public const string EXCEPTION_BUILD_UNABLETOBINDCALL = "Unable to bind call '{0}' with arguments '{1}' to object of type '{2}'.";
+        public const string EXCEPTION_BUILD_UNABLETOBINDDELEG = "Unable to bind delegate '{0}' with arguments '{1}'.";
+        public const string EXCEPTION_BUILD_UNABLETOBINDINDEXER = "Unable to bind indexer with arguments '{0}' to object of type '{1}'.";
+        public const string EXCEPTION_BUILD_UNABLETOCREATEEXPRWITHPARAMS = "Unable to create '{0}' expression with these'{1}' parameters.";
+        public const string EXCEPTION_BUILD_UNABLETOINVOKENONDELEG = "Unable to invoke non-delegate type '{0}' with arguments '{1}'.";
+        public const string EXCEPTION_BUILD_UNABLETORESOLVEMEMBERONTYPE = "Unable to find public property or field '{0}' on '{1}'.";
+        public const string EXCEPTION_BUILD_UNABLETORESOLVENAME = "Unable to resolve '{0}'. There is no formal parameter with this name.";
+        public const string EXCEPTION_BUILD_UNABLETORESOLVETYPE = "Unable to resolve type '{0}'. Known types are: '{1}'.";
+        public const string EXCEPTION_BUILD_UNABLETORESOLVETYPEMULTIPLE = "Unable to resolve type '{0}'. Can't choose from: '{1}'.";
+        public const string EXCEPTION_BUILD_UNKNOWNEXPRTYPE = "Unknown expression type '{0}'.";
+        public const string EXCEPTION_COMPIL_NOBINARYOPONTYPE = "No binary operation '{0}' is defined on type '{1}'.";
+        public const string EXCEPTION_COMPIL_NOUNARYOPONTYPE = "No unary operation '{0}' is defined on type '{1}'.";
+        public const string EXCEPTION_COMPIL_UNKNOWNBINARYEXPRTYPE = "Unknown binary expression type '{0}'.";
+        public const string EXCEPTION_COMPIL_UNKNOWNEXPRTYPE = "Unknown expression type {0}.";
+        public const string EXCEPTION_COMPIL_UNKNOWNUNARYEXPRTYPE = "Unknown unary expression type '{0}'.";
+        public const string EXCEPTION_LIST_LISTISEMPTY = "List is empty.";
+        public const string EXCEPTION_PARSER_BINARYOPREQOPERAND = "A binary operation requires two parameters.";
+        public const string EXCEPTION_PARSER_COLONISEXPRECTED = "A colon ':' symbol is expected in conditional '?' expression.";
+        public const string EXCEPTION_PARSER_EXPRESSIONISEMPTY = "Expression is empty";
+        public const string EXCEPTION_PARSER_INVALIDCHILDCOUNTOFNODE = "An invalid children count '{1}' of node '{0}' while {2} is expected.";
+        public const string EXCEPTION_PARSER_INVALIDCHILDTYPESOFNODE = "An invalid type of children nodes '{1}' of node '{0}' while '{2}' is expected.";
+        public const string EXCEPTION_PARSER_OPREQUIRESOPERAND = "A '{0}' operator requires an operand.";
+        public const string EXCEPTION_PARSER_OPREQUIRESSECONDOPERAND = "A '{0}' operator requires a second operand.";
+        public const string EXCEPTION_PARSER_TERNARYOPREQOPERAND = "A ternary operation requires three parameters.";
+        public const string EXCEPTION_PARSER_UNARYOPREQOPERAND = "An unary operation requires one parameter.";
+        public const string EXCEPTION_PARSER_UNEXPECTEDTOKEN = "Unexpected token '{0}' in current context.";
+        public const string EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEBUILDINGTREE = "Unexpected parser node met '{0}' while building expression tree.";
+        public const string EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEOTHEREXPECTED = "A one of these '{0}' tokens are expected.";
+        public const string EXCEPTION_STRINGUTILS_UNEXPECTEDESCAPESEQ = "Unknown escape sequence '{0}'.";
+        public const string EXCEPTION_TOKENIZER_UNEXPECTEDSYMBOL = "Unexpected symbol '{0}'.";
+        public const string EXCEPTION_UNBOUNDEXPR_DUPLICATEPARAMNAME = "Duplicate parameter name '{0}'.";
+        public const string EXCEPTION_UNBOUNDEXPR_TYPESDOESNTMATCHNAMES = "Length of types array doesn't match length of names array.";
     }
 #endif
 }

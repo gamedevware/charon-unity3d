@@ -29,7 +29,7 @@ namespace Assets.Unity.Charon.Editor.Windows
 
 		public UpdateToolsWindow()
 		{
-			this.titleContent = new GUIContent("Tools Update");
+			this.titleContent = new GUIContent(Resources.UI_UNITYPLUGIN_WINDOWUPDATETOOLSTITLE);
 			this.maxSize = minSize = new Vector2(380, 346);
 		}
 

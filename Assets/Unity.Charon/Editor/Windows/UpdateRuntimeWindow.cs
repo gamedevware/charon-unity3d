@@ -19,19 +19,15 @@
 
 using System;
 using System.Collections;
-using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using Assets.Unity.Charon.Editor.Tasks;
 using Assets.Unity.Charon.Editor.Utils;
-#if UNITY_EDITOR_WIN
-using Microsoft.Win32;
-#endif
 using UnityEditor;
 using UnityEngine;
-// ReSharper disable UnusedMember.Local
 
+// ReSharper disable UnusedMember.Local
 namespace Assets.Unity.Charon.Editor.Windows
 {
 	class UpdateRuntimeWindow : EditorWindow
@@ -55,59 +51,57 @@ namespace Assets.Unity.Charon.Editor.Windows
 
 		public UpdateRuntimeWindow()
 		{
-			this.titleContent = new GUIContent(".NET Runtime Update");
+			this.titleContent = new GUIContent(Resources.UI_UNITYPLUGIN_WINDOWUPDATERUNTIMETITLE);
 			this.maxSize = minSize = new Vector2(420, 190);
 		}
 
 		protected void OnGUI()
 		{
-			EditorGUILayout.HelpBox("Please provide path to Mono binaries.\r\n" +
-									"Default location is: " + MonoDefaultLocation + "\r\n" +
-									"If it doesn't exists you can press 'Download Mono' button below.\r\n" +
+			EditorGUILayout.HelpBox(Resources.UI_UNITYPLUGIN_WINDOWRUNTIMEREQUIRED + "\r\n" +
+									string.Format(Resources.UI_UNITYPLUGIN_WINDOWFINDMONOMANUALLY, MonoDefaultLocation) + "\r\n" +
+									Resources.UI_UNITYPLUGIN_WINDOWDOWNLOADMONO + "\r\n" +
 #if UNITY_EDITOR_WIN
-									"Alternatively, you can install .NET 4.5 by pressing 'Download .NET 4.5'.\r\n " +
+									Resources.UI_UNITYPLUGIN_WINDOWDOWNLOADDOTNET + "\r\n " +
 #endif
-									"If you need a help with installation press 'Help' button."
-
-									, MessageType.Info);
+									Resources.UI_UNITYPLUGIN_WINDOWPRESSHELP, MessageType.Info);
 
 			var checkIsRunning = this.checkRuntimeVersionCoroutine != null && this.checkRuntimeVersionCoroutine.IsCompleted == false;
 			GUI.enabled = !checkIsRunning;
 			GUILayout.BeginHorizontal();
 			EditorGUILayout.Space();
 #if UNITY_EDITOR_WIN
-			if (GUILayout.Button("Download .NET 4.5", GUILayout.Width(140)))
+			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOWDOWNLOADDOTNETBUTTON, GUILayout.Width(140)))
 				Application.OpenURL("https://www.microsoft.com/ru-RU/download/details.aspx?id=42643");
 #endif
-			if (GUILayout.Button("Download Mono", GUILayout.Width(140)))
+			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOWDOWNLOADMONOBUTTON, GUILayout.Width(140)))
 				Application.OpenURL("http://www.mono-project.com/download/#download-mac");
-			if (GUILayout.Button("Help", GUILayout.Width(40)))
+			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOWHELPBUTTON, GUILayout.Width(40)))
 				Application.OpenURL("https://github.com/deniszykov/charon-unity3d/blob/master/README.md");
 			GUILayout.EndHorizontal();
 
 			GUILayout.Space(18);
 			EditorGUILayout.BeginHorizontal();
 			{
-				this.monoPath = EditorGUILayout.TextField("Path to Mono (bin)", this.monoPath);
-				if (GUILayout.Button("Browse...", EditorStyles.toolbarButton, GUILayout.Width(70), GUILayout.Height(18)))
+				this.monoPath = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_WINDOWPATHTOMONO, this.monoPath);
+				if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOWBROWSEBUTTON, EditorStyles.toolbarButton, GUILayout.Width(70), GUILayout.Height(18)))
 				{
-					this.monoPath = EditorUtility.OpenFolderPanel("Path to Mono binaries", "", "bin");
+					this.monoPath = EditorUtility.OpenFolderPanel(Resources.UI_UNITYPLUGIN_WINDOWPATHTOMONO, "", "");
 					GUI.changed = true;
 					this.Repaint();
 				}
 				GUILayout.Space(5);
 			}
 			EditorGUILayout.EndHorizontal();
-			EditorGUILayout.LabelField("Runtime Version", this.runtimeVersion, new GUIStyle { richText = true });
+			EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_WINDOWRUNTIMEVERSION, this.runtimeVersion, new GUIStyle { richText = true });
 
 			GUILayout.Space(18);
 			GUILayout.BeginHorizontal();
 			EditorGUILayout.Space();
-			if (GUILayout.Button("Re-check", GUILayout.Width(80)))
+			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOWRECHECKBUTTON, GUILayout.Width(80)))
 				this.RunCheck();
 
 			GUI.enabled = true;
-			if (GUILayout.Button("Cancel", GUILayout.Width(80)))
+			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOWCANCELBUTTON, GUILayout.Width(80)))
 				this.Close();
 			GUILayout.EndHorizontal();
 
@@ -129,7 +123,7 @@ namespace Assets.Unity.Charon.Editor.Windows
 		{
 
 #if UNITY_EDITOR_WIN
-			var dotNetRuntimeVersion = Get45or451FromRegistry();
+			var dotNetRuntimeVersion = ToolsUtils.Get45or451FromRegistry();
 			if (dotNetRuntimeVersion != null)
 			{
 				UpdateRuntimeVersionLabel(dotNetRuntimeVersion, ".NET", true);
@@ -141,7 +135,7 @@ namespace Assets.Unity.Charon.Editor.Windows
 			if (string.IsNullOrEmpty(this.monoPath))
 				yield break;
 
-			this.runtimeVersion = "Checking Mono...";
+			this.runtimeVersion = Resources.UI_UNITYPLUGIN_WINDOWCHECKINGMONO;
 			var monoRuntimePath = File.Exists(this.monoPath) ? this.monoPath : Path.Combine(this.monoPath, MONO_EXECUTABLE_NAME);
 			var output = new StringBuilder();
 			this.runMonoTask = new ExecuteCommandTask(
@@ -157,9 +151,9 @@ namespace Assets.Unity.Charon.Editor.Windows
 			if (!monoRuntimeVersionMatch.Success)
 			{
 				if (Settings.Current.Verbose)
-					Debug.LogWarning(output.Length > 0 ? output.ToString() : "Mono doesn't return any version information. Exit code: " + this.runMonoTask.ExitCode);
+					Debug.LogWarning(output.Length > 0 ? output.ToString() : string.Format(Resources.UI_UNITYPLUGIN_WINDOWCHECKINGMONOFAILED, this.runMonoTask.ExitCode));
 
-				this.UpdateRuntimeVersionLabel("Unknown", "Mono", isValid: false);
+				this.UpdateRuntimeVersionLabel(Resources.UI_UNITYPLUGIN_WINDOWRUNTIMEVERSIONUNKNOWN, "Mono", isValid: false);
 			}
 			else
 			{
@@ -177,7 +171,7 @@ namespace Assets.Unity.Charon.Editor.Windows
 				{
 					if (Settings.Current.Verbose)
 						Debug.LogError(e);
-					this.UpdateRuntimeVersionLabel("Error", "Mono", isValid: false);
+					this.UpdateRuntimeVersionLabel(Resources.UI_UNITYPLUGIN_WINDOWRUNTIMEVERSIONERROR, "Mono", isValid: false);
 				}
 			}
 		}
@@ -190,14 +184,15 @@ namespace Assets.Unity.Charon.Editor.Windows
 			this.Done = null;
 			this.Cancel = null;
 
-			Debug.Log(string.Format("'{0}' window is closed with selected Mono Runtime path: {1}. Runtime version: {2}.", this.titleContent.text, ToolsUtils.MonoPath, this.runtimeVersion));
+			if (Settings.Current.Verbose)
+				Debug.Log(string.Format("'{0}' window is closed with selected Mono Runtime path: {1}. Runtime version: {2}.", this.titleContent.text, ToolsUtils.MonoPath, this.runtimeVersion));
 			this.Close();
 		}
 		private void RaiseCancel()
 		{
 			if (this.Cancel != null)
 			{
-				this.Cancel(this, new ErrorEventArgs(new InvalidOperationException("Operation was cancelled by user.")));
+				this.Cancel(this, new ErrorEventArgs(new InvalidOperationException(Resources.UI_UNITYPLUGIN_OPERATIONCANCELLED)));
 				if (Settings.Current.Verbose)
 					Debug.Log(string.Format("'{0}' window is closed by user.", this.titleContent.text));
 			}
@@ -232,7 +227,7 @@ namespace Assets.Unity.Charon.Editor.Windows
 
 			window.monoPath = string.IsNullOrEmpty(ToolsUtils.MonoPath) ? MonoDefaultLocation : ToolsUtils.MonoPath;
 #if UNITY_EDITOR_WIN
-			window.runtimeVersion = Get45or451FromRegistry();
+			window.runtimeVersion = ToolsUtils.Get45or451FromRegistry();
 			window.RunCheck();
 #endif
 			if (Settings.Current.Verbose)
@@ -252,28 +247,6 @@ namespace Assets.Unity.Charon.Editor.Windows
 			}
 
 			return Environment.GetEnvironmentVariable("ProgramFiles");
-		}
-		private static string Get45or451FromRegistry()
-		{
-			using (RegistryKey ndpKey = RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, "").OpenSubKey("SOFTWARE\\Microsoft\\NET Framework Setup\\NDP\\v4\\Full\\"))
-			{
-				if (ndpKey == null)
-					return null;
-				var release = ndpKey.GetValue("Release");
-				if (release == null)
-					return null;
-				var releaseKey = Convert.ToInt32(release, CultureInfo.InvariantCulture);
-				if (releaseKey >= 393295)
-					return "4.6 or later";
-				if ((releaseKey >= 379893))
-					return "4.5.2 or later";
-				if ((releaseKey >= 378675))
-					return "4.5.1 or later";
-				if ((releaseKey >= 378389))
-					return "4.5 or later";
-
-				return null;
-			}
 		}
 #endif
 	}

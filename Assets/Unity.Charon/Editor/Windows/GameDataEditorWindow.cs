@@ -47,7 +47,7 @@ namespace Assets.Unity.Charon.Editor.Windows
 
 		public GameDataEditorWindow()
 		{
-			this.titleContent = new GUIContent("Editor");
+			this.titleContent = new GUIContent(Resources.UI_UNITYPLUGIN_WINDOWEDITORTITLE);
 			this.minSize = new Vector2(300, 300);
 			this.Paddings = new Rect(3, 3, 3, 19);
 		}
@@ -57,9 +57,9 @@ namespace Assets.Unity.Charon.Editor.Windows
 			if (this.IsCrashed)
 			{
 				if (this.loadingTask.HasErrors)
-					EditorGUILayout.HelpBox("Loading failed with error: " + this.loadingTask.Error.Unwrap(), MessageType.Error);
+					EditorGUILayout.HelpBox(string.Format(Resources.UI_UNITYPLUGIN_WINDOWLOADINGFAILEDWITHERROR, this.loadingTask.Error.Unwrap()), MessageType.Error);
 				else
-					EditorGUILayout.HelpBox("Editor has crashed :(", MessageType.Warning);
+					EditorGUILayout.HelpBox(Resources.UI_UNITYPLUGIN_WINDOWEDITORWASCRASHED, MessageType.Warning);
 				this.SetWebViewVisibility(false);
 
 				if (string.IsNullOrEmpty(this.gameDataPath) == false)
@@ -67,25 +67,25 @@ namespace Assets.Unity.Charon.Editor.Windows
 					EditorGUILayout.Space();
 					GUILayout.BeginHorizontal();
 					GUILayout.Space(10);
-					if (GUILayout.Button("Reload", GUILayout.Width(60)))
+					if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOWRELOADBUTTON, GUILayout.Width(60)))
 						this.Load(this.gameDataPath, null);
 					GUILayout.EndHorizontal();
 				}
 			}
 			else if (this.IsLoading)
 			{
-				EditorGUILayout.HelpBox("Please wait while editor process is loading...", MessageType.Info);
+				EditorGUILayout.HelpBox(Resources.UI_UNITYPLUGIN_WINDOWEDITORLOADING, MessageType.Info);
 			}
 			else
 			{
-				EditorGUILayout.HelpBox("Browser is currently opened for '" + this.gameDataPath + "'. Close this window after you finished work.", MessageType.Info);
+				EditorGUILayout.HelpBox(string.Format(Resources.UI_UNITYPLUGIN_WINDOWEDITORISOPENED, this.gameDataPath), MessageType.Info);
 				base.OnGUI();
 			}
 
 			GUILayout.BeginVertical();
 			GUILayout.FlexibleSpace();
 			GUILayout.BeginHorizontal();
-			var codeRecpmpilationEnabled = EditorGUILayout.ToggleLeft("Resume code re-compilation?", !assemblyReloadLocked);
+			var codeRecpmpilationEnabled = EditorGUILayout.ToggleLeft(Resources.UI_UNITYPLUGIN_WINDOWRESUMECODERECOMPILATION, !assemblyReloadLocked);
 			if (!codeRecpmpilationEnabled && !assemblyReloadLocked)
 			{
 				this.LockCodeReload();
@@ -112,7 +112,7 @@ namespace Assets.Unity.Charon.Editor.Windows
 
 		void IHasCustomMenu.AddItemsToMenu(GenericMenu menu)
 		{
-			menu.AddItem(new GUIContent("Reload"), false, this.Reload);
+			menu.AddItem(new GUIContent(Resources.UI_UNITYPLUGIN_WINDOWRELOADBUTTON), false, this.Reload);
 		}
 
 		protected void Update()
@@ -159,7 +159,7 @@ namespace Assets.Unity.Charon.Editor.Windows
 		{
 			switch (ToolsUtils.CheckTools())
 			{
-				case ToolsCheckResult.MissingMono: yield return UpdateRuntimeWindow.ShowAsync(); break;
+				case ToolsCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
 				case ToolsCheckResult.MissingTools: yield return UpdateToolsWindow.ShowAsync(); break;
 				case ToolsCheckResult.Ok: break;
 				default: throw new InvalidOperationException("Unknown Tools check result.");
@@ -251,13 +251,13 @@ namespace Assets.Unity.Charon.Editor.Windows
 
 			if (errorPromise.IsCompleted)
 			{
-				Debug.LogError("Failed to start GameData editor: " + errorPromise.GetResult());
+				Debug.LogError(string.Format(Resources.UI_UNITYPLUGIN_WINDOWFAILEDTOSTARTEDITOR, errorPromise.GetResult()));
 				this.editorProcess.Close();
 				yield break;
 			}
 			else if (timeout.IsCompleted)
 			{
-				Debug.LogWarning("Failed to start GameData editor: Aborted by timeout.");
+				Debug.LogWarning(Resources.UI_UNITYPLUGIN_WINDOWFAILEDTOSTARTEDITORTIMEOUT);
 				this.editorProcess.Kill();
 				yield break;
 			}

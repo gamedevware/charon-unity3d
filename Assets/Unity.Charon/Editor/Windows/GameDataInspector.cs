@@ -17,7 +17,6 @@
     along with this program.  If not, see http://www.gnu.org/licenses.
 */
 
-using System;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
@@ -50,24 +49,24 @@ namespace Assets.Unity.Charon.Editor.Windows
 			}
 			GUI.enabled = true;
 			GUILayout.Label(Path.GetFileName(gameDataPath), EditorStyles.boldLabel);
-			this.gameDataSettings.Generator = (int)(GameDataSettings.CodeGenerator)EditorGUILayout.EnumPopup("Code Generator", (GameDataSettings.CodeGenerator)this.gameDataSettings.Generator);
+			this.gameDataSettings.Generator = (int)(GameDataSettings.CodeGenerator)EditorGUILayout.EnumPopup(Resources.UI_UNITYPLUGIN_WINDOWCODEGENERATOR, (GameDataSettings.CodeGenerator)this.gameDataSettings.Generator);
 			if (this.gameDataSettings.Generator != (int)GameDataSettings.CodeGenerator.None)
 			{
-				this.gameDataSettings.AutoGeneration = EditorGUILayout.Toggle("Auto-Generation", this.gameDataSettings.AutoGeneration);
+				this.gameDataSettings.AutoGeneration = EditorGUILayout.Toggle(Resources.UI_UNITYPLUGIN_WINDOWAUTOGENERATION, this.gameDataSettings.AutoGeneration);
 				var codeAsset = !string.IsNullOrEmpty(this.gameDataSettings.CodeGenerationPath) && File.Exists(this.gameDataSettings.CodeGenerationPath) ? AssetDatabase.LoadAssetAtPath<TextAsset>(this.gameDataSettings.CodeGenerationPath) : null;
 				var assetAsset = !string.IsNullOrEmpty(this.gameDataSettings.AssetGenerationPath) && File.Exists(this.gameDataSettings.AssetGenerationPath) ? AssetDatabase.LoadAssetAtPath<ScriptableObject>(this.gameDataSettings.AssetGenerationPath) : null;
 
 				if (codeAsset != null)
-					this.gameDataSettings.CodeGenerationPath = AssetDatabase.GetAssetPath(EditorGUILayout.ObjectField("Code Generation Path", codeAsset, typeof(TextAsset), false));
+					this.gameDataSettings.CodeGenerationPath = AssetDatabase.GetAssetPath(EditorGUILayout.ObjectField(Resources.UI_UNITYPLUGIN_WINDOWCODEGENERATIONPATH, codeAsset, typeof(TextAsset), false));
 				else
-					this.gameDataSettings.CodeGenerationPath = EditorGUILayout.TextField("Code Generation Path", this.gameDataSettings.CodeGenerationPath);
+					this.gameDataSettings.CodeGenerationPath = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_WINDOWCODEGENERATIONPATH, this.gameDataSettings.CodeGenerationPath);
 
-				if (gameDataSettings.Generator == (int) GameDataSettings.CodeGenerator.CSharpCodeAndAsset)
+				if (gameDataSettings.Generator == (int)GameDataSettings.CodeGenerator.CSharpCodeAndAsset)
 				{
 					if (assetAsset != null)
-						this.gameDataSettings.AssetGenerationPath = AssetDatabase.GetAssetPath(EditorGUILayout.ObjectField("Asset Generation Path", assetAsset, typeof (ScriptableObject), false));
+						this.gameDataSettings.AssetGenerationPath = AssetDatabase.GetAssetPath(EditorGUILayout.ObjectField(Resources.UI_UNITYPLUGIN_WINDOWASSETGENERATIONPATH, assetAsset, typeof(ScriptableObject), false));
 					else
-						this.gameDataSettings.AssetGenerationPath = EditorGUILayout.TextField("Asset Generation Path", this.gameDataSettings.AssetGenerationPath);
+						this.gameDataSettings.AssetGenerationPath = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_WINDOWASSETGENERATIONPATH, this.gameDataSettings.AssetGenerationPath);
 				}
 
 				if ((this.gameDataSettings.Generator == (int)GameDataSettings.CodeGenerator.CSharp ||
@@ -77,37 +76,37 @@ namespace Assets.Unity.Charon.Editor.Windows
 				if (this.gameDataSettings.Generator == (int)GameDataSettings.CodeGenerator.CSharpCodeAndAsset && Path.GetExtension(this.gameDataSettings.AssetGenerationPath) != ".asset")
 					this.gameDataSettings.AssetGenerationPath = Path.ChangeExtension(this.gameDataSettings.AssetGenerationPath, ".asset");
 
-				this.gameDataSettings.Namespace = EditorGUILayout.TextField("Code Namespace", this.gameDataSettings.Namespace);
-				this.gameDataSettings.GameDataClassName = EditorGUILayout.TextField("Code GameData class", this.gameDataSettings.GameDataClassName);
-				this.gameDataSettings.EntryClassName = EditorGUILayout.TextField("Code Entry class", this.gameDataSettings.EntryClassName);
-				this.gameDataSettings.LineEnding = (int)(GameDataSettings.LineEndings)EditorGUILayout.EnumPopup("Line endings", (GameDataSettings.LineEndings)this.gameDataSettings.LineEnding);
-				this.gameDataSettings.Identation = (int)(GameDataSettings.Identations)EditorGUILayout.EnumPopup("Identation", (GameDataSettings.Identations)this.gameDataSettings.Identation);
-				this.gameDataSettings.Options = (int)(GameDataSettings.CodeGenerationOptions)EditorGUILayout.EnumMaskField("Options", (GameDataSettings.CodeGenerationOptions)gameDataSettings.Options);
+				this.gameDataSettings.Namespace = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_WINDOWCODENAMESPACE, this.gameDataSettings.Namespace);
+				this.gameDataSettings.GameDataClassName = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_WINDOWCODEGAMEDATACLASSNAME, this.gameDataSettings.GameDataClassName);
+				this.gameDataSettings.EntryClassName = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_WINDOWCODEENTRYCLASSNAME, this.gameDataSettings.EntryClassName);
+				this.gameDataSettings.LineEnding = (int)(GameDataSettings.LineEndings)EditorGUILayout.EnumPopup(Resources.UI_UNITYPLUGIN_WINDOWCODELINEENDINGS, (GameDataSettings.LineEndings)this.gameDataSettings.LineEnding);
+				this.gameDataSettings.Identation = (int)(GameDataSettings.Identations)EditorGUILayout.EnumPopup(Resources.UI_UNITYPLUGIN_WINDOWCODEIDENTATION, (GameDataSettings.Identations)this.gameDataSettings.Identation);
+				this.gameDataSettings.Options = (int)(GameDataSettings.CodeGenerationOptions)EditorGUILayout.EnumMaskField(Resources.UI_UNITYPLUGIN_WINDOWCODEOPTIONS, (GameDataSettings.CodeGenerationOptions)gameDataSettings.Options);
 			}
 
 			EditorGUILayout.Space();
-			GUILayout.Label("Actions", EditorStyles.boldLabel);
+			GUILayout.Label(Resources.UI_UNITYPLUGIN_WINDOWACTIONSGROUP, EditorStyles.boldLabel);
 			EditorGUILayout.BeginHorizontal();
 			GUI.enabled = !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling && string.IsNullOrEmpty(this.gameDataSettings.CodeGenerationPath) == false;
-			if (GUILayout.Button("Edit"))
+			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOWEDITBUTTON))
 			{
 				AssetDatabase.OpenAsset(gameDataAsset);
 			}
-			if (GUILayout.Button("Run Generator"))
+			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOWRUNGENERATORBUTTON))
 			{
-				CoroutineScheduler.Schedule(Menu.GenerateCodeAndAssetsAsync(gameDataPath, ProgressUtils.ReportToLog("Generation: ")), "generation::" + gameDataPath);
+				CoroutineScheduler.Schedule(Menu.GenerateCodeAndAssetsAsync(gameDataPath, ProgressUtils.ReportToLog(Resources.UI_UNITYPLUGIN_WINDOWGENERATIONPREFIX + " ")), "generation::" + gameDataPath);
 			}
 			GUI.enabled = !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling;
-			if (GUILayout.Button("Validate"))
+			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOWVALIDATEBUTTON))
 			{
-				CoroutineScheduler.Schedule(Menu.ValidateAsync(gameDataPath, ProgressUtils.ReportToLog("Validation: ")), "validation::" + gameDataPath);
+				CoroutineScheduler.Schedule(Menu.ValidateAsync(gameDataPath, ProgressUtils.ReportToLog(Resources.UI_UNITYPLUGIN_WINDOWVALIDATIONPREFIX + " ")), "validation::" + gameDataPath);
 			}
-			if (GUILayout.Button("Migrate"))
+			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOWMIGRATEBUTTON))
 			{
-				CoroutineScheduler.Schedule(Menu.MigrateAsync(gameDataPath, ProgressUtils.ReportToLog("Migration: ")), "migration::" + gameDataPath);
+				CoroutineScheduler.Schedule(Menu.MigrateAsync(gameDataPath, ProgressUtils.ReportToLog(Resources.UI_UNITYPLUGIN_WINDOWMIGRATIONPREFIX + " ")), "migration::" + gameDataPath);
 			}
 			GUI.enabled = true;
-			if (GUILayout.Button("Untrack"))
+			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOWUNTRACTBUTTON))
 			{
 				Settings.Current.GameDataPaths.Remove(gameDataPath);
 				Settings.Current.Version++;
@@ -119,38 +118,5 @@ namespace Assets.Unity.Charon.Editor.Windows
 				this.gameDataSettings.Save(gameDataPath);
 			}
 		}
-
-		//private void ValidateAndTrack(Object assetToValidate)
-		//{
-		//	var path = FileUtils.MakeProjectRelative(AssetDatabase.GetAssetPath(assetToValidate));
-		//	var validationCoroutine = CoroutineScheduler.Schedule<Dictionary<string, object>>(
-		//		Menu.ValidateAsync(path, ProgressUtils.ReportToLog("Validation: ")
-		//	));
-		//	validationCoroutine.ContinueWith(s =>
-		//	{
-		//		var report = default(object);
-		//		var errorMsg = default(string);
-		//		if (validationCoroutine.HasErrors)
-		//			errorMsg = "Validation failed: " + validationCoroutine.Error.Unwrap().ToString();
-		//		else if (validationCoroutine.GetResult() == null || validationCoroutine.GetResult().TryGetValue(path, out report) == false)
-		//			errorMsg = "Validation failed: " + "No report return from tool.";
-		//		else if (report is string)
-		//			errorMsg = "Validation failed: " + report;
-		//		else if (!Settings.Current.GameDataPaths.Contains(path))
-		//		{
-		//			Settings.Current.GameDataPaths.Add(path);
-		//			Settings.Current.Version++;
-		//		}
-
-		//		if (this.lastCheckedObject == assetToValidate)
-		//		{
-		//			this.infoMessageType = MessageType.Error;
-		//			if (string.IsNullOrEmpty(errorMsg) == false)
-		//				this.infoMessage = errorMsg;
-		//			else
-		//				this.lastCheckedObject = null;
-		//		}
-		//	}, null);
-		//}
 	}
 }
