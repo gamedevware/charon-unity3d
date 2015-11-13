@@ -62,7 +62,7 @@ namespace Assets.Unity.Charon.Editor
 										  let path = FileUtils.MakeProjectRelative(AssetDatabase.GUIDToAssetPath(id))
 										  where path != null && path.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
 										  select path).ToList();
-				settings.Verbose = true;
+				settings.Verbose = false;
 			}
 			settings.Validate();
 
