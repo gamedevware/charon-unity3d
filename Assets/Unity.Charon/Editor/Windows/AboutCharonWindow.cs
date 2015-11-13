@@ -34,7 +34,7 @@ namespace Assets.Unity.Charon.Editor.Windows
 		public AboutCharonWindow()
 		{
 			this.titleContent = new GUIContent(Resources.UI_UNITYPLUGIN_WINDOWABOUTCHARONTITLE);
-			this.maxSize = minSize = new Vector2(380, 346);
+			this.maxSize = minSize = new Vector2(380, 326);
 		}
 
 		protected void OnGUI()

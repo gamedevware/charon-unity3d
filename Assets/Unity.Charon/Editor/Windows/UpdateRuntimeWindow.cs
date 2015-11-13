@@ -52,16 +52,16 @@ namespace Assets.Unity.Charon.Editor.Windows
 		public UpdateRuntimeWindow()
 		{
 			this.titleContent = new GUIContent(Resources.UI_UNITYPLUGIN_WINDOWUPDATERUNTIMETITLE);
-			this.maxSize = minSize = new Vector2(420, 190);
+			this.maxSize = minSize = new Vector2(480, 220);
 		}
 
 		protected void OnGUI()
 		{
-			EditorGUILayout.HelpBox(Resources.UI_UNITYPLUGIN_WINDOWRUNTIMEREQUIRED + "\r\n" +
-									string.Format(Resources.UI_UNITYPLUGIN_WINDOWFINDMONOMANUALLY, MonoDefaultLocation) + "\r\n" +
+			EditorGUILayout.HelpBox(Resources.UI_UNITYPLUGIN_WINDOWRUNTIMEREQUIRED + "\r\n\r\n" +
+									string.Format(Resources.UI_UNITYPLUGIN_WINDOWFINDMONOMANUALLY) + "\r\n" +
 									Resources.UI_UNITYPLUGIN_WINDOWDOWNLOADMONO + "\r\n" +
 #if UNITY_EDITOR_WIN
-									Resources.UI_UNITYPLUGIN_WINDOWDOWNLOADDOTNET + "\r\n " +
+									Resources.UI_UNITYPLUGIN_WINDOWDOWNLOADDOTNET + "\r\n\r\n" +
 #endif
 									Resources.UI_UNITYPLUGIN_WINDOWPRESSHELP, MessageType.Info);
 
@@ -186,7 +186,7 @@ namespace Assets.Unity.Charon.Editor.Windows
 
 			if (Settings.Current.Verbose)
 				Debug.Log(string.Format("'{0}' window is closed with selected Mono Runtime path: {1}. Runtime version: {2}.", this.titleContent.text, ToolsUtils.MonoPath, this.runtimeVersion));
-			this.Close();
+			//this.Close();
 		}
 		private void RaiseCancel()
 		{

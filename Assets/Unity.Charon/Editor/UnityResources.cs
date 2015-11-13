@@ -296,7 +296,7 @@ namespace Assets.Unity.Charon.Editor {
         public const string UI_UNITYPLUGIN_MENUVALIDATEASSETS = "Validate Assets";
         public const string UI_UNITYPLUGIN_MENUVERBOSELOGS = "Verbose Logs";
         public const string UI_UNITYPLUGIN_OPERATIONCANCELLED = "Operation was cancelled by user.";
-        public const string UI_UNITYPLUGIN_WINDOWABOUTCHARONTITLE = "About Charon Game Data Editor";
+        public const string UI_UNITYPLUGIN_WINDOWABOUTCHARONTITLE = "Charon: Game Data Editor";
         public const string UI_UNITYPLUGIN_WINDOWACTIONSGROUP = "Actions";
         public const string UI_UNITYPLUGIN_WINDOWASSETGENERATIONPATH = "Asset Generation Path";
         public const string UI_UNITYPLUGIN_WINDOWAUTOGENERATION = "Auto-Generation";
@@ -329,7 +329,7 @@ namespace Assets.Unity.Charon.Editor {
         public const string UI_UNITYPLUGIN_WINDOWEDITORWASCRASHED = "Game Data Editor has crashed :(";
         public const string UI_UNITYPLUGIN_WINDOWFAILEDTOSTARTEDITOR = "Failed to start Game Data editor due errors:";
         public const string UI_UNITYPLUGIN_WINDOWFAILEDTOSTARTEDITORTIMEOUT = "Failed to start Game Data editor due errors: Aborted by timeout.";
-        public const string UI_UNITYPLUGIN_WINDOWFINDMONOMANUALLY = "a) You can manually locate Mono Runtime by pressing 'Browse...' button. Default location is '{0}'.";
+        public const string UI_UNITYPLUGIN_WINDOWFINDMONOMANUALLY = "a) You can manually locate Mono Runtime by pressing 'Browse...' button.";
         public const string UI_UNITYPLUGIN_WINDOWGENERATIONPREFIX = "Generation:";
         public const string UI_UNITYPLUGIN_WINDOWHELPBUTTON = "Help";
         public const string UI_UNITYPLUGIN_WINDOWIMPORTLICENSEBUTTON = "Import";
@@ -341,7 +341,7 @@ namespace Assets.Unity.Charon.Editor {
         public const string UI_UNITYPLUGIN_WINDOWMIGRATIONPREFIX = "Migration:";
         public const string UI_UNITYPLUGIN_WINDOWOKBUTTON = "Ok";
         public const string UI_UNITYPLUGIN_WINDOWPATHTOMONO = "Path to Mono (bin)";
-        public const string UI_UNITYPLUGIN_WINDOWPRESSHELP = "If you need a help with installation press 'Help' button.";
+        public const string UI_UNITYPLUGIN_WINDOWPRESSHELP = "If you need a help with .NET Runtime installation press 'Help' button.";
         public const string UI_UNITYPLUGIN_WINDOWRECHECKBUTTON = "Re-check";
         public const string UI_UNITYPLUGIN_WINDOWRELOADBUTTON = "Reload";
         public const string UI_UNITYPLUGIN_WINDOWRESUMECODERECOMPILATION = "Resume code re-compilation?";
