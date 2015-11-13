@@ -206,6 +206,10 @@ namespace Assets.Unity.Charon.Editor.Tasks
 		}
 		public void RequireDotNetRuntime()
 		{
+#if UNITY_EDITOR_WIN
+			if (ToolsUtils.Get45or451FromRegistry() != null)
+				return;
+#endif
 			if (string.IsNullOrEmpty(ToolsUtils.MonoPath))
 				return;
 
