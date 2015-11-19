@@ -247,12 +247,19 @@ namespace Assets.Unity.Charon.Editor.Windows
 			if (Settings.Current.Verbose)
 				Debug.Log("Launching gamedata editor process.");
 
-			yield return Promise.WhenAny(listenPromise, errorPromise, timeout);
+			var startPromise = this.editorProcess.IgnoreFault();
+
+			yield return Promise.WhenAny(listenPromise, errorPromise, timeout, startPromise);
 
 			if (errorPromise.IsCompleted)
 			{
-				Debug.LogError(string.Format(Resources.UI_UNITYPLUGIN_WINDOWFAILEDTOSTARTEDITOR, errorPromise.GetResult()));
+				Debug.LogError(Resources.UI_UNITYPLUGIN_WINDOWFAILEDTOSTARTEDITOR + errorPromise.GetResult());
 				this.editorProcess.Close();
+				yield break;
+			}
+			else if (startPromise.IsCompleted)
+			{
+				Debug.LogError(Resources.UI_UNITYPLUGIN_WINDOWFAILEDTOSTARTEDITOR + " Process has exited with code: " + this.editorProcess.ExitCode);
 				yield break;
 			}
 			else if (timeout.IsCompleted)

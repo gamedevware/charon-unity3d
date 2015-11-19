@@ -37,7 +37,7 @@ namespace Assets.Unity.Charon.Editor.Windows
 		private static readonly string MonoDefaultLocation = Path.Combine(GetProgramFilesx86(), @"Mono\bin");
 #else
 		private const string MONO_EXECUTABLE_NAME = "mono";
-		private static readonly string MonoDefaultLocation = @"/usr/bin";
+		private static readonly string MonoDefaultLocation = @"/Library/Frameworks/Mono.framework/Commands";
 #endif
 		private static readonly Version MinimalMonoVersion = new Version(4, 0, 3);
 
@@ -132,11 +132,11 @@ namespace Assets.Unity.Charon.Editor.Windows
 			}
 #endif
 
-			if (string.IsNullOrEmpty(this.monoPath))
+			var monoRuntimePath = File.Exists(this.monoPath) ? this.monoPath : Path.Combine(this.monoPath, MONO_EXECUTABLE_NAME);
+			if (string.IsNullOrEmpty(monoRuntimePath))
 				yield break;
 
 			this.runtimeVersion = Resources.UI_UNITYPLUGIN_WINDOWCHECKINGMONO;
-			var monoRuntimePath = File.Exists(this.monoPath) ? this.monoPath : Path.Combine(this.monoPath, MONO_EXECUTABLE_NAME);
 			var output = new StringBuilder();
 			this.runMonoTask = new ExecuteCommandTask(
 				processPath: monoRuntimePath,
@@ -186,7 +186,7 @@ namespace Assets.Unity.Charon.Editor.Windows
 
 			if (Settings.Current.Verbose)
 				Debug.Log(string.Format("'{0}' window is closed with selected Mono Runtime path: {1}. Runtime version: {2}.", this.titleContent.text, ToolsUtils.MonoPath, this.runtimeVersion));
-			//this.Close();
+			this.Close();
 		}
 		private void RaiseCancel()
 		{
