@@ -129,18 +129,16 @@ namespace Assets.Unity.Charon.Editor.Tasks
 			if (second == null) throw new ArgumentNullException("second");
 
 			var result = new Promise();
-			var continuation = (AsyncCallback)(p =>
+			var continuation = (Action<Promise>)(p =>
 			{
-				var promise = (Promise)p.AsyncState;
-
-				if (promise.HasErrors)
-					result.TrySetFailed(promise.Error);
+				if (p.HasErrors)
+					result.TrySetFailed(p.Error);
 				else
 					result.TrySetCompleted();
 			});
 
-			first.ContinueWith(continuation, first);
-			second.ContinueWith(continuation, second);
+			first.ContinueWith(continuation);
+			second.ContinueWith(continuation);
 
 			return result;
 		}
@@ -151,18 +149,16 @@ namespace Assets.Unity.Charon.Editor.Tasks
 			if (promises.Length == 1) return promises[0];
 
 			var result = new Promise();
-			var continuation = (AsyncCallback)(p =>
+			var continuation = (Action<Promise>)(p =>
 			{
-				var promise = (Promise)p.AsyncState;
-
-				if (promise.HasErrors)
-					result.TrySetFailed(promise.Error);
+				if (p.HasErrors)
+					result.TrySetFailed(p.Error);
 				else
 					result.TrySetCompleted();
 			});
 
 			foreach (var promise in promises)
-				promise.ContinueWith(continuation, promise);
+				promise.ContinueWith(continuation);
 
 			return result;
 		}
@@ -174,7 +170,7 @@ namespace Assets.Unity.Charon.Editor.Tasks
 			var result = new Promise();
 			var resultsCount = 0;
 
-			var continuation = (AsyncCallback)(p =>
+			var continuation = (Action<Promise>)(p =>
 			{
 				if (Interlocked.Increment(ref resultsCount) == 2)
 				{
@@ -189,8 +185,8 @@ namespace Assets.Unity.Charon.Editor.Tasks
 				}
 			});
 
-			first.ContinueWith(continuation, null);
-			second.ContinueWith(continuation, null);
+			first.ContinueWith(continuation);
+			second.ContinueWith(continuation);
 
 			return result;
 		}
@@ -202,7 +198,7 @@ namespace Assets.Unity.Charon.Editor.Tasks
 			var result = new Promise();
 			var resultsCount = 0;
 
-			var continuation = (AsyncCallback)(p =>
+			var continuation = (Action<Promise>)(p =>
 			{
 				if (Interlocked.Increment(ref resultsCount) == promises.Length)
 				{
@@ -226,7 +222,7 @@ namespace Assets.Unity.Charon.Editor.Tasks
 			});
 
 			foreach (var promise in promises)
-				promise.ContinueWith(continuation, null);
+				promise.ContinueWith(continuation);
 
 			return result;
 		}
@@ -243,7 +239,16 @@ namespace Assets.Unity.Charon.Editor.Tasks
 				return result;
 			}
 
-			return this.ContinueWith(_ => { }, null);
+			return this.ContinueWith(_ => { });
+		}
+
+		public Promise ContinueWith(Action<Promise, object> continuation, object state)
+		{
+			return ContinueWithInternal(continuation, state);
+		}
+		public Promise ContinueWith(Action<Promise> continuation)
+		{
+			return ContinueWithInternal(continuation, null);
 		}
 
 		private void EnsureCompletionEvent()
@@ -258,15 +263,7 @@ namespace Assets.Unity.Charon.Editor.Tasks
 		}
 		private void ExecuteAsyncCallback()
 		{
-			var errorList = default(List<Exception>);
-
-			var conts = Interlocked.Exchange(ref this.continuations, null);
-			if (conts != null)
-			{
-				var contErrors = conts.Invoke(this);
-				if (contErrors != null)
-					errorList = new List<Exception> { contErrors };
-			}
+			var errorList = this.InvokeContinuations();
 
 			if (this.asyncCallback != null)
 			{
@@ -289,6 +286,24 @@ namespace Assets.Unity.Charon.Editor.Tasks
 			if (errorList != null)
 				throw new AggregateException(errorList).Flatten();
 		}
+		private List<Exception> InvokeContinuations()
+		{
+			var errorList = default(List<Exception>);
+			var conts = Interlocked.Exchange(ref this.continuations, null);
+			if (conts != null)
+			{
+				var contErrors = this.InvokeContinuation(conts);
+				if (contErrors != null)
+					errorList = new List<Exception> { contErrors };
+			}
+			return errorList;
+		}
+		protected virtual AggregateException InvokeContinuation(Continuation continuation)
+		{
+			if(continuation == null) throw new ArgumentNullException("continuation");
+
+			return continuation.Invoke(this);
+		}
 
 		protected void ThrowIfCompleted()
 		{
@@ -300,7 +315,7 @@ namespace Assets.Unity.Charon.Editor.Tasks
 				throw new ObjectDisposedException(this.GetType().Name);
 		}
 
-		public Promise ContinueWith(AsyncCallback continuationCallback, object state)
+		protected Promise ContinueWithInternal(Delegate continuation, object state)
 		{
 			var continuationPromise = new Promise(null, state, this);
 			var newContinuation = default(Continuation);
@@ -308,11 +323,11 @@ namespace Assets.Unity.Charon.Editor.Tasks
 			do
 			{
 				curContinuations = this.continuations;
-				newContinuation = new Continuation(continuationCallback, continuationPromise, curContinuations);
+				newContinuation = new Continuation(continuation, state, continuationPromise, curContinuations);
 			} while (Interlocked.CompareExchange(ref this.continuations, newContinuation, curContinuations) != curContinuations);
 
 			if (this.IsDisposed || this.IsCompleted)
-				continuationCallback(this);
+				this.InvokeContinuations();
 
 			return continuationPromise;
 		}
@@ -401,18 +416,16 @@ namespace Assets.Unity.Charon.Editor.Tasks
 			if (second == null) throw new ArgumentNullException("second");
 
 			var result = new Promise<T>();
-			var continuation = (AsyncCallback)(p =>
+			var continuation = (Action<Promise<T>>)(p =>
 			{
-				var promise = (Promise<T>)p.AsyncState;
-
-				if (promise.HasErrors)
-					result.TrySetFailed(promise.Error);
+				if (p.HasErrors)
+					result.TrySetFailed(p.Error);
 				else
-					result.TrySetResult(promise.GetResult());
+					result.TrySetResult(p.GetResult());
 			});
 
-			first.ContinueWith(continuation, first);
-			second.ContinueWith(continuation, second);
+			first.ContinueWith(continuation);
+			second.ContinueWith(continuation);
 
 			return result;
 		}
@@ -423,18 +436,16 @@ namespace Assets.Unity.Charon.Editor.Tasks
 			if (promises.Length == 1) return promises[0];
 
 			var result = new Promise<T>();
-			var continuation = (AsyncCallback)(p =>
+			var continuation = (Action<Promise<T>>)(p =>
 			{
-				var promise = (Promise<T>)p.AsyncState;
-
-				if (promise.HasErrors)
-					result.TrySetFailed(promise.Error);
+				if (p.HasErrors)
+					result.TrySetFailed(p.Error);
 				else
-					result.TrySetResult(promise.GetResult());
+					result.TrySetResult(p.GetResult());
 			});
 
 			foreach (var promise in promises)
-				promise.ContinueWith(continuation, promise);
+				promise.ContinueWith(continuation);
 
 			return result;
 		}
@@ -446,7 +457,7 @@ namespace Assets.Unity.Charon.Editor.Tasks
 			var result = new Promise<T[]>();
 			var resultsCount = 0;
 
-			var continuation = (AsyncCallback)(p =>
+			var continuation = (Action<Promise<T>>)(p =>
 			{
 				if (Interlocked.Increment(ref resultsCount) == 2)
 				{
@@ -461,8 +472,8 @@ namespace Assets.Unity.Charon.Editor.Tasks
 				}
 			});
 
-			first.ContinueWith(continuation, null);
-			second.ContinueWith(continuation, null);
+			first.ContinueWith(continuation);
+			second.ContinueWith(continuation);
 
 			return result;
 		}
@@ -474,7 +485,7 @@ namespace Assets.Unity.Charon.Editor.Tasks
 			var result = new Promise<T[]>();
 			var resultsCount = 0;
 
-			var continuation = (AsyncCallback)(p =>
+			var continuation = (Action<Promise<T>>)(p =>
 			{
 				if (Interlocked.Increment(ref resultsCount) == promises.Length)
 				{
@@ -498,9 +509,25 @@ namespace Assets.Unity.Charon.Editor.Tasks
 			});
 
 			foreach (var promise in promises)
-				promise.ContinueWith(continuation, null);
+				promise.ContinueWith(continuation);
 
 			return result;
+		}
+
+		public Promise ContinueWith(Action<Promise<T>, object> continuation, object state)
+		{
+			return ContinueWithInternal(continuation, state);
+		}
+		public Promise ContinueWith(Action<Promise<T>> continuation)
+		{
+			return ContinueWithInternal(continuation, null);
+		}
+
+		protected override AggregateException InvokeContinuation(Continuation continuation)
+		{
+			if(continuation == null) throw new ArgumentNullException("continuation");
+
+			return continuation.Invoke(this);
 		}
 
 		public override string ToString()

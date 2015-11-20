@@ -142,7 +142,7 @@ namespace Assets.Unity.Charon.Editor.Windows
 		private void Load(string gameDataPath, string reference)
 		{
 			var loadAsync = CoroutineScheduler.Schedule(this.LoadEditor(gameDataPath, reference));
-			loadAsync.ContinueWith(ar => { if (loadAsync.HasErrors) this.CleanUp(); }, null);
+			loadAsync.ContinueWith(_ => { if (loadAsync.HasErrors) this.CleanUp(); });
 			this.loadingTask = loadAsync;
 		}
 		private void CleanUp()
@@ -242,7 +242,7 @@ namespace Assets.Unity.Charon.Editor.Windows
 			this.editorProcess.Start();
 
 			// re-paint on exit or crash
-			this.editorProcess.IgnoreFault().ContinueWith(_ => this.Repaint(), null);
+			this.editorProcess.IgnoreFault().ContinueWith(_ => this.Repaint());
 
 			if (Settings.Current.Verbose)
 				Debug.Log("Launching gamedata editor process.");

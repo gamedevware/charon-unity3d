@@ -48,7 +48,7 @@ namespace Assets.Unity.Charon.Editor
 				ScanForGameDataAsync(
 					progressCallback: ProgressUtils.ShowProgressBar(Resources.UI_UNITYPLUGIN_MENUSCANNINGASSETS))
 			);
-			scanCoroutine.ContinueWith(ProgressUtils.HideProgressBar, null);
+			scanCoroutine.ContinueWith(ProgressUtils.HideProgressBar);
 			FocusConsoleWindow();
 		}
 		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUSCANFORNEWASSETS, true, 1)]
@@ -71,7 +71,7 @@ namespace Assets.Unity.Charon.Editor
 				GenerateCodeAndAssetsAsync(
 					progressCallback: ProgressUtils.ShowProgressBar(Resources.UI_UNITYPLUGIN_GENERATINGCODEANDASSETS))
 			);
-			generateCoroutine.ContinueWith(ProgressUtils.HideProgressBar, null);
+			generateCoroutine.ContinueWith(ProgressUtils.HideProgressBar);
 			FocusConsoleWindow();
 		}
 		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUGENERATECODEANDASSETS, true, 2)]
@@ -90,7 +90,7 @@ namespace Assets.Unity.Charon.Editor
 					progressCallback: ProgressUtils.ShowProgressBar(Resources.UI_UNITYPLUGIN_VALIDATINGASSETS)
 				)
 			);
-			validateCoroutine.ContinueWith(ProgressUtils.HideProgressBar, null);
+			validateCoroutine.ContinueWith(ProgressUtils.HideProgressBar);
 			FocusConsoleWindow();
 		}
 		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUVALIDATEASSETS, true, 3)]
@@ -110,7 +110,7 @@ namespace Assets.Unity.Charon.Editor
 					  progressCallback: ProgressUtils.ShowProgressBar(Resources.UI_UNITYPLUGIN_MIGRATINGASSETS)
 				)
 			);
-			migrateCoroutine.ContinueWith(ProgressUtils.HideProgressBar, null);
+			migrateCoroutine.ContinueWith(ProgressUtils.HideProgressBar);
 			FocusConsoleWindow();
 		}
 		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUMIGRATEASSETS, true, 4)]

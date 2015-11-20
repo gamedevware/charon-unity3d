@@ -23,19 +23,21 @@ namespace Assets.Unity.Charon.Editor.Tasks
 {
 	partial class Promise
 	{
-		private class Continuation
+		protected class Continuation
 		{
-			private readonly AsyncCallback Callback;
+			private readonly Delegate Callback;
+			private readonly object CallbackState;
 			private readonly Promise ContinuationPromise;
 			private readonly Continuation NextContinuation;
 
 
-			public Continuation(AsyncCallback callback, Promise continuationPromise, Continuation nextContinuation)
+			public Continuation(Delegate callback, object state, Promise continuationPromise, Continuation nextContinuation)
 			{
 				if (callback == null) throw new ArgumentNullException("callback");
 				if (continuationPromise == null) throw new ArgumentNullException("continuationPromise");
 
 				this.Callback = callback;
+				this.CallbackState = state;
 				this.ContinuationPromise = continuationPromise;
 				this.NextContinuation = nextContinuation;
 
@@ -43,10 +45,35 @@ namespace Assets.Unity.Charon.Editor.Tasks
 					nextContinuation.CheckForCircularReference(this);
 			}
 
+
+			public AggregateException Invoke<T>(Promise<T> result)
+			{
+				return this.InvokeInternal<T>(result);
+			}
 			public AggregateException Invoke(Promise result)
 			{
+				return this.InvokeInternal<object>(result);
+			}
+			private AggregateException InvokeInternal<T>(Promise result)
+			{
 				var error = default(Exception);
-				try { this.Callback(this.ContinuationPromise); }
+				try
+				{
+					var noStateCallback = this.Callback as Action<Promise>;
+					var stateCallback = this.Callback as Action<Promise, object>;
+					var noStateTypedCallback = this.Callback as Action<Promise<T>>;
+					var stateTypedCallback = this.Callback as Action<Promise<T>, object>;
+					if (noStateCallback != null)
+						noStateCallback(result);
+					else if (stateCallback != null)
+						stateCallback(result, this.CallbackState);
+					else if (noStateTypedCallback != null)
+						noStateTypedCallback((Promise<T>)result);
+					else if (stateTypedCallback != null)
+						stateTypedCallback((Promise<T>)result, this.CallbackState);
+					else
+						throw new InvalidOperationException("Invalid continuation callback type.");
+				}
 				catch (Exception e) { error = e; }
 
 				if (this.ContinuationPromise != null)
@@ -56,7 +83,7 @@ namespace Assets.Unity.Charon.Editor.Tasks
 				try
 				{
 					if (this.NextContinuation != null)
-						error2 = this.NextContinuation.Invoke(result);
+						error2 = this.NextContinuation.InvokeInternal<T>(result);
 				}
 				catch (Exception e) { error2 = e; }
 

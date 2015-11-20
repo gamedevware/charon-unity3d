@@ -67,7 +67,7 @@ namespace Assets.Unity.Charon.Editor
 
 			CoroutineScheduler.Schedule(Menu.GenerateAssetsAsync(this.AssetGenerationList.ToArray()))
 				.IgnoreFault()
-				.ContinueWith(ar => EditorPrefs.DeleteKey(PREFS_KEY), null);
+				.ContinueWith(_ => EditorPrefs.DeleteKey(PREFS_KEY));
 
 			this.AssetGenerationList.Clear();
 		}
