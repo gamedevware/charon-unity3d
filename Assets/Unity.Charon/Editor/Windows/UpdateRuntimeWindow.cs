@@ -35,9 +35,12 @@ namespace Assets.Unity.Charon.Editor.Windows
 #if UNITY_EDITOR_WIN
 		private const string MONO_EXECUTABLE_NAME = "mono.exe";
 		private static readonly string MonoDefaultLocation = Path.Combine(GetProgramFilesx86(), @"Mono\bin");
-#else
+#elif UNITY_EDITOR_OSX
 		private const string MONO_EXECUTABLE_NAME = "mono";
 		private static readonly string MonoDefaultLocation = @"/Library/Frameworks/Mono.framework/Commands";
+#else
+		private const string MONO_EXECUTABLE_NAME = "mono";
+		private static readonly string MonoDefaultLocation = @"/usr/bin";
 #endif
 		private static readonly Version MinimalMonoVersion = new Version(4, 0, 3);
 

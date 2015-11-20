@@ -213,11 +213,11 @@ namespace Assets.Unity.Charon.Editor.Tasks
 			if (string.IsNullOrEmpty(ToolsUtils.MonoPath))
 				return;
 
-			this.StartInfo.Arguments = "\"" + this.startInfo.FileName + "\" " + this.StartInfo.Arguments;
+			this.StartInfo.Arguments = ConcatArguments(this.startInfo.FileName, this.StartInfo.Arguments);
 			this.StartInfo.FileName = ToolsUtils.MonoPath;
 		}
 
-		private string ConcatArguments(string[] arguments)
+		private string ConcatArguments(params string[] arguments)
 		{
 			for (int i = 0; i < arguments.Length; i++)
 			{
@@ -227,15 +227,11 @@ namespace Assets.Unity.Charon.Editor.Tasks
 
 				if (arg.IndexOfAny(new char[] { '"', ' ' }) != -1)
 				{
-
-					var backslashes = 0;
-					for (int j = arg.Length - 1; j >= 0; j--)
-					{
-						if (arg[j] == '\\')
-							backslashes++;
-					}
-
-					arguments[i] = '"' + arg.Replace("\"", "\\\"") + new string('\\', backslashes) + '"';
+					arguments[i] = 
+					"\"" + arg
+						.Replace(@"\", @"\\")
+						.Replace("\"", "\\\"") + 
+					"\"";
 				}
 			}
 			return string.Join(" ", arguments);
