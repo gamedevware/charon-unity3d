@@ -48,6 +48,7 @@ namespace Assets.Unity.Charon.Editor.Windows
 		private string runtimeVersion;
 		private Promise checkRuntimeVersionCoroutine;
 		private ExecuteCommandTask runMonoTask;
+		private bool autoClose;
 
 		private event EventHandler Done;
 		private event EventHandler<ErrorEventArgs> Cancel;
@@ -56,8 +57,15 @@ namespace Assets.Unity.Charon.Editor.Windows
 		{
 			this.titleContent = new GUIContent(Resources.UI_UNITYPLUGIN_WINDOWUPDATERUNTIMETITLE);
 			this.maxSize = minSize = new Vector2(480, 220);
+			this.position = new Rect(
+				left: (Screen.width - this.maxSize.x) / 2,
+				top: (Screen.height - this.maxSize.y) / 2,
+				width: this.maxSize.x,
+				height: this.maxSize.y
+			);
 		}
 
+		// ReSharper disable once InconsistentNaming
 		protected void OnGUI()
 		{
 			EditorGUILayout.HelpBox(Resources.UI_UNITYPLUGIN_WINDOWRUNTIMEREQUIRED + "\r\n\r\n" +
@@ -187,6 +195,9 @@ namespace Assets.Unity.Charon.Editor.Windows
 			this.Done = null;
 			this.Cancel = null;
 
+			if (!this.autoClose)
+				return;
+
 			if (Settings.Current.Verbose)
 				Debug.Log(string.Format("'{0}' window is closed with selected Mono Runtime path: {1}. Runtime version: {2}.", this.titleContent.text, ToolsUtils.MonoPath, this.runtimeVersion));
 			this.Close();
@@ -219,20 +230,22 @@ namespace Assets.Unity.Charon.Editor.Windows
 			this.RaiseCancel();
 		}
 
-		public static IAsyncResult ShowAsync()
+		public static IAsyncResult ShowAsync(bool autoClose = true)
 		{
 			var promise = new Promise();
 			var window = EditorWindow.GetWindow<UpdateRuntimeWindow>(utility: true);
-
 
 			window.Done += (sender, args) => promise.TrySetCompleted();
 			window.Cancel += (sender, args) => promise.TrySetFailed(args.GetException());
 
 			window.monoPath = string.IsNullOrEmpty(ToolsUtils.MonoPath) ? MonoDefaultLocation : ToolsUtils.MonoPath;
+			window.autoClose = autoClose;
 #if UNITY_EDITOR_WIN
 			window.runtimeVersion = ToolsUtils.Get45or451FromRegistry();
 			window.RunCheck();
 #endif
+			window.Focus();
+
 			if (Settings.Current.Verbose)
 				Debug.Log(string.Format("Showing '{0}' window. Where current mono location: '{1}'.", window.titleContent.text, window.monoPath));
 

@@ -38,7 +38,7 @@ namespace Assets.Unity.Charon.Editor
 		public const string ToolsPrefix = "Tools/Charon/";
 		public const string TroubleshootingPrefix = ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUTROUBLESHOOTING + "/";
 
-		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUSCANFORNEWASSETS)]
+		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUSCANFORNEWASSETS, false, 1)]
 		private static void ScanForGameData()
 		{
 			if (!ScanForGameDataCheck()) return;
@@ -51,7 +51,7 @@ namespace Assets.Unity.Charon.Editor
 			scanCoroutine.ContinueWith(ProgressUtils.HideProgressBar, null);
 			FocusConsoleWindow();
 		}
-		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUSCANFORNEWASSETS, true)]
+		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUSCANFORNEWASSETS, true, 1)]
 		private static bool ScanForGameDataCheck()
 		{
 			// why not here :D
@@ -61,7 +61,7 @@ namespace Assets.Unity.Charon.Editor
 			return !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling;
 		}
 
-		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUGENERATECODEANDASSETS)]
+		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUGENERATECODEANDASSETS, false, 2)]
 		private static void GenerateCodeAndAssets()
 		{
 			if (!GenerateCodeAndAssetsCheck()) return;
@@ -74,13 +74,13 @@ namespace Assets.Unity.Charon.Editor
 			generateCoroutine.ContinueWith(ProgressUtils.HideProgressBar, null);
 			FocusConsoleWindow();
 		}
-		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUGENERATECODEANDASSETS, true)]
+		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUGENERATECODEANDASSETS, true, 2)]
 		private static bool GenerateCodeAndAssetsCheck()
 		{
 			return !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling;
 		}
 
-		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUVALIDATEASSETS)]
+		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUVALIDATEASSETS, false, 3)]
 		private static void ValidateAll()
 		{
 			if (!ValidateAllCheck()) return;
@@ -93,13 +93,13 @@ namespace Assets.Unity.Charon.Editor
 			validateCoroutine.ContinueWith(ProgressUtils.HideProgressBar, null);
 			FocusConsoleWindow();
 		}
-		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUVALIDATEASSETS, true)]
+		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUVALIDATEASSETS, true, 3)]
 		private static bool ValidateAllCheck()
 		{
 			return !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling;
 		}
 
-		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUMIGRATEASSETS)]
+		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUMIGRATEASSETS, false, 4)]
 		private static void MigrateAll()
 		{
 			if (!MigrateAllCheck()) return;
@@ -113,13 +113,13 @@ namespace Assets.Unity.Charon.Editor
 			migrateCoroutine.ContinueWith(ProgressUtils.HideProgressBar, null);
 			FocusConsoleWindow();
 		}
-		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUMIGRATEASSETS, true)]
+		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUMIGRATEASSETS, true, 4)]
 		private static bool MigrateAllCheck()
 		{
 			return !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling;
 		}
 
-		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUEXTRACTT4TEMPLATES)]
+		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUEXTRACTT4TEMPLATES, false, 5)]
 		private static void ExtractT4Templates()
 		{
 			if (!ExtractT4TemplatesCheck())
@@ -135,13 +135,13 @@ namespace Assets.Unity.Charon.Editor
 			);
 			FocusConsoleWindow();
 		}
-		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUEXTRACTT4TEMPLATES, true)]
+		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUEXTRACTT4TEMPLATES, true, 5)]
 		private static bool ExtractT4TemplatesCheck()
 		{
 			return !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling;
 		}
 
-		[MenuItem(TroubleshootingPrefix + Resources.UI_UNITYPLUGIN_MENUVERBOSELOGS)]
+		[MenuItem(TroubleshootingPrefix + Resources.UI_UNITYPLUGIN_MENUVERBOSELOGS, false, 9)]
 		private static void VerboseLogs()
 		{
 			Settings.Current.Verbose = !Settings.Current.Verbose;
@@ -149,7 +149,7 @@ namespace Assets.Unity.Charon.Editor
 			Settings.Current.Save();
 		}
 
-		[MenuItem(TroubleshootingPrefix + Resources.UI_UNITYPLUGIN_MENURECOVERYSCRIPTS)]
+		[MenuItem(TroubleshootingPrefix + Resources.UI_UNITYPLUGIN_MENURECOVERYSCRIPTS, false, 8)]
 		private static void RecoveryScripts()
 		{
 			Settings.Current.SuppressRecoveryScripts = !Settings.Current.SuppressRecoveryScripts;
@@ -157,19 +157,25 @@ namespace Assets.Unity.Charon.Editor
 			Settings.Current.Save();
 		}
 
-		[MenuItem(TroubleshootingPrefix + Resources.UI_UNITYPLUGIN_MENUSUBMITISSUE)]
+		[MenuItem(TroubleshootingPrefix + Resources.UI_UNITYPLUGIN_MENUSUBMITISSUE, false, 7)]
 		private static void SubmitIssue()
 		{
 			Application.OpenURL("https://github.com/deniszykov/charon-unity3d/issues");
 		}
 
-		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUDOCUMENTATION)]
+		[MenuItem(TroubleshootingPrefix + Resources.UI_UNITYPLUGIN_MENUCHECKRUNTIME, false, 6)]
+		private static void CheckRuntime()
+		{
+			UpdateRuntimeWindow.ShowAsync(autoClose: false);
+		}
+
+		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUDOCUMENTATION, false, 10)]
 		private static void ShowDocumentation()
 		{
 			Application.OpenURL("https://github.com/deniszykov/charon-unity3d/blob/master/README.md");
 		}
 
-		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUABOUT)]
+		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUABOUT, false, 11)]
 		private static void About()
 		{
             EditorWindow.GetWindow<AboutCharonWindow>(utility: true);

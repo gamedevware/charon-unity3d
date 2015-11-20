@@ -292,6 +292,7 @@ namespace Assets.Unity.Charon.Editor {
         public const string UI_UNITYPLUGIN_MENURECOVERYSCRIPTS = "Recovery Scripts";
         public const string UI_UNITYPLUGIN_MENUSCANFORNEWASSETS = "Scan for new Assets";
         public const string UI_UNITYPLUGIN_MENUSUBMITISSUE = "Submit an Issue (website)";
+	    public const string UI_UNITYPLUGIN_MENUCHECKRUNTIME = "Check Runtime Version...";
         public const string UI_UNITYPLUGIN_MENUTROUBLESHOOTING = "Troubleshooting";
         public const string UI_UNITYPLUGIN_MENUVALIDATEASSETS = "Validate Assets";
         public const string UI_UNITYPLUGIN_MENUVERBOSELOGS = "Verbose Logs";
