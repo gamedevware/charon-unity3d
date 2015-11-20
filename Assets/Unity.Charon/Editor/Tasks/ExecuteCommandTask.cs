@@ -213,7 +213,7 @@ namespace Assets.Unity.Charon.Editor.Tasks
 			if (string.IsNullOrEmpty(ToolsUtils.MonoPath))
 				return;
 
-			this.StartInfo.Arguments = ConcatArguments(this.startInfo.FileName, this.StartInfo.Arguments);
+			this.StartInfo.Arguments = ConcatArguments(this.startInfo.FileName) + " " + this.StartInfo.Arguments;
 			this.StartInfo.FileName = ToolsUtils.MonoPath;
 		}
 
@@ -227,10 +227,10 @@ namespace Assets.Unity.Charon.Editor.Tasks
 
 				if (arg.IndexOfAny(new char[] { '"', ' ' }) != -1)
 				{
-					arguments[i] = 
+					arguments[i] =
 					"\"" + arg
 						.Replace(@"\", @"\\")
-						.Replace("\"", "\\\"") + 
+						.Replace("\"", "\\\"") +
 					"\"";
 				}
 			}
