@@ -31,18 +31,25 @@ namespace Unity.Dynamic.Expressions
 {
 	public abstract class BoundExpression : Expression
 	{
-		public const ExpressionType BoundExpressionType = (ExpressionType)101;
+		public static bool AotRuntime;
+		public static readonly ExpressionType BoundExpressionType = (ExpressionType)101;
 		public static readonly ReadOnlyCollection<ParameterExpression> EmptyParameters = new ReadOnlyCollection<ParameterExpression>(new ParameterExpression[0]);
 
 		public abstract Expression Body { get; }
 		public abstract ReadOnlyCollection<ParameterExpression> Parameters { get; }
 
+		static BoundExpression()
+		{
+			try { Lambda<Func<bool>>(Constant(true)).Compile(); }
+			catch (Exception) { AotRuntime = true; }
+		}
 		protected BoundExpression(Type resultType)
 			: base(BoundExpressionType, resultType)
 		{
 
 		}
 
+		public abstract Delegate DynamicCompile();
 		public abstract object DynamicExecute(params object[] args);
 
 		protected static T BindParameter<T>(object[] args, ReadOnlyCollection<ParameterExpression> parameters, int paramIndex)
@@ -111,8 +118,8 @@ namespace Unity.Dynamic.Expressions
 			if (this.compiledExpression != null)
 				return this.compiledExpression;
 
-			if (Compiler.UseAotCompiler)
-				this.compiledExpression = Compiler.Compile<ResultT>(this.Body, this.Parameters);
+			if (AotRuntime)
+				this.compiledExpression = Executor.Prepare<ResultT>(this.Body, this.Parameters);
 			else
 				this.compiledExpression = Lambda<Func<ResultT>>(this.Body, this.Parameters.ToArray()).Compile();
 
@@ -125,7 +132,11 @@ namespace Unity.Dynamic.Expressions
 		}
 		public override object DynamicExecute(params object[] args)
 		{
-			return Execute();
+			return this.Execute();
+		}
+		public override Delegate DynamicCompile()
+		{
+			return this.Compile();
 		}
 	}
 	public class BoundExpression<Arg1T, ResultT> : BoundExpression
@@ -155,8 +166,8 @@ namespace Unity.Dynamic.Expressions
 			if (this.compiledExpression != null)
 				return this.compiledExpression;
 
-			if (Compiler.UseAotCompiler)
-				this.compiledExpression = Compiler.Compile<Arg1T, ResultT>(this.Body, this.Parameters);
+			if (AotRuntime)
+				this.compiledExpression = Executor.Prepare<Arg1T, ResultT>(this.Body, this.Parameters);
 			else
 				this.compiledExpression = Lambda<Func<Arg1T, ResultT>>(this.Body, this.Parameters.ToArray()).Compile();
 
@@ -169,10 +180,14 @@ namespace Unity.Dynamic.Expressions
 		}
 		public override object DynamicExecute(params object[] args)
 		{
-			return Execute
+			return this.Execute
 			(
 				arg1: BindParameter<Arg1T>(args, this.parameterExpressions, 0)
 			);
+		}
+		public override Delegate DynamicCompile()
+		{
+			return this.Compile();
 		}
 	}
 	public class BoundExpression<Arg1T, Arg2T, ResultT> : BoundExpression
@@ -204,8 +219,8 @@ namespace Unity.Dynamic.Expressions
 			if (this.compiledExpression != null)
 				return this.compiledExpression;
 
-			if (Compiler.UseAotCompiler)
-				this.compiledExpression = Compiler.Compile<Arg1T, Arg2T, ResultT>(this.Body, this.Parameters);
+			if (AotRuntime)
+				this.compiledExpression = Executor.Prepare<Arg1T, Arg2T, ResultT>(this.Body, this.Parameters);
 			else
 				this.compiledExpression = Lambda<Func<Arg1T, Arg2T, ResultT>>(this.Body, this.Parameters.ToArray()).Compile();
 
@@ -218,11 +233,15 @@ namespace Unity.Dynamic.Expressions
 		}
 		public override object DynamicExecute(params object[] args)
 		{
-			return Execute
+			return this.Execute
 			(
 				arg1: BindParameter<Arg1T>(args, this.parameterExpressions, 0),
 				arg2: BindParameter<Arg2T>(args, this.parameterExpressions, 1)
 			);
+		}
+		public override Delegate DynamicCompile()
+		{
+			return this.Compile();
 		}
 	}
 	public class BoundExpression<Arg1T, Arg2T, Arg3T, ResultT> : BoundExpression
@@ -254,8 +273,8 @@ namespace Unity.Dynamic.Expressions
 			if (this.compiledExpression != null)
 				return this.compiledExpression;
 
-			if (Compiler.UseAotCompiler)
-				this.compiledExpression = Compiler.Compile<Arg1T, Arg2T, Arg3T, ResultT>(this.Body, this.Parameters);
+			if (AotRuntime)
+				this.compiledExpression = Executor.Prepare<Arg1T, Arg2T, Arg3T, ResultT>(this.Body, this.Parameters);
 			else
 				this.compiledExpression = Lambda<Func<Arg1T, Arg2T, Arg3T, ResultT>>(this.Body, this.Parameters.ToArray()).Compile();
 
@@ -268,12 +287,16 @@ namespace Unity.Dynamic.Expressions
 		}
 		public override object DynamicExecute(params object[] args)
 		{
-			return Execute
+			return this.Execute
 			(
 				arg1: BindParameter<Arg1T>(args, this.parameterExpressions, 0),
 				arg2: BindParameter<Arg2T>(args, this.parameterExpressions, 1),
 				arg3: BindParameter<Arg3T>(args, this.parameterExpressions, 2)
 			);
+		}
+		public override Delegate DynamicCompile()
+		{
+			return this.Compile();
 		}
 	}
 	public class BoundExpression<Arg1T, Arg2T, Arg3T, Arg4T, ResultT> : BoundExpression
@@ -306,8 +329,8 @@ namespace Unity.Dynamic.Expressions
 			if (this.compiledExpression != null)
 				return this.compiledExpression;
 
-			if (Compiler.UseAotCompiler)
-				this.compiledExpression = Compiler.Compile<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>(this.Body, this.Parameters);
+			if (AotRuntime)
+				this.compiledExpression = Executor.Prepare<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>(this.Body, this.Parameters);
 			else
 				this.compiledExpression = Lambda<Func<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>>(this.Body, this.Parameters.ToArray()).Compile();
 
@@ -320,13 +343,17 @@ namespace Unity.Dynamic.Expressions
 		}
 		public override object DynamicExecute(params object[] args)
 		{
-			return Execute
+			return this.Execute
 			(
 				arg1: BindParameter<Arg1T>(args, this.parameterExpressions, 0),
 				arg2: BindParameter<Arg2T>(args, this.parameterExpressions, 1),
 				arg3: BindParameter<Arg3T>(args, this.parameterExpressions, 2),
 				arg4: BindParameter<Arg4T>(args, this.parameterExpressions, 3)
 			);
+		}
+		public override Delegate DynamicCompile()
+		{
+			return this.Compile();
 		}
 	}
 }

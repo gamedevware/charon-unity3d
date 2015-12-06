@@ -32,7 +32,8 @@ namespace Unity.Dynamic.Expressions
 		private static readonly CultureInfo Format = CultureInfo.InvariantCulture;
 		private static readonly IDictionary<string, object> EmptyArguments = ReadOnlyDictionary<string, object>.Empty;
 		private static readonly ILookup<string, MethodInfo> ExpressionConstructors;
-		private static readonly string[] NumericPromotionOperations;
+		private static readonly string[] OperationWithPromotionForBothOperand;
+		private static readonly string[] OperationWithPromotionForFirstOperand;
 		private static readonly TypeCode[] SignedIntegerTypes;
 		private static readonly TypeCode[] Numeric;
 
@@ -50,12 +51,18 @@ namespace Unity.Dynamic.Expressions
 				.Where(m => typeof(Expression).IsAssignableFrom(m.ReturnType))
 				.ToLookup(m => m.Name);
 
-			NumericPromotionOperations = new[]
+			OperationWithPromotionForBothOperand = new[]
 			{
 				"Add", "AddChecked", "And", "Coalesce", "Condition", "Divide", "ExclusiveOr", "Equal",  "GreaterThan", "GreaterThanOrEqual",
 				"LessThan", "LessThanOrEqual", "Modulo", "Multiply", "MultiplyChecked", "NotEqual", "Or", "Subtract", "SubtractChecked"
 			};
-			Array.Sort(NumericPromotionOperations);
+			Array.Sort(OperationWithPromotionForBothOperand);
+			OperationWithPromotionForFirstOperand = new[]
+			{
+				"LeftShift", "RightShift", "Negate", "Complement"
+			};
+			Array.Sort(OperationWithPromotionForFirstOperand);
+
 			SignedIntegerTypes = new[] { TypeCode.SByte, TypeCode.Int16, TypeCode.Int32, TypeCode.Int64 };
 			Numeric = new[]
 			{
@@ -95,6 +102,8 @@ namespace Unity.Dynamic.Expressions
 				case "Invoke": expression = BuildInvoke(node, context); break;
 				case "Index": expression = BuildIndex(node, context); break;
 				case "Enclose":
+				case "UncheckedScope":
+				case "CheckedScope":
 				case "Group": expression = BuildGroup(node, context); break;
 				case "Constant": expression = BuildConstant(node); break;
 				case "PropertyOrField": expression = BuildPropertyOrField(node, context); break;
@@ -103,6 +112,7 @@ namespace Unity.Dynamic.Expressions
 
 			return expression;
 		}
+
 		private Expression BuildByType(ExpressionTree node, Expression context)
 		{
 			if (node == null) throw new ArgumentNullException("node");
@@ -151,15 +161,20 @@ namespace Unity.Dynamic.Expressions
 					index++;
 				}
 
-				if (Array.BinarySearch(NumericPromotionOperations, expressionType) >= 0)
-					PromoteNumeric(method, methodArguments);
+				if (Array.BinarySearch(OperationWithPromotionForBothOperand, expressionType) >= 0)
+					PromoteBothNumerics(method, methodArguments);
+				if (Array.BinarySearch(OperationWithPromotionForFirstOperand, expressionType) >= 0)
+					PromoteFirstNumeric(method, methodArguments);
 
 				try
 				{
 					if (methodArguments.Length == 2 &&
-						(((Expression)methodArguments[0]).Type == typeof(string) ||
-						((Expression)methodArguments[1]).Type == typeof(string)) &&
-						(expressionType == "Add" || expressionType == "AddChecked"))
+						methodArguments[0] is Expression &&
+						methodArguments[1] is Expression &&
+						((Expression)methodArguments[0]).Type == typeof(string) &&
+						((Expression)methodArguments[1]).Type == typeof(string) &&
+						(string.Equals(expressionType, "Add", StringComparison.Ordinal) || string.Equals(expressionType, "AddChecked", StringComparison.Ordinal))
+					)
 					{
 						var concatArguments = new Expression[]
 						{
@@ -177,7 +192,6 @@ namespace Unity.Dynamic.Expressions
 			}
 			throw new InvalidOperationException(string.Format(node.Position + " " + Properties.Resources.EXCEPTION_BUILD_UNABLETOCREATEEXPRWITHPARAMS, expressionType, string.Join(", ", argumentNames.ToArray())));
 		}
-
 		private Expression BuildGroup(ExpressionTree node, Expression context)
 		{
 			if (node == null) throw new ArgumentNullException("node");
@@ -372,8 +386,11 @@ namespace Unity.Dynamic.Expressions
 				if (TryGetTypeName(propertyOrFieldExpressionObj, out typeName) == false || TryResolveType(typeName, out type) == false)
 				{
 					var propertyOrFieldExpression = propertyOrFieldExpressionObj != null ? Build((ExpressionTree)propertyOrFieldExpressionObj, context) : context;
-					type = propertyOrFieldExpression.Type;
-					isStatic = false;
+					if (propertyOrFieldExpression != null)
+					{
+						type = propertyOrFieldExpression.Type;
+						isStatic = false;
+					}
 				}
 
 				var methodBindingFlags = BindingFlags.Public | (isStatic ? BindingFlags.Static : BindingFlags.Instance);
@@ -421,9 +438,9 @@ namespace Unity.Dynamic.Expressions
 			{
 				var parameter = default(ParameterInfo);
 				var parameterIndex = 0;
-				if (argName.All(Char.IsDigit))
+				if (argName.All(char.IsDigit))
 				{
-					parameterIndex = Int32.Parse(argName, Format);
+					parameterIndex = int.Parse(argName, Format);
 					if (parametersByPos.TryGetValue(parameterIndex, out parameter) == false)
 						return false; // position out of range
 
@@ -474,7 +491,6 @@ namespace Unity.Dynamic.Expressions
 					continue;
 				}
 
-
 				return false; // parameters types doesn't match
 			}
 
@@ -504,7 +520,7 @@ namespace Unity.Dynamic.Expressions
 
 			return type.IsValueType ? Activator.CreateInstance(type) : null;
 		}
-		private static void PromoteNumeric(MethodInfo method, object[] methodArguments)
+		private static void PromoteBothNumerics(MethodInfo method, object[] methodArguments)
 		{
 			if (method == null) throw new ArgumentNullException("method");
 			if (methodArguments == null) throw new ArgumentNullException("methodArguments");
@@ -544,7 +560,16 @@ namespace Unity.Dynamic.Expressions
 			//	right = Expression.Property(right, "Value");
 
 			if (left.Type == right.Type)
+			{
+				var typeCode = Type.GetTypeCode(left.Type);
+				if (typeCode < TypeCode.SByte || typeCode > TypeCode.UInt16)
+					return;
+
+				// expand smaller integers to int32
+				methodArguments[leftIdx] = Expression.Convert(left, typeof(int));
+				methodArguments[rightIdx] = Expression.Convert(right, typeof(int));
 				return;
+			}
 
 			if (left.Type == typeof(object))
 				methodArguments[rightIdx] = Expression.Convert(right, typeof(object));
@@ -561,23 +586,23 @@ namespace Unity.Dynamic.Expressions
 				if (leftType == TypeCode.Double || leftType == TypeCode.Single || rightType == TypeCode.Double || rightType == TypeCode.Single)
 					return; // will throw exception
 				if (leftType == TypeCode.Decimal)
-					methodArguments[rightIdx] = Expression.Convert(right, typeof(Decimal));
+					methodArguments[rightIdx] = Expression.Convert(right, typeof(decimal));
 				else
-					methodArguments[leftIdx] = Expression.Convert(left, typeof(Decimal));
+					methodArguments[leftIdx] = Expression.Convert(left, typeof(decimal));
 			}
 			else if (leftType == TypeCode.Double || rightType == TypeCode.Double)
 			{
 				if (leftType == TypeCode.Double)
-					methodArguments[rightIdx] = Expression.Convert(right, typeof(Double));
+					methodArguments[rightIdx] = Expression.Convert(right, typeof(double));
 				else
-					methodArguments[leftIdx] = Expression.Convert(left, typeof(Double));
+					methodArguments[leftIdx] = Expression.Convert(left, typeof(double));
 			}
 			else if (leftType == TypeCode.Single || rightType == TypeCode.Single)
 			{
 				if (leftType == TypeCode.Single)
-					methodArguments[rightIdx] = Expression.Convert(right, typeof(Single));
+					methodArguments[rightIdx] = Expression.Convert(right, typeof(float));
 				else
-					methodArguments[leftIdx] = Expression.Convert(left, typeof(Single));
+					methodArguments[leftIdx] = Expression.Convert(left, typeof(float));
 			}
 			else if (leftType == TypeCode.UInt64 || rightType == TypeCode.UInt64)
 			{
@@ -585,34 +610,69 @@ namespace Unity.Dynamic.Expressions
 					return; // will throw exception
 
 				if (leftType == TypeCode.UInt64)
-					methodArguments[rightIdx] = Expression.Convert(right, typeof(UInt64));
+					methodArguments[rightIdx] = Expression.Convert(right, typeof(ulong));
 				else
-					methodArguments[leftIdx] = Expression.Convert(left, typeof(UInt64));
+					methodArguments[leftIdx] = Expression.Convert(left, typeof(ulong));
 			}
 			else if (leftType == TypeCode.Int64 || rightType == TypeCode.Int64)
 			{
 				if (leftType == TypeCode.Int64)
-					methodArguments[rightIdx] = Expression.Convert(right, typeof(Int64));
+					methodArguments[rightIdx] = Expression.Convert(right, typeof(long));
 				else
-					methodArguments[leftIdx] = Expression.Convert(left, typeof(Int64));
+					methodArguments[leftIdx] = Expression.Convert(left, typeof(long));
 			}
-			else if (leftType == TypeCode.UInt32 || Array.IndexOf(SignedIntegerTypes, rightType) > 0)
+			else if ((leftType == TypeCode.UInt32 && Array.IndexOf(SignedIntegerTypes, rightType) > 0) ||
+				(rightType == TypeCode.UInt32 && Array.IndexOf(SignedIntegerTypes, leftType) > 0))
 			{
-				methodArguments[rightIdx] = Expression.Convert(right, typeof(Int64));
-				methodArguments[leftIdx] = Expression.Convert(left, typeof(Int64));
+				methodArguments[rightIdx] = Expression.Convert(right, typeof(long));
+				methodArguments[leftIdx] = Expression.Convert(left, typeof(long));
 			}
 			else if (leftType == TypeCode.UInt32 || rightType == TypeCode.UInt32)
 			{
 				if (leftType == TypeCode.UInt32)
-					methodArguments[rightIdx] = Expression.Convert(right, typeof(UInt32));
+					methodArguments[rightIdx] = Expression.Convert(right, typeof(uint));
 				else
-					methodArguments[leftIdx] = Expression.Convert(left, typeof(UInt32));
+					methodArguments[leftIdx] = Expression.Convert(left, typeof(uint));
 			}
 			else
 			{
-				methodArguments[rightIdx] = Expression.Convert(right, typeof(Int32));
-				methodArguments[leftIdx] = Expression.Convert(left, typeof(Int32));
+				methodArguments[rightIdx] = Expression.Convert(right, typeof(int));
+				methodArguments[leftIdx] = Expression.Convert(left, typeof(int));
 			}
+		}
+		private static void PromoteFirstNumeric(MethodInfo method, object[] methodArguments)
+		{
+			if (method == null) throw new ArgumentNullException("method");
+			if (methodArguments == null) throw new ArgumentNullException("methodArguments");
+
+			var first = default(Expression);
+			var firstIdx = -1;
+			foreach (var parameter in method.GetParameters())
+			{
+				if (parameter.Name != "expression" && parameter.Name != "left")
+					continue;
+
+				first = (Expression)methodArguments[parameter.Position];
+				firstIdx = parameter.Position;
+				break;
+			}
+
+			if (first == null || firstIdx < 0)
+				return;
+
+			if (first.Type.IsEnum)
+				first = Expression.Convert(first, Enum.GetUnderlyingType(first.Type));
+
+			var typeCode = Type.GetTypeCode(first.Type);
+			if (typeCode >= TypeCode.SByte && typeCode <= TypeCode.UInt16)
+			{
+				methodArguments[firstIdx] = Expression.Convert(first, typeof(int));
+			}
+			else if (typeCode == TypeCode.UInt32 && method.Name == "Not")
+			{
+				methodArguments[firstIdx] = Expression.Convert(first, typeof(long));
+			}
+
 		}
 
 		private Type ResolveType(string typeName)
@@ -702,23 +762,23 @@ namespace Unity.Dynamic.Expressions
 			var knownTypes = new HashSet<Type>();
 			knownTypes = new HashSet<Type>
 			{
-				typeof (Object),
-				typeof (Boolean),
-				typeof (Char),
-				typeof (SByte),
-				typeof (Byte),
-				typeof (Int16),
-				typeof (UInt16),
-				typeof (Int32),
-				typeof (UInt32),
-				typeof (Int64),
-				typeof (UInt64),
-				typeof (Single),
-				typeof (Double),
-				typeof (Decimal),
+				typeof (object),
+				typeof (bool),
+				typeof (char),
+				typeof (sbyte),
+				typeof (byte),
+				typeof (short),
+				typeof (ushort),
+				typeof (int),
+				typeof (uint),
+				typeof (long),
+				typeof (ulong),
+				typeof (float),
+				typeof (double),
+				typeof (decimal),
 				typeof (DateTime),
 				typeof (TimeSpan),
-				typeof (String),
+				typeof (string),
 				typeof (Math)
 			};
 
