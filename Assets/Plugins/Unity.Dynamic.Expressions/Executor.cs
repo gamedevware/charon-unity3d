@@ -218,6 +218,23 @@ namespace Unity.Dynamic.Expressions
 			});
 		}
 
+		public static void RegisterForFastCall<InstanceT, Arg1T, Arg2T, Arg3T, ResultT>()
+		{
+			MethodCallWrapper.RegisterInstanceMethod<InstanceT, Arg1T, Arg2T, Arg3T, ResultT>();
+		}
+		public static void RegisterForFastCall<InstanceT, Arg1T, Arg2T, ResultT>()
+		{
+			MethodCallWrapper.RegisterInstanceMethod<InstanceT, Arg1T, Arg2T, ResultT>();
+		}
+		public static void RegisterForFastCall<InstanceT, Arg1T, ResultT>()
+		{
+			MethodCallWrapper.RegisterInstanceMethod<InstanceT, Arg1T, ResultT>();
+		}
+		public static void RegisterForFastCall<InstanceT, ResultT>()
+		{
+			MethodCallWrapper.RegisterInstanceMethod<InstanceT, ResultT>();
+		}
+
 		private static Func<Closure, object> Expression(Expression exp, ConstantExpression[] constantsExprs,
 			ParameterExpression[] localsExprs)
 		{

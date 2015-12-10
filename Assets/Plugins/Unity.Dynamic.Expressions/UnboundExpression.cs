@@ -30,7 +30,7 @@ namespace Unity.Dynamic.Expressions
 	{
 		public static readonly ExpressionType UnboundExpressionType = (ExpressionType)102;
 
-		private readonly Dictionary<InvocationParameters, Expression> compiledExpressions;
+		private readonly Dictionary<MethodCallSignature, Expression> compiledExpressions;
 
 		private readonly ExpressionTree expressionTree;
 		public ExpressionTree ExpressionTree { get { return this.expressionTree; } }
@@ -40,13 +40,13 @@ namespace Unity.Dynamic.Expressions
 		{
 			if (node == null) throw new ArgumentNullException("node");
 
-			this.compiledExpressions = new Dictionary<InvocationParameters, Expression>();
+			this.compiledExpressions = new Dictionary<MethodCallSignature, Expression>();
 			this.expressionTree = node is ExpressionTree ? (ExpressionTree)node : new ExpressionTree(node);
 		}
 
 		public Func<ResultT> Bind<ResultT>()
 		{
-			var key = new InvocationParameters(typeof(ResultT));
+			var key = new MethodCallSignature(typeof(ResultT));
 			var expression = default(Expression);
 			lock (this.compiledExpressions)
 			{
@@ -63,7 +63,7 @@ namespace Unity.Dynamic.Expressions
 		}
 		public Func<Arg1T, ResultT> Bind<Arg1T, ResultT>(string arg1Name = null)
 		{
-			var key = new InvocationParameters(typeof(Arg1T), arg1Name ?? "arg1", typeof(ResultT));
+			var key = new MethodCallSignature(typeof(Arg1T), arg1Name ?? "arg1", typeof(ResultT));
 			var expression = default(Expression);
 			lock (this.compiledExpressions)
 			{
@@ -80,7 +80,7 @@ namespace Unity.Dynamic.Expressions
 		}
 		public Func<Arg1T, Arg2T, ResultT> Bind<Arg1T, Arg2T, ResultT>(string arg1Name = null, string arg2Name = null)
 		{
-			var key = new InvocationParameters(typeof(Arg1T), arg1Name ?? "arg1", typeof(Arg2T), arg2Name ?? "arg2", typeof(ResultT));
+			var key = new MethodCallSignature(typeof(Arg1T), arg1Name ?? "arg1", typeof(Arg2T), arg2Name ?? "arg2", typeof(ResultT));
 			var expression = default(Expression);
 			lock (this.compiledExpressions)
 			{
@@ -97,7 +97,7 @@ namespace Unity.Dynamic.Expressions
 		}
 		public Func<Arg1T, Arg2T, Arg3T, ResultT> Bind<Arg1T, Arg2T, Arg3T, ResultT>(string arg1Name = null, string arg2Name = null, string arg3Name = null)
 		{
-			var key = new InvocationParameters(typeof(Arg1T), arg1Name ?? "arg1", typeof(Arg2T), arg2Name ?? "arg2", typeof(Arg3T), arg3Name ?? "arg3", typeof(ResultT));
+			var key = new MethodCallSignature(typeof(Arg1T), arg1Name ?? "arg1", typeof(Arg2T), arg2Name ?? "arg2", typeof(Arg3T), arg3Name ?? "arg3", typeof(ResultT));
 			var expression = default(Expression);
 			lock (this.compiledExpressions)
 			{
@@ -113,7 +113,7 @@ namespace Unity.Dynamic.Expressions
 		}
 		public Func<Arg1T, Arg2T, Arg3T, Arg4T, ResultT> Bind<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>(string arg1Name = null, string arg2Name = null, string arg3Name = null, string arg4Name = null)
 		{
-			var key = new InvocationParameters(typeof(Arg1T), arg1Name ?? "arg1", typeof(Arg2T), arg2Name ?? "arg2", typeof(Arg3T), arg3Name ?? "arg3", typeof(Arg4T), arg4Name ?? "arg4", typeof(ResultT));
+			var key = new MethodCallSignature(typeof(Arg1T), arg1Name ?? "arg1", typeof(Arg2T), arg2Name ?? "arg2", typeof(Arg3T), arg3Name ?? "arg3", typeof(Arg4T), arg4Name ?? "arg4", typeof(ResultT));
 			var expression = default(Expression);
 			lock (this.compiledExpressions)
 			{

@@ -18,8 +18,8 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 
 // ReSharper disable PossibleNullReferenceException
 
@@ -28,9 +28,14 @@ namespace Unity.Dynamic.Expressions
 	partial class Executor
 	{
 		private delegate object InvokeOperation(Closure closure, Func<Closure, object>[] argumentFns);
+		private delegate InvokeOperation InvokeOperationCreator(MethodInfo method, ParameterInfo[] parameters);
 
 		private class MethodCallWrapper
 		{
+			private static readonly Dictionary<MethodInfo, InvokeOperation> StaticMethods = new Dictionary<MethodInfo, InvokeOperation>();
+			private static readonly Dictionary<MethodInfo, InvokeOperation> InstanceMethods = new Dictionary<MethodInfo, InvokeOperation>();
+			private static readonly Dictionary<Type, Dictionary<MethodCallSignature, InvokeOperationCreator>[]> InstanceMethodCreators = new Dictionary<Type, Dictionary<MethodCallSignature, InvokeOperationCreator>[]>();
+
 			private readonly Delegate fn;
 
 			private MethodCallWrapper(Type delegateType, MethodInfo method)
@@ -76,13 +81,20 @@ namespace Unity.Dynamic.Expressions
 			{
 				if (method == null) throw new ArgumentNullException("method");
 
-				if (!method.IsStatic)
-					return null;
-
-				// TODO caching for method wrappers
+				if (method.IsStatic)
+					return TryCreateStaticMethod(method);
+				else
+					return TryCreateInstanceMethod(method);
+			}
+			private static InvokeOperation TryCreateStaticMethod(MethodInfo method)
+			{
+				// try get from cache
+				var invoker = default(InvokeOperation);
+				lock (StaticMethods)
+					if (StaticMethods.TryGetValue(method, out invoker))
+						return invoker;
 
 				var parameters = method.GetParameters();
-				var invoker = default(InvokeOperation);
 				// ReSharper disable once SwitchStatementMissingSomeCases
 				switch (parameters.Length)
 				{
@@ -122,6 +134,7 @@ namespace Unity.Dynamic.Expressions
 							TryCreate<string, string>(method, parameters) ??
 							TryCreate<object, object>(method, parameters) ??
 							TryCreate<TimeSpan, TimeSpan>(method, parameters) ??
+							TryCreate<DateTime, DateTime>(method, parameters) ??
 							TryCreate<DateTime, TimeSpan>(method, parameters) ??
 							TryCreate<byte, bool>(method, parameters) ??
 							TryCreate<sbyte, bool>(method, parameters) ??
@@ -157,7 +170,9 @@ namespace Unity.Dynamic.Expressions
 							TryCreate<string, string, string>(method, parameters) ??
 							TryCreate<object, object, object>(method, parameters) ??
 							TryCreate<TimeSpan, TimeSpan, TimeSpan>(method, parameters) ??
+							TryCreate<DateTime, DateTime, DateTime>(method, parameters) ??
 							TryCreate<DateTime, DateTime, TimeSpan>(method, parameters) ??
+							TryCreate<DateTime, TimeSpan, DateTime>(method, parameters) ??
 							TryCreate<byte, byte, bool>(method, parameters) ??
 							TryCreate<sbyte, sbyte, bool>(method, parameters) ??
 							TryCreate<short, short, bool>(method, parameters) ??
@@ -220,7 +235,7 @@ namespace Unity.Dynamic.Expressions
 							TryCreate<float, float, float, float, float>(method, parameters) ??
 							TryCreate<double, double, double, double, double>(method, parameters) ??
 							TryCreate<decimal, decimal, decimal, decimal, decimal>(method, parameters) ??
-							TryCreate<double, string, string, string, string>(method, parameters) ??
+							TryCreate<string, string, string, string, string>(method, parameters) ??
 							TryCreate<object, object, object, object, object>(method, parameters) ??
 							TryCreate<byte, byte, byte, byte, bool>(method, parameters) ??
 							TryCreate<sbyte, sbyte, sbyte, sbyte, bool>(method, parameters) ??
@@ -238,7 +253,116 @@ namespace Unity.Dynamic.Expressions
 							TryCreate<object, object, object, object, string>(method, parameters);
 						break;
 				}
+
+				// cache it
+				lock (StaticMethods)
+					StaticMethods[method] = invoker;
+
 				return invoker;
+			}
+			private static InvokeOperation TryCreateInstanceMethod(MethodInfo method)
+			{
+				if (method.DeclaringType == null)
+					return null;
+
+				// try get from cache
+				var invoker = default(InvokeOperation);
+				lock (InstanceMethods)
+					if (InstanceMethods.TryGetValue(method, out invoker))
+						return invoker;
+
+				var creatorsByParamsCount = default(Dictionary<MethodCallSignature, InvokeOperationCreator>[]);
+				lock (InstanceMethodCreators)
+					if (InstanceMethodCreators.TryGetValue(method.DeclaringType, out creatorsByParamsCount) == false || creatorsByParamsCount == null)
+						goto cacheAndReturn;
+
+				var methodCallSignature = new MethodCallSignature(method);
+				if (creatorsByParamsCount.Length < methodCallSignature.Count || creatorsByParamsCount[methodCallSignature.Count] == null)
+					goto cacheAndReturn;
+
+				var creatorsBySignature = creatorsByParamsCount[methodCallSignature.Count];
+				var creator = default(InvokeOperationCreator);
+				lock (creatorsBySignature)
+					if (creatorsBySignature.TryGetValue(methodCallSignature, out creator) == false || creator == null)
+						goto cacheAndReturn;
+
+				invoker = creator(method, method.GetParameters());
+
+				cacheAndReturn:
+				// cache it
+				lock (InstanceMethods)
+					InstanceMethods[method] = invoker;
+
+				return invoker;
+			}
+
+			public static void RegisterInstanceMethod<InstanceT, Arg1T, Arg2T, Arg3T, ResultT>()
+			{
+				const int PARAMS_INDEX = 3;
+
+				var creatorsByParamsCount = default(Dictionary<MethodCallSignature, InvokeOperationCreator>[]);
+				lock (InstanceMethodCreators)
+					if (InstanceMethodCreators.TryGetValue(typeof(InstanceT), out creatorsByParamsCount) == false)
+						InstanceMethodCreators[typeof(InstanceT)] = creatorsByParamsCount = new Dictionary<MethodCallSignature, InvokeOperationCreator>[4];
+
+				var creatorsBySignature = creatorsByParamsCount[PARAMS_INDEX];
+				if (creatorsBySignature == null)
+					creatorsByParamsCount[PARAMS_INDEX] = creatorsBySignature = new Dictionary<MethodCallSignature, InvokeOperationCreator>();
+
+				var methodCallSignature = new MethodCallSignature(typeof(Arg1T), "", typeof(Arg2T), "", typeof(Arg3T), "", typeof(ResultT));
+				lock (creatorsBySignature)
+					creatorsBySignature[methodCallSignature] = new InvokeOperationCreator(TryCreate<InstanceT, Arg1T, Arg2T, Arg3T, ResultT>);
+			}
+			public static void RegisterInstanceMethod<InstanceT, Arg1T, Arg2T, ResultT>()
+			{
+				const int PARAMS_INDEX = 2;
+
+				var creatorsByParamsCount = default(Dictionary<MethodCallSignature, InvokeOperationCreator>[]);
+				lock (InstanceMethodCreators)
+					if (InstanceMethodCreators.TryGetValue(typeof(InstanceT), out creatorsByParamsCount) == false)
+						InstanceMethodCreators[typeof(InstanceT)] = creatorsByParamsCount = new Dictionary<MethodCallSignature, InvokeOperationCreator>[4];
+
+				var creatorsBySignature = creatorsByParamsCount[PARAMS_INDEX];
+				if (creatorsBySignature == null)
+					creatorsByParamsCount[PARAMS_INDEX] = creatorsBySignature = new Dictionary<MethodCallSignature, InvokeOperationCreator>();
+
+				var methodCallSignature = new MethodCallSignature(typeof(Arg1T), "", typeof(Arg2T), "", typeof(ResultT));
+				lock (creatorsBySignature)
+					creatorsBySignature[methodCallSignature] = new InvokeOperationCreator(TryCreate<InstanceT, Arg1T, Arg2T, ResultT>);
+			}
+			public static void RegisterInstanceMethod<InstanceT, Arg1T, ResultT>()
+			{
+				const int PARAMS_INDEX = 1;
+
+				var creatorsByParamsCount = default(Dictionary<MethodCallSignature, InvokeOperationCreator>[]);
+				lock (InstanceMethodCreators)
+					if (InstanceMethodCreators.TryGetValue(typeof(InstanceT), out creatorsByParamsCount) == false)
+						InstanceMethodCreators[typeof(InstanceT)] = creatorsByParamsCount = new Dictionary<MethodCallSignature, InvokeOperationCreator>[4];
+
+				var creatorsBySignature = creatorsByParamsCount[PARAMS_INDEX];
+				if (creatorsBySignature == null)
+					creatorsByParamsCount[PARAMS_INDEX] = creatorsBySignature = new Dictionary<MethodCallSignature, InvokeOperationCreator>();
+
+				var methodCallSignature = new MethodCallSignature(typeof(Arg1T), "", typeof(ResultT));
+				lock (creatorsBySignature)
+					creatorsBySignature[methodCallSignature] = new InvokeOperationCreator(TryCreate<InstanceT, Arg1T, ResultT>);
+			}
+			public static void RegisterInstanceMethod<InstanceT, ResultT>()
+			{
+				const int PARAMS_INDEX = 0;
+
+				var creatorsByParamsCount = default(Dictionary<MethodCallSignature, InvokeOperationCreator>[]);
+				lock (InstanceMethodCreators)
+					if (InstanceMethodCreators.TryGetValue(typeof(InstanceT), out creatorsByParamsCount) == false)
+						InstanceMethodCreators[typeof(InstanceT)] = creatorsByParamsCount = new Dictionary<MethodCallSignature, InvokeOperationCreator>[4];
+
+				var creatorsBySignature = creatorsByParamsCount[PARAMS_INDEX];
+				if (creatorsBySignature == null)
+					creatorsByParamsCount[PARAMS_INDEX] = creatorsBySignature = new Dictionary<MethodCallSignature, InvokeOperationCreator>();
+
+				var methodCallSignature = new MethodCallSignature(typeof(ResultT));
+				lock (creatorsBySignature)
+					creatorsBySignature[methodCallSignature] = new InvokeOperationCreator(TryCreate<InstanceT, ResultT>);
 			}
 
 			private static InvokeOperation TryCreate<ResultT>(MethodInfo method, ParameterInfo[] parameters)
