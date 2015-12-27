@@ -51,6 +51,7 @@ namespace Unity.Dynamic.Expressions.Properties {
         public const string EXCEPTION_BUILD_UNABLETORESOLVETYPEMULTIPLE = "Unable to resolve type '{0}'. Can't choose from: '{1}'.";
         public const string EXCEPTION_BUILD_UNKNOWNEXPRTYPE = "Unknown expression type '{0}'.";
         public const string EXCEPTION_COMPIL_NOBINARYOPONTYPE = "No binary operation '{0}' is defined on type '{1}'.";
+        public const string EXCEPTION_COMPIL_NOCONVERTIONBETWEENTYPES = "No convertion operation is defined between types '{0}' and '{1}'.";
         public const string EXCEPTION_COMPIL_NOUNARYOPONTYPE = "No unary operation '{0}' is defined on type '{1}'.";
         public const string EXCEPTION_COMPIL_UNKNOWNBINARYEXPRTYPE = "Unknown binary expression type '{0}'.";
         public const string EXCEPTION_COMPIL_UNKNOWNEXPRTYPE = "Unknown expression type {0}.";
@@ -71,6 +72,7 @@ namespace Unity.Dynamic.Expressions.Properties {
         public const string EXCEPTION_STRINGUTILS_UNEXPECTEDESCAPESEQ = "Unknown escape sequence '{0}'.";
         public const string EXCEPTION_TOKENIZER_UNEXPECTEDSYMBOL = "Unexpected symbol '{0}'.";
         public const string EXCEPTION_UNBOUNDEXPR_DUPLICATEPARAMNAME = "Duplicate parameter name '{0}'.";
+        public const string EXCEPTION_UNBOUNDEXPR_INVALIDPARAMCOUNT = "Invalid parameters count.";
         public const string EXCEPTION_UNBOUNDEXPR_TYPESDOESNTMATCHNAMES = "Length of types array doesn't match length of names array.";
     }
 #endif
