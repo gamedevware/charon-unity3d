@@ -2,6 +2,7 @@
 using System;
 using System.Globalization;
 using System.IO;
+using Assets.Unity.Charon.Editor.Tasks;
 #if UNITY_EDITOR_WIN
 using Microsoft.Win32;
 #endif
@@ -52,6 +53,11 @@ namespace Assets.Unity.Charon.Editor.Utils
 
 				return null;
 			}
+		}
+
+		internal static Promise UpdateTools(Action<string, float> progressCallback = null)
+		{
+			return new Coroutine(Menu.CheckForUpdatesAsync(progressCallback));
 		}
 #endif
 	}

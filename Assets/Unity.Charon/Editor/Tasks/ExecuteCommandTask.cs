@@ -216,6 +216,10 @@ namespace Assets.Unity.Charon.Editor.Tasks
 			this.StartInfo.Arguments = ConcatArguments(this.startInfo.FileName) + " " + this.StartInfo.Arguments;
 			this.StartInfo.FileName = ToolsUtils.MonoPath;
 		}
+		protected override void OnStop()
+		{
+			this.Kill();
+		}
 
 		private string ConcatArguments(params string[] arguments)
 		{

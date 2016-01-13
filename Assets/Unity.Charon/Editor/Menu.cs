@@ -20,6 +20,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -175,10 +177,30 @@ namespace Assets.Unity.Charon.Editor
 			Application.OpenURL("https://github.com/deniszykov/charon-unity3d/blob/master/README.md");
 		}
 
-		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUABOUT, false, 11)]
+		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUCHECKUPDATES, false, 11)]
+		private static void CheckUpdates()
+		{
+			if (!ValidateAllCheck()) return;
+
+			var validateCoroutine = CoroutineScheduler.Schedule(
+				CheckForUpdatesAsync(
+					progressCallback: ProgressUtils.ShowProgressBar(Resources.UI_UNITYPLUGIN_MENUCHECKUPDATES)
+				)
+			);
+			validateCoroutine.ContinueWith(ProgressUtils.HideProgressBar);
+			FocusConsoleWindow();
+		}
+
+		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUCHECKUPDATES, true, 11)]
+		private static bool CheckUpdatesCheck()
+		{
+			return !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling;
+		}
+
+		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUABOUT, false, 12)]
 		private static void About()
 		{
-            EditorWindow.GetWindow<AboutCharonWindow>(utility: true);
+			EditorWindow.GetWindow<AboutCharonWindow>(utility: true);
 		}
 
 		[MenuItem("Assets/Create/GameData")]
@@ -230,7 +252,7 @@ namespace Assets.Unity.Charon.Editor
 			switch (ToolsUtils.CheckTools())
 			{
 				case ToolsCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
-				case ToolsCheckResult.MissingTools: yield return UpdateToolsWindow.ShowAsync(); break;
+				case ToolsCheckResult.MissingTools: yield return ToolsUtils.UpdateTools(progressCallback); break;
 				case ToolsCheckResult.Ok: break;
 				default: throw new InvalidOperationException("Unknown Tools check result.");
 			}
@@ -302,7 +324,7 @@ namespace Assets.Unity.Charon.Editor
 			switch (ToolsUtils.CheckTools())
 			{
 				case ToolsCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
-				case ToolsCheckResult.MissingTools: yield return UpdateToolsWindow.ShowAsync(); break;
+				case ToolsCheckResult.MissingTools: yield return ToolsUtils.UpdateTools(progressCallback); break;
 				case ToolsCheckResult.Ok: break;
 				default: throw new InvalidOperationException("Unknown Tools check result.");
 			}
@@ -483,7 +505,7 @@ namespace Assets.Unity.Charon.Editor
 			switch (ToolsUtils.CheckTools())
 			{
 				case ToolsCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
-				case ToolsCheckResult.MissingTools: yield return UpdateToolsWindow.ShowAsync(); break;
+				case ToolsCheckResult.MissingTools: yield return ToolsUtils.UpdateTools(progressCallback); break;
 				case ToolsCheckResult.Ok: break;
 				default: throw new InvalidOperationException("Unknown Tools check result.");
 			}
@@ -526,7 +548,7 @@ namespace Assets.Unity.Charon.Editor
 			switch (ToolsUtils.CheckTools())
 			{
 				case ToolsCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
-				case ToolsCheckResult.MissingTools: yield return UpdateToolsWindow.ShowAsync(); break;
+				case ToolsCheckResult.MissingTools: yield return ToolsUtils.UpdateTools(progressCallback); break;
 				case ToolsCheckResult.Ok: break;
 				default: throw new InvalidOperationException("Unknown Tools check result.");
 			}
@@ -617,7 +639,7 @@ namespace Assets.Unity.Charon.Editor
 			switch (ToolsUtils.CheckTools())
 			{
 				case ToolsCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
-				case ToolsCheckResult.MissingTools: yield return UpdateToolsWindow.ShowAsync(); break;
+				case ToolsCheckResult.MissingTools: yield return ToolsUtils.UpdateTools(ProgressUtils.ReportToLog(Resources.UI_UNITYPLUGIN_MENUCHECKUPDATES)); break;
 				case ToolsCheckResult.Ok: break;
 				default: throw new InvalidOperationException("Unknown Tools check result.");
 			}
@@ -662,6 +684,106 @@ namespace Assets.Unity.Charon.Editor
 				yield return Promise.Delayed(TimeSpan.FromSeconds(1));
 			}
 			yield return gameDataFile;
+		}
+		public static IEnumerable CheckForUpdatesAsync(Action<string, float> progressCallback = null)
+		{
+			var toolsVersion = default(Version);
+			var toolsPath = Settings.Current.ToolsPath;
+			if (File.Exists(toolsPath))
+			{
+				if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESSCHECKINGTOOLSVERSION, 0.05f);
+
+				var checkToolsVersion = new ExecuteCommandTask(
+					toolsPath,
+					(s, ea) => { if (!string.IsNullOrEmpty(ea.Data)) toolsVersion = new Version(ea.Data); },
+					(s, ea) => { if (!string.IsNullOrEmpty(ea.Data)) Debug.LogWarning(ea.Data.Trim()); },
+					"VERSION");
+				checkToolsVersion.RequireDotNetRuntime();
+				checkToolsVersion.Start();
+				yield return checkToolsVersion;
+			}
+
+			if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESSGETTINGAVAILABLEBUILDS, 0.10f);
+
+			var getBuildsHeaders = new NameValueCollection { { "Accept", "application/json" } };
+			var getBuildsUrl = new Uri("http://localhost:50100/api/Build");
+			var getBuildsRequest = new GetRequest<ApiResponse<JsonValue>>(getBuildsUrl, getBuildsHeaders);
+			yield return getBuildsRequest;
+
+			var response = getBuildsRequest.GetResult();
+			if (response.Message != null) throw new InvalidOperationException(string.Format("Request to '{0}' has failed with message from server: {1}.", getBuildsUrl, response.Message));
+			var builds = (JsonArray)response.Result;
+			var lastVersion =
+			(
+				from build in builds
+				let buildObj = (JsonObject)build
+				let version = new Version(buildObj["Version"].As<string>())
+				orderby version descending
+				select version
+			).FirstOrDefault();
+
+			if (lastVersion == null)
+			{
+				if (progressCallback != null) progressCallback(Resources.UI_DATASOURCE_PROGRESS_DONE, 1.0f);
+
+				Debug.Log("No public releases available.");
+				yield break;
+			}
+			else if (toolsVersion != null && toolsVersion >= lastVersion)
+			{
+				if (progressCallback != null) progressCallback(Resources.UI_DATASOURCE_PROGRESS_DONE, 1.0f);
+
+				Debug.Log(string.Format("{2} version is '{0}' and last tools version is '{1}'. No update required.", toolsVersion, lastVersion, Path.GetFileName(toolsPath)));
+				yield break;
+			}
+
+			if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_PROGRESSDOWNLOADINGS, 0, 0), 0.10f);
+
+			var downloadHeaders = new NameValueCollection { { "Accept", "application/octet-stream" } };
+			var downloadUrl = new Uri("http://localhost:50100/api/Build?id=" + Uri.EscapeDataString(lastVersion.ToString()));
+			var downloadPath = Path.GetTempFileName();
+			yield return new FileDownloadRequest(downloadUrl, downloadPath, downloadHeaders, (readed, total) =>
+			{
+				if (progressCallback == null || total == 0)
+					return;
+
+				progressCallback(string.Format(Resources.UI_UNITYPLUGIN_PROGRESSDOWNLOADINGS, (float)readed / 1024 / 1024, total / 1024 / 1024), 0.10f + (0.80f * Math.Min(1.0f, (float)readed / total)));
+			});
+			try
+			{
+				if (File.Exists(toolsPath))
+					File.Delete(toolsPath);
+
+				File.Move(downloadPath, toolsPath);
+			}
+			finally
+			{
+				// ReSharper disable once EmptyGeneralCatchClause
+				try { if (File.Exists(downloadPath)) File.Delete(downloadPath); }
+				catch { }
+			}
+
+			// ReSharper disable once EmptyGeneralCatchClause
+			try { if (Directory.Exists(GameDataEditorWindow.ToolShadowCopyPath)) Directory.Delete(GameDataEditorWindow.ToolShadowCopyPath, true); }
+			catch { Debug.LogWarning(string.Format("Failed to delete directory with old copy of tools '{0}'. Please restart unity or delete it manually.", GameDataEditorWindow.ToolShadowCopyPath)); }
+
+			if (File.Exists(Settings.Current.ToolsPath))
+			{
+				if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESSCHECKINGTOOLSVERSION, 0.95f);
+
+				var checkToolsVersion = new ExecuteCommandTask(
+					Settings.Current.ToolsPath,
+					(s, ea) => { if (!string.IsNullOrEmpty(ea.Data)) toolsVersion = new Version(ea.Data); },
+					(s, ea) => { if (!string.IsNullOrEmpty(ea.Data)) Debug.LogWarning(ea.Data.Trim()); },
+					"VERSION");
+				checkToolsVersion.RequireDotNetRuntime();
+				checkToolsVersion.Start();
+				yield return checkToolsVersion;
+			}
+
+			Debug.Log(string.Format("{1} version is '{0}'. Update is complete.", toolsVersion, Path.GetFileName(toolsPath)));
+
+			if (progressCallback != null) progressCallback(Resources.UI_DATASOURCE_PROGRESS_DONE, 1.0f);
 		}
 	}
 }

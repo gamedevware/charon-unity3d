@@ -23,7 +23,7 @@ using UnityEngine;
 
 namespace Assets.Unity.Charon.Editor
 {
-	class ProgressUtils
+	internal static class ProgressUtils
 	{
 		public static Action<string, float> ShowProgressBar(string title)
 		{

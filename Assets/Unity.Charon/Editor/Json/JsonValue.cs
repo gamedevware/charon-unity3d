@@ -1,6 +1,6 @@
 ﻿/*
 	 Copyright (C) 2001-2002  Ximian, Inc.
-	 
+
 	Permission is hereby granted, free of charge, to any person obtaining a
 	copy of this software and associated documentation files (the "Software"),
 	to deal in the Software without restriction, including without limitation
@@ -57,7 +57,7 @@ namespace Assets.Unity.Charon.Editor.Json
 		{
 			if (stream == null)
 				throw new ArgumentNullException("stream");
-			return Load(new StreamReader(stream, true));
+			return Load(new StreamReader(stream, Encoding.UTF8));
 		}
 		public static JsonValue Load(TextReader textReader)
 		{

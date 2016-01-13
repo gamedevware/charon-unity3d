@@ -31,8 +31,9 @@ namespace Assets.Unity.Charon.Editor
 	{
 		public const string PREF_PREFIX = "Charon_";
 		public const string SETTINGS_PATH = "Assets/Unity.Charon/Editor/Settings.asset";
+		public const string DEFAULT_TOOLS_PATH = "Assets/Unity.Charon/Editor/Charon.exe";
 		public const string LIST_SPLITTER = ";";
-		public readonly static char[] ListSplitterChars = LIST_SPLITTER.ToArray();
+		public static readonly char[] ListSplitterChars = LIST_SPLITTER.ToArray();
 
 		public static Settings Current;
 
@@ -57,7 +58,7 @@ namespace Assets.Unity.Charon.Editor
 				settings.ToolsPath = (from id in AssetDatabase.FindAssets("t:DefaultAsset Charon")
 									  let path = FileUtils.MakeProjectRelative(AssetDatabase.GUIDToAssetPath(id))
 									  where path != null && path.EndsWith(".exe", StringComparison.OrdinalIgnoreCase)
-									  select path).FirstOrDefault();
+									  select path).FirstOrDefault() ?? DEFAULT_TOOLS_PATH;
 				settings.GameDataPaths = (from id in AssetDatabase.FindAssets("t:TextAsset GameData")
 										  let path = FileUtils.MakeProjectRelative(AssetDatabase.GUIDToAssetPath(id))
 										  where path != null && path.EndsWith(".json", StringComparison.OrdinalIgnoreCase)

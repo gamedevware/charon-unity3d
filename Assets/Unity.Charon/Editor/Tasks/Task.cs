@@ -37,6 +37,7 @@ namespace Assets.Unity.Charon.Editor.Tasks
 		}
 
 		protected abstract IEnumerable InitAsync();
+		protected virtual void OnStop() { }
 
 		public void Start()
 		{
@@ -53,6 +54,8 @@ namespace Assets.Unity.Charon.Editor.Tasks
 
 			if (ev.IsCompleted == false)
 				throw new InvalidOperationException("Task is not started.");
+
+			this.OnStop();
 		}
 
 		public Promise IgnoreFault()

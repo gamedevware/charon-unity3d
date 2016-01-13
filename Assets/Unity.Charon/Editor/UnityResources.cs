@@ -360,6 +360,11 @@ namespace Assets.Unity.Charon.Editor {
         public const string UI_UNITYPLUGIN_WINDOWVALIDATEBUTTON = "Validate";
         public const string UI_UNITYPLUGIN_WINDOWVALIDATIONPREFIX = "Validation:";
         public const string UI_UNITYPLUGIN_MENUCHECKRUNTIME = "Check Runtime Version...";
+        public const string UI_UNITYPLUGIN_WINDOWLASTTOOLSVERSIONLABEL = "Last Tools Version";
+        public const string UI_UNITYPLUGIN_MENUCHECKUPDATES = "Check for Updates";
+        public const string UI_UNITYPLUGIN_PROGRESSCHECKINGTOOLSVERSION = "Checking current tools version...";
+        public const string UI_UNITYPLUGIN_PROGRESSDOWNLOADINGS = "Downloading assets ({0:F2}/{1:F2}Mib)...";
+        public const string UI_UNITYPLUGIN_PROGRESSGETTINGAVAILABLEBUILDS = "Getting list of public releases...";
     }
 #endif
 }

@@ -27,7 +27,7 @@ namespace Assets.Unity.Charon.Editor.Windows
 {
 	class AboutCharonWindow : EditorWindow
 	{
-		private string ToolsVersion = Resources.UI_UNITYPLUGIN_WINDOWCHECKINGVERSION;
+		private string toolsVersion = Resources.UI_UNITYPLUGIN_WINDOWCHECKINGVERSION;
 		[NonSerialized]
 		private ExecuteCommandTask checkToolsVersion;
 
@@ -48,7 +48,7 @@ namespace Assets.Unity.Charon.Editor.Windows
 			GUILayout.Box("Charon", new GUIStyle { fontSize = 72, alignment = TextAnchor.MiddleCenter });
 			GUILayout.Space(10);
 			GUILayout.Label(Resources.UI_UNITYPLUGIN_WINDOWINFOGROUP, EditorStyles.boldLabel);
-			EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_WINDOWTOOLSVERSIONLABEL, ToolsVersion);
+			EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_WINDOWTOOLSVERSIONLABEL, toolsVersion);
 			EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_WINDOWLICENSEHOLDER, "");
 			EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_WINDOWLICENSEKEY, "");
 			GUILayout.Space(10);
@@ -95,18 +95,18 @@ namespace Assets.Unity.Charon.Editor.Windows
 			switch (ToolsUtils.CheckTools())
 			{
 				case ToolsCheckResult.MissingRuntime:
-					this.ToolsVersion = Resources.UI_UNITYPLUGIN_WINDOWCHECKRESULTMISSINGMONOORDOTNET;
+					this.toolsVersion = Resources.UI_UNITYPLUGIN_WINDOWCHECKRESULTMISSINGMONOORDOTNET;
 					break;
 				case ToolsCheckResult.MissingTools:
-					this.ToolsVersion = Resources.UI_UNITYPLUGIN_WINDOWCHECKRESULTMISSINGTOOLS;
+					this.toolsVersion = Resources.UI_UNITYPLUGIN_WINDOWCHECKRESULTMISSINGTOOLS;
 					break;
 				case ToolsCheckResult.Ok:
 					if (this.checkToolsVersion == null)
 					{
 						this.checkToolsVersion = new ExecuteCommandTask(
 							Settings.Current.ToolsPath,
-							(s, ea) => { if (!string.IsNullOrEmpty(ea.Data)) this.ToolsVersion = ea.Data; },
-							(s, ea) => { if (!string.IsNullOrEmpty(ea.Data)) this.ToolsVersion = ea.Data; },
+							(s, ea) => { if (!string.IsNullOrEmpty(ea.Data)) this.toolsVersion = ea.Data; },
+							(s, ea) => { if (!string.IsNullOrEmpty(ea.Data)) this.toolsVersion = ea.Data; },
 							"VERSION");
 						this.checkToolsVersion.RequireDotNetRuntime();
 						this.checkToolsVersion.Start();

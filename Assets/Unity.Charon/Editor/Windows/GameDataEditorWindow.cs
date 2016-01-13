@@ -31,7 +31,7 @@ namespace Assets.Unity.Charon.Editor.Windows
 {
 	class GameDataEditorWindow : WebViewEditorWindow, IHasCustomMenu
 	{
-		public readonly static string ToolShadowCopyPath = FileUtil.GetUniqueTempPathInProject();
+		public static readonly string ToolShadowCopyPath = FileUtil.GetUniqueTempPathInProject();
 		private static bool assemblyReloadLocked;
 
 		[SerializeField]
@@ -160,7 +160,7 @@ namespace Assets.Unity.Charon.Editor.Windows
 			switch (ToolsUtils.CheckTools())
 			{
 				case ToolsCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
-				case ToolsCheckResult.MissingTools: yield return UpdateToolsWindow.ShowAsync(); break;
+				case ToolsCheckResult.MissingTools: yield return ToolsUtils.UpdateTools(ProgressUtils.ReportToLog(Resources.UI_UNITYPLUGIN_MENUCHECKUPDATES)); break;
 				case ToolsCheckResult.Ok: break;
 				default: throw new InvalidOperationException("Unknown Tools check result.");
 			}
@@ -199,7 +199,6 @@ namespace Assets.Unity.Charon.Editor.Windows
 				if (File.Exists(configPath))
 				{
 					var configText = File.ReadAllText(configPath);
-					configText = configText.Replace("<!--add key=\"AppData\" value=\"#\"/-->", "<add key=\"AppData\" value=\"" + Path.GetFullPath("./Library") + "\"/>");
 					if (Settings.Current.Verbose)
 						configText = configText.Replace("<!--appender-ref ref=\"FileAppender\"/-->", "<appender-ref ref=\"FileAppender\"/>");
 					else
@@ -238,6 +237,7 @@ namespace Assets.Unity.Charon.Editor.Windows
 				System.Diagnostics.Process.GetCurrentProcess().Id.ToString(),
 				Settings.Current.Verbose ? "--verbose" : ""
 			);
+			this.editorProcess.StartInfo.EnvironmentVariables["APP_DATA"] = Path.GetFullPath("./Library/Charon");
 			this.editorProcess.RequireDotNetRuntime();
 			this.editorProcess.Start();
 
