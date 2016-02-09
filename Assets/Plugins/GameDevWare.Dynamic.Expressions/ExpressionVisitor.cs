@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq.Expressions;
 
-namespace Unity.Dynamic.Expressions
+namespace GameDevWare.Dynamic.Expressions
 {
 	public abstract class ExpressionVisitor
 	{

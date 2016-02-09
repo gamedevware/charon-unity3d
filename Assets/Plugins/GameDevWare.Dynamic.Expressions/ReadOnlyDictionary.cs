@@ -21,7 +21,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Unity.Dynamic.Expressions
+namespace GameDevWare.Dynamic.Expressions
 {
 	public class ReadOnlyDictionary<KeyT, ValueT> : IDictionary<KeyT, ValueT>
 	{

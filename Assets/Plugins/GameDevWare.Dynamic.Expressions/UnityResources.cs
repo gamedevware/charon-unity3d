@@ -29,7 +29,7 @@
 // ReSharper disable once CheckNamespace
 // ReSharper disable once EmptyNamespace
 // ReSharper disable IdentifierTypo
-namespace Unity.Dynamic.Expressions.Properties {
+namespace GameDevWare.Dynamic.Expressions.Properties {
 
 #if UNITY_5 || UNITY_4
     public class Resources
@@ -51,7 +51,7 @@ namespace Unity.Dynamic.Expressions.Properties {
         public const string EXCEPTION_BUILD_UNABLETORESOLVETYPEMULTIPLE = "Unable to resolve type '{0}'. Can't choose from: '{1}'.";
         public const string EXCEPTION_BUILD_UNKNOWNEXPRTYPE = "Unknown expression type '{0}'.";
         public const string EXCEPTION_COMPIL_NOBINARYOPONTYPE = "No binary operation '{0}' is defined on type '{1}'.";
-        public const string EXCEPTION_COMPIL_NOCONVERTIONBETWEENTYPES = "No convertion operation is defined between types '{0}' and '{1}'.";
+        public const string EXCEPTION_COMPIL_NOCONVERTIONBETWEENTYPES = "No convertion operation is defined from '{0}' to '{1}'.";
         public const string EXCEPTION_COMPIL_NOUNARYOPONTYPE = "No unary operation '{0}' is defined on type '{1}'.";
         public const string EXCEPTION_COMPIL_UNKNOWNBINARYEXPRTYPE = "Unknown binary expression type '{0}'.";
         public const string EXCEPTION_COMPIL_UNKNOWNEXPRTYPE = "Unknown expression type {0}.";

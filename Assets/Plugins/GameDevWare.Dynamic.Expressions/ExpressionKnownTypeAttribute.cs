@@ -19,7 +19,7 @@
 
 using System;
 
-namespace Unity.Dynamic.Expressions
+namespace GameDevWare.Dynamic.Expressions
 {
 	[AttributeUsage(AttributeTargets.Class)]
 	public sealed class ExpressionKnownTypeAttribute : Attribute

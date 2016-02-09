@@ -20,7 +20,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Unity.Dynamic.Expressions
+namespace GameDevWare.Dynamic.Expressions
 {
 	public class ExpressionTree : ReadOnlyDictionary<string, object>
 	{

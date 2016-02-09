@@ -27,7 +27,7 @@ using System.Linq.Expressions;
 // ReSharper disable ConvertIfStatementToConditionalTernaryExpression
 // ReSharper disable StaticMemberInGenericType
 
-namespace Unity.Dynamic.Expressions
+namespace GameDevWare.Dynamic.Expressions
 {
 	public abstract class BoundExpression : Expression
 	{

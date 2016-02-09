@@ -19,11 +19,11 @@
 
 using System;
 using System.Reflection;
-using Unity.Dynamic.Expressions.Properties;
+using GameDevWare.Dynamic.Expressions.Properties;
 
-namespace Unity.Dynamic.Expressions
+namespace GameDevWare.Dynamic.Expressions
 {
-	class MethodCallSignature
+	internal class MethodCallSignature
 	{
 		private readonly int hashCode;
 

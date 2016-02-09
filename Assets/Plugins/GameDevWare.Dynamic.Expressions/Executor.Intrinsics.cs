@@ -31,7 +31,7 @@ using System.Reflection;
 
 #pragma warning disable 0675
 
-namespace Unity.Dynamic.Expressions
+namespace GameDevWare.Dynamic.Expressions
 {
 	partial class Executor
 	{
@@ -62,7 +62,7 @@ namespace Unity.Dynamic.Expressions
 		{
 			if (method == null) return null;
 
-			var invoker = MethodCallWrapper.TryCreate(method);
+			var invoker = MethodCall.TryCreate(method);
 			if (invoker != null)
 			{
 				var argFns = new Func<Closure, object>[] { closure => closure.Locals[LOCAL_OPERAND1] };
@@ -98,7 +98,7 @@ namespace Unity.Dynamic.Expressions
 			if (method == null) return null;
 
 
-			var invoker = MethodCallWrapper.TryCreate(method);
+			var invoker = MethodCall.TryCreate(method);
 			if (invoker != null)
 			{
 				var argFns = new Func<Closure, object>[] { closure => closure.Locals[LOCAL_OPERAND1], closure => closure.Locals[LOCAL_OPERAND2] };
@@ -122,15 +122,15 @@ namespace Unity.Dynamic.Expressions
 			}
 		}
 
-		private static class BuildInOperations
+		private static class Intrinsics
 		{
 			private static readonly ReadOnlyDictionary<Type, ReadOnlyDictionary<int, Delegate>> Operations;
 			private static readonly ReadOnlyDictionary<Type, ReadOnlyDictionary<Type, Delegate>> Convertions;
 
-			static BuildInOperations()
+			static Intrinsics()
 			{
 				// AOT
-				if (typeof(BuildInOperations).Name == string.Empty)
+				if (typeof(Intrinsics).Name == string.Empty)
 				{
 					op_Boolean.Not(default(Closure), default(object));
 					op_Byte.Negate(default(Closure), default(object));
@@ -159,11 +159,12 @@ namespace Unity.Dynamic.Expressions
 					where opType.Name.StartsWith("op_", StringComparison.Ordinal)
 					from method in opType.GetMethods(BindingFlags.Public | BindingFlags.Static)
 					let type = Type.GetType("System." + opType.Name.Substring(3), false)
-					where type != null && method.Name.StartsWith("To", StringComparison.Ordinal) == false
+					where type != null && Array.IndexOf(Enum.GetNames(typeof(ExpressionType)), method.Name) >= 0
 					let expressionType = (ExpressionType)Enum.Parse(typeof(ExpressionType), method.Name)
-					let fn = method.GetParameters().Length == 3
-							? (Delegate)CreateBinaryOperationFn(method)
-							: (Delegate)CreateUnaryOperationFn(method)
+					let methodParams = method.GetParameters()
+					let fn = methodParams.Length == 3 ? (Delegate)CreateBinaryOperationFn(method) :
+							 methodParams.Length == 2 ? (Delegate)CreateUnaryOperationFn(method) : null
+					where fn != null
 					select new { type, expressionType, fn }
 				)
 				.ToLookup(t => t.type)
@@ -181,7 +182,8 @@ namespace Unity.Dynamic.Expressions
 					let type = Type.GetType("System." + opType.Name.Substring(3), false)
 					where type != null && method.Name.StartsWith("To", StringComparison.Ordinal)
 					let fn = (Delegate)CreateBinaryOperationFn(method)
-					let toType = Type.GetType("System." + method.Name.Substring(2), true)
+					let toType = Type.GetType("System." + method.Name.Substring(2), false)
+					where toType != null
 					select new { type, toType, fn }
 				)
 				.ToLookup(t => t.type)
@@ -260,6 +262,7 @@ namespace Unity.Dynamic.Expressions
 				// AOT
 				if (typeof(op_Object).Name == string.Empty)
 				{
+					Default(default(Closure));
 					Equal(default(Closure), default(object), default(object));
 					NotEqual(default(Closure), default(object), default(object));
 					ToObject(default(Closure), default(object), default(object));
@@ -280,6 +283,10 @@ namespace Unity.Dynamic.Expressions
 				}
 			}
 
+			public static object Default(Closure closure)
+			{
+				return closure.Box(default(object));
+			}
 			public static object Equal(Closure closure, object left, object right)
 			{
 				return closure.Box(Equals(closure.Unbox<object>(left), closure.Unbox<object>(right)));
@@ -351,7 +358,8 @@ namespace Unity.Dynamic.Expressions
 				// AOT
 				if (typeof(op_Boolean).Name == string.Empty)
 				{
-					Not(default(Closure), default(object));
+					Default(default(Closure));
+					Not(default(Closure), default(bool));
 					Equal(default(Closure), default(object), default(object));
 					NotEqual(default(Closure), default(object), default(object));
 					ToObject(default(Closure), default(object), default(object));
@@ -359,6 +367,10 @@ namespace Unity.Dynamic.Expressions
 				}
 			}
 
+			public static object Default(Closure closure)
+			{
+				return closure.Box(default(bool));
+			}
 			public static object Not(Closure closure, object operand)
 			{
 				return closure.Box(!closure.Unbox<bool>(operand));
@@ -388,7 +400,8 @@ namespace Unity.Dynamic.Expressions
 				// AOT
 				if (typeof(op_Byte).Name == string.Empty)
 				{
-					Negate(default(Closure), default(object));
+					Default(default(Closure));
+					Negate(default(Closure), default(Byte));
 					NegateChecked(default(Closure), default(object));
 					UnaryPlus(default(Closure), default(object));
 					Not(default(Closure), default(object));
@@ -429,6 +442,10 @@ namespace Unity.Dynamic.Expressions
 				}
 			}
 
+			public static object Default(Closure closure)
+			{
+				return closure.Box(default(byte));
+			}
 			public static object Negate(Closure closure, object operand)
 			{
 				return closure.Box((byte)unchecked(-closure.Unbox<byte>(operand)));
@@ -617,7 +634,8 @@ namespace Unity.Dynamic.Expressions
 				// AOT
 				if (typeof(op_SByte).Name == string.Empty)
 				{
-					Negate(default(Closure), default(object));
+					Default(default(Closure));
+					Negate(default(Closure), default(byte));
 					NegateChecked(default(Closure), default(object));
 					UnaryPlus(default(Closure), default(object));
 					Not(default(Closure), default(object));
@@ -658,6 +676,10 @@ namespace Unity.Dynamic.Expressions
 				}
 			}
 
+			public static object Default(Closure closure)
+			{
+				return closure.Box(default(sbyte));
+			}
 			public static object Negate(Closure closure, object operand)
 			{
 				return closure.Box((sbyte)unchecked(-closure.Unbox<sbyte>(operand)));
@@ -846,7 +868,8 @@ namespace Unity.Dynamic.Expressions
 				// AOT
 				if (typeof(op_Int16).Name == string.Empty)
 				{
-					Negate(default(Closure), default(object));
+					Default(default(Closure));
+					Negate(default(Closure), default(short));
 					NegateChecked(default(Closure), default(object));
 					UnaryPlus(default(Closure), default(object));
 					Not(default(Closure), default(object));
@@ -887,6 +910,10 @@ namespace Unity.Dynamic.Expressions
 				}
 			}
 
+			public static object Default(Closure closure)
+			{
+				return closure.Box(default(short));
+			}
 			public static object Negate(Closure closure, object operand)
 			{
 				return closure.Box((short)unchecked(-closure.Unbox<short>(operand)));
@@ -1075,7 +1102,8 @@ namespace Unity.Dynamic.Expressions
 				// AOT
 				if (typeof(op_UInt16).Name == string.Empty)
 				{
-					Negate(default(Closure), default(object));
+					Default(default(Closure));
+					Negate(default(Closure), default(ushort));
 					NegateChecked(default(Closure), default(object));
 					UnaryPlus(default(Closure), default(object));
 					Not(default(Closure), default(object));
@@ -1116,6 +1144,10 @@ namespace Unity.Dynamic.Expressions
 				}
 			}
 
+			public static object Default(Closure closure)
+			{
+				return closure.Box(default(ushort));
+			}
 			public static object Negate(Closure closure, object operand)
 			{
 				return closure.Box((ushort)unchecked(-closure.Unbox<ushort>(operand)));
@@ -1304,7 +1336,8 @@ namespace Unity.Dynamic.Expressions
 				// AOT
 				if (typeof(op_Int32).Name == string.Empty)
 				{
-					Negate(default(Closure), default(object));
+					Default(default(Closure));
+					Negate(default(Closure), default(int));
 					NegateChecked(default(Closure), default(object));
 					UnaryPlus(default(Closure), default(object));
 					Not(default(Closure), default(object));
@@ -1345,6 +1378,10 @@ namespace Unity.Dynamic.Expressions
 				}
 			}
 
+			public static object Default(Closure closure)
+			{
+				return closure.Box(default(int));
+			}
 			public static object Negate(Closure closure, object operand)
 			{
 				return closure.Box((int)unchecked(-closure.Unbox<int>(operand)));
@@ -1534,7 +1571,8 @@ namespace Unity.Dynamic.Expressions
 				// AOT
 				if (typeof(op_UInt32).Name == string.Empty)
 				{
-					Negate(default(Closure), default(object));
+					Default(default(Closure));
+					Negate(default(Closure), default(uint));
 					NegateChecked(default(Closure), default(object));
 					UnaryPlus(default(Closure), default(object));
 					Not(default(Closure), default(object));
@@ -1573,6 +1611,10 @@ namespace Unity.Dynamic.Expressions
 				}
 			}
 
+			public static object Default(Closure closure)
+			{
+				return closure.Box(default(uint));
+			}
 			public static object Negate(Closure closure, object operand)
 			{
 				return closure.Box((uint)unchecked(-closure.Unbox<uint>(operand)));
@@ -1761,7 +1803,8 @@ namespace Unity.Dynamic.Expressions
 				// AOT
 				if (typeof(op_Int64).Name == string.Empty)
 				{
-					Negate(default(Closure), default(object));
+					Default(default(Closure));
+					Negate(default(Closure), default(long));
 					NegateChecked(default(Closure), default(object));
 					UnaryPlus(default(Closure), default(object));
 					Not(default(Closure), default(object));
@@ -1800,6 +1843,10 @@ namespace Unity.Dynamic.Expressions
 				}
 			}
 
+			public static object Default(Closure closure)
+			{
+				return closure.Box(default(long));
+			}
 			public static object Negate(Closure closure, object operand)
 			{
 				return closure.Box((long)unchecked(-closure.Unbox<long>(operand)));
@@ -1988,7 +2035,8 @@ namespace Unity.Dynamic.Expressions
 				// AOT
 				if (typeof(op_UInt64).Name == string.Empty)
 				{
-					UnaryPlus(default(Closure), default(object));
+					Default(default(Closure));
+					UnaryPlus(default(Closure), default(ulong));
 					Not(default(Closure), default(object));
 					Add(default(Closure), default(object), default(object));
 					AddChecked(default(Closure), default(object), default(object));
@@ -2025,6 +2073,10 @@ namespace Unity.Dynamic.Expressions
 				}
 			}
 
+			public static object Default(Closure closure)
+			{
+				return closure.Box(default(ulong));
+			}
 			public static object UnaryPlus(Closure closure, object operand)
 			{
 				return closure.Box((ulong)unchecked(+closure.Unbox<ulong>(operand)));
@@ -2206,7 +2258,8 @@ namespace Unity.Dynamic.Expressions
 				// AOT
 				if (typeof(op_Single).Name == string.Empty)
 				{
-					Negate(default(Closure), default(object));
+					Default(default(Closure));
+					Negate(default(Closure), default(float));
 					NegateChecked(default(Closure), default(object));
 					UnaryPlus(default(Closure), default(object));
 					Add(default(Closure), default(object), default(object));
@@ -2241,6 +2294,10 @@ namespace Unity.Dynamic.Expressions
 				}
 			}
 
+			public static object Default(Closure closure)
+			{
+				return closure.Box(default(float));
+			}
 			public static object Negate(Closure closure, object operand)
 			{
 				return closure.Box((float)unchecked(-closure.Unbox<float>(operand)));
@@ -2405,7 +2462,8 @@ namespace Unity.Dynamic.Expressions
 				// AOT
 				if (typeof(op_Double).Name == string.Empty)
 				{
-					Negate(default(Closure), default(object));
+					Default(default(Closure));
+					Negate(default(Closure), default(double));
 					NegateChecked(default(Closure), default(object));
 					UnaryPlus(default(Closure), default(object));
 					Add(default(Closure), default(object), default(object));
@@ -2440,6 +2498,10 @@ namespace Unity.Dynamic.Expressions
 				}
 			}
 
+			public static object Default(Closure closure)
+			{
+				return closure.Box(default(double));
+			}
 			public static object Negate(Closure closure, object operand)
 			{
 				return closure.Box((double)unchecked(-closure.Unbox<double>(operand)));
@@ -2604,7 +2666,8 @@ namespace Unity.Dynamic.Expressions
 				// AOT
 				if (typeof(op_Decimal).Name == string.Empty)
 				{
-					Negate(default(Closure), default(object));
+					Default(default(Closure));
+					Negate(default(Closure), default(decimal));
 					NegateChecked(default(Closure), default(object));
 					UnaryPlus(default(Closure), default(object));
 					Add(default(Closure), default(object), default(object));
@@ -2639,6 +2702,10 @@ namespace Unity.Dynamic.Expressions
 				}
 			}
 
+			public static object Default(Closure closure)
+			{
+				return closure.Box(default(decimal));
+			}
 			public static object Negate(Closure closure, object operand)
 			{
 				return closure.Box((decimal)unchecked(-closure.Unbox<decimal>(operand)));

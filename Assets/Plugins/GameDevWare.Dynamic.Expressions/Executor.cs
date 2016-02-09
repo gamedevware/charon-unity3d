@@ -26,9 +26,9 @@ using System.Reflection;
 
 // ReSharper disable UnusedParameter.Local
 
-namespace Unity.Dynamic.Expressions
+namespace GameDevWare.Dynamic.Expressions
 {
-	static partial class Executor
+	internal static partial class Executor
 	{
 
 		private const int LOCAL_OPERAND1 = 0;
@@ -220,19 +220,19 @@ namespace Unity.Dynamic.Expressions
 
 		public static void RegisterForFastCall<InstanceT, Arg1T, Arg2T, Arg3T, ResultT>()
 		{
-			MethodCallWrapper.RegisterInstanceMethod<InstanceT, Arg1T, Arg2T, Arg3T, ResultT>();
+			MethodCall.RegisterInstanceMethod<InstanceT, Arg1T, Arg2T, Arg3T, ResultT>();
 		}
 		public static void RegisterForFastCall<InstanceT, Arg1T, Arg2T, ResultT>()
 		{
-			MethodCallWrapper.RegisterInstanceMethod<InstanceT, Arg1T, Arg2T, ResultT>();
+			MethodCall.RegisterInstanceMethod<InstanceT, Arg1T, Arg2T, ResultT>();
 		}
 		public static void RegisterForFastCall<InstanceT, Arg1T, ResultT>()
 		{
-			MethodCallWrapper.RegisterInstanceMethod<InstanceT, Arg1T, ResultT>();
+			MethodCall.RegisterInstanceMethod<InstanceT, Arg1T, ResultT>();
 		}
 		public static void RegisterForFastCall<InstanceT, ResultT>()
 		{
-			MethodCallWrapper.RegisterInstanceMethod<InstanceT, ResultT>();
+			MethodCall.RegisterInstanceMethod<InstanceT, ResultT>();
 		}
 
 		private static Func<Closure, object> Expression(Expression exp, ConstantExpression[] constantsExprs,
@@ -556,7 +556,7 @@ namespace Unity.Dynamic.Expressions
 		{
 			var targetFn = Expression(methodCallExpression.Object, constantsExprs, localsExprs);
 			var argsFns = methodCallExpression.Arguments.Select(e => Expression(e, constantsExprs, localsExprs)).ToArray();
-			var invokeFn = MethodCallWrapper.TryCreate(methodCallExpression.Method);
+			var invokeFn = MethodCall.TryCreate(methodCallExpression.Method);
 
 			if (invokeFn != null)
 			{
@@ -738,7 +738,7 @@ namespace Unity.Dynamic.Expressions
 					fromType == typeof(int) && fromType == typeof(uint) &&
 					fromType == typeof(long) && fromType == typeof(ulong))
 				{
-					value = BuildInOperations.Convert(closure, value, Enum.GetUnderlyingType(toType), ExpressionType.Convert, null);
+					value = Intrinsics.Convert(closure, value, Enum.GetUnderlyingType(toType), ExpressionType.Convert, null);
 					return Enum.ToObject(toType, closure.Unbox<object>(value));
 				}
 				// from enum
@@ -748,7 +748,7 @@ namespace Unity.Dynamic.Expressions
 					toType == typeof(long) && toType == typeof(ulong))
 				{
 					value = System.Convert.ChangeType(value, Enum.GetUnderlyingType(fromType));
-					value = BuildInOperations.Convert(closure, value, toType, ExpressionType.Convert, null);
+					value = Intrinsics.Convert(closure, value, toType, ExpressionType.Convert, null);
 					return value;
 				}
 				// to nullable - noop
@@ -762,8 +762,10 @@ namespace Unity.Dynamic.Expressions
 					else
 						return value;
 				}
+				else if (toType.IsAssignableFrom(fromType))
+					return value;
 
-				return BuildInOperations.Convert(closure, value, toType, convertType, convertOperator);
+				return Intrinsics.Convert(closure, value, toType, convertType, convertOperator);
 			};
 		}
 
@@ -782,11 +784,11 @@ namespace Unity.Dynamic.Expressions
 				{
 					case ExpressionType.Negate:
 					case ExpressionType.NegateChecked:
-						return BuildInOperations.UnaryOperation(closure, operand, unaryExpression.NodeType, opUnaryNegation);
+						return Intrinsics.UnaryOperation(closure, operand, unaryExpression.NodeType, opUnaryNegation);
 					case ExpressionType.UnaryPlus:
-						return BuildInOperations.UnaryOperation(closure, operand, unaryExpression.NodeType, opUnaryPlus);
+						return Intrinsics.UnaryOperation(closure, operand, unaryExpression.NodeType, opUnaryPlus);
 					case ExpressionType.Not:
-						return BuildInOperations.UnaryOperation(closure, operand, unaryExpression.NodeType, opOnesComplement);
+						return Intrinsics.UnaryOperation(closure, operand, unaryExpression.NodeType, opOnesComplement);
 					case ExpressionType.ArrayLength:
 						return closure.Unbox<Array>(operand).Length;
 				}
@@ -830,9 +832,9 @@ namespace Unity.Dynamic.Expressions
 				{
 					case ExpressionType.Add:
 					case ExpressionType.AddChecked:
-						return BuildInOperations.BinaryOperation(closure, left, right, binaryExpression.NodeType, opAddition);
+						return Intrinsics.BinaryOperation(closure, left, right, binaryExpression.NodeType, opAddition);
 					case ExpressionType.And:
-						return BuildInOperations.BinaryOperation(closure, left, right, binaryExpression.NodeType, opBitwiseAnd);
+						return Intrinsics.BinaryOperation(closure, left, right, binaryExpression.NodeType, opBitwiseAnd);
 					case ExpressionType.ArrayIndex:
 						return closure.Is<int[]>(right)
 							? closure.Unbox<Array>(left).GetValue(closure.Unbox<int[]>(right))
@@ -840,35 +842,35 @@ namespace Unity.Dynamic.Expressions
 					case ExpressionType.Coalesce:
 						return left ?? right;
 					case ExpressionType.Divide:
-						return BuildInOperations.BinaryOperation(closure, left, right, binaryExpression.NodeType, opDivision);
+						return Intrinsics.BinaryOperation(closure, left, right, binaryExpression.NodeType, opDivision);
 					case ExpressionType.Equal:
-						return BuildInOperations.BinaryOperation(closure, left, right, binaryExpression.NodeType, opEquality);
+						return Intrinsics.BinaryOperation(closure, left, right, binaryExpression.NodeType, opEquality);
 					case ExpressionType.ExclusiveOr:
-						return BuildInOperations.BinaryOperation(closure, left, right, binaryExpression.NodeType, opExclusiveOr);
+						return Intrinsics.BinaryOperation(closure, left, right, binaryExpression.NodeType, opExclusiveOr);
 					case ExpressionType.GreaterThan:
-						return BuildInOperations.BinaryOperation(closure, left, right, binaryExpression.NodeType, opGreaterThan);
+						return Intrinsics.BinaryOperation(closure, left, right, binaryExpression.NodeType, opGreaterThan);
 					case ExpressionType.GreaterThanOrEqual:
-						return BuildInOperations.BinaryOperation(closure, left, right, binaryExpression.NodeType, opGreaterThanOrEqual);
+						return Intrinsics.BinaryOperation(closure, left, right, binaryExpression.NodeType, opGreaterThanOrEqual);
 					case ExpressionType.LeftShift:
 					case ExpressionType.Power:
 					case ExpressionType.RightShift:
-						return BuildInOperations.BinaryOperation(closure, left, right, binaryExpression.NodeType, null);
+						return Intrinsics.BinaryOperation(closure, left, right, binaryExpression.NodeType, null);
 					case ExpressionType.LessThan:
-						return BuildInOperations.BinaryOperation(closure, left, right, binaryExpression.NodeType, opLessThan);
+						return Intrinsics.BinaryOperation(closure, left, right, binaryExpression.NodeType, opLessThan);
 					case ExpressionType.LessThanOrEqual:
-						return BuildInOperations.BinaryOperation(closure, left, right, binaryExpression.NodeType, opLessThanOrEqual);
+						return Intrinsics.BinaryOperation(closure, left, right, binaryExpression.NodeType, opLessThanOrEqual);
 					case ExpressionType.Modulo:
-						return BuildInOperations.BinaryOperation(closure, left, right, binaryExpression.NodeType, opModulus);
+						return Intrinsics.BinaryOperation(closure, left, right, binaryExpression.NodeType, opModulus);
 					case ExpressionType.Multiply:
 					case ExpressionType.MultiplyChecked:
-						return BuildInOperations.BinaryOperation(closure, left, right, binaryExpression.NodeType, opMultiply);
+						return Intrinsics.BinaryOperation(closure, left, right, binaryExpression.NodeType, opMultiply);
 					case ExpressionType.NotEqual:
-						return !((bool)BuildInOperations.BinaryOperation(closure, left, right, ExpressionType.Equal, opEquality));
+						return !((bool)Intrinsics.BinaryOperation(closure, left, right, ExpressionType.Equal, opEquality));
 					case ExpressionType.Or:
-						return BuildInOperations.BinaryOperation(closure, left, right, binaryExpression.NodeType, opBitwiseOr);
+						return Intrinsics.BinaryOperation(closure, left, right, binaryExpression.NodeType, opBitwiseOr);
 					case ExpressionType.Subtract:
 					case ExpressionType.SubtractChecked:
-						return BuildInOperations.BinaryOperation(closure, left, right, binaryExpression.NodeType, opSubtraction);
+						return Intrinsics.BinaryOperation(closure, left, right, binaryExpression.NodeType, opSubtraction);
 				}
 
 				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_COMPIL_UNKNOWNBINARYEXPRTYPE, binaryExpression.Type));

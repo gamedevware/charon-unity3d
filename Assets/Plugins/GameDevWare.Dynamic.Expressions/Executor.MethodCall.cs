@@ -23,14 +23,14 @@ using System.Reflection;
 
 // ReSharper disable PossibleNullReferenceException
 
-namespace Unity.Dynamic.Expressions
+namespace GameDevWare.Dynamic.Expressions
 {
 	partial class Executor
 	{
 		private delegate object InvokeOperation(Closure closure, Func<Closure, object>[] argumentFns);
 		private delegate InvokeOperation InvokeOperationCreator(MethodInfo method, ParameterInfo[] parameters);
 
-		private class MethodCallWrapper
+		private class MethodCall
 		{
 			private static readonly Dictionary<MethodInfo, InvokeOperation> StaticMethods = new Dictionary<MethodInfo, InvokeOperation>();
 			private static readonly Dictionary<MethodInfo, InvokeOperation> InstanceMethods = new Dictionary<MethodInfo, InvokeOperation>();
@@ -38,7 +38,7 @@ namespace Unity.Dynamic.Expressions
 
 			private readonly Delegate fn;
 
-			private MethodCallWrapper(Type delegateType, MethodInfo method)
+			private MethodCall(Type delegateType, MethodInfo method)
 			{
 				if (delegateType == null) throw new ArgumentNullException("method");
 				if (method == null) throw new ArgumentNullException("method");
@@ -373,7 +373,7 @@ namespace Unity.Dynamic.Expressions
 				if (parameters.Length != 0 || method.ReturnType != typeof(ResultT))
 					return null;
 
-				var wrapper = new MethodCallWrapper(typeof(Func<ResultT>), method);
+				var wrapper = new MethodCall(typeof(Func<ResultT>), method);
 
 				// never happens, just for AOT
 #pragma warning disable 1720
@@ -394,7 +394,7 @@ namespace Unity.Dynamic.Expressions
 				if (parameters.Length != 1 || method.ReturnType != typeof(ResultT) || parameters[0].ParameterType != typeof(Arg1T))
 					return null;
 
-				var wrapper = new MethodCallWrapper(typeof(Func<Arg1T, ResultT>), method);
+				var wrapper = new MethodCall(typeof(Func<Arg1T, ResultT>), method);
 
 				// never happens, just for AOT
 #pragma warning disable 1720
@@ -416,7 +416,7 @@ namespace Unity.Dynamic.Expressions
 					parameters[1].ParameterType != typeof(Arg2T))
 					return null;
 
-				var wrapper = new MethodCallWrapper(typeof(Func<Arg1T, Arg2T, ResultT>), method);
+				var wrapper = new MethodCall(typeof(Func<Arg1T, Arg2T, ResultT>), method);
 
 				// never happens, just for AOT
 #pragma warning disable 1720
@@ -438,7 +438,7 @@ namespace Unity.Dynamic.Expressions
 					parameters[1].ParameterType != typeof(Arg2T) || parameters[2].ParameterType != typeof(Arg3T))
 					return null;
 
-				var wrapper = new MethodCallWrapper(typeof(Func<Arg1T, Arg2T, Arg3T, ResultT>), method);
+				var wrapper = new MethodCall(typeof(Func<Arg1T, Arg2T, Arg3T, ResultT>), method);
 
 				// never happens, just for AOT
 #pragma warning disable 1720
@@ -460,7 +460,7 @@ namespace Unity.Dynamic.Expressions
 					parameters[1].ParameterType != typeof(Arg2T) || parameters[2].ParameterType != typeof(Arg3T) || parameters[3].ParameterType != typeof(Arg4T))
 					return null;
 
-				var wrapper = new MethodCallWrapper(typeof(Func<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>), method);
+				var wrapper = new MethodCall(typeof(Func<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>), method);
 
 				// never happens, just for AOT
 #pragma warning disable 1720

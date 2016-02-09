@@ -724,14 +724,14 @@ namespace Assets.Unity.Charon.Editor
 
 			if (lastVersion == null)
 			{
-				if (progressCallback != null) progressCallback(Resources.UI_DATASOURCE_PROGRESS_DONE, 1.0f);
+				if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESSDONE, 1.0f);
 
 				Debug.Log("No public releases available.");
 				yield break;
 			}
 			else if (toolsVersion != null && toolsVersion >= lastVersion)
 			{
-				if (progressCallback != null) progressCallback(Resources.UI_DATASOURCE_PROGRESS_DONE, 1.0f);
+				if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESSDONE, 1.0f);
 
 				Debug.Log(string.Format("{2} version is '{0}' and last tools version is '{1}'. No update required.", toolsVersion, lastVersion, Path.GetFileName(toolsPath)));
 				yield break;
@@ -783,7 +783,7 @@ namespace Assets.Unity.Charon.Editor
 
 			Debug.Log(string.Format("{1} version is '{0}'. Update is complete.", toolsVersion, Path.GetFileName(toolsPath)));
 
-			if (progressCallback != null) progressCallback(Resources.UI_DATASOURCE_PROGRESS_DONE, 1.0f);
+			if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESSDONE, 1.0f);
 		}
 	}
 }
