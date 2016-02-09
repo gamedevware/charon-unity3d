@@ -291,7 +291,7 @@ namespace Assets.Unity.Charon.Editor {
         public const string UI_UNITYPLUGIN_MENUMIGRATEASSETS = "Migrate Assets";
         public const string UI_UNITYPLUGIN_MENURECOVERYSCRIPTS = "Recovery Scripts";
         public const string UI_UNITYPLUGIN_MENUSCANFORNEWASSETS = "Scan for new Assets";
-        public const string UI_UNITYPLUGIN_MENUSUBMITISSUE = "Submit an Issue (website)";
+        public const string UI_UNITYPLUGIN_MENUREPORTISSUE = "Report an Issue...";
         public const string UI_UNITYPLUGIN_MENUTROUBLESHOOTING = "Troubleshooting";
         public const string UI_UNITYPLUGIN_MENUVALIDATEASSETS = "Validate Assets";
         public const string UI_UNITYPLUGIN_MENUVERBOSELOGS = "Verbose Logs";
@@ -365,6 +365,31 @@ namespace Assets.Unity.Charon.Editor {
         public const string UI_UNITYPLUGIN_PROGRESSCHECKINGTOOLSVERSION = "Checking current tools version...";
         public const string UI_UNITYPLUGIN_PROGRESSDOWNLOADINGS = "Downloading assets ({0:F2}/{1:F2}Mib)...";
         public const string UI_UNITYPLUGIN_PROGRESSGETTINGAVAILABLEBUILDS = "Getting list of public releases...";
+        public const string UI_LOGINPANEL_CONTINUEBUTTON = "Continue";
+        public const string UI_LOGINPANEL_EMAILFIELDLABEL = "Email";
+        public const string UI_LOGINPANEL_TITLE = "Sign In";
+        public const string UI_LOGINPANEL_ACCOUNTWITHEMAILDOESNOTEXISTS = "An account with email '{0}' does not exists.";
+        public const string UI_LOGINPANEL_BACKBUTTON = "Back";
+        public const string UI_LOGINPANEL_ERRORMESSAGE = "An error occured. Try again later.";
+        public const string UI_LOGINPANEL_PASSWORDFIELDLABEL = "Password";
+        public const string UI_LOGINPANEL_SIGNINBUTTON = "Sign In";
+        public const string UI_LOGINPANEL_INVALIDEMAILMESSAGE = "Invalid email address.";
+        public const string UI_LOGINPANEL_NEWPASSWORDFIELDLABEL = "New Password";
+        public const string UI_LOGINPANEL_PASSWORDSDOESNTMATCHMESSAGE = "Passwords doesn't match.";
+        public const string UI_LOGINPANEL_RETYPEPASSWORDFIELDLABEL = "Re-Type Password";
+        public const string UI_LOGINPANEL_SIGNUPBUTTON = "Sign Up";
+        public const string UI_LOGINPANEL_SELECTTITLE = "Select your account";
+        public const string UI_PROCESSTYPE_LOAD = "Load";
+        public const string UI_MAIN_DATALOADINGFAILEDMESSAGE = "Failed to load the data. Perhaps this is due to formatting errors or data itself. Read the error message and try to solve the problem manually. If you don't how to solve it, try to google error message, then contact the developer. Error: {0}";
+        public const string UI_MAIN_DATALOADINGFAILEDTITLE = "Loading Failed";
+        public const string UI_UNITYPLUGIN_ATTACHFILEBUTTON = "Attach...";
+        public const string UI_UNITYPLUGIN_SELECTFILETOATTACHTITLE = "Select file to attach";
+        public const string UI_UNITYPLUGIN_REPORTBUTTON = "Report";
+        public const string UI_UNITYPLUGIN_WINDOWATTACHFILECHECKBOX = "Attach '{0}' file ({1:F2}Mb)";
+        public const string UI_UNITYPLUGIN_WINDOWREPORTERLABEL = "Your E-Mail or Name";
+        public const string UI_UNITYPLUGIN_WINDOWREPORTISSUETITLE = "Report an Issue";
+        public const string UI_UNITYPLUGIN_WINDOWTYPELABEL = "Type";
+        public const string UI_UNITYPLUGIN_WINDOWREPORTTHANKSMESSAGE = "Thank you for your feedback!";
     }
 #endif
 }

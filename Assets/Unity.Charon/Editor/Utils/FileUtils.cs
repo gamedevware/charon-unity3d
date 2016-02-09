@@ -31,7 +31,6 @@ namespace Assets.Unity.Charon.Editor
 		public static string MakeProjectRelative(string path)
 		{
 			if (String.IsNullOrEmpty(path)) return null;
-			var oldPath = path;
 			var fullPath = Path.GetFullPath(Environment.CurrentDirectory).Replace("\\", "/");
 			path = Path.GetFullPath(path).Replace("\\", "/");
 
@@ -46,9 +45,6 @@ namespace Assets.Unity.Charon.Editor
 				path = path.Substring(fullPath.Length + 1);
 			else
 				path = null;
-
-			if (Settings.Current != null && Settings.Current.Verbose && oldPath != path)
-				Debug.Log("Making path '" + oldPath + "' relative to project location '" + fullPath + "'. New path is: '" + path + "'.");
 
 			return path;
 		}

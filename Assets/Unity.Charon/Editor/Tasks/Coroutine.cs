@@ -42,9 +42,6 @@ namespace Assets.Unity.Charon.Editor.Tasks
 
 					if (task is IAsyncResult && ((IAsyncResult)task).IsCompleted)
 					{
-						if (task is Promise && ((Promise)task).HasErrors)
-							error = ((Promise)task).Error;
-
 						UpdateList.RemoveAt(index);
 						index--;
 					}
@@ -125,9 +122,11 @@ namespace Assets.Unity.Charon.Editor.Tasks
 						this.lastResult = (T)this.current;
 				}
 			}
-			catch (Exception e)
+			catch (Exception error)
 			{
-				this.SetFailed(e);
+				Debug.LogError(this.GetType().Name + " was finished with error: " + error.Unwrap());
+
+				this.TrySetFailed(error);
 			}
 		}
 

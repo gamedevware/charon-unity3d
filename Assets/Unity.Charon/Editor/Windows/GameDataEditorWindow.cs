@@ -237,7 +237,10 @@ namespace Assets.Unity.Charon.Editor.Windows
 				System.Diagnostics.Process.GetCurrentProcess().Id.ToString(),
 				Settings.Current.Verbose ? "--verbose" : ""
 			);
-			this.editorProcess.StartInfo.EnvironmentVariables["APP_DATA"] = Path.GetFullPath("./Library/Charon");
+			this.editorProcess.StartInfo.EnvironmentVariables["CHARON_APP_DATA"] = Path.GetFullPath("./Library/Charon");
+			if(string.IsNullOrEmpty(Settings.Current.LicenseServerAddress) == false)
+				this.editorProcess.StartInfo.EnvironmentVariables["CHARON_LICENSE_SERVER"] = Settings.Current.LicenseServerAddress;
+
 			this.editorProcess.RequireDotNetRuntime();
 			this.editorProcess.Start();
 

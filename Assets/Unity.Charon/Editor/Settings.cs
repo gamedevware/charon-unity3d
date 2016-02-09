@@ -32,13 +32,12 @@ namespace Assets.Unity.Charon.Editor
 		public const string PREF_PREFIX = "Charon_";
 		public const string SETTINGS_PATH = "Assets/Unity.Charon/Editor/Settings.asset";
 		public const string DEFAULT_TOOLS_PATH = "Assets/Unity.Charon/Editor/Charon.exe";
-		public const string LIST_SPLITTER = ";";
-		public static readonly char[] ListSplitterChars = LIST_SPLITTER.ToArray();
 
-		public static Settings Current;
+		public static readonly Settings Current;
 
 		public string ToolsPath;
 		public string BrowserPath;
+		public string LicenseServerAddress;
 		public Browser Browser;
 		public int ToolsPort;
 		public List<string> GameDataPaths;
@@ -48,6 +47,11 @@ namespace Assets.Unity.Charon.Editor
 		public int Version;
 
 		static Settings()
+		{
+			Current = Load();
+		}
+
+		private static Settings Load()
 		{
 			var settings = AssetDatabase.LoadAssetAtPath<Settings>(SETTINGS_PATH);
 
@@ -63,18 +67,12 @@ namespace Assets.Unity.Charon.Editor
 										  let path = FileUtils.MakeProjectRelative(AssetDatabase.GUIDToAssetPath(id))
 										  where path != null && path.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
 										  select path).ToList();
+				settings.LicenseServerAddress = null;
 				settings.Verbose = false;
 			}
 			settings.Validate();
 
-			if ((EditorGUIUtility.SerializeMainMenuToString() ?? "").Contains(Resources.UI_UNITYPLUGIN_MENUVERBOSELOGS))
-				UnityEditor.Menu.SetChecked(Menu.TroubleshootingPrefix + Resources.UI_UNITYPLUGIN_MENUVERBOSELOGS, settings.Verbose);
-
-
-			if ((EditorGUIUtility.SerializeMainMenuToString() ?? "").Contains(Resources.UI_UNITYPLUGIN_MENURECOVERYSCRIPTS))
-				UnityEditor.Menu.SetChecked(Menu.TroubleshootingPrefix + Resources.UI_UNITYPLUGIN_MENURECOVERYSCRIPTS, !settings.SuppressRecoveryScripts);
-
-			Current = settings;
+			return settings;
 		}
 		public void Save()
 		{

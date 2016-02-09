@@ -77,12 +77,13 @@ namespace Assets.Unity.Charon.Editor.Tasks
 			if (this.aborted)
 				yield break;
 
-			this.process = default(Process);
+			var process = default(Process);
 			var error = default(Exception);
-			try { this.process = Process.Start(this.startInfo); }
+			try { process = Process.Start(this.startInfo); }
 			catch (Exception e) { error = e; }
+			this.process = process;
 
-			if (error != null || this.process == null)
+			if (error != null || process == null)
 			{
 				yield return int.MinValue;
 				yield break;
@@ -91,16 +92,16 @@ namespace Assets.Unity.Charon.Editor.Tasks
 			if (this.aborted)
 				yield break;
 
-			this.ProcessId = this.process.Id;
+			this.ProcessId = process.Id;
 
 			if (this.outputDataReceived != null)
 			{
-				this.process.OutputDataReceived += outputDataReceived;
+				process.OutputDataReceived += outputDataReceived;
 				process.BeginOutputReadLine();
 			}
 			if (this.errorDataReceived != null)
 			{
-				this.process.ErrorDataReceived += errorDataReceived;
+				process.ErrorDataReceived += errorDataReceived;
 				process.BeginErrorReadLine();
 			}
 
@@ -113,10 +114,10 @@ namespace Assets.Unity.Charon.Editor.Tasks
 
 				try
 				{
-					this.process.Refresh();
-					hasExited = this.process.HasExited;
+					process.Refresh();
+					hasExited = process.HasExited;
 					if (hasExited)
-						exitCode = this.process.ExitCode;
+						exitCode = process.ExitCode;
 				}
 				catch (InvalidOperationException)
 				{
@@ -132,6 +133,13 @@ namespace Assets.Unity.Charon.Editor.Tasks
 			this.ExitCode = exitCode;
 			if (Settings.Current.Verbose)
 				UnityEngine.Debug.Log(string.Format("Process '{0}' has exited with code {1}.", this.startInfo.FileName, exitCode));
+
+
+			this.process = null;
+			process.Refresh();
+			yield return null;
+			process.Dispose();
+			yield return null;
 		}
 		private IEnumerable KillAsync(Process currentProcess)
 		{
@@ -155,6 +163,8 @@ namespace Assets.Unity.Charon.Editor.Tasks
 						throw;
 				}
 			}
+
+			currentProcess.Dispose();
 		}
 
 		public bool Kill()
@@ -201,8 +211,9 @@ namespace Assets.Unity.Charon.Editor.Tasks
 
 			if (!currentProcess.HasExited)
 				return new Coroutine(KillAsync(currentProcess));
-			else
-				return Promise.Fulfilled;
+
+			currentProcess.Dispose();
+			return Promise.Fulfilled;
 		}
 		public void RequireDotNetRuntime()
 		{

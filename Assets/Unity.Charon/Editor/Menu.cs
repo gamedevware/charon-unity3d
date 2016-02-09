@@ -159,10 +159,10 @@ namespace Assets.Unity.Charon.Editor
 			Settings.Current.Save();
 		}
 
-		[MenuItem(TroubleshootingPrefix + Resources.UI_UNITYPLUGIN_MENUSUBMITISSUE, false, 7)]
-		private static void SubmitIssue()
+		[MenuItem(TroubleshootingPrefix + Resources.UI_UNITYPLUGIN_MENUREPORTISSUE, false, 7)]
+		private static void ReportIssue()
 		{
-			Application.OpenURL("https://github.com/deniszykov/charon-unity3d/issues");
+			EditorWindow.GetWindow<ReportIssueWindow>(utility: true);
 		}
 
 		[MenuItem(TroubleshootingPrefix + Resources.UI_UNITYPLUGIN_MENUCHECKRUNTIME, false, 6)]
@@ -293,7 +293,7 @@ namespace Assets.Unity.Charon.Editor
 					Settings.Current.ToolsPath,
 					null,
 					(s, ea) => { if (string.IsNullOrEmpty(ea.Data) == false) errorText.Append(ea.Data); },
-					"VALIDATE", fullGameDataPath,
+					"DATA", "VALIDATE", fullGameDataPath,
 					Settings.Current.Verbose ? "--verbose" : ""
 				);
 				checkProcess.RequireDotNetRuntime();
@@ -377,7 +377,7 @@ namespace Assets.Unity.Charon.Editor
 								Settings.Current.ToolsPath,
 								null,
 								(sender, args) => { if (!string.IsNullOrEmpty(args.Data)) errorText.Append(args.Data); },
-								generator == GameDataSettings.CodeGenerator.CSharp ? "GENERATECSHARPCODE" : "GENERATEUNITYCSHARPCODE",
+								"DATA", generator == GameDataSettings.CodeGenerator.CSharp ? "GENERATECSHARPCODE" : "GENERATEUNITYCSHARPCODE",
 								Path.GetFullPath(gameDataPath),
 								"--namespace",
 								gameDataSettings.Namespace,
@@ -527,7 +527,7 @@ namespace Assets.Unity.Charon.Editor
 					Settings.Current.ToolsPath,
 					null,
 					(sender, args) => { if (!string.IsNullOrEmpty(args.Data)) errorText.Append(args.Data); },
-					"MIGRATE",
+					"DATA", "MIGRATE",
 					Path.GetFullPath(gameDataPath),
 					Settings.Current.Verbose ? "--verbose" : ""
 				);
@@ -572,7 +572,7 @@ namespace Assets.Unity.Charon.Editor
 					Settings.Current.ToolsPath,
 					(sender, args) => { if (!string.IsNullOrEmpty(args.Data)) outputText.Append(args.Data); },
 					(sender, args) => { if (!string.IsNullOrEmpty(args.Data)) errorText.Append(args.Data); },
-					"VALIDATE", Path.GetFullPath(gameDataPath),
+					"DATA", "VALIDATE", Path.GetFullPath(gameDataPath),
 					"--output", "out",
 					"--outputFormat", "json",
 					Settings.Current.Verbose ? "--verbose" : ""
@@ -707,12 +707,12 @@ namespace Assets.Unity.Charon.Editor
 
 			var getBuildsHeaders = new NameValueCollection { { "Accept", "application/json" } };
 			var getBuildsUrl = new Uri("http://localhost:50100/api/Build");
-			var getBuildsRequest = new GetRequest<ApiResponse<JsonValue>>(getBuildsUrl, getBuildsHeaders);
+			var getBuildsRequest = new GetRequest<JsonValue>(getBuildsUrl, getBuildsHeaders);
 			yield return getBuildsRequest;
 
 			var response = getBuildsRequest.GetResult();
-			if (response.Message != null) throw new InvalidOperationException(string.Format("Request to '{0}' has failed with message from server: {1}.", getBuildsUrl, response.Message));
-			var builds = (JsonArray)response.Result;
+			if (response.ContainsKey("Message")) throw new InvalidOperationException(string.Format("Request to '{0}' has failed with message from server: {1}.", getBuildsUrl, response["Message"]));
+			var builds = (JsonArray)response["Result"];
 			var lastVersion =
 			(
 				from build in builds

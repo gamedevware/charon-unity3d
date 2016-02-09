@@ -29,6 +29,8 @@ namespace Assets.Unity.Charon.Editor
 	class AssetGenerator : ScriptableObject
 	{
 		private const string PREFS_KEY = Settings.PREF_PREFIX + "AssetGenerationList";
+		public const string LIST_SPLITTER = ";";
+		public static readonly char[] ListSplitterChars = LIST_SPLITTER.ToArray();
 
 		public static AssetGenerator Instance;
 		private HashSet<string> AssetGenerationList;
@@ -54,7 +56,7 @@ namespace Assets.Unity.Charon.Editor
 			if (string.IsNullOrEmpty(listStr))
 				this.AssetGenerationList = new HashSet<string>();
 			else
-				this.AssetGenerationList = new HashSet<string>(listStr.Split(Settings.ListSplitterChars, StringSplitOptions.RemoveEmptyEntries));
+				this.AssetGenerationList = new HashSet<string>(listStr.Split(ListSplitterChars, StringSplitOptions.RemoveEmptyEntries));
 		}
 
 		protected void OnEnable()
@@ -77,7 +79,7 @@ namespace Assets.Unity.Charon.Editor
 			if (this.AssetGenerationList == null || this.AssetGenerationList.Count == 0)
 				return;
 
-			var listStr = string.Join(Settings.LIST_SPLITTER, this.AssetGenerationList.ToArray());
+			var listStr = string.Join(LIST_SPLITTER, this.AssetGenerationList.ToArray());
 			EditorPrefs.SetString(PREFS_KEY, listStr);
 		}
 	}

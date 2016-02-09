@@ -18,6 +18,9 @@
 */
 
 using System;
+using System.Linq;
+using System.Text;
+using Assets.Unity.Charon.Editor.Json;
 using Assets.Unity.Charon.Editor.Tasks;
 using Assets.Unity.Charon.Editor.Utils;
 using UnityEditor;
@@ -28,8 +31,12 @@ namespace Assets.Unity.Charon.Editor.Windows
 	class AboutCharonWindow : EditorWindow
 	{
 		private string toolsVersion = Resources.UI_UNITYPLUGIN_WINDOWCHECKINGVERSION;
+		private string licenseHolder = Resources.UI_UNITYPLUGIN_WINDOWCHECKINGVERSION;
+		private string licenseKey = Resources.UI_UNITYPLUGIN_WINDOWCHECKINGVERSION;
 		[NonSerialized]
 		private ExecuteCommandTask checkToolsVersion;
+		[NonSerialized]
+		private ExecuteCommandTask checkLicense;
 
 		public AboutCharonWindow()
 		{
@@ -48,9 +55,12 @@ namespace Assets.Unity.Charon.Editor.Windows
 			GUILayout.Box("Charon", new GUIStyle { fontSize = 72, alignment = TextAnchor.MiddleCenter });
 			GUILayout.Space(10);
 			GUILayout.Label(Resources.UI_UNITYPLUGIN_WINDOWINFOGROUP, EditorStyles.boldLabel);
-			EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_WINDOWTOOLSVERSIONLABEL, toolsVersion);
-			EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_WINDOWLICENSEHOLDER, "");
-			EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_WINDOWLICENSEKEY, "");
+			EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_WINDOWTOOLSVERSIONLABEL, this.toolsVersion);
+			GUI.enabled = false;
+			EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_WINDOWLICENSEHOLDER, this.licenseHolder);
+			GUI.enabled = this.checkLicense != null && this.checkLicense.IsRunning == false;
+			EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_WINDOWLICENSEKEY, this.licenseKey);
+			GUI.enabled = true;
 			GUILayout.Space(10);
 			GUILayout.Label(Resources.UI_UNITYPLUGIN_WINDOWSETTINGSGROUP, EditorStyles.boldLabel);
 			GUI.enabled = System.IO.File.Exists(Settings.Current.ToolsPath) == false;
@@ -99,6 +109,8 @@ namespace Assets.Unity.Charon.Editor.Windows
 					break;
 				case ToolsCheckResult.MissingTools:
 					this.toolsVersion = Resources.UI_UNITYPLUGIN_WINDOWCHECKRESULTMISSINGTOOLS;
+					this.licenseHolder = "";
+					this.licenseKey = "";
 					break;
 				case ToolsCheckResult.Ok:
 					if (this.checkToolsVersion == null)
@@ -108,11 +120,70 @@ namespace Assets.Unity.Charon.Editor.Windows
 							(s, ea) => { if (!string.IsNullOrEmpty(ea.Data)) this.toolsVersion = ea.Data; },
 							(s, ea) => { if (!string.IsNullOrEmpty(ea.Data)) this.toolsVersion = ea.Data; },
 							"VERSION");
+						this.checkToolsVersion.IgnoreFault().ContinueWith(_ => this.Repaint());
 						this.checkToolsVersion.RequireDotNetRuntime();
 						this.checkToolsVersion.Start();
 					}
+					else if (this.checkToolsVersion != null && !this.checkToolsVersion.IsRunning && this.checkLicense == null)
+					{
+						var licensesJson = new StringBuilder();
+						this.checkLicense = new ExecuteCommandTask(
+							Settings.Current.ToolsPath,
+							(s, ea) => { lock (licensesJson) licensesJson.Append(ea.Data ?? ""); },
+							(s, ea) => { lock (licensesJson) licensesJson.Append(ea.Data ?? ""); },
+							"ACCOUNT", "LICENSE", "SHOWLOCAL"
+						);
+						this.checkLicense.IgnoreFault().ContinueWith(_ => { lock (licensesJson) HandleLicenseCheckResult(licensesJson.ToString()); });
+
+						this.checkLicense.StartInfo.EnvironmentVariables["CHARON_APP_DATA"] = System.IO.Path.GetFullPath("./Library/Charon");
+						if (string.IsNullOrEmpty(Settings.Current.LicenseServerAddress) == false)
+							this.checkLicense.StartInfo.EnvironmentVariables["CHARON_LICENSE_SERVER"] = Settings.Current.LicenseServerAddress;
+						this.checkLicense.RequireDotNetRuntime();
+						this.checkLicense.Start();
+					}
 					break;
+
 			}
+		}
+
+		private void HandleLicenseCheckResult(string licensesJson)
+		{
+			try
+			{
+				if (checkLicense.ExitCode != 0)
+				{
+					this.licenseHolder = licensesJson;
+					this.licenseKey = null;
+				}
+				else
+				{
+					var licenses = (JsonArray)JsonValue.Parse(licensesJson);
+					switch (licenses.Count)
+					{
+						case 0:
+							this.licenseHolder = "";
+							this.licenseKey = "";
+							break;
+						case 1:
+							var license = (JsonObject)licenses[0];
+							var recipient = (JsonObject)license["Recipient"];
+							this.licenseHolder = recipient["FirstName"] + " " + recipient["LastName"];
+							this.licenseKey = license["SerialNumber"];
+							break;
+						default:
+							var topLicense = licenses.OrderByDescending(l => DateTime.Parse(l["ExpirationDate"].As<string>())).First();
+							licenses = new JsonArray(topLicense);
+							goto case 1;
+					}
+				}
+			}
+			catch
+			{
+				this.licenseHolder = "";
+				this.licenseKey = "";
+			}
+
+			this.Repaint();
 		}
 	}
 }
