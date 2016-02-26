@@ -1,7 +1,7 @@
 ﻿/*
-	Copyright (c) 2015 Denis Zykov
+	Copyright (c) 2016 Denis Zykov
 
-	This is part of Charon Game Data Editor Unity Plugin.
+	This is part of "Charon: Game Data Editor" Unity Plugin.
 
 	Charon Game Data Editor Unity Plugin is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,7 +30,6 @@ namespace GameDevWare.Dynamic.Expressions
 {
 	internal static partial class Executor
 	{
-
 		private const int LOCAL_OPERAND1 = 0;
 		private const int LOCAL_OPERAND2 = 1;
 		private const int LOCAL_FIRST_PARAMETER = 2; // this is offset of first parameter in Closure locals
@@ -71,7 +70,6 @@ namespace GameDevWare.Dynamic.Expressions
 				return boxed is T;
 			}
 		}
-
 		private sealed class ConstantsCollector : ExpressionVisitor
 		{
 			public readonly List<ConstantExpression> Constants = new List<ConstantExpression>();
@@ -693,30 +691,26 @@ namespace GameDevWare.Dynamic.Expressions
 					m.GetParameters().Length == 1 &&
 					m.GetParameters()[0].ParameterType == convertExpression.Operand.Type)
 			);
+			var toType = Nullable.GetUnderlyingType(convertExpression.Type) ?? convertExpression.Type;
+			var toIsNullable = Nullable.GetUnderlyingType(convertExpression.Type) != null;
+			var fromType = Nullable.GetUnderlyingType(convertExpression.Operand.Type) ?? convertExpression.Operand.Type;
+			var fromIsNullable = IsNullable(convertExpression.Operand);
 
 			return closure =>
 			{
 				var value = closure.Unbox<object>(valueFn(closure));
-				if (value == null && (!convertExpression.Type.IsValueType || convertExpression.IsLiftedToNull))
+				if (value == null && (convertExpression.Type.IsValueType == false || toIsNullable))
 					return null;
 
 				var convertType = convertExpression.NodeType;
 				if (convertType != ExpressionType.Convert)
 					convertType = ExpressionType.ConvertChecked;
 
-				var toType = convertExpression.Type;
-				var fromType = convertExpression.Operand.Type;
 				// un-box
 				if ((fromType == typeof(object) || fromType == typeof(ValueType) || fromType.IsInterface) && toType.IsValueType)
 				{
 					// null un-box
-					if (value == null)
-					{
-						if (toType.IsGenericType && toType.GetGenericTypeDefinition() == typeof(Nullable<>))
-							return null;
-						else
-							throw new NullReferenceException();
-					}
+					if (value == null) throw new NullReferenceException("Attempt to unbox a null value.");
 					// typecheck for un-box
 					if (value.GetType() == toType)
 						return value;
@@ -725,42 +719,39 @@ namespace GameDevWare.Dynamic.Expressions
 				// box
 				else if (fromType.IsValueType && (toType == typeof(object) || toType == typeof(ValueType) || toType.IsInterface))
 				{
-					// null box
-					if (value == null)
-						return null;
-
 					// typecheck for box
 					return toType.IsAssignableFrom(value.GetType()) ? value : null;
 				}
 				// to enum
-				else if (toType.IsEnum && fromType == typeof(byte) && fromType == typeof(sbyte) &&
-					fromType == typeof(short) && fromType == typeof(ushort) &&
-					fromType == typeof(int) && fromType == typeof(uint) &&
-					fromType == typeof(long) && fromType == typeof(ulong))
+				else if (toType.IsEnum && (fromType == typeof(byte) || fromType == typeof(sbyte) ||
+					fromType == typeof(short) || fromType == typeof(ushort) ||
+					fromType == typeof(int) || fromType == typeof(uint) ||
+					fromType == typeof(long) || fromType == typeof(ulong)))
 				{
-					value = Intrinsics.Convert(closure, value, Enum.GetUnderlyingType(toType), ExpressionType.Convert, null);
+					if (value == null) throw new NullReferenceException("Attempt to unbox a null value.");
+
+					value = Intrinsics.Convert(closure, value, Enum.GetUnderlyingType(toType), convertExpression.NodeType, null);
 					return Enum.ToObject(toType, closure.Unbox<object>(value));
 				}
 				// from enum
-				else if (fromType.IsEnum && toType == typeof(byte) && toType == typeof(sbyte) &&
-					toType == typeof(short) && toType == typeof(ushort) &&
-					toType == typeof(int) && toType == typeof(uint) &&
-					toType == typeof(long) && toType == typeof(ulong))
-				{
-					value = System.Convert.ChangeType(value, Enum.GetUnderlyingType(fromType));
-					value = Intrinsics.Convert(closure, value, toType, ExpressionType.Convert, null);
-					return value;
-				}
-				// to nullable - noop
-				// from nullable
-				if (toType.IsValueType && fromType.IsValueType &&
-					fromType.IsGenericType && fromType.GetGenericTypeDefinition() == typeof(Nullable<>) &&
-					fromType.GetGenericArguments()[0] == toType)
+				else if (fromType.IsEnum && (toType == typeof(byte) || toType == typeof(sbyte) ||
+					toType == typeof(short) || toType == typeof(ushort) ||
+					toType == typeof(int) || toType == typeof(uint) ||
+					toType == typeof(long) || toType == typeof(ulong)))
 				{
 					if (value == null)
-						throw new NullReferenceException();
-					else
-						return value;
+						throw new NullReferenceException("Attempt to unbox a null value.");
+
+					value = System.Convert.ChangeType(value, Enum.GetUnderlyingType(fromType));
+					value = Intrinsics.Convert(closure, value, toType, convertExpression.NodeType, null);
+					return value;
+				}
+				// from nullable
+				if (toType.IsValueType && fromIsNullable)
+				{
+					if (value == null) throw new NullReferenceException("Attempt to unbox a null value.");
+
+					value = Intrinsics.Convert(closure, value, Nullable.GetUnderlyingType(toType) ?? toType, convertExpression.NodeType, null);
 				}
 				else if (toType.IsAssignableFrom(fromType))
 					return value;
@@ -776,10 +767,15 @@ namespace GameDevWare.Dynamic.Expressions
 			var opUnaryNegation = WrapUnaryOperation(unaryExpression.Method) ?? WrapUnaryOperation(unaryExpression.Operand.Type, "op_UnaryNegation");
 			var opUnaryPlus = WrapUnaryOperation(unaryExpression.Method) ?? WrapUnaryOperation(unaryExpression.Operand.Type, "op_UnaryPlus");
 			var opOnesComplement = WrapUnaryOperation(unaryExpression.Method) ?? WrapUnaryOperation(unaryExpression.Operand.Type, "op_OnesComplement");
+			var isNullable = IsNullable(unaryExpression.Operand);
 
 			return closure =>
 			{
 				var operand = valueFn(closure);
+
+				if (isNullable && operand == null && unaryExpression.NodeType != ExpressionType.ArrayLength)
+					return null;
+
 				switch (unaryExpression.NodeType)
 				{
 					case ExpressionType.Negate:
@@ -815,8 +811,9 @@ namespace GameDevWare.Dynamic.Expressions
 			var opMultiply = WrapBinaryOperation(binaryExpression.Method) ?? WrapBinaryOperation(binaryExpression.Left.Type, "op_Multiply");
 			var opBitwiseOr = WrapBinaryOperation(binaryExpression.Method) ?? WrapBinaryOperation(binaryExpression.Left.Type, "op_BitwiseOr");
 			var opSubtraction = WrapBinaryOperation(binaryExpression.Method) ?? WrapBinaryOperation(binaryExpression.Left.Type, "op_Subtraction");
+			var isNullable = IsNullable(binaryExpression.Left) || IsNullable(binaryExpression.Right);
 
-			return (closure =>
+			return closure =>
 			{
 				switch (binaryExpression.NodeType)
 				{
@@ -828,6 +825,28 @@ namespace GameDevWare.Dynamic.Expressions
 
 				var left = leftFn(closure);
 				var right = rightFn(closure);
+
+				if
+				(
+					isNullable &&
+					(left == null || right == null) &&
+					binaryExpression.NodeType != ExpressionType.Coalesce &&
+					binaryExpression.NodeType != ExpressionType.ArrayIndex
+				)
+				{
+					// ReSharper disable once SwitchStatementMissingSomeCases
+					switch (binaryExpression.NodeType)
+					{
+						case ExpressionType.Equal: return closure.Box(left == right);
+						case ExpressionType.NotEqual: return closure.Box(left != right);
+						case ExpressionType.GreaterThan:
+						case ExpressionType.GreaterThanOrEqual:
+						case ExpressionType.LessThan:
+						case ExpressionType.LessThanOrEqual: return closure.Box(false);
+						default: return null;
+					}
+				}
+
 				switch (binaryExpression.NodeType)
 				{
 					case ExpressionType.Add:
@@ -845,6 +864,8 @@ namespace GameDevWare.Dynamic.Expressions
 						return Intrinsics.BinaryOperation(closure, left, right, binaryExpression.NodeType, opDivision);
 					case ExpressionType.Equal:
 						return Intrinsics.BinaryOperation(closure, left, right, binaryExpression.NodeType, opEquality);
+					case ExpressionType.NotEqual:
+						return closure.Box(closure.Unbox<bool>(Intrinsics.BinaryOperation(closure, left, right, ExpressionType.Equal, opEquality)) == false);
 					case ExpressionType.ExclusiveOr:
 						return Intrinsics.BinaryOperation(closure, left, right, binaryExpression.NodeType, opExclusiveOr);
 					case ExpressionType.GreaterThan:
@@ -864,8 +885,6 @@ namespace GameDevWare.Dynamic.Expressions
 					case ExpressionType.Multiply:
 					case ExpressionType.MultiplyChecked:
 						return Intrinsics.BinaryOperation(closure, left, right, binaryExpression.NodeType, opMultiply);
-					case ExpressionType.NotEqual:
-						return !((bool)Intrinsics.BinaryOperation(closure, left, right, ExpressionType.Equal, opEquality));
 					case ExpressionType.Or:
 						return Intrinsics.BinaryOperation(closure, left, right, binaryExpression.NodeType, opBitwiseOr);
 					case ExpressionType.Subtract:
@@ -874,7 +893,16 @@ namespace GameDevWare.Dynamic.Expressions
 				}
 
 				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_COMPIL_UNKNOWNBINARYEXPRTYPE, binaryExpression.Type));
-			});
+			};
+		}
+
+		private static bool IsNullable(Expression expression)
+		{
+			var constantExpression = expression as ConstantExpression;
+			if (constantExpression != null && constantExpression.Type == typeof(Object) && constantExpression.Value == null)
+				return true;
+
+			return Nullable.GetUnderlyingType(expression.Type) != null;
 		}
 	}
 }

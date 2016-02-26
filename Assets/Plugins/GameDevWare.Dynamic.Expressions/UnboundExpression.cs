@@ -1,7 +1,7 @@
-/*
-	Copyright (c) 2015 Denis Zykov
+﻿/*
+	Copyright (c) 2016 Denis Zykov
 
-	This is part of Charon Game Data Editor Unity Plugin.
+	This is part of "Charon: Game Data Editor" Unity Plugin.
 
 	Charon Game Data Editor Unity Plugin is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,17 +26,14 @@ using System.Text;
 
 namespace GameDevWare.Dynamic.Expressions
 {
-	public sealed class UnboundExpression : Expression
+	public sealed class UnboundExpression
 	{
-		public static readonly ExpressionType UnboundExpressionType = (ExpressionType)102;
-
 		private readonly Dictionary<MethodCallSignature, Expression> compiledExpressions;
 
 		private readonly ExpressionTree expressionTree;
 		public ExpressionTree ExpressionTree { get { return this.expressionTree; } }
 
 		public UnboundExpression(IDictionary<string, object> node)
-			: base(UnboundExpressionType, typeof(object))
 		{
 			if (node == null) throw new ArgumentNullException("node");
 
@@ -52,14 +49,14 @@ namespace GameDevWare.Dynamic.Expressions
 			{
 				if (!this.compiledExpressions.TryGetValue(key, out expression))
 				{
-					var parameters = BoundExpression.EmptyParameters;
-					var builder = new ExpressionBuilder(parameters);
-					expression = new BoundExpression<ResultT>(builder.Build(this.ExpressionTree), parameters);
+					var parameters = new ReadOnlyCollection<ParameterExpression>(new ParameterExpression[0]);
+					var builder = new ExpressionBuilder(parameters, resultType: typeof(ResultT));
+					expression = Expression.Lambda<Func<ResultT>>(builder.Build(this.ExpressionTree), parameters);
 					this.compiledExpressions.Add(key, expression);
 				}
 			}
 
-			return ((BoundExpression<ResultT>)expression).Compile();
+			return ((Expression<Func<ResultT>>)expression).CompileAot();
 		}
 		public Func<Arg1T, ResultT> Bind<Arg1T, ResultT>(string arg1Name = null)
 		{
@@ -70,13 +67,12 @@ namespace GameDevWare.Dynamic.Expressions
 				if (!this.compiledExpressions.TryGetValue(key, out expression))
 				{
 					var parameters = CreateParameters(new[] { typeof(Arg1T) }, new[] { arg1Name ?? "arg1" });
-					var builder = new ExpressionBuilder(parameters);
-					expression = new BoundExpression<ResultT>(builder.Build(this.ExpressionTree), parameters);
+					var builder = new ExpressionBuilder(parameters, resultType: typeof(ResultT));
+					expression = Expression.Lambda<Func<Arg1T, ResultT>>(builder.Build(this.ExpressionTree), parameters);
 					this.compiledExpressions.Add(key, expression);
 				}
 			}
-
-			return ((BoundExpression<Arg1T, ResultT>)expression).Compile();
+			return ((Expression<Func<Arg1T, ResultT>>)expression).CompileAot();
 		}
 		public Func<Arg1T, Arg2T, ResultT> Bind<Arg1T, Arg2T, ResultT>(string arg1Name = null, string arg2Name = null)
 		{
@@ -87,13 +83,12 @@ namespace GameDevWare.Dynamic.Expressions
 				if (!this.compiledExpressions.TryGetValue(key, out expression))
 				{
 					var parameters = CreateParameters(new[] { typeof(Arg1T), typeof(Arg2T) }, new[] { arg1Name ?? "arg1", arg2Name ?? "arg2" });
-					var builder = new ExpressionBuilder(parameters);
-					expression = new BoundExpression<ResultT>(builder.Build(this.ExpressionTree), parameters);
+					var builder = new ExpressionBuilder(parameters, resultType: typeof(ResultT));
+					expression = Expression.Lambda<Func<Arg1T, Arg2T, ResultT>>(builder.Build(this.ExpressionTree), parameters);
 					this.compiledExpressions.Add(key, expression);
 				}
 			}
-
-			return ((BoundExpression<Arg1T, Arg2T, ResultT>)expression).Compile();
+			return ((Expression<Func<Arg1T, Arg2T, ResultT>>)expression).CompileAot();
 		}
 		public Func<Arg1T, Arg2T, Arg3T, ResultT> Bind<Arg1T, Arg2T, Arg3T, ResultT>(string arg1Name = null, string arg2Name = null, string arg3Name = null)
 		{
@@ -104,12 +99,12 @@ namespace GameDevWare.Dynamic.Expressions
 				if (!this.compiledExpressions.TryGetValue(key, out expression))
 				{
 					var parameters = CreateParameters(new[] { typeof(Arg1T), typeof(Arg2T), typeof(Arg3T) }, new[] { arg1Name ?? "arg1", arg2Name ?? "arg2", arg3Name ?? "arg3" });
-					var builder = new ExpressionBuilder(parameters);
-					expression = new BoundExpression<ResultT>(builder.Build(this.ExpressionTree), parameters);
+					var builder = new ExpressionBuilder(parameters, resultType: typeof(ResultT));
+					expression = Expression.Lambda<Func<Arg1T, Arg2T, Arg3T, ResultT>>(builder.Build(this.ExpressionTree), parameters);
 					this.compiledExpressions.Add(key, expression);
 				}
 			}
-			return ((BoundExpression<Arg1T, Arg2T, Arg3T, ResultT>)expression).Compile();
+			return ((Expression<Func<Arg1T, Arg2T, Arg3T, ResultT>>)expression).CompileAot();
 		}
 		public Func<Arg1T, Arg2T, Arg3T, Arg4T, ResultT> Bind<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>(string arg1Name = null, string arg2Name = null, string arg3Name = null, string arg4Name = null)
 		{
@@ -120,12 +115,12 @@ namespace GameDevWare.Dynamic.Expressions
 				if (!this.compiledExpressions.TryGetValue(key, out expression))
 				{
 					var parameters = CreateParameters(new[] { typeof(Arg1T), typeof(Arg2T), typeof(Arg3T), typeof(Arg4T) }, new[] { arg1Name ?? "arg1", arg2Name ?? "arg2", arg3Name ?? "arg3", arg4Name ?? "arg4" });
-					var builder = new ExpressionBuilder(parameters);
-					expression = new BoundExpression<ResultT>(builder.Build(this.ExpressionTree), parameters);
+					var builder = new ExpressionBuilder(parameters, resultType: typeof(ResultT));
+					expression = Expression.Lambda<Func<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>>(builder.Build(this.ExpressionTree), parameters);
 					this.compiledExpressions.Add(key, expression);
 				}
 			}
-			return ((BoundExpression<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>)expression).Compile();
+			return ((Expression<Func<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>>)expression).CompileAot();
 		}
 
 		private static ReadOnlyCollection<ParameterExpression> CreateParameters(Type[] types, string[] names)
@@ -139,7 +134,7 @@ namespace GameDevWare.Dynamic.Expressions
 			{
 				if (Array.IndexOf(names, names[i]) != i) throw new ArgumentException(string.Format(Properties.Resources.EXCEPTION_UNBOUNDEXPR_DUPLICATEPARAMNAME, names[i]), "names");
 
-				parameters[i] = Parameter(types[i], names[i]);
+				parameters[i] = Expression.Parameter(types[i], names[i]);
 			}
 			return new ReadOnlyCollection<ParameterExpression>(parameters);
 		}

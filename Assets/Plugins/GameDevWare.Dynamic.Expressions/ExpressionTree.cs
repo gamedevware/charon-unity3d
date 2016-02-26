@@ -1,7 +1,7 @@
 ﻿/*
-	Copyright (c) 2015 Denis Zykov
+	Copyright (c) 2016 Denis Zykov
 
-	This is part of Charon Game Data Editor Unity Plugin.
+	This is part of "Charon: Game Data Editor" Unity Plugin.
 
 	Charon Game Data Editor Unity Plugin is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ using System.Collections.Generic;
 
 namespace GameDevWare.Dynamic.Expressions
 {
-	public class ExpressionTree : ReadOnlyDictionary<string, object>
+	public class ExpressionTree : ReadOnlyDictionary<string, object>, ILineInfo
 	{
 		public const string EXPRESSION_LINE = "$lineNum";
 		public const string EXPRESSION_COLUMN = "$columnNum";

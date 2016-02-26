@@ -1,4 +1,4 @@
-﻿/*
+/*
 	Copyright (c) 2016 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
@@ -16,11 +16,3 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see http://www.gnu.org/licenses.
 */
-
-namespace Assets.Unity.Charon.Editor.Tasks
-{
-	public interface IUpdatable
-	{
-		void Update();
-	}
-}
