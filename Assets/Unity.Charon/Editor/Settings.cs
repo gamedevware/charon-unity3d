@@ -44,6 +44,8 @@ namespace Assets.Unity.Charon.Editor
 		public bool Verbose;
 		public bool SuppressRecoveryScripts;
 		[HideInInspector]
+		public string SelectedLicense;
+		[HideInInspector]
 		public int Version;
 
 		static Settings()
@@ -67,6 +69,7 @@ namespace Assets.Unity.Charon.Editor
 										  let path = FileUtils.MakeProjectRelative(AssetDatabase.GUIDToAssetPath(id))
 										  where path != null && path.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
 										  select path).ToList();
+				settings.SelectedLicense = null;
 				settings.LicenseServerAddress = null;
 				settings.Verbose = false;
 			}
@@ -137,6 +140,11 @@ namespace Assets.Unity.Charon.Editor
 			return "Tools Path: " + this.ToolsPath + Environment.NewLine + " " +
 				   "Tool Port: " + this.ToolsPort + Environment.NewLine + " " +
 				   "Game Data Paths: " + string.Join(", ", this.GameDataPaths.ToArray()) + Environment.NewLine + " ";
+		}
+
+		internal static string GetAppDataPath()
+		{
+			return Path.Combine(Path.GetFullPath("./Library/Charon/Users"), FileUtils.SanitizeFileName(Environment.UserName ?? "Default"));
 		}
 	}
 }

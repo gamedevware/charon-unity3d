@@ -72,7 +72,7 @@ namespace Assets.Unity.Charon.Editor.Windows
 
 			var editorLogPath = string.Empty;
 			var editorPrevLogPath = string.Empty;
-			var charonLogPath = Path.Combine(GameDataEditorWindow.ToolShadowCopyPath, "charon.log");
+			var charonLogPath = Path.Combine("./Library/Charon/Logs", "Charon.log");
 
 #if UNITY_EDITOR_WIN
 			editorLogPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Unity\Editor\Editor.log");
@@ -204,7 +204,7 @@ namespace Assets.Unity.Charon.Editor.Windows
 				arguments.ToArray()
 			);
 
-			reportIssue.StartInfo.EnvironmentVariables["CHARON_APP_DATA"] = Path.GetFullPath("./Library/Charon");
+			reportIssue.StartInfo.EnvironmentVariables["CHARON_APP_DATA"] = Settings.GetAppDataPath();
 			if (string.IsNullOrEmpty(Settings.Current.LicenseServerAddress) == false)
 				reportIssue.StartInfo.EnvironmentVariables["CHARON_LICENSE_SERVER"] = Settings.Current.LicenseServerAddress;
 			reportIssue.RequireDotNetRuntime();

@@ -82,7 +82,7 @@ namespace Assets.Unity.Charon.Editor
 			return new string('0', 32); // never happens
 		}
 
-		public static object SanitizeFileName(string path)
+		public static string SanitizeFileName(string path)
 		{
 			var fileName = new StringBuilder(path);
 			for (var c = 0; c < fileName.Length; c++)
@@ -90,7 +90,7 @@ namespace Assets.Unity.Charon.Editor
 				if (Array.IndexOf(InvalidFileNameChars, fileName[c]) != -1)
 					fileName[c] = '_';
 			}
-			return fileName;
+			return fileName.ToString();
 		}
 	}
 }

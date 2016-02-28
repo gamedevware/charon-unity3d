@@ -91,6 +91,9 @@ namespace Assets.Unity.Charon.Editor
 				.Append("--verbose")
 				.AppendLine();
 
+			if (Directory.Exists(RECOVERYSCRIPTS_PATH) == false)
+				Directory.CreateDirectory(RECOVERYSCRIPTS_PATH);
+
 			File.WriteAllText(Path.Combine(RECOVERYSCRIPTS_PATH, editScriptOutput), output.ToString());
 		}
 		private static void GenerateCodeGeneratorScripts(string gameDataPath)
@@ -144,6 +147,9 @@ namespace Assets.Unity.Charon.Editor
 					Debug.LogError("Unknown code/asset generator type " + (GameDataSettings.CodeGenerator)gameDataSettings.Generator + ".");
 					break;
 			}
+
+			if (Directory.Exists(RECOVERYSCRIPTS_PATH) == false)
+				Directory.CreateDirectory(RECOVERYSCRIPTS_PATH);
 
 			File.WriteAllText(Path.Combine(RECOVERYSCRIPTS_PATH, generateCodeOutput), output.ToString());
 		}

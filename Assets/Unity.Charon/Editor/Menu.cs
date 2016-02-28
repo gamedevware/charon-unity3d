@@ -180,7 +180,7 @@ namespace Assets.Unity.Charon.Editor
 		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUABOUT, false, 12)]
 		private static void About()
 		{
-			EditorWindow.GetWindow<AboutCharonWindow>(utility: true);
+			EditorWindow.GetWindow<AboutWindow>(utility: true);
 		}
 
 		[MenuItem("Assets/Create/GameData")]

@@ -46,7 +46,9 @@ namespace Assets.Unity.Charon.Editor.Windows
 
 		private string monoPath;
 		private string runtimeVersion;
+		[NonSerialized]
 		private Promise checkRuntimeVersionCoroutine;
+		[NonSerialized]
 		private ExecuteCommandTask runMonoTask;
 		private bool autoClose;
 
@@ -230,7 +232,7 @@ namespace Assets.Unity.Charon.Editor.Windows
 			this.RaiseCancel();
 		}
 
-		public static IAsyncResult ShowAsync(bool autoClose = true)
+		public static Promise ShowAsync(bool autoClose = true)
 		{
 			var promise = new Promise();
 			var window = EditorWindow.GetWindow<UpdateRuntimeWindow>(utility: true);

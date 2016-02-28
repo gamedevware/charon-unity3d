@@ -118,7 +118,7 @@ namespace Assets.Unity.Charon.Editor.Windows
 		protected void Update()
 		{
 			if (this.loadingTask == null && string.IsNullOrEmpty(this.gameDataPath) == false)
-				this.Load(gameDataPath, null);
+				this.Load(this.gameDataPath, null);
 		}
 
 		// ReSharper disable once InconsistentNaming
@@ -141,7 +141,7 @@ namespace Assets.Unity.Charon.Editor.Windows
 
 		private void Load(string gameDataPath, string reference)
 		{
-			var loadAsync = CoroutineScheduler.Schedule(this.LoadEditor(gameDataPath, reference));
+			var loadAsync = new Tasks.Coroutine(PrepareEditor(gameDataPath, reference));
 			loadAsync.ContinueWith(_ => { if (loadAsync.HasErrors) this.CleanUp(); });
 			this.loadingTask = loadAsync;
 		}
@@ -155,8 +155,10 @@ namespace Assets.Unity.Charon.Editor.Windows
 
 		}
 
-		private IEnumerable LoadEditor(string gameDataPath, string reference)
+		private IEnumerable PrepareEditor(string gameDataPath, string reference)
 		{
+			this.gameDataPath = gameDataPath;
+
 			switch (ToolsUtils.CheckTools())
 			{
 				case ToolsCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
@@ -165,10 +167,17 @@ namespace Assets.Unity.Charon.Editor.Windows
 				default: throw new InvalidOperationException("Unknown Tools check result.");
 			}
 
+			var getLicense = Licenses.GetLicense(scheduleCoroutine: true);
+			yield return getLicense;
+			if (getLicense.GetResult() == null)
+				yield return LicenseActivationWindow.ShowAsync();
+
+			yield return CoroutineScheduler.Schedule(this.LoadEditor(gameDataPath, reference));
+		}
+		private IEnumerable LoadEditor(string gameDataPath, string reference)
+		{
 			if (this.editorProcess != null)
 				yield return this.editorProcess.Close();
-
-			this.gameDataPath = gameDataPath;
 
 			this.titleContent = new GUIContent(Path.GetFileNameWithoutExtension(gameDataPath));
 
@@ -198,15 +207,9 @@ namespace Assets.Unity.Charon.Editor.Windows
 				var configShadowPath = shadowCopyOfTools + ".config";
 				if (File.Exists(configPath))
 				{
-					var configText = File.ReadAllText(configPath);
-					if (Settings.Current.Verbose)
-						configText = configText.Replace("<!--appender-ref ref=\"FileAppender\"/-->", "<appender-ref ref=\"FileAppender\"/>");
-					else
-						configText = configText.Replace("<appender-ref ref=\"FileAppender\"/>", "<!--appender-ref ref=\"FileAppender\"/-->");
-
 					if (Settings.Current.Verbose)
 						Debug.Log("Shadow copying tools configuration to " + configShadowPath + ".");
-					File.WriteAllText(configShadowPath, configText);
+					File.Copy(configPath, configShadowPath);
 				}
 				else
 				{
@@ -237,9 +240,11 @@ namespace Assets.Unity.Charon.Editor.Windows
 				System.Diagnostics.Process.GetCurrentProcess().Id.ToString(),
 				Settings.Current.Verbose ? "--verbose" : ""
 			);
-			this.editorProcess.StartInfo.EnvironmentVariables["CHARON_APP_DATA"] = Path.GetFullPath("./Library/Charon");
-			if(string.IsNullOrEmpty(Settings.Current.LicenseServerAddress) == false)
+			this.editorProcess.StartInfo.EnvironmentVariables["CHARON_APP_DATA"] = Settings.GetAppDataPath();
+			if (string.IsNullOrEmpty(Settings.Current.LicenseServerAddress) == false)
 				this.editorProcess.StartInfo.EnvironmentVariables["CHARON_LICENSE_SERVER"] = Settings.Current.LicenseServerAddress;
+			if (string.IsNullOrEmpty(Settings.Current.SelectedLicense) == false)
+				this.editorProcess.StartInfo.EnvironmentVariables["CHARON_SELECTED_LICENSE"] = Settings.Current.SelectedLicense;
 
 			this.editorProcess.RequireDotNetRuntime();
 			this.editorProcess.Start();

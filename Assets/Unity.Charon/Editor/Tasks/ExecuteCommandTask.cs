@@ -31,8 +31,11 @@ namespace Assets.Unity.Charon.Editor.Tasks
 		private readonly ProcessStartInfo startInfo;
 		private readonly DataReceivedEventHandler outputDataReceived;
 		private readonly DataReceivedEventHandler errorDataReceived;
+		private readonly object syncLock;
 		private Process process;
 		private bool aborted;
+		private bool errorDataClosed;
+		private bool outputDataClosed;
 
 		public ProcessStartInfo StartInfo { get { return this.startInfo; } }
 		public bool IsRunning { get { return this.process != null && this.process.HasExited == false; } }
@@ -50,6 +53,10 @@ namespace Assets.Unity.Charon.Editor.Tasks
 				Arguments = ConcatArguments(arguments),
 				UseShellExecute = false,
 				WorkingDirectory = Path.GetFullPath("./"),
+				EnvironmentVariables =
+				{
+					{ "UNITY_PROJECT_PATH", Path.GetFullPath("./").Trim(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) }
+				},
 				CreateNoWindow = true
 			};
 		}
@@ -57,6 +64,9 @@ namespace Assets.Unity.Charon.Editor.Tasks
 		public ExecuteCommandTask(string processPath, DataReceivedEventHandler outputDataReceived, DataReceivedEventHandler errorDataReceived, params string[] arguments)
 			: this(processPath, arguments)
 		{
+			this.syncLock = new object();
+			this.errorDataClosed = errorDataReceived == null;
+			this.outputDataClosed = outputDataReceived == null;
 			this.outputDataReceived = outputDataReceived;
 			this.errorDataReceived = errorDataReceived;
 			this.startInfo.RedirectStandardError = errorDataReceived != null;
@@ -72,7 +82,7 @@ namespace Assets.Unity.Charon.Editor.Tasks
 			yield return this.StartedEvent;
 
 			if (Settings.Current.Verbose)
-				UnityEngine.Debug.Log(string.Format("Starting process '{0}' with arguments '{1}'.", this.startInfo.FileName, this.startInfo.Arguments));
+				UnityEngine.Debug.Log(string.Format("Starting process '{0}' at '{1}' with arguments '{2}'.", this.startInfo.FileName, this.startInfo.WorkingDirectory, this.startInfo.Arguments));
 
 			if (this.aborted)
 				yield break;
@@ -81,7 +91,6 @@ namespace Assets.Unity.Charon.Editor.Tasks
 			var error = default(Exception);
 			try { process = Process.Start(this.startInfo); }
 			catch (Exception e) { error = e; }
-			this.process = process;
 
 			if (error != null || process == null)
 			{
@@ -92,16 +101,35 @@ namespace Assets.Unity.Charon.Editor.Tasks
 			if (this.aborted)
 				yield break;
 
+			this.process = process;
 			this.ProcessId = process.Id;
 
 			if (this.outputDataReceived != null)
 			{
-				process.OutputDataReceived += outputDataReceived;
+				process.OutputDataReceived += (sender, args) =>
+				{
+					lock (this.syncLock)
+					{
+						if (args.Data == null)
+							this.outputDataClosed = true;
+
+						this.outputDataReceived(sender, args);
+					}
+				};
 				process.BeginOutputReadLine();
 			}
 			if (this.errorDataReceived != null)
 			{
-				process.ErrorDataReceived += errorDataReceived;
+				process.ErrorDataReceived += (sender, args) =>
+				{
+					lock (this.syncLock)
+					{
+						if (args.Data == null)
+							this.errorDataClosed = true;
+
+						this.errorDataReceived(sender, args);
+					}
+				};
 				process.BeginErrorReadLine();
 			}
 
@@ -132,14 +160,23 @@ namespace Assets.Unity.Charon.Editor.Tasks
 
 			this.ExitCode = exitCode;
 			if (Settings.Current.Verbose)
-				UnityEngine.Debug.Log(string.Format("Process '{0}' has exited with code {1}.", this.startInfo.FileName, exitCode));
+				UnityEngine.Debug.Log(string.Format("Process '{0}' has exited with code {1}.", this.startInfo.FileName, this.ExitCode));
 
+			if (this.errorDataClosed == false || this.outputDataClosed == false)
+			{
+				if (Settings.Current.Verbose)
+					UnityEngine.Debug.Log(string.Format("Waiting till process '{0}' output/error data received.", this.startInfo.FileName));
+
+				while (this.errorDataClosed == false || this.outputDataClosed == false)
+					yield return null;
+			}
 
 			this.process = null;
-			process.Refresh();
 			yield return null;
 			process.Dispose();
 			yield return null;
+			if (Settings.Current.Verbose)
+				UnityEngine.Debug.Log(string.Format("Process '{0}' has beed disposed.", this.startInfo.FileName));
 		}
 		private IEnumerable KillAsync(Process currentProcess)
 		{
@@ -163,8 +200,6 @@ namespace Assets.Unity.Charon.Editor.Tasks
 						throw;
 				}
 			}
-
-			currentProcess.Dispose();
 		}
 
 		public bool Kill()
@@ -173,6 +208,9 @@ namespace Assets.Unity.Charon.Editor.Tasks
 			var currentProcess = this.process;
 			if (currentProcess == null)
 				return false;
+
+			if (Settings.Current.Verbose)
+				UnityEngine.Debug.Log(string.Format("Trying to kill process '{0}'.", this.startInfo.FileName));
 
 			var attempt = 1;
 			while (!currentProcess.HasExited)
@@ -198,6 +236,9 @@ namespace Assets.Unity.Charon.Editor.Tasks
 			if (currentProcess == null || currentProcess.HasExited)
 				return Promise.Fulfilled;
 
+			if (Settings.Current.Verbose)
+				UnityEngine.Debug.Log(string.Format("Trying to close process '{0}'.", this.startInfo.FileName));
+
 			try
 			{
 				currentProcess.CloseMainWindow();
@@ -212,7 +253,6 @@ namespace Assets.Unity.Charon.Editor.Tasks
 			if (!currentProcess.HasExited)
 				return new Coroutine(KillAsync(currentProcess));
 
-			currentProcess.Dispose();
 			return Promise.Fulfilled;
 		}
 		public void RequireDotNetRuntime()
