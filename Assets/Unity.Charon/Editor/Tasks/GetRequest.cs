@@ -20,17 +20,18 @@
 using System;
 using System.Collections;
 using System.Collections.Specialized;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using Assets.Unity.Charon.Editor.Json;
+using UnityEngine;
 
 namespace Assets.Unity.Charon.Editor.Tasks
 {
 	public class GetRequest<ResultT> : Coroutine<ResultT>
 	{
 		public Uri Url { get; private set; }
+		public bool TrustSSLCertificates { get; set; }
 
 		public GetRequest(Uri url, NameValueCollection requestHeader = null)
 			: base(DoRequestAsync(url, requestHeader))
@@ -43,6 +44,9 @@ namespace Assets.Unity.Charon.Editor.Tasks
 		private static IEnumerable DoRequestAsync(Uri url, NameValueCollection requestHeader)
 		{
 			if (url == null) throw new ArgumentNullException("url");
+
+			if (Settings.Current.Verbose)
+				Debug.Log(string.Format("Starting new get request to '{0}'.", url));
 
 			var request = (HttpWebRequest)WebRequest.Create(url);
 			request.Accept = "*/*";
@@ -75,7 +79,8 @@ namespace Assets.Unity.Charon.Editor.Tasks
 			{
 				using (var responseStream = response.GetResponseStream())
 				{
-					Debug.Assert(responseStream != null, "responseStream != null");
+					if (Settings.Current.Verbose)
+						Debug.Log(string.Format("Got [{1}] response for '{0}' request.", url, response.StatusCode));
 
 					if (response.StatusCode != HttpStatusCode.OK)
 						throw new WebException(string.Format("An unexpected status code '{0}' returned for request '{1}'.", response.StatusCode, url));

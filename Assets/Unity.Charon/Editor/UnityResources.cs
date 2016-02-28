@@ -155,10 +155,7 @@ namespace Assets.Unity.Charon.Editor {
         public const string UI_UNITYPLUGIN_GENERATEREFRESHINGASSETS = "Refreshing assets";
         public const string UI_UNITYPLUGIN_GENERATINGCODEANDASSETS = "Generating Code and Assets...";
         public const string UI_UNITYPLUGIN_MENUSCANNINGASSETS = "Scanning Assets...";
-        public const string UI_UNITYPLUGIN_MIGRATECOMPLETE = "Migration of '{0}' is complete.";
-        public const string UI_UNITYPLUGIN_MIGRATEFAILEDDUEERRORS = "Migration of '{0}' has failed due errors: {1}.";
         public const string UI_UNITYPLUGIN_MIGRATERUNMIGRATIONFOR = "Running migration tools for {0}";
-        public const string UI_UNITYPLUGIN_MIGRATINGASSETS = "Migrating Assets...";
         public const string UI_UNITYPLUGIN_PROGRESSCURRENTTARGETIS = "Current target is {0}";
         public const string UI_UNITYPLUGIN_PROGRESSDONE = "Done";
         public const string UI_UNITYPLUGIN_SCANASSETSKIPPED = "TextAsset '{0}' is skipped because of validation error.";
@@ -175,7 +172,6 @@ namespace Assets.Unity.Charon.Editor {
         public const string UI_UNITYPLUGIN_MENUDOCUMENTATION = "Documentation (website)";
         public const string UI_UNITYPLUGIN_MENUEXTRACTT4TEMPLATES = "Extract T4 Templates";
         public const string UI_UNITYPLUGIN_MENUGENERATECODEANDASSETS = "Generate Code and Assets";
-        public const string UI_UNITYPLUGIN_MENUMIGRATEASSETS = "Migrate Assets";
         public const string UI_UNITYPLUGIN_MENURECOVERYSCRIPTS = "Recovery Scripts";
         public const string UI_UNITYPLUGIN_MENUSCANFORNEWASSETS = "Scan for new Assets";
         public const string UI_UNITYPLUGIN_MENUREPORTISSUE = "Report an Issue...";
@@ -224,8 +220,6 @@ namespace Assets.Unity.Charon.Editor {
         public const string UI_UNITYPLUGIN_WINDOWLICENSEHOLDER = "License Holder";
         public const string UI_UNITYPLUGIN_WINDOWLICENSEKEY = "License Key";
         public const string UI_UNITYPLUGIN_WINDOWLOADINGFAILEDWITHERROR = "Loading failed with error: {0}";
-        public const string UI_UNITYPLUGIN_WINDOWMIGRATEBUTTON = "Migrate";
-        public const string UI_UNITYPLUGIN_WINDOWMIGRATIONPREFIX = "Migration:";
         public const string UI_UNITYPLUGIN_WINDOWOKBUTTON = "Ok";
         public const string UI_UNITYPLUGIN_WINDOWPATHTOMONO = "Path to Mono (bin)";
         public const string UI_UNITYPLUGIN_WINDOWPRESSHELP = "If you need a help with .NET Runtime installation press 'Help' button.";
@@ -260,6 +254,9 @@ namespace Assets.Unity.Charon.Editor {
         public const string UI_UNITYPLUGIN_WINDOWREPORTISSUETITLE = "Report an Issue";
         public const string UI_UNITYPLUGIN_WINDOWTYPELABEL = "Type";
         public const string UI_UNITYPLUGIN_WINDOWREPORTTHANKSMESSAGE = "Thank you for your feedback!";
+        public const string UI_UNITYPLUGIN_DOWNLOADBUTTON = "Update (~10 MiB)";
+        public const string UI_UNITYPLUGIN_UPDATEAVAILABLEMESSAGE = "A new vesion '{1}' of tools available. Current version is '{0}'.";
+        public const string UI_UNITYPLUGIN_UPDATEAVAILABLETITLE = "Update Charon";
 #endif
     }
 #endif

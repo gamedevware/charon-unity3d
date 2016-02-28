@@ -101,26 +101,6 @@ namespace Assets.Unity.Charon.Editor
 			return !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling;
 		}
 
-		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUMIGRATEASSETS, false, 4)]
-		private static void MigrateAll()
-		{
-			if (!MigrateAllCheck()) return;
-
-			var migrateCoroutine = CoroutineScheduler.Schedule
-			(
-				MigrateAsync(
-					  progressCallback: ProgressUtils.ShowProgressBar(Resources.UI_UNITYPLUGIN_MIGRATINGASSETS)
-				)
-			);
-			migrateCoroutine.ContinueWith(ProgressUtils.HideProgressBar);
-			FocusConsoleWindow();
-		}
-		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUMIGRATEASSETS, true, 4)]
-		private static bool MigrateAllCheck()
-		{
-			return !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling;
-		}
-
 		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUEXTRACTT4TEMPLATES, false, 5)]
 		private static void ExtractT4Templates()
 		{
@@ -225,8 +205,6 @@ namespace Assets.Unity.Charon.Editor
 			AssetDatabase.Refresh();
 			Settings.Current.GameDataPaths.Add(gameDataPath);
 			Settings.Current.Version++;
-
-			CoroutineScheduler.Schedule(MigrateAsync(gameDataPath));
 		}
 		[MenuItem("Assets/Create/GameData", true)]
 		private static bool CreateGameDataAssetCheck()
@@ -500,49 +478,6 @@ namespace Assets.Unity.Charon.Editor
 			AssetDatabase.Refresh(ImportAssetOptions.Default);
 			if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESSDONE, 1);
 		}
-		public static IEnumerable MigrateAsync(string path = null, Action<string, float> progressCallback = null)
-		{
-			switch (ToolsUtils.CheckTools())
-			{
-				case ToolsCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
-				case ToolsCheckResult.MissingTools: yield return ToolsUtils.UpdateTools(progressCallback); break;
-				case ToolsCheckResult.Ok: break;
-				default: throw new InvalidOperationException("Unknown Tools check result.");
-			}
-
-			var paths = !string.IsNullOrEmpty(path) ? new string[] { path } : Settings.Current.GameDataPaths.ToArray();
-			var total = paths.Length;
-			for (var i = 0; i < paths.Length; i++)
-			{
-				var gameDataPath = paths[i];
-				if (File.Exists(gameDataPath) == false)
-					continue;
-				if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_PROGRESSCURRENTTARGETIS, gameDataPath), (float)i / total);
-
-				var errorText = new StringBuilder();
-				if (Settings.Current.Verbose) Debug.Log(string.Format("Migrating GameData at '{0}'...", gameDataPath));
-				if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_MIGRATERUNMIGRATIONFOR, gameDataPath), (float)i / total);
-				var migrateProcess = new ExecuteCommandTask
-				(
-					Settings.Current.ToolsPath,
-					null,
-					(sender, args) => { if (!string.IsNullOrEmpty(args.Data)) errorText.Append(args.Data); },
-					"DATA", "MIGRATE",
-					Path.GetFullPath(gameDataPath),
-					Settings.Current.Verbose ? "--verbose" : ""
-				);
-				migrateProcess.RequireDotNetRuntime();
-				migrateProcess.Start();
-				yield return migrateProcess;
-
-				if (Settings.Current.Verbose) Debug.Log(string.Format("Migration complete, exit code: '{0}'", migrateProcess.ExitCode));
-				if (migrateProcess.ExitCode != 0)
-					Debug.LogWarning(string.Format(Resources.UI_UNITYPLUGIN_MIGRATEFAILEDDUEERRORS, gameDataPath, errorText));
-				else
-					Debug.Log(string.Format(Resources.UI_UNITYPLUGIN_MIGRATECOMPLETE, gameDataPath));
-			}
-			if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESSDONE, 1);
-		}
 		public static IEnumerable ValidateAsync(string path = null, Action<string, float> progressCallback = null)
 		{
 			switch (ToolsUtils.CheckTools())
@@ -705,8 +640,9 @@ namespace Assets.Unity.Charon.Editor
 
 			if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESSGETTINGAVAILABLEBUILDS, 0.10f);
 
+			var licenseServerAddress = Settings.Current.GetLicenseServerAddress();
 			var getBuildsHeaders = new NameValueCollection { { "Accept", "application/json" } };
-			var getBuildsUrl = new Uri("http://localhost:50100/api/Build");
+			var getBuildsUrl = new Uri(licenseServerAddress, "Build?product=Charon");
 			var getBuildsRequest = new GetRequest<JsonValue>(getBuildsUrl, getBuildsHeaders);
 			yield return getBuildsRequest;
 
@@ -726,21 +662,30 @@ namespace Assets.Unity.Charon.Editor
 			{
 				if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESSDONE, 1.0f);
 
-				Debug.Log("No public releases available.");
+				Debug.Log(string.Format("{0} version '{1}' is up to date.", Path.GetFileName(toolsPath), toolsVersion));
 				yield break;
 			}
 			else if (toolsVersion != null && toolsVersion >= lastVersion)
 			{
 				if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESSDONE, 1.0f);
 
-				Debug.Log(string.Format("{2} version is '{0}' and last tools version is '{1}'. No update required.", toolsVersion, lastVersion, Path.GetFileName(toolsPath)));
+				Debug.Log(string.Format("{0} version '{1}' is up to date.", Path.GetFileName(toolsPath), toolsVersion));
+				yield break;
+			}
+
+			if (toolsVersion != null && !EditorUtility.DisplayDialog(
+					Resources.UI_UNITYPLUGIN_UPDATEAVAILABLETITLE,
+					string.Format(Resources.UI_UNITYPLUGIN_UPDATEAVAILABLEMESSAGE, toolsVersion, lastVersion),
+					Resources.UI_UNITYPLUGIN_DOWNLOADBUTTON)
+			)
+			{
 				yield break;
 			}
 
 			if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_PROGRESSDOWNLOADINGS, 0, 0), 0.10f);
 
 			var downloadHeaders = new NameValueCollection { { "Accept", "application/octet-stream" } };
-			var downloadUrl = new Uri("http://localhost:50100/api/Build?id=" + Uri.EscapeDataString(lastVersion.ToString()));
+			var downloadUrl = new Uri(licenseServerAddress, "Build?product=Charon&id=" + Uri.EscapeDataString(lastVersion.ToString()));
 			var downloadPath = Path.GetTempFileName();
 			yield return new FileDownloadRequest(downloadUrl, downloadPath, downloadHeaders, (readed, total) =>
 			{

@@ -101,10 +101,6 @@ namespace Assets.Unity.Charon.Editor.Windows
 			{
 				CoroutineScheduler.Schedule(Menu.ValidateAsync(gameDataPath, ProgressUtils.ReportToLog(Resources.UI_UNITYPLUGIN_WINDOWVALIDATIONPREFIX + " ")), "validation::" + gameDataPath);
 			}
-			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOWMIGRATEBUTTON))
-			{
-				CoroutineScheduler.Schedule(Menu.MigrateAsync(gameDataPath, ProgressUtils.ReportToLog(Resources.UI_UNITYPLUGIN_WINDOWMIGRATIONPREFIX + " ")), "migration::" + gameDataPath);
-			}
 			GUI.enabled = true;
 			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOWUNTRACTBUTTON))
 			{

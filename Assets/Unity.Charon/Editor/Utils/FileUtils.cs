@@ -21,6 +21,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 using UnityEngine;
 
@@ -28,6 +29,9 @@ namespace Assets.Unity.Charon.Editor
 {
 	static class FileUtils
 	{
+		private readonly static char[] InvalidFileNameChars = Path.GetInvalidFileNameChars();
+
+
 		public static string MakeProjectRelative(string path)
 		{
 			if (String.IsNullOrEmpty(path)) return null;
@@ -76,6 +80,17 @@ namespace Assets.Unity.Charon.Editor
 			}
 
 			return new string('0', 32); // never happens
+		}
+
+		public static object SanitizeFileName(string path)
+		{
+			var fileName = new StringBuilder(path);
+			for (var c = 0; c < fileName.Length; c++)
+			{
+				if (Array.IndexOf(InvalidFileNameChars, fileName[c]) != -1)
+					fileName[c] = '_';
+			}
+			return fileName;
 		}
 	}
 }

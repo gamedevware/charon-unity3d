@@ -32,7 +32,7 @@ namespace Assets.Unity.Charon.Editor
 		public const string PREF_PREFIX = "Charon_";
 		public const string SETTINGS_PATH = "Assets/Unity.Charon/Editor/Settings.asset";
 		public const string DEFAULT_TOOLS_PATH = "Assets/Unity.Charon/Editor/Charon.exe";
-
+		public const string DEFAULT_LICENSE_SERVER_ADDRESS = "http://gamedevware.com/service/api/";
 		public static readonly Settings Current;
 
 		public string ToolsPath;
@@ -123,6 +123,13 @@ namespace Assets.Unity.Charon.Editor
 				this.ToolsPort = 65535;
 				this.Version++;
 			}
+		}
+
+		public Uri GetLicenseServerAddress()
+		{
+			if (string.IsNullOrEmpty(this.LicenseServerAddress) || this.LicenseServerAddress.All(char.IsWhiteSpace))
+				return new Uri(DEFAULT_LICENSE_SERVER_ADDRESS);
+			return new Uri(this.LicenseServerAddress);
 		}
 
 		public override string ToString()

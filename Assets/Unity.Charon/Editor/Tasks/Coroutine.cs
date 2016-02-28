@@ -27,18 +27,21 @@ namespace Assets.Unity.Charon.Editor.Tasks
 {
 	public class Coroutine : Coroutine<object>
 	{
-		public readonly static List<IUpdatable> UpdateList = new List<IUpdatable>();
+		public static readonly List<IUpdatable> UpdateList = new List<IUpdatable>();
+		public static readonly HashSet<Exception> ReportedExceptions = new HashSet<Exception>();
 
 		static Coroutine()
 		{
 			EditorApplication.update += () =>
 			{
+				ReportedExceptions.Clear();
+
 				for (var index = 0; index < UpdateList.Count; index++)
 				{
 					var error = default(Exception);
 					var task = UpdateList[index];
 					try { task.Update(); }
-					catch (Exception exception) { error = exception; }
+					catch (Exception exception) { error = exception.Unwrap(); }
 
 					if (task is IAsyncResult && ((IAsyncResult)task).IsCompleted)
 					{
@@ -46,8 +49,12 @@ namespace Assets.Unity.Charon.Editor.Tasks
 						index--;
 					}
 
-					if (error != null)
-						Debug.LogError(task.GetType().Name + " was finished with error: " + error.Unwrap());
+					if (error != null && ReportedExceptions.Contains(error) == false)
+					{
+						ReportedExceptions.Add(error);
+
+						Debug.LogError(task.GetType().Name + " was finished with error: " + error);
+					}
 				}
 			};
 		}
@@ -122,9 +129,14 @@ namespace Assets.Unity.Charon.Editor.Tasks
 						this.lastResult = (T)this.current;
 				}
 			}
-			catch (Exception error)
+			catch (Exception exception)
 			{
-				Debug.LogError(this.GetType().Name + " was finished with error: " + error.Unwrap());
+				var error = exception.Unwrap();
+				if (Coroutine.ReportedExceptions.Contains(error) == false)
+				{
+					Coroutine.ReportedExceptions.Add(error.Unwrap());
+					Debug.LogError(this.GetType().Name + " was finished with error: " + error);
+				}
 
 				this.TrySetFailed(error);
 			}
