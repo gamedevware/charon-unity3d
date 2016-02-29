@@ -83,8 +83,9 @@ namespace Assets.Editor.GameDevWare.Charon
 				Settings.Current.ToolsPath,
 				null,
 				(s, ea) => { errorJson.Append(ea.Data ?? ""); },
-				"ACCOUNT", "LICENSE", "DOWNLOAD",
-				"--credentials", email, password,
+				"ACCOUNT", "INITIALIZE",
+				"--email", email,
+				"--password", password,
 				"--noPrompt",
 				"--verbose"
 			);

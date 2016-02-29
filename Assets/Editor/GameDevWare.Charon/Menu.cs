@@ -235,7 +235,7 @@ namespace Assets.Editor.GameDevWare.Charon
 			}
 
 			if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_MENUSCANNINGASSETS, 0);
-			var gameDataFiles = (from id in AssetDatabase.FindAssets("t:TextAsset")
+			var gameDataFiles = (from id in AssetDatabase.FindAssets("t:TextAsset").Concat(AssetDatabase.FindAssets("t:DefaultAsset"))
 								 let path = AssetDatabase.GUIDToAssetPath(id)
 								 where path != null && path.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
 								 select path);
@@ -257,7 +257,7 @@ namespace Assets.Editor.GameDevWare.Charon
 				if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_PROGRESSCURRENTTARGETIS, gameDataPath), (float)i / total);
 				if (!File.Exists(fullGameDataPath))
 				{
-					Debug.LogWarning(string.Format("TextAsset at '{0}' is not found.", gameDataPath));
+					Debug.LogWarning(string.Format("Asset at '{0}' is not found.", gameDataPath));
 					Settings.Current.GameDataPaths.Remove(gameDataPath);
 					continue;
 				}
@@ -286,6 +286,8 @@ namespace Assets.Editor.GameDevWare.Charon
 				}
 				else
 				{
+					AssetDatabase.LoadAssetAtPath<TextAsset>(gameDataPath);
+
 					if (Settings.Current.Verbose) Debug.Log(string.Format("Adding '{0}' to tracked GameData files.", gameDataPath));
 					found++;
 				}
