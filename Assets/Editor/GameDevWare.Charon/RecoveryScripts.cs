@@ -73,7 +73,13 @@ namespace Assets.Editor.GameDevWare.Charon
 		{
 			var editScriptOutput = "Edit_" + FileUtils.SanitizeFileName(gameDataPath) + RECOVERYSCRIPTS_EXTENTIONS;
 			var output = new StringBuilder();
-			output.AppendLine("cd ../..");
+			output.AppendLine("cd ../../..");
+
+#if UNITY_EDITOR_WIN
+			output.AppendLine("SET UNITY_PROJECT_PATH=%CD%");
+#else
+			output.AppendLine("UNITY_PROJECT_PATH=\"" + Path.GetFullPath("./").TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) + "\"");
+#endif
 
 			if (string.IsNullOrEmpty(ToolsUtils.MonoPath) == false)
 				output.Append("\"").Append(ToolsUtils.MonoPath).Append("\" ");
@@ -104,7 +110,12 @@ namespace Assets.Editor.GameDevWare.Charon
 
 			var generateCodeOutput = "GenerateCodeFor_" + FileUtils.SanitizeFileName(gameDataPath) + RECOVERYSCRIPTS_EXTENTIONS;
 			var output = new StringBuilder();
-			output.AppendLine("cd ../..");
+			output.AppendLine("cd ../../..");
+#if UNITY_EDITOR_WIN
+			output.AppendLine("SET UNITY_PROJECT_PATH=%CD%");
+#else
+			output.AppendLine("UNITY_PROJECT_PATH=\"" + Path.GetFullPath("./").TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) + "\"");
+#endif
 			var generationOptions = gameDataSettings.Options;
 			var generator = (GameDataSettings.CodeGenerator)gameDataSettings.Generator;
 			switch (generator)

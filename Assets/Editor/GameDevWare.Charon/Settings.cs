@@ -63,7 +63,7 @@ namespace Assets.Editor.GameDevWare.Charon
 				settings = ScriptableObject.CreateInstance<Settings>();
 				settings.ToolsPort = 43210;
 				settings.ToolsPath = null;
-				settings.GameDataPaths = (from id in AssetDatabase.FindAssets("t:TextAsset GameData")
+				settings.GameDataPaths = (from id in AssetDatabase.FindAssets("GameData")
 										  let path = FileUtils.MakeProjectRelative(AssetDatabase.GUIDToAssetPath(id))
 										  where path != null && path.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
 										  select path).ToList();
@@ -83,6 +83,7 @@ namespace Assets.Editor.GameDevWare.Charon
 			{
 				if (AssetDatabase.LoadAssetAtPath<Settings>(SETTINGS_PATH) == null)
 					AssetDatabase.CreateAsset(this, SETTINGS_PATH);
+				EditorUtility.SetDirty(this);
 				AssetDatabase.SaveAssets();
 			}
 			catch (Exception e)

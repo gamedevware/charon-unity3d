@@ -100,7 +100,6 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 		}
 		protected override void OnDestroy()
 		{
-			this.gameDataPath = null;
 			this.CleanUp();
 			base.OnDestroy();
 		}
@@ -142,13 +141,16 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 
 		private void Load(string gameDataPath, string reference)
 		{
-			var loadAsync = new Tasks.Coroutine(PrepareEditor(gameDataPath, reference));
-			loadAsync.ContinueWith(_ => { if (loadAsync.HasErrors) this.CleanUp(); });
+			this.gameDataPath = gameDataPath;
+
+			var loadAsync = new Tasks.Coroutine(PrepareEditor(reference));
+			loadAsync.ContinueWith(_ => { if (loadAsync.HasErrors) this.Close(); });
 			this.loadingTask = loadAsync;
 		}
 		private void CleanUp()
 		{
 			this.UnlockCodeReload();
+			this.gameDataPath = null;
 			this.loadingTask = null;
 			if (this.editorProcess != null)
 				this.editorProcess.Close();
@@ -156,10 +158,8 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 
 		}
 
-		private IEnumerable PrepareEditor(string gameDataPath, string reference)
+		private IEnumerable PrepareEditor(string reference)
 		{
-			this.gameDataPath = gameDataPath;
-
 			switch (ToolsUtils.CheckTools())
 			{
 				case ToolsCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
@@ -173,14 +173,14 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 			if (getLicense.GetResult() == null)
 				yield return LicenseActivationWindow.ShowAsync();
 
-			yield return CoroutineScheduler.Schedule(this.LoadEditor(gameDataPath, reference));
+			yield return CoroutineScheduler.Schedule(this.LoadEditor(reference));
 		}
-		private IEnumerable LoadEditor(string gameDataPath, string reference)
+		private IEnumerable LoadEditor(string reference)
 		{
 			if (this.editorProcess != null)
 				yield return this.editorProcess.Close();
 
-			this.titleContent = new GUIContent(Path.GetFileNameWithoutExtension(gameDataPath));
+			this.titleContent = new GUIContent(Path.GetFileName(this.gameDataPath));
 
 			var toolsPath = Settings.Current.ToolsPath;
 			var port = Settings.Current.ToolsPort;
@@ -234,7 +234,7 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 						Debug.LogWarning(Path.GetFileName(Settings.Current.ToolsPath) + ": " + args.Data);
 				},
 				"LISTEN",
-				Path.GetFullPath(gameDataPath),
+				Path.GetFullPath(this.gameDataPath),
 				"--port",
 				port.ToString(),
 				"--parentPid",
@@ -278,7 +278,7 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 				yield break;
 			}
 
-			switch ((Browser)Settings.Current.Browser)
+			switch (Settings.Current.Browser)
 			{
 				case Browser.UnityEmbedded:
 					this.LoadUrl(gameDataEditorUrl + reference);

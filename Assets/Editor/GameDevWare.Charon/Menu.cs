@@ -286,8 +286,6 @@ namespace Assets.Editor.GameDevWare.Charon
 				}
 				else
 				{
-					AssetDatabase.LoadAssetAtPath<TextAsset>(gameDataPath);
-
 					if (Settings.Current.Verbose) Debug.Log(string.Format("Adding '{0}' to tracked GameData files.", gameDataPath));
 					found++;
 				}
@@ -319,7 +317,7 @@ namespace Assets.Editor.GameDevWare.Charon
 				if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_PROGRESSCURRENTTARGETIS, gameDataPath), (float)i / total);
 
 
-				var gameDataObj = AssetDatabase.LoadAssetAtPath(gameDataPath, typeof(TextAsset));
+				var gameDataObj = AssetDatabase.LoadAssetAtPath(gameDataPath, typeof(UnityEngine.Object));
 				var assetImport = AssetImporter.GetAtPath(gameDataPath);
 				if (assetImport == null)
 					continue;
@@ -442,7 +440,7 @@ namespace Assets.Editor.GameDevWare.Charon
 				if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_PROGRESSCURRENTTARGETIS, gameDataPath), (float)i / total);
 
 
-				var gameDataObj = AssetDatabase.LoadAssetAtPath(gameDataPath, typeof(TextAsset));
+				var gameDataObj = AssetDatabase.LoadAssetAtPath(gameDataPath, typeof(UnityEngine.Object));
 				var assetImport = AssetImporter.GetAtPath(gameDataPath);
 				if (assetImport == null)
 					continue;

@@ -136,7 +136,7 @@ namespace Assets.Editor.GameDevWare.Charon
 
 			try
 			{
-				var gameDataObj = AssetDatabase.LoadAssetAtPath<TextAsset>(gameDataPath);
+				var gameDataObj = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(gameDataPath);
 				var importer = AssetImporter.GetAtPath(gameDataPath);
 				importer.userData = JsonObject.From(this).Stringify();
 				EditorUtility.SetDirty(gameDataObj);

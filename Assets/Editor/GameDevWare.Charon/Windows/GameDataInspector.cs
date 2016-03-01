@@ -24,22 +24,20 @@ using UnityEngine;
 
 namespace Assets.Editor.GameDevWare.Charon.Windows
 {
-	[CustomEditor(typeof(TextAsset))]
+	[CustomEditor(typeof(Object), editorForChildClasses: true)]
 	class GameDataInspector : UnityEditor.Editor
 	{
-		private static readonly UnityEditor.Editor DefaultEditor = (UnityEditor.Editor)ScriptableObject.CreateInstance(typeof(EditorWindow).Assembly.GetType("UnityEditor.TextAssetInspector", true));
 
-		private TextAsset lastAsset;
+		private Object lastAsset;
 		private GameDataSettings gameDataSettings;
 
 		public override void OnInspectorGUI()
 		{
-			var gameDataAsset = (TextAsset)this.target;
+			var gameDataAsset = (Object)this.target;
 			var gameDataPath = FileUtils.MakeProjectRelative(AssetDatabase.GetAssetPath(gameDataAsset));
 			if (Settings.Current.GameDataPaths.Contains(gameDataPath) == false)
 			{
-				DefaultEditor.Invoke("InternalSetTargets", new object[] { this.targets });
-				DefaultEditor.OnInspectorGUI();
+				this.DrawDefaultInspector();
 				return;
 			}
 
