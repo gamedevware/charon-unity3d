@@ -142,14 +142,13 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 
 				try
 				{
-					process.Refresh();
 					hasExited = process.HasExited;
-					if (hasExited)
-						exitCode = process.ExitCode;
+					if (hasExited) exitCode = process.ExitCode;
+					process.Refresh();
 				}
 				catch (InvalidOperationException)
 				{
-					break;
+					// ignored
 				}
 				catch (Win32Exception)
 				{
@@ -160,27 +159,32 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 
 			this.ExitCode = exitCode;
 			if (Settings.Current.Verbose)
-				UnityEngine.Debug.Log(string.Format("Process '{0}' has exited with code {1}.", this.startInfo.FileName, this.ExitCode));
+				UnityEngine.Debug.Log(string.Format("Process #{1} '{0}' has exited with code {2}.", this.startInfo.FileName, this.ProcessId, this.ExitCode));
 
 			if (this.errorDataClosed == false || this.outputDataClosed == false)
 			{
 				if (Settings.Current.Verbose)
-					UnityEngine.Debug.Log(string.Format("Waiting till process '{0}' output/error data received.", this.startInfo.FileName));
+					UnityEngine.Debug.Log(string.Format("Waiting till process #{1} '{0}' output/error data received.", this.startInfo.FileName, this.ProcessId));
 
 				while (this.errorDataClosed == false || this.outputDataClosed == false)
 					yield return null;
 			}
+			if (Settings.Current.Verbose)
+				UnityEngine.Debug.Log(string.Format("Disposing process #{1} '{0}'.", this.startInfo.FileName, this.ProcessId));
 
 			this.process = null;
 			yield return null;
 			process.Dispose();
 			yield return null;
 			if (Settings.Current.Verbose)
-				UnityEngine.Debug.Log(string.Format("Process '{0}' has beed disposed.", this.startInfo.FileName));
+				UnityEngine.Debug.Log(string.Format("Process #{1} '{0}' has beed disposed.", this.startInfo.FileName, this.ProcessId));
 		}
 		private IEnumerable KillAsync(Process currentProcess)
 		{
 			yield return Promise.Delayed(TimeSpan.FromSeconds(1));
+
+			if (Settings.Current.Verbose)
+				UnityEngine.Debug.Log(string.Format("Trying to kill process #{1} '{0}'.", this.startInfo.FileName, this.ProcessId));
 
 			var attempt = 1;
 			while (!currentProcess.HasExited)
@@ -195,9 +199,14 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 				}
 				catch (Exception e)
 				{
-					UnityEngine.Debug.LogWarning("Attempt #" + attempt + " to kill process " + Path.GetFileName(startInfo.FileName) + " has failed: " + e.Message);
-					if (attempt > 10)
-						throw;
+					if (Settings.Current.Verbose)
+						UnityEngine.Debug.LogWarning("Attempt #" + attempt + " to kill process " + Path.GetFileName(startInfo.FileName) + " has failed: " + e.Message);
+
+					if (attempt < 10)
+						continue;
+
+					UnityEngine.Debug.Log(string.Format("Unable to to kill process #{1} '{0}'.", this.startInfo.FileName, this.ProcessId));
+					throw;
 				}
 			}
 		}
@@ -210,7 +219,7 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 				return false;
 
 			if (Settings.Current.Verbose)
-				UnityEngine.Debug.Log(string.Format("Trying to kill process '{0}'.", this.startInfo.FileName));
+				UnityEngine.Debug.Log(string.Format("Trying to kill process #{1} '{0}'.", this.startInfo.FileName, this.ProcessId));
 
 			var attempt = 1;
 			while (!currentProcess.HasExited)
@@ -223,8 +232,12 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 				}
 				catch (Exception)
 				{
-					if (attempt > 10)
-						return false;
+					if (attempt < 10)
+						continue;
+
+					if (Settings.Current.Verbose)
+						UnityEngine.Debug.Log(string.Format("Unable to to kill process #{1} '{0}'.", this.startInfo.FileName, this.ProcessId));
+					return false;
 				}
 			}
 			return true;
@@ -237,7 +250,7 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 				return Promise.Fulfilled;
 
 			if (Settings.Current.Verbose)
-				UnityEngine.Debug.Log(string.Format("Trying to close process '{0}'.", this.startInfo.FileName));
+				UnityEngine.Debug.Log(string.Format("Trying to close process #{1} '{0}'.", this.startInfo.FileName, this.ProcessId));
 
 			try
 			{
@@ -247,7 +260,7 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 			}
 			catch (Exception e)
 			{
-				UnityEngine.Debug.LogWarning("Failed to shutdown process " + Path.GetFileName(startInfo.FileName) + ": " + e.Message);
+				UnityEngine.Debug.LogWarning("Failed to shutdown process #" + this.ProcessId + " " + Path.GetFileName(startInfo.FileName) + ": " + e.Message);
 			}
 
 			if (!currentProcess.HasExited)

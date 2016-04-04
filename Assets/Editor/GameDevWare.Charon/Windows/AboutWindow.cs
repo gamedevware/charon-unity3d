@@ -34,7 +34,7 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 		[NonSerialized]
 		private ExecuteCommandTask checkToolsVersion;
 		[NonSerialized]
-		private Coroutine<LicenseInfo> getLicense;
+		private Promise<LicenseInfo> getLicense;
 
 		public AboutWindow()
 		{

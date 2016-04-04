@@ -11,7 +11,7 @@ namespace Assets.Editor.GameDevWare.Charon
 {
 	public static class Licenses
 	{
-		public static Coroutine<LicenseInfo> GetLicense(bool scheduleCoroutine)
+		public static Promise<LicenseInfo> GetLicense(bool scheduleCoroutine)
 		{
 			var stateMachine = GetLicenseAsync();
 
@@ -34,7 +34,7 @@ namespace Assets.Editor.GameDevWare.Charon
 			yield return selectedLicense;
 		}
 
-		public static Coroutine<LicenseInfo[]> GetLicenses(bool scheduleCoroutine)
+		public static Promise<LicenseInfo[]> GetLicenses(bool scheduleCoroutine)
 		{
 			var stateMachine = GetLicensesAsync();
 
@@ -68,7 +68,7 @@ namespace Assets.Editor.GameDevWare.Charon
 			yield return licenses;
 		}
 
-		public static Coroutine<LicenseInfo[]> DownloadLicenses(string email, string password, bool scheduleCoroutine)
+		public static Promise<LicenseInfo[]> DownloadLicenses(string email, string password, bool scheduleCoroutine)
 		{
 			if (email == null) throw new ArgumentNullException("email");
 			if (password == null) throw new ArgumentNullException("password");
@@ -105,7 +105,7 @@ namespace Assets.Editor.GameDevWare.Charon
 				yield return step;
 		}
 
-		public static Coroutine<LicenseInfo[]> Register(string firstName, string lastName, string organizationName, string email, string password, string unityInvoiceNumber, bool scheduleCoroutine)
+		public static Promise<LicenseInfo[]> Register(string firstName, string lastName, string organizationName, string email, string password, string unityInvoiceNumber, bool scheduleCoroutine)
 		{
 			if (firstName == null) throw new ArgumentNullException("firstName");
 			if (lastName == null) throw new ArgumentNullException("lastName");

@@ -28,12 +28,12 @@ namespace Assets.Editor.GameDevWare.Charon.Utils
 {
 	public static class CoroutineScheduler
 	{
-		private static IAsyncResult current;
+		private static Promise Current;
 
-		private static readonly Queue<string> ids = new Queue<string>();
-		private static readonly Dictionary<string, Promise> coroutineById = new Dictionary<string, Promise>();
+		private static readonly Queue<Action> WaitQueue = new Queue<Action>();
+		private static readonly Dictionary<string, Promise> CoroutineById = new Dictionary<string, Promise>();
 
-		public static bool IsRunning { get { return current != null && current.IsCompleted == false; } }
+		public static bool IsRunning { get { return Current != null && Current.IsCompleted == false; } }
 
 		static CoroutineScheduler()
 		{
@@ -42,26 +42,26 @@ namespace Assets.Editor.GameDevWare.Charon.Utils
 
 		private static void Update()
 		{
-			if (IsRunning || ids.Count <= 0)
+			if (IsRunning || WaitQueue.Count <= 0)
 				return;
-			var id = ids.Dequeue();
 
-			coroutineById[id].SetCompleted(); // start coroutine
+			var start = WaitQueue.Dequeue();
+			start();
 		}
 
-		public static Coroutine<object> Schedule(IEnumerable coroutine)
+		public static Promise Schedule(IEnumerable coroutine)
 		{
-			return Schedule(coroutine, Guid.NewGuid().ToString());
+			return Schedule(coroutine, null);
 		}
-		public static Coroutine<object> Schedule(IEnumerable coroutine, string id)
+		public static Promise Schedule(IEnumerable coroutine, string id)
 		{
 			return Schedule<object>(coroutine, id);
 		}
-		public static Coroutine<T> Schedule<T>(IEnumerable coroutine)
+		public static Promise<T> Schedule<T>(IEnumerable coroutine)
 		{
 			return Schedule<T>(coroutine, Guid.NewGuid().ToString());
 		}
-		public static Coroutine<T> Schedule<T>(IEnumerable coroutine, string id)
+		public static Promise<T> Schedule<T>(IEnumerable coroutine, string id)
 		{
 			if (coroutine == null) throw new ArgumentNullException("coroutine");
 
@@ -72,30 +72,27 @@ namespace Assets.Editor.GameDevWare.Charon.Utils
 			if (string.IsNullOrEmpty(id))
 				id = coroutineName + "_" + Guid.NewGuid().ToString().Replace("-", "");
 
-			var startPromise = default(Promise);
-			if (coroutineById.TryGetValue(id, out startPromise))
-				return (Coroutine<T>)((object[])startPromise.PromiseState)[0];
+			var existingPromise = default(Promise);
+			if (CoroutineById.TryGetValue(id, out existingPromise))
+				return (Promise<T>)existingPromise;
 
 			if (Settings.Current.Verbose)
-				Debug.Log("Sheduling new coroutine " + coroutineName + " with id '" + id + "'.");
+				Debug.Log("Scheduling new coroutine " + coroutineName + " with id '" + id + "'.");
 
-			startPromise = new Promise(null, null, new object[1]);
-			ids.Enqueue(id);
-			coroutineById.Add(id, startPromise);
-			var result = new Coroutine<T>(Start<T>(coroutine, id, startPromise));
-			((object[])startPromise.PromiseState)[0] = result;
+			var resultPromise = new Promise<T>();
+			WaitQueue.Enqueue(() =>
+			{
+				Current = new Coroutine<T>(coroutine).ContinueWith(t =>
+				{
+					CoroutineById.Remove(id);
 
-			return result;
-		}
+					if (t.HasErrors) resultPromise.SetFailed(t.Error);
+					else resultPromise.SetResult(t.GetResult());
+				});
+			});
 
-		private static IEnumerable Start<T>(IEnumerable coroutine, string id, Promise startPromise)
-		{
-			yield return startPromise;
-			var innerCoroutine = new Coroutine<T>(coroutine);
-			current = innerCoroutine;
-			yield return innerCoroutine;
-			coroutineById.Remove(id);
-			yield return innerCoroutine.GetResult();
+			CoroutineById.Add(id, resultPromise);
+			return resultPromise;
 		}
 	}
 }
