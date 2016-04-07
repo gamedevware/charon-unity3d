@@ -1,71 +1,60 @@
-﻿/*
-	Copyright (c) 2016 Denis Zykov
-
-	This is part of "Charon: Game Data Editor" Unity Plugin.
-
-	Charon Game Data Editor Unity Plugin is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see http://www.gnu.org/licenses.
-*/
-
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using Assets.Editor.GameDevWare.Charon.Utils;
-using UnityEditor;
+using Assets.Scripts;
 using UnityEngine;
+using UnityEditor;
 
 namespace Assets.Editor.GameDevWare.Charon.Tasks
 {
 	public class Coroutine : Coroutine<object>
 	{
-		public static readonly List<IUpdatable> UpdateList = new List<IUpdatable>();
-		public static readonly HashSet<Exception> ReportedExceptions = new HashSet<Exception>();
+		private static readonly List<IUpdatable> UpdateList = new List<IUpdatable>();
 
 		static Coroutine()
 		{
-			EditorApplication.update += () =>
-			{
-				ReportedExceptions.Clear();
-
-				for (var index = 0; index < UpdateList.Count; index++)
-				{
-					var error = default(Exception);
-					var task = UpdateList[index];
-					try { task.Update(); }
-					catch (Exception exception) { error = exception.Unwrap(); }
-
-					if (task is IAsyncResult && ((IAsyncResult)task).IsCompleted)
-					{
-						UpdateList.RemoveAt(index);
-						index--;
-					}
-
-					if (error != null && ReportedExceptions.Contains(error) == false)
-					{
-						ReportedExceptions.Add(error);
-
-						Debug.LogError(task.GetType().Name + " was finished with error: " + error);
-					}
-				}
-			};
+			EditorApplication.update += UpdateCoroutines;
 		}
-
 		public Coroutine(IEnumerable coroutine, AsyncCallback callback = null, object asyncCallbackState = null, object promiseState = null)
 			: base(coroutine, callback, asyncCallbackState, promiseState)
 		{
 		}
 
+		private static void UpdateCoroutines()
+		{
+			for (var index = 0; index < UpdateList.Count; index++)
+			{
+				var error = default(Exception);
+				var task = UpdateList[index];
 
+				try { task.Update(); }
+				catch (Exception exception) { error = exception; }
+
+				if (task is IAsyncResult && ((IAsyncResult)task).IsCompleted)
+				{
+					UpdateList.RemoveAt(index);
+					index--;
+				}
+
+				var promise = task as Promise;
+				if (promise != null && promise.HasErrors && !promise.IsErrorObserved)
+					error = promise.Error;
+
+				if (error != null)
+					Debug.LogWarning(task.GetType().Name + " was finished with error: " + error.Unwrap());
+			}
+		}
+		public static void AddToUpdateList(IUpdatable updatable)
+		{
+			if (updatable == null) throw new ArgumentNullException("updatable");
+			UpdateList.Add(updatable);
+		}
+		public static void RemoveFromUpdateList(IUpdatable updatable)
+		{
+			if (updatable == null) throw new ArgumentNullException("updatable");
+
+			UpdateList.Remove(updatable);
+		}
 
 		internal static IEnumerable WaitForUpdatablePromise(Promise promise)
 		{
@@ -84,7 +73,6 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 			while (DateTime.UtcNow - startTime < timeToWait)
 				yield return null;
 		}
-
 	}
 	public class Coroutine<T> : Promise<T>, IUpdatable
 	{
@@ -99,7 +87,7 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 
 			this.coroutine = coroutine.GetEnumerator();
 
-			Coroutine.UpdateList.Add(this);
+			Coroutine.AddToUpdateList(this);
 		}
 
 		public void Update()
@@ -130,15 +118,8 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 						this.lastResult = (T)this.current;
 				}
 			}
-			catch (Exception exception)
+			catch (Exception error)
 			{
-				var error = exception.Unwrap();
-				if (Coroutine.ReportedExceptions.Contains(error) == false)
-				{
-					Coroutine.ReportedExceptions.Add(error.Unwrap());
-					Debug.LogError(this.GetType().Name + " was finished with error: " + error);
-				}
-
 				this.TrySetFailed(error);
 			}
 		}
@@ -154,10 +135,10 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 		public override string ToString()
 		{
 			if (!this.IsCompleted)
-				return string.Format("{0}, running", this.GetType().Name);
+				return string.Format("{0}, running", coroutine);
 			if (this.HasErrors)
-				return string.Format("{0}, error: " + this.Error.Message, this.GetType().Name);
-			return string.Format("{0}, complete", this.GetType().Name);
+				return string.Format("{0}, error: " + this.Error.Message, coroutine);
+			return string.Format("{0}, complete", coroutine);
 		}
 	}
 }
