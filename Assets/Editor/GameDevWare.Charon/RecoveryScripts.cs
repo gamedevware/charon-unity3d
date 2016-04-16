@@ -75,10 +75,21 @@ namespace Assets.Editor.GameDevWare.Charon
 			var output = new StringBuilder();
 			output.AppendLine("cd ../../..");
 
+			var appDataPath = Path.GetFullPath(Settings.GetAppDataPath()).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+			var unityProjectPath = Path.GetFullPath("./").TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+			var licenseServer = Settings.Current.LicenseServerAddress;
+			var selectedLicense = Settings.Current.SelectedLicense;
+
 #if UNITY_EDITOR_WIN
-			output.AppendLine("SET UNITY_PROJECT_PATH=%CD%");
+			output.Append("SET UNITY_PROJECT_PATH=").Append(unityProjectPath).AppendLine();
+			output.Append("SET CHARON_APP_DATA=").Append(appDataPath).AppendLine();
+			output.Append("SET CHARON_LICENSE_SERVER=").Append(licenseServer).AppendLine();
+			output.Append("SET CHARON_SELECTED_LICENSE=").Append(selectedLicense).AppendLine();
 #else
-			output.AppendLine("UNITY_PROJECT_PATH=\"" + Path.GetFullPath("./").TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) + "\"");
+			output.Append("UNITY_PROJECT_PATH=").Append(unityProjectPath).AppendLine();
+			output.Append("CHARON_APP_DATA=").Append(appDataPath).AppendLine();
+			output.Append("CHARON_LICENSE_SERVER=").Append(licenseServer).AppendLine();
+			output.Append("CHARON_SELECTED_LICENSE=").Append(selectedLicense).AppendLine();
 #endif
 
 			if (string.IsNullOrEmpty(ToolsUtils.MonoPath) == false)
@@ -111,10 +122,15 @@ namespace Assets.Editor.GameDevWare.Charon
 			var generateCodeOutput = "GenerateCodeFor_" + FileUtils.SanitizeFileName(gameDataPath) + RECOVERYSCRIPTS_EXTENTIONS;
 			var output = new StringBuilder();
 			output.AppendLine("cd ../../..");
+
+			var appDataPath = Path.GetFullPath(Settings.GetAppDataPath()).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+			var unityProjectPath = Path.GetFullPath("./").TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 #if UNITY_EDITOR_WIN
-			output.AppendLine("SET UNITY_PROJECT_PATH=%CD%");
+			output.Append("SET UNITY_PROJECT_PATH=").Append(unityProjectPath).AppendLine();
+			output.Append("SET CHARON_APP_DATA=").Append(appDataPath).AppendLine();
 #else
-			output.AppendLine("UNITY_PROJECT_PATH=\"" + Path.GetFullPath("./").TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) + "\"");
+			output.Append("UNITY_PROJECT_PATH=").Append(unityProjectPath).AppendLine();
+			output.Append("CHARON_APP_DATA=").Append(appDataPath).AppendLine();
 #endif
 			var generationOptions = gameDataSettings.Options;
 			var generator = (GameDataSettings.CodeGenerator)gameDataSettings.Generator;
