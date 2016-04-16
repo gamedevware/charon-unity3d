@@ -55,7 +55,7 @@ namespace Assets.Editor.GameDevWare.Charon
 			Unix
 		}
 
-		public enum Identations
+		public enum Indentations
 		{
 			Tab = 0,
 			TwoSpaces,
@@ -76,7 +76,7 @@ namespace Assets.Editor.GameDevWare.Charon
 		public string EntryClassName;
 		public int Options;
 		public int LineEnding;
-		public int Identation;
+		public int Indentation;
 
 		public static GameDataSettings CreateDefault(string gameDataPath)
 		{
@@ -86,7 +86,7 @@ namespace Assets.Editor.GameDevWare.Charon
 			settings.Generator = (int)CodeGenerator.CSharp;
 			settings.AutoGeneration = true;
 			settings.LineEnding = (int) LineEndings.Windows;
-			settings.Identation = (int) Identations.Tab;
+			settings.Indentation = (int) Indentations.Tab;
 			settings.AssetGenerationPath = Path.ChangeExtension(gameDataPath, "asset");
 			settings.CodeGenerationPath = Path.ChangeExtension(gameDataPath, "cs");
 			settings.GameDataClassName = Path.GetFileNameWithoutExtension(gameDataPath);

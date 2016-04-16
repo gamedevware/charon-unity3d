@@ -1,4 +1,23 @@
-﻿using System;
+﻿/*
+	Copyright (c) 2016 Denis Zykov
+
+	This is part of "Charon: Game Data Editor" Unity Plugin.
+
+	Charon Game Data Editor Unity Plugin is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see http://www.gnu.org/licenses.
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -35,7 +54,7 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 			if (info == null)
 				throw new ArgumentNullException("info");
 
-			var list = info.GetValue("InnerExceptions", typeof(Exception[])) as Exception[];
+			var list = info.GetValue("InnerExceptions", typeof (Exception[])) as Exception[];
 			if (list == null)
 				throw new SerializationException("DeserializationFailure");
 			this.InnerExceptions = new ReadOnlyCollection<Exception>(list);
@@ -45,7 +64,7 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 		{
 		}
 		public AggregateException(string message, params Exception[] innerExceptions)
-			: this(message, (IList<Exception>)innerExceptions)
+			: this(message, (IList<Exception>) innerExceptions)
 		{
 		}
 		public AggregateException(string message, Exception innerException)
@@ -53,7 +72,7 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 		{
 			if (innerException == null) throw new ArgumentNullException("innerException");
 
-			this.InnerExceptions = new ReadOnlyCollection<Exception>(new[] { innerException });
+			this.InnerExceptions = new ReadOnlyCollection<Exception>(new[] {innerException});
 		}
 		private AggregateException(string message, IList<Exception> innerExceptions)
 			: base(message, ((innerExceptions != null) && (innerExceptions.Count > 0)) ? innerExceptions[0] : null)
@@ -73,7 +92,7 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 		public AggregateException Flatten()
 		{
 			var innerExceptions = new List<Exception>();
-			var procList = new List<AggregateException> { this };
+			var procList = new List<AggregateException> {this};
 			var procListIdx = 0;
 			while (procList.Count > procListIdx)
 			{
@@ -107,7 +126,7 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 			base.GetObjectData(info, context);
 			var array = new Exception[this.InnerExceptions.Count];
 			this.InnerExceptions.CopyTo(array, 0);
-			info.AddValue("InnerExceptions", array, typeof(Exception[]));
+			info.AddValue("InnerExceptions", array, typeof (Exception[]));
 		}
 		public void Handle(Predicate<Exception> predicate)
 		{

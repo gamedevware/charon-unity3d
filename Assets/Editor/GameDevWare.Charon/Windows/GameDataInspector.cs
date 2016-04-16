@@ -17,19 +17,60 @@
     along with this program.  If not, see http://www.gnu.org/licenses.
 */
 
+using System;
 using System.IO;
+using System.Reflection;
 using Assets.Editor.GameDevWare.Charon.Utils;
 using UnityEditor;
 using UnityEngine;
 
+using Object = UnityEngine.Object;
+
 namespace Assets.Editor.GameDevWare.Charon.Windows
 {
-	[CustomEditor(typeof(Object), editorForChildClasses: true)]
-	class GameDataInspector : UnityEditor.Editor
+	internal class GameDataInspector : UnityEditor.Editor
 	{
-
 		private Object lastAsset;
 		private GameDataSettings gameDataSettings;
+
+		static GameDataInspector()
+		{
+			Selection.selectionChanged += OnSelectionChanged;
+		}
+
+		public static void OnSelectionChanged()
+		{
+			if (Selection.activeObject == null || Settings.Current.GameDataPaths.Contains(FileUtils.MakeProjectRelative(AssetDatabase.GetAssetPath(Selection.activeObject))) == false)
+				return;
+
+			try
+			{
+				var templateAsset = Selection.activeObject.GetType();
+				var inspectorWindowType = typeof(PopupWindow).Assembly.GetType("UnityEditor.InspectorWindow");
+				var inspectorWindow = EditorWindow.GetWindow(inspectorWindowType);
+				var activeEditorTracker = inspectorWindow.GetFieldValue("m_Tracker");
+				var customEditorAttributesType = typeof(PopupWindow).Assembly.GetType("UnityEditor.CustomEditorAttributes");
+				var customEditorsList = (System.Collections.IList)customEditorAttributesType.GetFieldValue("kSCustomEditors");
+				foreach (var customEditor in customEditorsList)
+				{
+					if ((Type)customEditor.GetFieldValue("m_InspectedType") != templateAsset) continue;
+
+					var originalInspectorType = (Type)customEditor.GetFieldValue("m_InspectorType");
+					// override inspector
+					customEditor.SetFieldValue("m_InspectorType", typeof(GameDataInspector));
+					// force rebuild editor list
+					activeEditorTracker.Invoke("ForceRebuild");
+					inspectorWindow.Invoke("Repaint");
+					// restore original inspector
+					customEditor.SetFieldValue("m_InspectorType", originalInspectorType);
+				}
+
+			}
+			catch (Exception e)
+			{
+				Debug.LogError(e);
+			}
+		}
 
 		public override void OnInspectorGUI()
 		{
@@ -79,7 +120,7 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 				this.gameDataSettings.GameDataClassName = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_WINDOWCODEGAMEDATACLASSNAME, this.gameDataSettings.GameDataClassName);
 				this.gameDataSettings.EntryClassName = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_WINDOWCODEENTRYCLASSNAME, this.gameDataSettings.EntryClassName);
 				this.gameDataSettings.LineEnding = (int)(GameDataSettings.LineEndings)EditorGUILayout.EnumPopup(Resources.UI_UNITYPLUGIN_WINDOWCODELINEENDINGS, (GameDataSettings.LineEndings)this.gameDataSettings.LineEnding);
-				this.gameDataSettings.Identation = (int)(GameDataSettings.Identations)EditorGUILayout.EnumPopup(Resources.UI_UNITYPLUGIN_WINDOWCODEIDENTATION, (GameDataSettings.Identations)this.gameDataSettings.Identation);
+				this.gameDataSettings.Indentation = (int)(GameDataSettings.Indentations)EditorGUILayout.EnumPopup(Resources.UI_UNITYPLUGIN_WINDOWCODEIDENTATION, (GameDataSettings.Indentations)this.gameDataSettings.Indentation);
 				this.gameDataSettings.Options = (int)(GameDataSettings.CodeGenerationOptions)EditorGUILayout.EnumMaskField(Resources.UI_UNITYPLUGIN_WINDOWCODEOPTIONS, (GameDataSettings.CodeGenerationOptions)gameDataSettings.Options);
 			}
 

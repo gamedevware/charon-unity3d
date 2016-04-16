@@ -18,6 +18,7 @@
 */
 
 using System.Reflection;
+using Assets.Editor.GameDevWare.Charon.Utils;
 using UnityEditor;
 using UnityEngine;
 
@@ -90,7 +91,7 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 
 			if (focused)
 			{
-				var parent = this.GetField("m_Parent");
+				var parent = this.GetFieldValue("m_Parent");
 				if (ReferenceEquals(parent, null) == false)
 					this.webView.Invoke("SetHostView", parent);
 
@@ -128,9 +129,9 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 				var engineAsm = typeof(ScriptableObject).Assembly;
 				var webViewRect = (Rect)engineAsm.GetType("UnityEngine.GUIClip", throwOnError: true).InvokeMember("Unclip", BindingFlags.InvokeMethod | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public, null, null, new object[] { new Rect(0, 0, this.position.width, this.position.height) });
 				this.webView = ScriptableObject.CreateInstance(editorAsm.GetType("UnityEditor.WebView", throwOnError: true));
-				var hostView = this.GetField("m_Parent");
+				var hostView = this.GetFieldValue("m_Parent");
 				this.webView.Invoke("InitWebView", hostView, (int)(webViewRect.x + Paddings.x), (int)(webViewRect.y + Paddings.y), (int)(webViewRect.width - (Paddings.width + Paddings.x)), (int)(webViewRect.height - (Paddings.height + Paddings.y)), false);
-				this.webView.SetProperty("hideFlags", HideFlags.HideAndDontSave);
+				this.webView.SetPropertyValue("hideFlags", HideFlags.HideAndDontSave);
 
 				if (Settings.Current.Verbose)
 					Debug.Log("WebViewEditorWindow instantiated new WebView.");

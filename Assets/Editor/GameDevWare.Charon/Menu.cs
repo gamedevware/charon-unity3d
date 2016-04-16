@@ -384,7 +384,7 @@ namespace Assets.Editor.GameDevWare.Charon
 								forceReImportList.Add(codeGenerationPath);
 
 								if (gameDataSettings.LineEnding != 0 ||
-									gameDataSettings.Identation != 0)
+									gameDataSettings.Indentation != 0)
 								{
 									if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_GENERATEREFORMATCODE, gameDataPath), (float)i / total);
 
@@ -400,19 +400,19 @@ namespace Assets.Editor.GameDevWare.Charon
 										default:
 											throw new InvalidOperationException(string.Format("Unknown LineEnding value '{0}' is set for {1}", gameDataSettings.LineEnding, gameDataPath));
 									}
-									switch ((GameDataSettings.Identations)gameDataSettings.Identation)
+									switch ((GameDataSettings.Indentations)gameDataSettings.Indentation)
 									{
-										case GameDataSettings.Identations.Tab:
+										case GameDataSettings.Indentations.Tab:
 											// already tabs
 											break;
-										case GameDataSettings.Identations.FourSpaces:
+										case GameDataSettings.Indentations.FourSpaces:
 											code.Replace("\t", "    ");
 											break;
-										case GameDataSettings.Identations.TwoSpaces:
+										case GameDataSettings.Indentations.TwoSpaces:
 											code.Replace("\t", "  ");
 											break;
 										default:
-											throw new InvalidOperationException(string.Format("Unknown indentation value '{0}' is set for {1}", gameDataSettings.Identation, gameDataPath));
+											throw new InvalidOperationException(string.Format("Unknown indentation value '{0}' is set for {1}", gameDataSettings.Indentation, gameDataPath));
 									}
 									File.WriteAllText(codeGenerationPath, code.ToString());
 								}
@@ -468,7 +468,7 @@ namespace Assets.Editor.GameDevWare.Charon
 
 					var gameDataJson = gameDataTextReader.ReadToEnd();
 					var gameDataAsset = (ScriptableObject)ScriptableObject.CreateInstance(gameDataType);
-					gameDataAsset.SetField("jsonText", gameDataJson);
+					gameDataAsset.SetFieldValue("jsonText", gameDataJson);
 					AssetDatabase.CreateAsset(gameDataAsset, assetGenerationPath);
 					AssetDatabase.SaveAssets();
 				}

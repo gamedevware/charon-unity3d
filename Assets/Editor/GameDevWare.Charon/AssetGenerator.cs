@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Assets.Editor.GameDevWare.Charon.Utils;
+using Assets.Editor.GameDevWare.Charon.Windows;
 using UnityEditor;
 using UnityEngine;
 
@@ -53,6 +54,9 @@ namespace Assets.Editor.GameDevWare.Charon
 
 		protected void Awake()
 		{
+			System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(GameDataInspector).TypeHandle);
+
+
 			var listStr = EditorPrefs.GetString(PREFS_KEY);
 			if (string.IsNullOrEmpty(listStr))
 				this.AssetGenerationList = new HashSet<string>();

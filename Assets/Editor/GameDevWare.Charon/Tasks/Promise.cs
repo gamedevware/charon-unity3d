@@ -1,4 +1,23 @@
-﻿using System;
+﻿/*
+	Copyright (c) 2016 Denis Zykov
+
+	This is part of "Charon: Game Data Editor" Unity Plugin.
+
+	Charon Game Data Editor Unity Plugin is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see http://www.gnu.org/licenses.
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -12,31 +31,20 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 		private readonly object asyncCallbackState;
 		private readonly object promiseState;
 		private bool cantBeDisposed;
-#if !UNITY_WEBGL || UNITY_EDITOR
 		private ManualResetEvent completionEvent;
-#endif
 		private Continuation continuations;
-		private AggregateException error;
-		private SynchronizationContext capturedSynchronizationContext;
 
 		public bool IsDisposed { get; private set; }
-		public bool HasErrors { get { return this.error != null; } }
-		public AggregateException Error { get { IsErrorObserved = true; return error; } protected set { error = value; } }
+		public bool HasErrors { get { return this.Error != null; } }
+		public AggregateException Error { get; protected set; }
 		public object PromiseState { get { return this.promiseState; } }
 		public bool IsCompleted { get; private set; }
-#if !UNITY_WEBGL || UNITY_EDITOR
 		WaitHandle IAsyncResult.AsyncWaitHandle { get { this.EnsureCompletionEvent(); return this.completionEvent; } }
-#else
-		WaitHandle IAsyncResult.AsyncWaitHandle { get { throw new NotSupportedException(); } }
-#endif
 		object IAsyncResult.AsyncState { get { return this.asyncCallbackState; } }
 		bool IAsyncResult.CompletedSynchronously { get { return false; } }
-		private bool ContinueOnCapturedContext { get { return SynchronizationContext.Current != this.capturedSynchronizationContext && this.capturedSynchronizationContext != null && this.capturedSynchronizationContext.GetType() != typeof(SynchronizationContext); } }
-		internal bool IsErrorObserved { get; private set; }
 
 		public Promise(AsyncCallback callback = null, object asyncCallbackState = null, object promiseState = null)
 		{
-			this.capturedSynchronizationContext = SynchronizationContext.Current;
 			this.asyncCallback = callback;
 			this.asyncCallbackState = asyncCallbackState;
 			this.promiseState = promiseState;
@@ -57,9 +65,7 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 		}
 		public bool TrySetCompleted()
 		{
-#if !UNITY_WEBGL || UNITY_EDITOR
 			var ev = default(ManualResetEvent);
-#endif
 
 			lock (this)
 			{
@@ -67,14 +73,13 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 					return false;
 
 				this.IsCompleted = true;
-#if !UNITY_WEBGL || UNITY_EDITOR
 				ev = this.completionEvent;
-				if (ev != null)
-					ev.Set();
-#endif
 			}
 
-			this.ExecuteContinuations();
+			if (ev != null)
+				ev.Set();
+
+			this.ExecuteAsyncCallback();
 
 			return true;
 		}
@@ -124,9 +129,16 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 			if (second == null) throw new ArgumentNullException("second");
 
 			var result = new Promise();
+			var continuation = (Action<Promise>)(p =>
+			{
+				if (p.HasErrors)
+					result.TrySetFailed(p.Error);
+				else
+					result.TrySetCompleted();
+			});
 
-			first.PropagateTo(result);
-			second.PropagateTo(result);
+			first.ContinueWith(continuation);
+			second.ContinueWith(continuation);
 
 			return result;
 		}
@@ -137,9 +149,16 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 			if (promises.Length == 1) return promises[0];
 
 			var result = new Promise();
+			var continuation = (Action<Promise>)(p =>
+			{
+				if (p.HasErrors)
+					result.TrySetFailed(p.Error);
+				else
+					result.TrySetCompleted();
+			});
 
 			foreach (var promise in promises)
-				promise.PropagateTo(result);
+				promise.ContinueWith(continuation);
 
 			return result;
 		}
@@ -151,7 +170,7 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 			var result = new Promise();
 			var resultsCount = 0;
 
-			var continuation = (ActionContinuation)(_ =>
+			var continuation = (Action<Promise>)(p =>
 			{
 				if (Interlocked.Increment(ref resultsCount) == 2)
 				{
@@ -179,7 +198,7 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 			var result = new Promise();
 			var resultsCount = 0;
 
-			var continuation = (ActionContinuation)(_ =>
+			var continuation = (Action<Promise>)(p =>
 			{
 				if (Interlocked.Increment(ref resultsCount) == promises.Length)
 				{
@@ -223,20 +242,15 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 			return this.ContinueWith(_ => { });
 		}
 
-		public void PropagateTo(Promise promise)
+		public Promise ContinueWith(Action<Promise, object> continuation, object state)
 		{
-			if (promise == null) throw new ArgumentNullException("promise");
-
-			this.ContinueWith(p =>
-			{
-				if (p.HasErrors)
-					promise.TrySetFailed(p.Error);
-				else
-					promise.TrySetCompleted();
-			});
+			return ContinueWithInternal(continuation, state);
+		}
+		public Promise ContinueWith(Action<Promise> continuation)
+		{
+			return ContinueWithInternal(continuation, null);
 		}
 
-#if !UNITY_WEBGL || UNITY_EDITOR
 		private void EnsureCompletionEvent()
 		{
 			lock (this)
@@ -244,36 +258,15 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 				this.ThrowIfDisposed();
 
 				if (this.completionEvent == null)
-				this.completionEvent = new ManualResetEvent(this.IsCompleted);
-
+					this.completionEvent = new ManualResetEvent(this.IsCompleted);
 			}
 		}
-#endif
-
-		private void ExecuteContinuations()
+		private void ExecuteAsyncCallback()
 		{
-			if (this.ContinueOnCapturedContext)
-			{
-				this.capturedSynchronizationContext.Post(_ => this.ExecuteContinuations(), null);
-				return;
-			}
-
-			var errorList = default(HashSet<Exception>);
-
-			var conts = Interlocked.Exchange(ref this.continuations, null);
-			if (conts != null)
-			{
-				var contErrors = default(AggregateException);
-
-				conts.Invoke(this, out contErrors);
-
-				if (contErrors != null)
-					errorList = new HashSet<Exception> { contErrors };
-			}
+			var errorList = this.InvokeContinuations();
 
 			if (this.asyncCallback != null)
 			{
-				// ReSharper disable once PossibleInvalidCastExceptionInForeachLoop
 				foreach (AsyncCallback target in this.asyncCallback.GetInvocationList())
 				{
 					try
@@ -282,14 +275,34 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 					}
 					catch (Exception e)
 					{
-						if (errorList == null) errorList = new HashSet<Exception>();
-						errorList.Add(e);
+						if (errorList == null) errorList = new List<Exception>();
+
+						if (errorList.Contains(e) == false)
+							errorList.Add(e);
 					}
 				}
 			}
 
 			if (errorList != null)
 				throw new AggregateException(errorList).Flatten();
+		}
+		private List<Exception> InvokeContinuations()
+		{
+			var errorList = default(List<Exception>);
+			var conts = Interlocked.Exchange(ref this.continuations, null);
+			if (conts != null)
+			{
+				var contErrors = this.InvokeContinuation(conts);
+				if (contErrors != null)
+					errorList = new List<Exception> { contErrors };
+			}
+			return errorList;
+		}
+		protected virtual AggregateException InvokeContinuation(Continuation continuation)
+		{
+			if(continuation == null) throw new ArgumentNullException("continuation");
+
+			return continuation.Invoke(this);
 		}
 
 		protected void ThrowIfCompleted()
@@ -302,31 +315,19 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 				throw new ObjectDisposedException(this.GetType().Name);
 		}
 
-		public Promise ContinueWith(ActionContinuation continuation)
+		protected Promise ContinueWithInternal(Delegate continuation, object state)
 		{
-			return this.ContinueWithInternal<object, object>(continuation);
-		}
-		public Promise<R> ContinueWith<R>(FuncContinuation<R> continuation)
-		{
-			return this.ContinueWithInternal<object, R>(continuation);
-		}
-
-		protected Promise<R> ContinueWithInternal<T, R>(Delegate continuation)
-		{
-			if (continuation == null) throw new ArgumentNullException("continuation");
-
-			var continuationPromise = new Promise<R>();
+			var continuationPromise = new Promise(null, state, this);
 			var newContinuation = default(Continuation);
 			var curContinuations = default(Continuation);
 			do
 			{
 				curContinuations = this.continuations;
-				newContinuation = new Continuation<T, R>(continuation, continuationPromise, curContinuations);
+				newContinuation = new Continuation(continuation, state, continuationPromise, curContinuations);
 			} while (Interlocked.CompareExchange(ref this.continuations, newContinuation, curContinuations) != curContinuations);
 
-			var errors = default(AggregateException);
 			if (this.IsDisposed || this.IsCompleted)
-				newContinuation.Invoke(this, out errors);
+				this.InvokeContinuations();
 
 			return continuationPromise;
 		}
@@ -337,10 +338,11 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 			{
 				if (this.IsDisposed || this.cantBeDisposed) return;
 
-				this.IsCompleted = true;
-				this.IsDisposed = true;
+				IsCompleted = true;
+				IsDisposed = true;
 
-				this.ExecuteContinuations();
+				using (this.completionEvent)
+					this.ExecuteAsyncCallback();
 			}
 		}
 
@@ -391,10 +393,10 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 				if (this.IsCompleted == false)
 					throw new InvalidOperationException("Promise is not yet fulfilled.");
 
-				if (this.HasErrors)
+				if (this.Error != null)
 				{
-					if (this.Error.InnerExceptions.Count == 1)
-						throw this.Error.InnerException;
+					if (Error.InnerExceptions.Count == 1)
+						throw Error.InnerException;
 					throw this.Error;
 				}
 
@@ -414,9 +416,16 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 			if (second == null) throw new ArgumentNullException("second");
 
 			var result = new Promise<T>();
+			var continuation = (Action<Promise<T>>)(p =>
+			{
+				if (p.HasErrors)
+					result.TrySetFailed(p.Error);
+				else
+					result.TrySetResult(p.GetResult());
+			});
 
-			first.PropagateTo(result);
-			second.PropagateTo(result);
+			first.ContinueWith(continuation);
+			second.ContinueWith(continuation);
 
 			return result;
 		}
@@ -427,8 +436,16 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 			if (promises.Length == 1) return promises[0];
 
 			var result = new Promise<T>();
+			var continuation = (Action<Promise<T>>)(p =>
+			{
+				if (p.HasErrors)
+					result.TrySetFailed(p.Error);
+				else
+					result.TrySetResult(p.GetResult());
+			});
+
 			foreach (var promise in promises)
-				promise.PropagateTo(result);
+				promise.ContinueWith(continuation);
 
 			return result;
 		}
@@ -440,7 +457,7 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 			var result = new Promise<T[]>();
 			var resultsCount = 0;
 
-			var continuation = (ActionContinuation)(_ =>
+			var continuation = (Action<Promise<T>>)(p =>
 			{
 				if (Interlocked.Increment(ref resultsCount) == 2)
 				{
@@ -468,7 +485,7 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 			var result = new Promise<T[]>();
 			var resultsCount = 0;
 
-			var continuation = (ActionContinuation)(_ =>
+			var continuation = (Action<Promise<T>>)(p =>
 			{
 				if (Interlocked.Increment(ref resultsCount) == promises.Length)
 				{
@@ -497,26 +514,20 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 			return result;
 		}
 
-		public Promise ContinueWith(ActionContinuation<T> continuation)
+		public Promise ContinueWith(Action<Promise<T>, object> continuation, object state)
 		{
-			return this.ContinueWithInternal<T, object>(continuation);
+			return ContinueWithInternal(continuation, state);
 		}
-		public Promise<R> ContinueWith<R>(FuncContinuation<T, R> continuation)
+		public Promise ContinueWith(Action<Promise<T>> continuation)
 		{
-			return this.ContinueWithInternal<T, R>(continuation);
+			return ContinueWithInternal(continuation, null);
 		}
 
-		public void PropagateTo(Promise<T> promise)
+		protected override AggregateException InvokeContinuation(Continuation continuation)
 		{
-			if (promise == null) throw new ArgumentNullException("promise");
+			if(continuation == null) throw new ArgumentNullException("continuation");
 
-			this.ContinueWith(p =>
-			{
-				if (p.HasErrors)
-					promise.TrySetFailed(p.Error);
-				else
-					promise.TrySetResult(p.GetResult());
-			});
+			return continuation.Invoke(this);
 		}
 
 		public override string ToString()
