@@ -132,9 +132,12 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 			{
 				AssetDatabase.OpenAsset(gameDataAsset);
 			}
-			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOWRUNGENERATORBUTTON))
+			if (this.gameDataSettings.Generator != (int)GameDataSettings.CodeGenerator.None)
 			{
-				CoroutineScheduler.Schedule(Menu.GenerateCodeAndAssetsAsync(gameDataPath, ProgressUtils.ReportToLog(Resources.UI_UNITYPLUGIN_WINDOWGENERATIONPREFIX + " ")), "generation::" + gameDataPath);
+				if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOWRUNGENERATORBUTTON))
+				{
+					CoroutineScheduler.Schedule(Menu.GenerateCodeAndAssetsAsync(gameDataPath, ProgressUtils.ReportToLog(Resources.UI_UNITYPLUGIN_WINDOWGENERATIONPREFIX + " ")), "generation::" + gameDataPath);
+				}
 			}
 			GUI.enabled = !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling;
 			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOWVALIDATEBUTTON))
