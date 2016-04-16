@@ -4,8 +4,6 @@ using System.IO;
 using Assets.Editor.GameDevWare.Charon.Tasks;
 using Microsoft.Win32;
 using UnityEditor;
-#if UNITY_EDITOR_WIN
-#endif
 
 namespace Assets.Editor.GameDevWare.Charon.Utils
 {
@@ -53,11 +51,10 @@ namespace Assets.Editor.GameDevWare.Charon.Utils
 				return null;
 			}
 		}
-
+#endif
 		internal static Promise UpdateTools(Action<string, float> progressCallback = null)
 		{
 			return new Coroutine(Menu.CheckForUpdatesAsync(progressCallback));
 		}
-#endif
 	}
 }
