@@ -5,6 +5,7 @@
 *.nupkg
 *.obj
 *.opensdf
+*.meta
 *.pdb
 *.ReSharper
 *.sdf
