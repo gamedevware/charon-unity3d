@@ -30,7 +30,7 @@ using UnityEngine;
 // ReSharper disable UnusedMember.Local
 namespace Assets.Editor.GameDevWare.Charon.Windows
 {
-	class UpdateRuntimeWindow : EditorWindow
+	internal class UpdateRuntimeWindow : EditorWindow
 	{
 #if UNITY_EDITOR_WIN
 		private const string MONO_EXECUTABLE_NAME = "mono.exe";

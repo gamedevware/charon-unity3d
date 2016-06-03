@@ -24,15 +24,23 @@ using UnityEngine;
 
 namespace Assets.Editor.GameDevWare.Charon.Windows
 {
-	abstract class WebViewEditorWindow : EditorWindow, ISerializationCallbackReceiver
+	internal abstract class WebViewEditorWindow : EditorWindow
 	{
 		private bool syncingFocus;
 		private int repeatedShow;
 		private bool webViewHidden;
+
 		[SerializeField]
 		private ScriptableObject webView;
+		//[SerializeField]
+		protected Rect paddings;
 
-		protected Rect Paddings { get; set; }
+		public WebViewEditorWindow()
+		{
+			this.titleContent = new GUIContent(Resources.UI_UNITYPLUGIN_WINDOWABOUTCHARONTITLE);
+			this.minSize = new Vector2(100, 100);
+		}
+
 		protected bool WebViewExists { get { return ReferenceEquals(this.webView, null) == false && this.webView; } }
 
 		protected virtual void OnDestroy()
@@ -59,12 +67,16 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 			{
 				var engineAsm = typeof(ScriptableObject).Assembly;
 				var webViewRect = (Rect)engineAsm.GetType("UnityEngine.GUIClip", throwOnError: true).InvokeMember("Unclip", BindingFlags.InvokeMethod | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public, null, null, new object[] { new Rect(0, 0, this.position.width, this.position.height) });
-				this.webView.Invoke("SetSizeAndPosition", (int)(webViewRect.x + Paddings.x), (int)(webViewRect.y + Paddings.y), (int)(webViewRect.width - (Paddings.width + Paddings.x)), (int)(webViewRect.height - (Paddings.height + Paddings.y)));
-			}
-		}
-		protected virtual void OnBeforeUnload()
-		{
 
+				if (webViewRect.width < this.minSize.x)
+					webViewRect.width = this.minSize.x;
+				if (webViewRect.height < this.minSize.y)
+					webViewRect.height = this.minSize.y;
+
+				this.webView.Invoke("SetSizeAndPosition", (int)(webViewRect.x + paddings.x), (int)(webViewRect.y + paddings.y), (int)(webViewRect.width - (paddings.width + paddings.x)), (int)(webViewRect.height - (paddings.height + paddings.y)));
+
+				Debug.Log(string.Format("WebView resized {0}.", webViewRect));
+			}
 		}
 
 		protected void OnFocus()
@@ -128,13 +140,19 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 				var editorAsm = typeof(SceneView).Assembly;
 				var engineAsm = typeof(ScriptableObject).Assembly;
 				var webViewRect = (Rect)engineAsm.GetType("UnityEngine.GUIClip", throwOnError: true).InvokeMember("Unclip", BindingFlags.InvokeMethod | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public, null, null, new object[] { new Rect(0, 0, this.position.width, this.position.height) });
+
+				if (webViewRect.width < this.minSize.x)
+					webViewRect.width = this.minSize.x;
+				if (webViewRect.height < this.minSize.y)
+					webViewRect.height = this.minSize.y;
+
 				this.webView = ScriptableObject.CreateInstance(editorAsm.GetType("UnityEditor.WebView", throwOnError: true));
 				var hostView = this.GetFieldValue("m_Parent");
-				this.webView.Invoke("InitWebView", hostView, (int)(webViewRect.x + Paddings.x), (int)(webViewRect.y + Paddings.y), (int)(webViewRect.width - (Paddings.width + Paddings.x)), (int)(webViewRect.height - (Paddings.height + Paddings.y)), false);
+				this.webView.Invoke("InitWebView", hostView, (int)(webViewRect.x + paddings.x), (int)(webViewRect.y + paddings.y), (int)(webViewRect.width - (paddings.width + paddings.x)), (int)(webViewRect.height - (paddings.height + paddings.y)), false);
 				this.webView.SetPropertyValue("hideFlags", HideFlags.HideAndDontSave);
 
 				if (Settings.Current.Verbose)
-					Debug.Log("WebViewEditorWindow instantiated new WebView.");
+					Debug.Log(string.Format("New WebView instantiated at {0}.", webViewRect));
 			}
 			this.webView.Invoke("SetDelegateObject", this);
 			this.webView.Invoke("LoadURL", url);
@@ -147,14 +165,6 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 				return;
 
 			this.webView.Invoke("Reload");
-		}
-
-		void ISerializationCallbackReceiver.OnBeforeSerialize()
-		{
-			this.OnBeforeUnload();
-		}
-		void ISerializationCallbackReceiver.OnAfterDeserialize()
-		{
 		}
 	}
 }

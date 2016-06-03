@@ -9,6 +9,8 @@ namespace Assets.Editor.GameDevWare.Charon.Utils
 {
 	public static class ToolsUtils
 	{
+		public static readonly string ToolShadowCopyPath = FileUtil.GetUniqueTempPathInProject();
+
 		// ReSharper disable once IdentifierTypo
 		private const string MONO_PATH_EDITORPREFS_KEY = "CHARON::MONOPATH";
 

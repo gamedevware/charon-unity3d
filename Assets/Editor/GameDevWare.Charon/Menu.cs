@@ -708,8 +708,8 @@ namespace Assets.Editor.GameDevWare.Charon
 			}
 
 			// ReSharper disable once EmptyGeneralCatchClause
-			try { if (Directory.Exists(GameDataEditorWindow.ToolShadowCopyPath)) Directory.Delete(GameDataEditorWindow.ToolShadowCopyPath, true); }
-			catch { Debug.LogWarning(string.Format("Failed to delete directory with old copy of tools '{0}'. Please restart unity or delete it manually.", GameDataEditorWindow.ToolShadowCopyPath)); }
+			try { if (Directory.Exists(ToolsUtils.ToolShadowCopyPath)) Directory.Delete(ToolsUtils.ToolShadowCopyPath, true); }
+			catch { Debug.LogWarning(string.Format("Failed to delete directory with old copy of tools '{0}'. Please restart unity or delete it manually.", ToolsUtils.ToolShadowCopyPath)); }
 
 			if (File.Exists(Settings.Current.ToolsPath))
 			{

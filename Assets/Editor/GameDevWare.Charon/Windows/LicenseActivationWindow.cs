@@ -29,7 +29,7 @@ using UnityEngine;
 
 namespace Assets.Editor.GameDevWare.Charon.Windows
 {
-	class LicenseActivationWindow : EditorWindow
+	internal class LicenseActivationWindow : EditorWindow
 	{
 		private enum Mode { SignIn, SelectLicense, SignUp }
 		private string email;

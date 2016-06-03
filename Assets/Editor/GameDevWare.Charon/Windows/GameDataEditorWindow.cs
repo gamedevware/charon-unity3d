@@ -19,106 +19,83 @@
 
 using System;
 using System.Collections;
+using System.Diagnostics;
 using System.IO;
+using Assets.Editor.GameDevWare.Charon.Models;
 using Assets.Editor.GameDevWare.Charon.Tasks;
 using Assets.Editor.GameDevWare.Charon.Utils;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEngine;
 
+using Debug = UnityEngine.Debug;
+
 // ReSharper disable InconsistentNaming
 
 namespace Assets.Editor.GameDevWare.Charon.Windows
 {
-	class GameDataEditorWindow : WebViewEditorWindow, IHasCustomMenu
+	internal class GameDataEditorWindow : WebViewEditorWindow, IHasCustomMenu
 	{
-		public static readonly string ToolShadowCopyPath = FileUtil.GetUniqueTempPathInProject();
-		private static bool assemblyReloadLocked;
+		public enum EditorStatus { Unloaded, Loading, Ready, Crashed }
 
 		[SerializeField]
 		private string gameDataPath;
+		[SerializeField]
+		private int toolsProcessId;
 
-		private Promise loadingTask;
-		private ExecuteCommandTask editorProcess;
+		private Promise loadEditorTask;
 
-		public bool IsLoaded { get { return this.editorProcess != null && this.loadingTask != null && this.loadingTask.IsCompleted; } }
-		public bool IsLoading { get { return this.loadingTask != null && this.editorProcess != null && !this.loadingTask.IsCompleted; } }
-		public bool IsCrashed { get { return this.loadingTask != null && this.editorProcess != null && this.loadingTask.IsCompleted && !this.editorProcess.IsRunning; } }
-
+		public EditorStatus Status { get; private set; }
 
 		public GameDataEditorWindow()
 		{
 			this.titleContent = new GUIContent(Resources.UI_UNITYPLUGIN_WINDOWEDITORTITLE);
 			this.minSize = new Vector2(300, 300);
-			this.Paddings = new Rect(3, 3, 3, 19);
+			this.paddings = new Rect(3, 3, 3, 19);
 		}
 
 		protected override void OnGUI()
 		{
-			if (this.IsCrashed)
+			switch (this.Status)
 			{
-				if (this.loadingTask.HasErrors)
-					EditorGUILayout.HelpBox(string.Format(Resources.UI_UNITYPLUGIN_WINDOWLOADINGFAILEDWITHERROR, this.loadingTask.Error.Unwrap()), MessageType.Error);
-				else
-					EditorGUILayout.HelpBox(Resources.UI_UNITYPLUGIN_WINDOWEDITORWASCRASHED, MessageType.Warning);
-				this.SetWebViewVisibility(false);
+				case EditorStatus.Loading:
+					EditorGUILayout.HelpBox(Resources.UI_UNITYPLUGIN_WINDOWEDITORLOADING, MessageType.Info);
+					break;
+				case EditorStatus.Ready:
+					break;
+				case EditorStatus.Crashed:
+					if (this.loadEditorTask != null && this.loadEditorTask.HasErrors)
+						EditorGUILayout.HelpBox(string.Format(Resources.UI_UNITYPLUGIN_WINDOWLOADINGFAILEDWITHERROR, this.loadEditorTask.Error.Unwrap()), MessageType.Error);
+					else
+						EditorGUILayout.HelpBox(Resources.UI_UNITYPLUGIN_WINDOWEDITORWASCRASHED, MessageType.Warning);
+					this.SetWebViewVisibility(false);
 
-				if (string.IsNullOrEmpty(this.gameDataPath) == false)
-				{
-					EditorGUILayout.Space();
-					GUILayout.BeginHorizontal();
-					GUILayout.Space(10);
-					if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOWRELOADBUTTON, GUILayout.Width(60)))
-						this.Load(this.gameDataPath, null);
-					GUILayout.EndHorizontal();
-				}
+					if (string.IsNullOrEmpty(this.gameDataPath) == false)
+					{
+						EditorGUILayout.Space();
+						GUILayout.BeginHorizontal();
+						GUILayout.Space(10);
+						if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOWRELOADBUTTON, GUILayout.Width(60)))
+							this.Load(this.gameDataPath, null);
+						GUILayout.EndHorizontal();
+					}
+					break;
+				default:
+					EditorGUILayout.HelpBox(string.Format(Resources.UI_UNITYPLUGIN_WINDOWEDITORISOPENED, this.gameDataPath), MessageType.Info);
+					base.OnGUI();
+					break;
 			}
-			else if (this.IsLoading)
-			{
-				EditorGUILayout.HelpBox(Resources.UI_UNITYPLUGIN_WINDOWEDITORLOADING, MessageType.Info);
-			}
-			else
-			{
-				EditorGUILayout.HelpBox(string.Format(Resources.UI_UNITYPLUGIN_WINDOWEDITORISOPENED, this.gameDataPath), MessageType.Info);
-				base.OnGUI();
-			}
-
-			GUILayout.BeginVertical();
-			GUILayout.FlexibleSpace();
-			GUILayout.BeginHorizontal();
-			var codeRecpmpilationEnabled = EditorGUILayout.ToggleLeft(Resources.UI_UNITYPLUGIN_WINDOWRESUMECODERECOMPILATION, !assemblyReloadLocked);
-			if (!codeRecpmpilationEnabled && !assemblyReloadLocked)
-			{
-				this.LockCodeReload();
-			}
-			else if (codeRecpmpilationEnabled && assemblyReloadLocked)
-			{
-				this.UnlockCodeReload();
-			}
-			GUILayout.EndHorizontal();
-			GUILayout.EndVertical();
 		}
+
 		protected override void OnDestroy()
 		{
 			this.CleanUp();
 			base.OnDestroy();
 		}
-		protected override void OnBeforeUnload()
-		{
-			if (this.editorProcess != null)
-				this.editorProcess.Kill();
-			this.CleanUp();
-		}
 
 		void IHasCustomMenu.AddItemsToMenu(GenericMenu menu)
 		{
 			menu.AddItem(new GUIContent(Resources.UI_UNITYPLUGIN_WINDOWRELOADBUTTON), false, this.Reload);
-		}
-
-		protected void Update()
-		{
-			if (this.loadingTask == null && string.IsNullOrEmpty(this.gameDataPath) == false)
-				this.Load(this.gameDataPath, null);
 		}
 
 		// ReSharper disable once InconsistentNaming
@@ -143,42 +120,55 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 		{
 			this.gameDataPath = gameDataPath;
 
-			var loadAsync = new Tasks.Coroutine(PrepareEditor(reference));
-			loadAsync.ContinueWith(_ => { if (loadAsync.HasErrors) this.Close(); });
-			this.loadingTask = loadAsync;
-		}
-		private void CleanUp()
-		{
-			this.UnlockCodeReload();
-			this.gameDataPath = null;
-			this.loadingTask = null;
-			if (this.editorProcess != null)
-				this.editorProcess.Close();
-			this.editorProcess = null;
-
+			var prepareAndLoadAsync = new Tasks.Coroutine(PrepareEditor(reference));
+			prepareAndLoadAsync.ContinueWith(_ =>
+			{
+				if (prepareAndLoadAsync.HasErrors)
+					this.Close();
+			});
 		}
 
 		private IEnumerable PrepareEditor(string reference)
 		{
 			switch (ToolsUtils.CheckTools())
 			{
-				case ToolsCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
-				case ToolsCheckResult.MissingTools: yield return ToolsUtils.UpdateTools(ProgressUtils.ReportToLog(Resources.UI_UNITYPLUGIN_MENUCHECKUPDATES)); break;
-				case ToolsCheckResult.Ok: break;
-				default: throw new InvalidOperationException("Unknown Tools check result.");
+				case ToolsCheckResult.MissingRuntime:
+					yield return UpdateRuntimeWindow.ShowAsync();
+					break;
+				case ToolsCheckResult.MissingTools:
+					yield return ToolsUtils.UpdateTools(ProgressUtils.ReportToLog(Resources.UI_UNITYPLUGIN_MENUCHECKUPDATES));
+					break;
+				case ToolsCheckResult.Ok:
+					break;
+				default:
+					throw new InvalidOperationException("Unknown Tools check result.");
 			}
 
-			var getLicense = Licenses.GetLicense(scheduleCoroutine: true);
-			yield return getLicense;
-			if (getLicense.GetResult() == null)
-				yield return LicenseActivationWindow.ShowAsync();
+			var license = default(LicenseInfo);
+			while (license == null)
+			{
+				var getLicense = Licenses.GetLicense(scheduleCoroutine: true);
+				yield return getLicense;
+				license = getLicense.GetResult();
+				if (license == null)
+					yield return LicenseActivationWindow.ShowAsync();
+			}
 
-			yield return CoroutineScheduler.Schedule(this.LoadEditor(reference));
+			if (this.loadEditorTask != null)
+				yield return this.loadEditorTask.IgnoreFault();
+
+			var loadEditor = this.loadEditorTask = new Coroutine<object>(this.LoadEditor(reference));
+			yield return loadEditor.IgnoreFault();
+			if (loadEditor.HasErrors && this.loadEditorTask == loadEditor)
+				this.Status = EditorStatus.Crashed;
 		}
+
 		private IEnumerable LoadEditor(string reference)
 		{
-			if (this.editorProcess != null)
-				yield return this.editorProcess.Close();
+			if (this.toolsProcessId != 0)
+				this.KillToolsProcess(this.toolsProcessId);
+			this.toolsProcessId = 0;
+			this.Status = EditorStatus.Loading;
 
 			this.titleContent = new GUIContent(Path.GetFileName(this.gameDataPath));
 
@@ -193,16 +183,16 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 				Debug.Log("Starting gamedata editor at " + gameDataEditorUrl + "...");
 
 			// ReSharper disable once AssignNullToNotNullAttribute
-			var shadowCopyOfTools = Path.GetFullPath(Path.Combine(ToolShadowCopyPath, Path.GetFileName(toolsPath)));
+			var shadowCopyOfTools = Path.GetFullPath(Path.Combine(ToolsUtils.ToolShadowCopyPath, Path.GetFileName(toolsPath)));
 			if (File.Exists(shadowCopyOfTools) == false)
 			{
-				if (Directory.Exists(ToolShadowCopyPath) == false)
-					Directory.CreateDirectory(ToolShadowCopyPath);
+				if (Directory.Exists(ToolsUtils.ToolShadowCopyPath) == false)
+					Directory.CreateDirectory(ToolsUtils.ToolShadowCopyPath);
 
 				if (Settings.Current.Verbose)
 					Debug.Log("Shadow copying tools to " + shadowCopyOfTools + ".");
 
-				File.Copy(Settings.Current.ToolsPath, shadowCopyOfTools);
+				File.Copy(Settings.Current.ToolsPath, shadowCopyOfTools, overwrite: true);
 
 				var configPath = toolsPath + ".config";
 				var configShadowPath = shadowCopyOfTools + ".config";
@@ -218,65 +208,66 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 				}
 			}
 
-			this.editorProcess = new ExecuteCommandTask
-			(
+			var toolsProcessTask = new ExecuteCommandTask(
 				shadowCopyOfTools,
 				(sender, args) =>
 				{
 					if (string.IsNullOrEmpty(args.Data)) return;
 					listenPromise.TrySetResult(args.Data);
-				},
-				(sender, args) =>
+				}, (sender, args) =>
 				{
 					if (string.IsNullOrEmpty(args.Data)) return;
 					errorPromise.TrySetResult(args.Data);
 					if (Settings.Current.Verbose)
 						Debug.LogWarning(Path.GetFileName(Settings.Current.ToolsPath) + ": " + args.Data);
 				},
-				"LISTEN",
-				Path.GetFullPath(this.gameDataPath),
-				"--port",
-				port.ToString(),
-				"--parentPid",
-				System.Diagnostics.Process.GetCurrentProcess().Id.ToString(),
+				"LISTEN", Path.GetFullPath(this.gameDataPath),
+				"--port", port.ToString(),
+				"--parentPid", Process.GetCurrentProcess().Id.ToString(),
 				Settings.Current.Verbose ? "--verbose" : ""
 			);
-			this.editorProcess.StartInfo.EnvironmentVariables["CHARON_APP_DATA"] = Settings.GetAppDataPath();
-			if (string.IsNullOrEmpty(Settings.Current.LicenseServerAddress) == false)
-				this.editorProcess.StartInfo.EnvironmentVariables["CHARON_LICENSE_SERVER"] = Settings.Current.LicenseServerAddress;
-			if (string.IsNullOrEmpty(Settings.Current.SelectedLicense) == false)
-				this.editorProcess.StartInfo.EnvironmentVariables["CHARON_SELECTED_LICENSE"] = Settings.Current.SelectedLicense;
 
-			this.editorProcess.RequireDotNetRuntime();
-			this.editorProcess.Start();
+			toolsProcessTask.StartInfo.EnvironmentVariables["CHARON_APP_DATA"] = Settings.GetAppDataPath();
+			if (string.IsNullOrEmpty(Settings.Current.LicenseServerAddress) == false)
+				toolsProcessTask.StartInfo.EnvironmentVariables["CHARON_LICENSE_SERVER"] = Settings.Current.LicenseServerAddress;
+			if (string.IsNullOrEmpty(Settings.Current.SelectedLicense) == false)
+				toolsProcessTask.StartInfo.EnvironmentVariables["CHARON_SELECTED_LICENSE"] = Settings.Current.SelectedLicense;
+
+			toolsProcessTask.RequireDotNetRuntime();
+			toolsProcessTask.Start();
+
 
 			// re-paint on exit or crash
-			this.editorProcess.IgnoreFault().ContinueWith(_ => this.Repaint());
+			toolsProcessTask.IgnoreFault().ContinueWith(_ => this.Repaint());
 
 			if (Settings.Current.Verbose)
 				Debug.Log("Launching gamedata editor process.");
 
-			var startPromise = this.editorProcess.IgnoreFault();
+			var startPromise = toolsProcessTask.IgnoreFault();
 
 			yield return Promise.WhenAny(listenPromise, errorPromise, timeout, startPromise);
 
 			if (errorPromise.IsCompleted)
 			{
 				Debug.LogError(Resources.UI_UNITYPLUGIN_WINDOWFAILEDTOSTARTEDITOR + errorPromise.GetResult());
-				this.editorProcess.Close();
+				this.Status = EditorStatus.Crashed;
 				yield break;
 			}
 			else if (startPromise.IsCompleted)
 			{
-				Debug.LogError(Resources.UI_UNITYPLUGIN_WINDOWFAILEDTOSTARTEDITOR + " Process has exited with code: " + this.editorProcess.ExitCode);
+				Debug.LogError(Resources.UI_UNITYPLUGIN_WINDOWFAILEDTOSTARTEDITOR + " Process has exited with code: " + toolsProcessTask.ExitCode);
+				this.Status = EditorStatus.Crashed;
 				yield break;
 			}
 			else if (timeout.IsCompleted)
 			{
 				Debug.LogWarning(Resources.UI_UNITYPLUGIN_WINDOWFAILEDTOSTARTEDITORTIMEOUT);
-				this.editorProcess.Kill();
+				toolsProcessTask.Kill();
+				this.Status = EditorStatus.Crashed;
 				yield break;
 			}
+
+			this.toolsProcessId = toolsProcessTask.ProcessId;
 
 			switch (Settings.Current.Browser)
 			{
@@ -296,30 +287,37 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 					SystemDefault:
 					EditorUtility.OpenWithDefaultApp(gameDataEditorUrl + reference);
 					break;
-
 			}
 
-			if (!assemblyReloadLocked)
-				this.LockCodeReload();
+			this.Status = EditorStatus.Ready;
 		}
 
-		private void LockCodeReload()
+		private void CleanUp()
 		{
-			if (assemblyReloadLocked)
-				return;
-
-			this.Paddings = new Rect(3, 3, 3, 19);
-			assemblyReloadLocked = true;
-			EditorApplication.LockReloadAssemblies();
+			this.gameDataPath = null;
+			if (this.toolsProcessId != 0)
+				this.KillToolsProcess(this.toolsProcessId);
+			this.toolsProcessId = 0;
+			this.Status = EditorStatus.Unloaded;
 		}
-		private void UnlockCodeReload()
-		{
-			if (!assemblyReloadLocked)
-				return;
 
-			this.Paddings = new Rect(3, 3, 3, 3);
-			assemblyReloadLocked = false;
-			EditorApplication.UnlockReloadAssemblies();
+		private void KillToolsProcess(int processId)
+		{
+			try
+			{
+				using (var process = Process.GetProcessById(processId))
+				{
+					process.CloseMainWindow();
+					process.WaitForExit(500);
+					process.Kill();
+					process.WaitForExit(500);
+				}
+			}
+			catch (Exception error)
+			{
+				if (Settings.Current.Verbose && error != null)
+					Debug.Log(string.Format("Failed to kill process with id {0} because of error: {1}{2}", processId, Environment.NewLine, error.Message));
+			}
 		}
 	}
 }
