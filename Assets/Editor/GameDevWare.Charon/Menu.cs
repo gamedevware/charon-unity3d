@@ -159,14 +159,14 @@ namespace Assets.Editor.GameDevWare.Charon
 		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUCHECKUPDATES, false, 11)]
 		private static void CheckUpdates()
 		{
-			if (!ValidateAllCheck()) return;
+			if (!CheckUpdatesCheck()) return;
 
-			var validateCoroutine = CoroutineScheduler.Schedule(
+			var checkUpdatesCheck = CoroutineScheduler.Schedule(
 				CheckForUpdatesAsync(
 					progressCallback: ProgressUtils.ShowProgressBar(Resources.UI_UNITYPLUGIN_MENUCHECKUPDATES)
 				)
 			);
-			validateCoroutine.ContinueWith(ProgressUtils.HideProgressBar);
+			checkUpdatesCheck.ContinueWith(ProgressUtils.HideProgressBar);
 			FocusConsoleWindow();
 		}
 

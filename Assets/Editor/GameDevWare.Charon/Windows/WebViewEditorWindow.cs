@@ -32,8 +32,8 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 
 		[SerializeField]
 		private ScriptableObject webView;
-		//[SerializeField]
-		protected Rect paddings;
+
+		protected Rect Paddings { get; set; }
 
 		public WebViewEditorWindow()
 		{
@@ -67,13 +67,7 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 			{
 				var engineAsm = typeof(ScriptableObject).Assembly;
 				var webViewRect = (Rect)engineAsm.GetType("UnityEngine.GUIClip", throwOnError: true).InvokeMember("Unclip", BindingFlags.InvokeMethod | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public, null, null, new object[] { new Rect(0, 0, this.position.width, this.position.height) });
-
-				if (webViewRect.width < this.minSize.x)
-					webViewRect.width = this.minSize.x;
-				if (webViewRect.height < this.minSize.y)
-					webViewRect.height = this.minSize.y;
-
-				this.webView.Invoke("SetSizeAndPosition", (int)(webViewRect.x + paddings.x), (int)(webViewRect.y + paddings.y), (int)(webViewRect.width - (paddings.width + paddings.x)), (int)(webViewRect.height - (paddings.height + paddings.y)));
+				this.webView.Invoke("SetSizeAndPosition", (int)(webViewRect.x + Paddings.x), (int)(webViewRect.y + Paddings.y), (int)(webViewRect.width - (Paddings.width + Paddings.x)), (int)(webViewRect.height - (Paddings.height + Paddings.y)));
 
 				Debug.Log(string.Format("WebView resized {0}.", webViewRect));
 			}
@@ -140,15 +134,9 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 				var editorAsm = typeof(SceneView).Assembly;
 				var engineAsm = typeof(ScriptableObject).Assembly;
 				var webViewRect = (Rect)engineAsm.GetType("UnityEngine.GUIClip", throwOnError: true).InvokeMember("Unclip", BindingFlags.InvokeMethod | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public, null, null, new object[] { new Rect(0, 0, this.position.width, this.position.height) });
-
-				if (webViewRect.width < this.minSize.x)
-					webViewRect.width = this.minSize.x;
-				if (webViewRect.height < this.minSize.y)
-					webViewRect.height = this.minSize.y;
-
 				this.webView = ScriptableObject.CreateInstance(editorAsm.GetType("UnityEditor.WebView", throwOnError: true));
 				var hostView = this.GetFieldValue("m_Parent");
-				this.webView.Invoke("InitWebView", hostView, (int)(webViewRect.x + paddings.x), (int)(webViewRect.y + paddings.y), (int)(webViewRect.width - (paddings.width + paddings.x)), (int)(webViewRect.height - (paddings.height + paddings.y)), false);
+				this.webView.Invoke("InitWebView", hostView, (int)(webViewRect.x + Paddings.x), (int)(webViewRect.y + Paddings.y), (int)(webViewRect.width - (Paddings.width + Paddings.x)), (int)(webViewRect.height - (Paddings.height + Paddings.y)), false);
 				this.webView.SetPropertyValue("hideFlags", HideFlags.HideAndDontSave);
 
 				if (Settings.Current.Verbose)

@@ -51,7 +51,7 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 		{
 			this.titleContent = new GUIContent(Resources.UI_UNITYPLUGIN_WINDOWEDITORTITLE);
 			this.minSize = new Vector2(300, 300);
-			this.paddings = new Rect(3, 3, 3, 19);
+			this.Paddings = new Rect(3, 3, 3, 3);
 		}
 
 		protected override void OnGUI()
@@ -82,14 +82,17 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 					break;
 				default:
 					EditorGUILayout.HelpBox(string.Format(Resources.UI_UNITYPLUGIN_WINDOWEDITORISOPENED, this.gameDataPath), MessageType.Info);
-					base.OnGUI();
 					break;
 			}
+			base.OnGUI();
 		}
 
 		protected override void OnDestroy()
 		{
-			this.CleanUp();
+
+			this.gameDataPath = null;
+			this.Status = EditorStatus.Unloaded;
+
 			base.OnDestroy();
 		}
 
@@ -145,7 +148,7 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 			}
 
 			var license = default(LicenseInfo);
-			while (license == null)
+			while (license == null && this)
 			{
 				var getLicense = Licenses.GetLicense(scheduleCoroutine: true);
 				yield return getLicense;
@@ -267,8 +270,14 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 				yield break;
 			}
 
-			this.toolsProcessId = toolsProcessTask.ProcessId;
+			if (!this)
+			{
+				toolsProcessTask.Kill();
+				this.Status = EditorStatus.Unloaded;
+				yield break;
+			}
 
+			this.toolsProcessId = toolsProcessTask.ProcessId;
 			switch (Settings.Current.Browser)
 			{
 				case Browser.UnityEmbedded:
@@ -292,17 +301,11 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 			this.Status = EditorStatus.Ready;
 		}
 
-		private void CleanUp()
-		{
-			this.gameDataPath = null;
-			if (this.toolsProcessId != 0)
-				this.KillToolsProcess(this.toolsProcessId);
-			this.toolsProcessId = 0;
-			this.Status = EditorStatus.Unloaded;
-		}
-
 		private void KillToolsProcess(int processId)
 		{
+			if (Settings.Current.Verbose)
+				Debug.Log(string.Format("Trying to kill process with id {0}.", processId));
+
 			try
 			{
 				using (var process = Process.GetProcessById(processId))
@@ -311,11 +314,12 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 					process.WaitForExit(500);
 					process.Kill();
 					process.WaitForExit(500);
+
 				}
 			}
 			catch (Exception error)
 			{
-				if (Settings.Current.Verbose && error != null)
+				if (Settings.Current.Verbose)
 					Debug.Log(string.Format("Failed to kill process with id {0} because of error: {1}{2}", processId, Environment.NewLine, error.Message));
 			}
 		}

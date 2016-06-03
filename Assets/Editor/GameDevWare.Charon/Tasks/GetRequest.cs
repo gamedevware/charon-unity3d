@@ -91,12 +91,12 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 					var read = 0;
 					do
 					{
-						var readAsync = responseStream.BeginRead(buffer, 0, buffer.Length, null, null);
+						var readAsync = responseStream.BeginRead(buffer, 0, buffer.Length, r => responseStream.EndRead(r), null);
 						yield return readAsync;
 						read = responseStream.EndRead(readAsync);
 						if (read <= 0) continue;
 
-						var writeAsync = memoryStream.BeginWrite(buffer, 0, read, null, null);
+						var writeAsync = memoryStream.BeginWrite(buffer, 0, read, memoryStream.EndWrite, null);
 						yield return writeAsync;
 					} while (read != 0);
 
