@@ -181,7 +181,6 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 		}
 		private IEnumerable ReportIssueAsync(string reporter, string description, IssueType type, HashSet<string> attachments)
 		{
-			var errorOutput = new StringBuilder();
 			var arguments = new List<string>
 			{
 				"SERVER", "REPORTISSUE",
@@ -198,23 +197,12 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 			if (Settings.Current.Verbose)
 				arguments.Add("--verbose");
 
-			var reportIssue = new ExecuteCommandTask(
-				Settings.Current.ToolsPath,
-				null,
-				(s, ea) => { lock (errorOutput) errorOutput.Append(ea.Data ?? ""); },
-				arguments.ToArray()
-			);
-
-			reportIssue.StartInfo.EnvironmentVariables["CHARON_APP_DATA"] = Settings.GetAppDataPath();
-			if (string.IsNullOrEmpty(Settings.Current.LicenseServerAddress) == false)
-				reportIssue.StartInfo.EnvironmentVariables["CHARON_LICENSE_SERVER"] = Settings.Current.LicenseServerAddress;
-			reportIssue.RequireDotNetRuntime();
-			reportIssue.Start();
-
+			var reportIssue = ToolsRunner.RunCharonAsTool(arguments.ToArray());
 			yield return reportIssue.IgnoreFault();
 
-			if (reportIssue.ExitCode != 0)
-				throw new InvalidOperationException("Failed to report issue: " + (errorOutput.Length > 0 ? errorOutput.ToString() : "An unknown error occured. Please report this issue directly to developer."));
+			var errorOutput = reportIssue.HasErrors ? reportIssue.Error.Message : reportIssue.GetResult().GetErrorData();
+			if (string.IsNullOrEmpty(errorOutput) == false)
+				throw new InvalidOperationException("Failed to report issue: " + (errorOutput.Length > 0 ? errorOutput : "An unknown error occured. Please report this issue directly to developer."));
 		}
 
 		protected void Update()

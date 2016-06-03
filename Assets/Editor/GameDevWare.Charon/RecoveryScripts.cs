@@ -92,8 +92,8 @@ namespace Assets.Editor.GameDevWare.Charon
 			output.Append("CHARON_SELECTED_LICENSE=").Append(selectedLicense).AppendLine();
 #endif
 
-			if (string.IsNullOrEmpty(ToolsUtils.MonoPath) == false)
-				output.Append("\"").Append(ToolsUtils.MonoPath).Append("\" ");
+			if (string.IsNullOrEmpty(Utils.ToolsRunner.MonoPath) == false)
+				output.Append("\"").Append(Utils.ToolsRunner.MonoPath).Append("\" ");
 
 			output
 				.Append("\"").Append(Settings.Current.ToolsPath).Append("\"")
@@ -145,8 +145,8 @@ namespace Assets.Editor.GameDevWare.Charon
 					goto generateCSharpCode;
 				case GameDataSettings.CodeGenerator.CSharp:
 					generateCSharpCode:
-					if (string.IsNullOrEmpty(ToolsUtils.MonoPath) == false)
-						output.Append("\"").Append(ToolsUtils.MonoPath).Append("\" ");
+					if (string.IsNullOrEmpty(Utils.ToolsRunner.MonoPath) == false)
+						output.Append("\"").Append(Utils.ToolsRunner.MonoPath).Append("\" ");
 
 					output
 						.Append("\"").Append(Settings.Current.ToolsPath).Append("\"")

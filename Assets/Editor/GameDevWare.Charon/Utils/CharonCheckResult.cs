@@ -19,10 +19,10 @@
 
 namespace Assets.Editor.GameDevWare.Charon.Utils
 {
-	public enum ToolsCheckResult
+	public enum CharonCheckResult
 	{
 		Ok,
 		MissingRuntime,
-		MissingTools
+		MissingExecutable
 	}
 }

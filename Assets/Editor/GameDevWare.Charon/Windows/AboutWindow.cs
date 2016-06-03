@@ -32,7 +32,7 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 		private string licenseHolder = Resources.UI_UNITYPLUGIN_WINDOWCHECKINGVERSION;
 		private string licenseKey = Resources.UI_UNITYPLUGIN_WINDOWCHECKINGVERSION;
 		[NonSerialized]
-		private ExecuteCommandTask checkToolsVersion;
+		private Promise<ToolExecutionResult> checkToolsVersion;
 		[NonSerialized]
 		private Promise<LicenseInfo> getLicense;
 
@@ -100,29 +100,36 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 
 		protected void Update()
 		{
-			switch (ToolsUtils.CheckTools())
+			switch (ToolsRunner.CheckCharon())
 			{
-				case ToolsCheckResult.MissingRuntime:
+				case CharonCheckResult.MissingRuntime:
 					this.toolsVersion = Resources.UI_UNITYPLUGIN_WINDOWCHECKRESULTMISSINGMONOORDOTNET;
 					break;
-				case ToolsCheckResult.MissingTools:
+				case CharonCheckResult.MissingExecutable:
 					this.toolsVersion = Resources.UI_UNITYPLUGIN_WINDOWCHECKRESULTMISSINGTOOLS;
 					this.licenseHolder = "";
 					this.licenseKey = "";
 					break;
-				case ToolsCheckResult.Ok:
+				case CharonCheckResult.Ok:
 					if (this.checkToolsVersion == null)
 					{
-						this.checkToolsVersion = new ExecuteCommandTask(
-							Settings.Current.ToolsPath,
-							(s, ea) => { if (!string.IsNullOrEmpty(ea.Data)) this.toolsVersion = ea.Data; },
-							(s, ea) => { if (!string.IsNullOrEmpty(ea.Data)) this.toolsVersion = ea.Data; },
-							"VERSION");
-						this.checkToolsVersion.IgnoreFault().ContinueWith(_ => this.Repaint());
-						this.checkToolsVersion.RequireDotNetRuntime();
-						this.checkToolsVersion.Start();
+						this.checkToolsVersion = ToolsRunner.Run(new ToolExecutionOptions(Settings.Current.ToolsPath, "VERSION")
+						{
+							RequireDotNetRuntime = true,
+							CaptureStandartOutput = true,
+							CaptureStandartError = true,
+							ExecutionTimeout = TimeSpan.FromSeconds(5)
+						});
+						this.checkToolsVersion.ContinueWith(r =>
+						{
+							if (r.HasErrors)
+								this.toolsVersion = r.Error.Unwrap().Message;
+							else
+								this.toolsVersion = r.GetResult().GetOutputData() + r.GetResult().GetErrorData();
+							this.Repaint();
+						});
 					}
-					else if (this.checkToolsVersion != null && !this.checkToolsVersion.IsRunning && this.getLicense == null)
+					else if (this.checkToolsVersion != null && this.checkToolsVersion.IsCompleted && this.getLicense == null)
 					{
 						this.getLicense = Licenses.GetLicense(scheduleCoroutine: true);
 						this.getLicense.ContinueWith((Promise<LicenseInfo> p) =>

@@ -49,7 +49,7 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 		[NonSerialized]
 		private Promise checkRuntimeVersionCoroutine;
 		[NonSerialized]
-		private ExecuteCommandTask runMonoTask;
+		private Promise<ToolExecutionResult> runMonoTask;
 		private bool autoClose;
 
 		private event EventHandler Done;
@@ -136,7 +136,7 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 		{
 
 #if UNITY_EDITOR_WIN
-			var dotNetRuntimeVersion = ToolsUtils.Get45or451FromRegistry();
+			var dotNetRuntimeVersion = Utils.ToolsRunner.Get45or451FromRegistry();
 			if (dotNetRuntimeVersion != null)
 			{
 				UpdateRuntimeVersionLabel(dotNetRuntimeVersion, ".NET", true);
@@ -150,21 +150,23 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 				yield break;
 
 			this.runtimeVersion = Resources.UI_UNITYPLUGIN_WINDOWCHECKINGMONO;
-			var output = new StringBuilder();
-			this.runMonoTask = new ExecuteCommandTask(
-				processPath: monoRuntimePath,
-				outputDataReceived: ((sender, args) => output.Append(args.Data ?? string.Empty)),
-				errorDataReceived: ((sender, args) => output.Append(args.Data ?? string.Empty)),
-				arguments: new[] { "--version" });
-			this.runMonoTask.Start();
-
+			this.runMonoTask = ToolsRunner.Run(new ToolExecutionOptions(monoRuntimePath, "--version")
+			{
+				CaptureStandartOutput = true,
+				CaptureStandartError = true,
+				ExecutionTimeout = TimeSpan.FromSeconds(5)
+			});
 			yield return this.runMonoTask.IgnoreFault();
 
-			var monoRuntimeVersionMatch = new Regex(@"version (?<v>[0-9]+\.[0-9]+\.[0-9]+)", RegexOptions.Multiline | RegexOptions.IgnoreCase).Match(output.ToString());
+			var output = string.Empty;
+			if (this.runMonoTask.HasErrors == false)
+				output = this.runMonoTask.GetResult().GetOutputData() ?? "";
+
+			var monoRuntimeVersionMatch = new Regex(@"version (?<v>[0-9]+\.[0-9]+\.[0-9]+)", RegexOptions.Multiline | RegexOptions.IgnoreCase).Match(output);
 			if (!monoRuntimeVersionMatch.Success)
 			{
 				if (Settings.Current.Verbose)
-					Debug.LogWarning(output.Length > 0 ? output.ToString() : string.Format(Resources.UI_UNITYPLUGIN_WINDOWCHECKINGMONOFAILED, this.runMonoTask.ExitCode));
+					Debug.LogWarning(output.Length > 0 ? output : string.Format(Resources.UI_UNITYPLUGIN_WINDOWCHECKINGMONOFAILED, this.runMonoTask.GetResult().ExitCode));
 
 				this.UpdateRuntimeVersionLabel(Resources.UI_UNITYPLUGIN_WINDOWRUNTIMEVERSIONUNKNOWN, "Mono", isValid: false);
 			}
@@ -191,7 +193,7 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 
 		private void RaiseDone(string monoRuntimePath)
 		{
-			ToolsUtils.MonoPath = monoRuntimePath;
+			Utils.ToolsRunner.MonoPath = monoRuntimePath;
 			if (this.Done != null)
 				this.Done(this, EventArgs.Empty);
 			this.Done = null;
@@ -201,7 +203,7 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 				return;
 
 			if (Settings.Current.Verbose)
-				Debug.Log(string.Format("'{0}' window is closed with selected Mono Runtime path: {1}. Runtime version: {2}.", this.titleContent.text, ToolsUtils.MonoPath, this.runtimeVersion));
+				Debug.Log(string.Format("'{0}' window is closed with selected Mono Runtime path: {1}. Runtime version: {2}.", this.titleContent.text, Utils.ToolsRunner.MonoPath, this.runtimeVersion));
 			this.Close();
 		}
 		private void RaiseCancel()
@@ -226,9 +228,6 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 		}
 		private void OnDestroy()
 		{
-			if (this.runMonoTask != null)
-				this.runMonoTask.Close();
-
 			this.RaiseCancel();
 		}
 
@@ -240,10 +239,10 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 			window.Done += (sender, args) => promise.TrySetCompleted();
 			window.Cancel += (sender, args) => promise.TrySetFailed(args.GetException());
 
-			window.monoPath = string.IsNullOrEmpty(ToolsUtils.MonoPath) ? MonoDefaultLocation : ToolsUtils.MonoPath;
+			window.monoPath = string.IsNullOrEmpty(Utils.ToolsRunner.MonoPath) ? MonoDefaultLocation : Utils.ToolsRunner.MonoPath;
 			window.autoClose = autoClose;
 #if UNITY_EDITOR_WIN
-			window.runtimeVersion = ToolsUtils.Get45or451FromRegistry();
+			window.runtimeVersion = Utils.ToolsRunner.Get45or451FromRegistry();
 			window.RunCheck();
 #endif
 			window.Focus();

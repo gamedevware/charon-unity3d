@@ -42,28 +42,18 @@ namespace Assets.Editor.GameDevWare.Charon
 		}
 		private static IEnumerable GetLicensesAsync()
 		{
-			var licensesJson = new StringBuilder();
-			var errorJson = new StringBuilder();
-			var checkLicense = new ExecuteCommandTask(
-				Settings.Current.ToolsPath,
-				(s, ea) => { licensesJson.Append(ea.Data ?? ""); },
-				(s, ea) => { errorJson.Append(ea.Data ?? ""); },
+			var checkLicenseAsync = ToolsRunner.RunCharonAsTool(
 				"ACCOUNT", "LICENSE", "SHOWLOCAL",
 				"--noPrompt",
 				"--verbose"
 			);
+			yield return checkLicenseAsync;
 
-			checkLicense.StartInfo.EnvironmentVariables["CHARON_APP_DATA"] = Settings.GetAppDataPath();
-			if (string.IsNullOrEmpty(Settings.Current.LicenseServerAddress) == false)
-				checkLicense.StartInfo.EnvironmentVariables["CHARON_LICENSE_SERVER"] = Settings.Current.LicenseServerAddress;
-			checkLicense.RequireDotNetRuntime();
-			checkLicense.Start();
+			var errorData = checkLicenseAsync.GetResult().GetErrorData();
+			if (string.IsNullOrEmpty(errorData) == false)
+				throw new InvalidOperationException(errorData);
 
-			yield return checkLicense.IgnoreFault();
-			if (errorJson.Length > 0)
-				throw new InvalidOperationException(errorJson.ToString());
-
-			var licensesArray = (JsonArray)JsonValue.Parse(licensesJson.ToString());
+			var licensesArray = (JsonArray)JsonValue.Parse(checkLicenseAsync.GetResult().GetOutputData());
 			var licenses = licensesArray.As<LicenseInfo[]>();
 			yield return licenses;
 		}
@@ -78,28 +68,18 @@ namespace Assets.Editor.GameDevWare.Charon
 		}
 		private static IEnumerable DownloadLicensesAsync(string email, string password)
 		{
-			var errorJson = new StringBuilder();
-			var checkLicense = new ExecuteCommandTask(
-				Settings.Current.ToolsPath,
-				null,
-				(s, ea) => { errorJson.Append(ea.Data ?? ""); },
+			var checkLicenseAsync = ToolsRunner.RunCharonAsTool(
 				"ACCOUNT", "INITIALIZE",
 				"--email", email,
 				"--password", password,
 				"--noPrompt",
 				"--verbose"
 			);
+			yield return checkLicenseAsync;
 
-			checkLicense.StartInfo.EnvironmentVariables["CHARON_APP_DATA"] = Settings.GetAppDataPath();
-			if (string.IsNullOrEmpty(Settings.Current.LicenseServerAddress) == false)
-				checkLicense.StartInfo.EnvironmentVariables["CHARON_LICENSE_SERVER"] = Settings.Current.LicenseServerAddress;
-			checkLicense.RequireDotNetRuntime();
-			checkLicense.Start();
-
-			yield return checkLicense.IgnoreFault();
-
-			if (errorJson.Length > 0)
-				throw new InvalidOperationException(errorJson.ToString());
+			var errorData = checkLicenseAsync.GetResult().GetErrorData();
+			if (string.IsNullOrEmpty(errorData) == false)
+				throw new InvalidOperationException(errorData);
 
 			foreach (var step in GetLicensesAsync())
 				yield return step;
@@ -119,11 +99,7 @@ namespace Assets.Editor.GameDevWare.Charon
 		}
 		private static IEnumerable RegisterAsync(string firstName, string lastName, string organizationName, string email, string password, string unityInvoiceNumber)
 		{
-			var errorJson = new StringBuilder();
-			var checkLicense = new ExecuteCommandTask(
-				Settings.Current.ToolsPath,
-				null,
-				(s, ea) => { errorJson.Append(ea.Data ?? ""); },
+			var registerAsync = ToolsRunner.RunCharonAsTool(
 				"ACCOUNT", "REGISTER",
 				"--firstName", firstName,
 				"--lastName", lastName,
@@ -135,16 +111,12 @@ namespace Assets.Editor.GameDevWare.Charon
 				"--verbose"
 			);
 
-			checkLicense.StartInfo.EnvironmentVariables["CHARON_APP_DATA"] = Settings.GetAppDataPath();
-			if (string.IsNullOrEmpty(Settings.Current.LicenseServerAddress) == false)
-				checkLicense.StartInfo.EnvironmentVariables["CHARON_LICENSE_SERVER"] = Settings.Current.LicenseServerAddress;
-			checkLicense.RequireDotNetRuntime();
-			checkLicense.Start();
 
-			yield return checkLicense.IgnoreFault();
+			yield return registerAsync;
 
-			if (errorJson.Length > 0)
-				throw new InvalidOperationException(errorJson.ToString());
+			var errorData = registerAsync.GetResult().GetErrorData();
+			if (string.IsNullOrEmpty(errorData) == false)
+				throw new InvalidOperationException(errorData);
 
 			foreach (var step in DownloadLicensesAsync(email, password))
 				yield return step;

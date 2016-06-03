@@ -226,11 +226,11 @@ namespace Assets.Editor.GameDevWare.Charon
 
 		public static IEnumerable ScanForGameDataAsync(Action<string, float> progressCallback = null)
 		{
-			switch (ToolsUtils.CheckTools())
+			switch (Utils.ToolsRunner.CheckCharon())
 			{
-				case ToolsCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
-				case ToolsCheckResult.MissingTools: yield return ToolsUtils.UpdateTools(progressCallback); break;
-				case ToolsCheckResult.Ok: break;
+				case CharonCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
+				case CharonCheckResult.MissingExecutable: yield return Utils.ToolsRunner.UpdateCharonExecutable(progressCallback); break;
+				case CharonCheckResult.Ok: break;
 				default: throw new InvalidOperationException("Unknown Tools check result.");
 			}
 
@@ -264,24 +264,18 @@ namespace Assets.Editor.GameDevWare.Charon
 
 				if (Settings.Current.Verbose) Debug.Log(string.Format("Checking '{0}'...", gameDataPath));
 				if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_SCANRUNVALIDATIONFOR, gameDataPath), (float)i / total);
-				var errorText = new StringBuilder();
-				var checkProcess = new ExecuteCommandTask
+
+				var checkProcess = ToolsRunner.RunCharonAsTool
 				(
-					Settings.Current.ToolsPath,
-					null,
-					(s, ea) => { if (string.IsNullOrEmpty(ea.Data) == false) errorText.Append(ea.Data); },
 					"DATA", "VALIDATE", fullGameDataPath,
 					Settings.Current.Verbose ? "--verbose" : ""
 				);
-				checkProcess.RequireDotNetRuntime();
-				checkProcess.Start();
-
 				yield return checkProcess;
-				if (Settings.Current.Verbose) Debug.Log(string.Format("Check complete exit code: '{0}'", checkProcess.ExitCode));
-				if (checkProcess.ExitCode != 0)
+				if (Settings.Current.Verbose) Debug.Log(string.Format("Check complete exit code: '{0}'", checkProcess.GetResult().ExitCode));
+				if (checkProcess.GetResult().ExitCode != 0)
 				{
 					Debug.LogWarning(string.Format(Resources.UI_UNITYPLUGIN_SCANASSETSKIPPED, gameDataPath));
-					if (Settings.Current.Verbose) Debug.LogWarning("Validation error: " + Environment.NewLine + errorText);
+					if (Settings.Current.Verbose) Debug.LogWarning("Validation error: " + Environment.NewLine + checkProcess.GetResult().GetErrorData());
 					Settings.Current.GameDataPaths.Remove(gameDataPath);
 				}
 				else
@@ -298,11 +292,11 @@ namespace Assets.Editor.GameDevWare.Charon
 		}
 		public static IEnumerable GenerateCodeAndAssetsAsync(string path = null, Action<string, float> progressCallback = null)
 		{
-			switch (ToolsUtils.CheckTools())
+			switch (Utils.ToolsRunner.CheckCharon())
 			{
-				case ToolsCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
-				case ToolsCheckResult.MissingTools: yield return ToolsUtils.UpdateTools(progressCallback); break;
-				case ToolsCheckResult.Ok: break;
+				case CharonCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
+				case CharonCheckResult.MissingExecutable: yield return Utils.ToolsRunner.UpdateCharonExecutable(progressCallback); break;
+				case CharonCheckResult.Ok: break;
 				default: throw new InvalidOperationException("Unknown Tools check result.");
 			}
 
@@ -334,7 +328,6 @@ namespace Assets.Editor.GameDevWare.Charon
 
 				using (touchGamedata.GetResult())
 				{
-					var errorText = new StringBuilder();
 					var generator = (GameDataSettings.CodeGenerator)gameDataSettings.Generator;
 					switch (generator)
 					{
@@ -349,11 +342,8 @@ namespace Assets.Editor.GameDevWare.Charon
 							generateCSharpCode:
 							if (Settings.Current.Verbose) Debug.Log(string.Format("Generating C# code for '{0}'...", gameDataPath));
 							if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_GENERATECODEFOR, gameDataPath), (float)i / total);
-							var generateProcess = new ExecuteCommandTask
+							var generateProcess = ToolsRunner.RunCharonAsTool
 							(
-								Settings.Current.ToolsPath,
-								null,
-								(sender, args) => { if (!string.IsNullOrEmpty(args.Data)) errorText.Append(args.Data); },
 								"DATA", generator == GameDataSettings.CodeGenerator.CSharp ? "GENERATECSHARPCODE" : "GENERATEUNITYCSHARPCODE",
 								Path.GetFullPath(gameDataPath),
 								"--namespace",
@@ -368,14 +358,12 @@ namespace Assets.Editor.GameDevWare.Charon
 								Path.GetFullPath(codeGenerationPath),
 								Settings.Current.Verbose ? "--verbose" : ""
 							);
-							generateProcess.RequireDotNetRuntime();
-							generateProcess.Start();
 							yield return generateProcess;
 
-							if (Settings.Current.Verbose) Debug.Log(string.Format("Generation complete, exit code: '{0}'", generateProcess.ExitCode));
-							if (generateProcess.ExitCode != 0)
+							if (Settings.Current.Verbose) Debug.Log(string.Format("Generation complete, exit code: '{0}'", generateProcess.GetResult().ExitCode));
+							if (generateProcess.GetResult().ExitCode != 0)
 							{
-								Debug.LogWarning(string.Format(Resources.UI_UNITYPLUGIN_GENERATEFAILEDDUEERRORS, gameDataPath, errorText));
+								Debug.LogWarning(string.Format(Resources.UI_UNITYPLUGIN_GENERATEFAILEDDUEERRORS, gameDataPath, generateProcess.GetResult().GetErrorData()));
 							}
 							else
 							{
@@ -479,11 +467,11 @@ namespace Assets.Editor.GameDevWare.Charon
 		}
 		public static IEnumerable ValidateAsync(string path = null, Action<string, float> progressCallback = null)
 		{
-			switch (ToolsUtils.CheckTools())
+			switch (Utils.ToolsRunner.CheckCharon())
 			{
-				case ToolsCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
-				case ToolsCheckResult.MissingTools: yield return ToolsUtils.UpdateTools(progressCallback); break;
-				case ToolsCheckResult.Ok: break;
+				case CharonCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
+				case CharonCheckResult.MissingExecutable: yield return Utils.ToolsRunner.UpdateCharonExecutable(progressCallback); break;
+				case CharonCheckResult.Ok: break;
 				default: throw new InvalidOperationException("Unknown Tools check result.");
 			}
 
@@ -497,36 +485,29 @@ namespace Assets.Editor.GameDevWare.Charon
 					continue;
 				if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_PROGRESSCURRENTTARGETIS, gameDataPath), (float)i / total);
 
-				var errorText = new StringBuilder();
-				var outputText = new StringBuilder();
 				if (Settings.Current.Verbose) Debug.Log(string.Format("Validating GameData at '{0}'...", gameDataPath));
 				if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_VALIDATERUNFOR, gameDataPath), (float)i / total);
-				var validateProcess = new ExecuteCommandTask
+				var validateProcess = ToolsRunner.RunCharonAsTool
 				(
-					Settings.Current.ToolsPath,
-					(sender, args) => { if (!string.IsNullOrEmpty(args.Data)) outputText.Append(args.Data); },
-					(sender, args) => { if (!string.IsNullOrEmpty(args.Data)) errorText.Append(args.Data); },
 					"DATA", "VALIDATE", Path.GetFullPath(gameDataPath),
 					"--output", "out",
 					"--outputFormat", "json",
 					Settings.Current.Verbose ? "--verbose" : ""
 				);
-				validateProcess.RequireDotNetRuntime();
-				validateProcess.Start();
 				yield return validateProcess;
 
-				if (Settings.Current.Verbose) Debug.Log(string.Format("Validation complete, exit code: '{0}'", validateProcess.ExitCode));
-				if (validateProcess.ExitCode != 0)
+				if (Settings.Current.Verbose) Debug.Log(string.Format("Validation complete, exit code: '{0}'", validateProcess.GetResult().ExitCode));
+				if (validateProcess.GetResult().ExitCode != 0)
 				{
-					reports.Add(gameDataPath, errorText.ToString());
-					Debug.LogWarning(string.Format(Resources.UI_UNITYPLUGIN_VALIDATEFAILEDDUEERRORS, gameDataPath, errorText));
+					reports.Add(gameDataPath, validateProcess.GetResult().GetErrorData());
+					Debug.LogWarning(string.Format(Resources.UI_UNITYPLUGIN_VALIDATEFAILEDDUEERRORS, gameDataPath, validateProcess.GetResult().GetErrorData()));
 				}
 				else
 				{
 					try
 					{
 						var report = default(JsonObject);
-						reports.Add(gameDataPath, report = (JsonObject)JsonValue.Parse(outputText.ToString()));
+						reports.Add(gameDataPath, report = (JsonObject)JsonValue.Parse(validateProcess.GetResult().GetOutputData()));
 						var success = (bool)report["success"];
 						var totalErrors = 0;
 						if (!success)
@@ -570,33 +551,26 @@ namespace Assets.Editor.GameDevWare.Charon
 		}
 		public static IEnumerable ExtractT4Templates(string extractionPath)
 		{
-			switch (ToolsUtils.CheckTools())
+			switch (Utils.ToolsRunner.CheckCharon())
 			{
-				case ToolsCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
-				case ToolsCheckResult.MissingTools: yield return ToolsUtils.UpdateTools(ProgressUtils.ReportToLog(Resources.UI_UNITYPLUGIN_MENUCHECKUPDATES)); break;
-				case ToolsCheckResult.Ok: break;
+				case CharonCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
+				case CharonCheckResult.MissingExecutable: yield return Utils.ToolsRunner.UpdateCharonExecutable(ProgressUtils.ReportToLog(Resources.UI_UNITYPLUGIN_MENUCHECKUPDATES)); break;
+				case CharonCheckResult.Ok: break;
 				default: throw new InvalidOperationException("Unknown Tools check result.");
 			}
 
-			var outputText = new StringBuilder();
-			var errorText = new StringBuilder();
 			if (Settings.Current.Verbose) Debug.Log(string.Format("Extracting T4 Templates to '{0}'...", extractionPath));
-			var generateProcess = new ExecuteCommandTask
+			var dumpProcess = ToolsRunner.RunCharonAsTool
 			(
-				Settings.Current.ToolsPath,
-				(sender, args) => { if (!string.IsNullOrEmpty(args.Data)) outputText.Append(args.Data); },
-				(sender, args) => { if (!string.IsNullOrEmpty(args.Data)) errorText.Append(args.Data); },
 				"DUMPCODEGENERATOR", Path.GetFullPath(extractionPath),
 				Settings.Current.Verbose ? "--verbose" : ""
 			);
-			generateProcess.RequireDotNetRuntime();
-			generateProcess.Start();
-			yield return generateProcess;
+			yield return dumpProcess;
 
-			if (errorText.Length > 0)
-				Debug.LogWarning(string.Format(Resources.UI_UNITYPLUGIN_T4EXTRACTIONFAILED, errorText));
+			if (string.IsNullOrEmpty(dumpProcess.GetResult().GetErrorData()) == false)
+				Debug.LogWarning(string.Format(Resources.UI_UNITYPLUGIN_T4EXTRACTIONFAILED, dumpProcess.GetResult().GetErrorData()));
 			else
-				Debug.Log(Resources.UI_UNITYPLUGIN_T4EXTRACTIONCOMPLETE + "\r\n" + outputText);
+				Debug.Log(Resources.UI_UNITYPLUGIN_T4EXTRACTIONCOMPLETE + "\r\n" + dumpProcess.GetResult().GetOutputData());
 		}
 		public static IEnumerable TouchGameDataFile(string path)
 		{
@@ -627,14 +601,12 @@ namespace Assets.Editor.GameDevWare.Charon
 			{
 				if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESSCHECKINGTOOLSVERSION, 0.05f);
 
-				var checkToolsVersion = new ExecuteCommandTask(
-					toolsPath,
-					(s, ea) => { if (!string.IsNullOrEmpty(ea.Data)) toolsVersion = new Version(ea.Data); },
-					(s, ea) => { if (!string.IsNullOrEmpty(ea.Data)) Debug.LogWarning(ea.Data.Trim()); },
-					"VERSION");
-				checkToolsVersion.RequireDotNetRuntime();
-				checkToolsVersion.Start();
-				yield return checkToolsVersion;
+				var checkToolsVersion = ToolsRunner.RunCharonAsTool("VERSION");
+				yield return checkToolsVersion.IgnoreFault();
+
+				var outputData = checkToolsVersion.HasErrors == false ? checkToolsVersion.GetResult().GetOutputData() : null;
+				if (string.IsNullOrEmpty(outputData) == false)
+					toolsVersion = new Version(outputData);
 			}
 
 			if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESSGETTINGAVAILABLEBUILDS, 0.10f);
@@ -693,6 +665,7 @@ namespace Assets.Editor.GameDevWare.Charon
 
 				progressCallback(string.Format(Resources.UI_UNITYPLUGIN_PROGRESSDOWNLOADINGS, (float)readed / 1024 / 1024, total / 1024 / 1024), 0.10f + (0.80f * Math.Min(1.0f, (float)readed / total)));
 			});
+
 			try
 			{
 				if (File.Exists(toolsPath))
@@ -708,21 +681,21 @@ namespace Assets.Editor.GameDevWare.Charon
 			}
 
 			// ReSharper disable once EmptyGeneralCatchClause
-			try { if (Directory.Exists(ToolsUtils.ToolShadowCopyPath)) Directory.Delete(ToolsUtils.ToolShadowCopyPath, true); }
-			catch { Debug.LogWarning(string.Format("Failed to delete directory with old copy of tools '{0}'. Please restart unity or delete it manually.", ToolsUtils.ToolShadowCopyPath)); }
+			try { if (Directory.Exists(ToolsRunner.ToolShadowCopyPath)) Directory.Delete(ToolsRunner.ToolShadowCopyPath, true); }
+			catch { Debug.LogWarning(string.Format("Failed to delete directory with old copy of tools '{0}'. Please restart unity or delete it manually.", Utils.ToolsRunner.ToolShadowCopyPath)); }
+
+			ToolsRunner.ToolShadowCopyPath = FileUtil.GetUniqueTempPathInProject();
 
 			if (File.Exists(Settings.Current.ToolsPath))
 			{
 				if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESSCHECKINGTOOLSVERSION, 0.95f);
 
-				var checkToolsVersion = new ExecuteCommandTask(
-					Settings.Current.ToolsPath,
-					(s, ea) => { if (!string.IsNullOrEmpty(ea.Data)) toolsVersion = new Version(ea.Data); },
-					(s, ea) => { if (!string.IsNullOrEmpty(ea.Data)) Debug.LogWarning(ea.Data.Trim()); },
-					"VERSION");
-				checkToolsVersion.RequireDotNetRuntime();
-				checkToolsVersion.Start();
-				yield return checkToolsVersion;
+				var checkToolsVersion = ToolsRunner.RunCharonAsTool("VERSION");
+				yield return checkToolsVersion.IgnoreFault();
+
+				var outputData = checkToolsVersion.HasErrors == false ? checkToolsVersion.GetResult().GetOutputData() : null;
+				if (string.IsNullOrEmpty(outputData) == false)
+					toolsVersion = new Version(outputData);
 			}
 
 			Debug.Log(string.Format("{1} version is '{0}'. Update is complete.", toolsVersion, Path.GetFileName(toolsPath)));

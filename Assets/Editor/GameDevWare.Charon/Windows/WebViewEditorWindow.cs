@@ -68,8 +68,6 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 				var engineAsm = typeof(ScriptableObject).Assembly;
 				var webViewRect = (Rect)engineAsm.GetType("UnityEngine.GUIClip", throwOnError: true).InvokeMember("Unclip", BindingFlags.InvokeMethod | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public, null, null, new object[] { new Rect(0, 0, this.position.width, this.position.height) });
 				this.webView.Invoke("SetSizeAndPosition", (int)(webViewRect.x + Paddings.x), (int)(webViewRect.y + Paddings.y), (int)(webViewRect.width - (Paddings.width + Paddings.x)), (int)(webViewRect.height - (Paddings.height + Paddings.y)));
-
-				Debug.Log(string.Format("WebView resized {0}.", webViewRect));
 			}
 		}
 
@@ -138,14 +136,11 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 				var hostView = this.GetFieldValue("m_Parent");
 				this.webView.Invoke("InitWebView", hostView, (int)(webViewRect.x + Paddings.x), (int)(webViewRect.y + Paddings.y), (int)(webViewRect.width - (Paddings.width + Paddings.x)), (int)(webViewRect.height - (Paddings.height + Paddings.y)), false);
 				this.webView.SetPropertyValue("hideFlags", HideFlags.HideAndDontSave);
-
-				if (Settings.Current.Verbose)
-					Debug.Log(string.Format("New WebView instantiated at {0}.", webViewRect));
 			}
 			this.webView.Invoke("SetDelegateObject", this);
 			this.webView.Invoke("LoadURL", url);
 			if (Settings.Current.Verbose)
-				Debug.Log("WebViewEditorWindow is loading '" + url + "'.");
+				Debug.Log("WebView is loading '" + url + "'.");
 		}
 		protected void Reload()
 		{

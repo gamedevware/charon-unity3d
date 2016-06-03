@@ -11,6 +11,7 @@ using System;
 using System.Linq;
 using System.IO;
 using System.Text;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
@@ -23,7 +24,7 @@ namespace Assets
 	/// No description is provided.
 	/// </summary>
 	
-	public sealed partial class ItemTemplate : GameData.Entry, IEquatable<ItemTemplate>
+	public sealed partial class ItemTemplate : GameData.Entry, IEquatable<ItemTemplate>, IComparable, IComparable<ItemTemplate>
 	{
 		private int hashCode;
 
@@ -132,14 +133,17 @@ namespace Assets
 
 		internal void Init(Func<string, object, GameData.Entry> refResolver)
 		{
-			if (refResolver == null) throw new System.ArgumentNullException("refResolver");
+			if (refResolver == null) throw new ArgumentNullException("refResolver");
 
 			this.ThrowIfReadOnly();
+			this.OnInitialize();
 		}
+
+		partial void OnInitialize();
 
 		internal void Visit(GameData.Visitor visit)
 		{
-			if (visit == null) throw new System.ArgumentNullException("visit");
+			if (visit == null) throw new ArgumentNullException("visit");
 
 		}
 
@@ -149,7 +153,10 @@ namespace Assets
 				this._DisplayName.SetLanguage(language);
 			if (this._Description != null)
 				this._Description.SetLanguage(language);
+			this.OnSetLanguage(language);
 		}
+
+		partial void OnSetLanguage(string language);
 
 		protected internal override void SetReadOnly()
 		{
@@ -159,7 +166,11 @@ namespace Assets
 			if (this._Description != null)
 				this._Description.SetReadOnly();
 			this.hashCode = this.ComputeHashCode();
+
+			this.OnSetReadOnly();
 		}
+
+		partial void OnSetReadOnly();
 
 		public bool Equals(ItemTemplate other)
 		{
@@ -189,6 +200,18 @@ namespace Assets
 				return this.hashCode;
 			return this.ComputeHashCode();
 		}
+
+		int IComparable.CompareTo(object obj)
+        {
+            return this.CompareTo(obj as ItemTemplate);
+        }
+
+        public int CompareTo(ItemTemplate other)
+        {
+            if (other == null)
+                return 1;
+            return string.Compare(this.Id, other.Id, StringComparison.Ordinal);
+        }
 
 		public static bool operator ==(ItemTemplate value1, ItemTemplate value2)
 		{
@@ -233,7 +256,7 @@ namespace Assets
 	/// No description is provided.
 	/// </summary>
 	
-	public sealed partial class Reward : GameData.Entry, IEquatable<Reward>
+	public sealed partial class Reward : GameData.Entry, IEquatable<Reward>, IComparable, IComparable<Reward>
 	{
 		private int hashCode;
 
@@ -302,30 +325,40 @@ namespace Assets
 
 		internal void Init(Func<string, object, GameData.Entry> refResolver)
 		{
-			if (refResolver == null) throw new System.ArgumentNullException("refResolver");
+			if (refResolver == null) throw new ArgumentNullException("refResolver");
 
 			this.ThrowIfReadOnly();
 			if (this._Item != null)
 			{
 				this._Item.Resolve(refResolver);
 			}
+			this.OnInitialize();
 		}
+
+		partial void OnInitialize();
 
 		internal void Visit(GameData.Visitor visit)
 		{
-			if (visit == null) throw new System.ArgumentNullException("visit");
+			if (visit == null) throw new ArgumentNullException("visit");
 
 		}
 
 		internal void SetLanguage(string language)
 		{
+			this.OnSetLanguage(language);
 		}
+
+		partial void OnSetLanguage(string language);
 
 		protected internal override void SetReadOnly()
 		{
 			base.SetReadOnly();
 			this.hashCode = this.ComputeHashCode();
+
+			this.OnSetReadOnly();
 		}
+
+		partial void OnSetReadOnly();
 
 		public bool Equals(Reward other)
 		{
@@ -352,6 +385,18 @@ namespace Assets
 				return this.hashCode;
 			return this.ComputeHashCode();
 		}
+
+		int IComparable.CompareTo(object obj)
+        {
+            return this.CompareTo(obj as Reward);
+        }
+
+        public int CompareTo(Reward other)
+        {
+            if (other == null)
+                return 1;
+			return this.Id.CompareTo(other.Id);
+        }
 
 		public static bool operator ==(Reward value1, Reward value2)
 		{
@@ -390,7 +435,7 @@ namespace Assets
 	/// No description is provided.
 	/// </summary>
 	
-	public sealed partial class Requirement : GameData.Entry, IEquatable<Requirement>
+	public sealed partial class Requirement : GameData.Entry, IEquatable<Requirement>, IComparable, IComparable<Requirement>
 	{
 		private int hashCode;
 
@@ -459,30 +504,40 @@ namespace Assets
 
 		internal void Init(Func<string, object, GameData.Entry> refResolver)
 		{
-			if (refResolver == null) throw new System.ArgumentNullException("refResolver");
+			if (refResolver == null) throw new ArgumentNullException("refResolver");
 
 			this.ThrowIfReadOnly();
 			if (this._Item != null)
 			{
 				this._Item.Resolve(refResolver);
 			}
+			this.OnInitialize();
 		}
+
+		partial void OnInitialize();
 
 		internal void Visit(GameData.Visitor visit)
 		{
-			if (visit == null) throw new System.ArgumentNullException("visit");
+			if (visit == null) throw new ArgumentNullException("visit");
 
 		}
 
 		internal void SetLanguage(string language)
 		{
+			this.OnSetLanguage(language);
 		}
+
+		partial void OnSetLanguage(string language);
 
 		protected internal override void SetReadOnly()
 		{
 			base.SetReadOnly();
 			this.hashCode = this.ComputeHashCode();
+
+			this.OnSetReadOnly();
 		}
+
+		partial void OnSetReadOnly();
 
 		public bool Equals(Requirement other)
 		{
@@ -509,6 +564,18 @@ namespace Assets
 				return this.hashCode;
 			return this.ComputeHashCode();
 		}
+
+		int IComparable.CompareTo(object obj)
+        {
+            return this.CompareTo(obj as Requirement);
+        }
+
+        public int CompareTo(Requirement other)
+        {
+            if (other == null)
+                return 1;
+			return this.Id.CompareTo(other.Id);
+        }
 
 		public static bool operator ==(Requirement value1, Requirement value2)
 		{
@@ -547,7 +614,7 @@ namespace Assets
 	/// No description is provided.
 	/// </summary>
 	
-	public sealed partial class StageTemplate : GameData.Entry, IEquatable<StageTemplate>
+	public sealed partial class StageTemplate : GameData.Entry, IEquatable<StageTemplate>, IComparable, IComparable<StageTemplate>
 	{
 		private int hashCode;
 
@@ -588,14 +655,17 @@ namespace Assets
 
 		internal void Init(Func<string, object, GameData.Entry> refResolver)
 		{
-			if (refResolver == null) throw new System.ArgumentNullException("refResolver");
+			if (refResolver == null) throw new ArgumentNullException("refResolver");
 
 			this.ThrowIfReadOnly();
+			this.OnInitialize();
 		}
+
+		partial void OnInitialize();
 
 		internal void Visit(GameData.Visitor visit)
 		{
-			if (visit == null) throw new System.ArgumentNullException("visit");
+			if (visit == null) throw new ArgumentNullException("visit");
 
 		}
 
@@ -603,7 +673,10 @@ namespace Assets
 		{
 			if (this._Name != null)
 				this._Name.SetLanguage(language);
+			this.OnSetLanguage(language);
 		}
+
+		partial void OnSetLanguage(string language);
 
 		protected internal override void SetReadOnly()
 		{
@@ -611,7 +684,11 @@ namespace Assets
 			if (this._Name != null)
 				this._Name.SetReadOnly();
 			this.hashCode = this.ComputeHashCode();
+
+			this.OnSetReadOnly();
 		}
+
+		partial void OnSetReadOnly();
 
 		public bool Equals(StageTemplate other)
 		{
@@ -636,6 +713,18 @@ namespace Assets
 				return this.hashCode;
 			return this.ComputeHashCode();
 		}
+
+		int IComparable.CompareTo(object obj)
+        {
+            return this.CompareTo(obj as StageTemplate);
+        }
+
+        public int CompareTo(StageTemplate other)
+        {
+            if (other == null)
+                return 1;
+			return this.Id.CompareTo(other.Id);
+        }
 
 		public static bool operator ==(StageTemplate value1, StageTemplate value2)
 		{
@@ -670,7 +759,7 @@ namespace Assets
 	/// No description is provided.
 	/// </summary>
 	
-	public sealed partial class AssignmentTemplate : GameData.Entry, IEquatable<AssignmentTemplate>
+	public sealed partial class AssignmentTemplate : GameData.Entry, IEquatable<AssignmentTemplate>, IComparable, IComparable<AssignmentTemplate>
 	{
 		private int hashCode;
 
@@ -742,14 +831,17 @@ namespace Assets
 
 		internal void Init(Func<string, object, GameData.Entry> refResolver)
 		{
-			if (refResolver == null) throw new System.ArgumentNullException("refResolver");
+			if (refResolver == null) throw new ArgumentNullException("refResolver");
 
 			this.ThrowIfReadOnly();
+			this.OnInitialize();
 		}
+
+		partial void OnInitialize();
 
 		internal void Visit(GameData.Visitor visit)
 		{
-			if (visit == null) throw new System.ArgumentNullException("visit");
+			if (visit == null) throw new ArgumentNullException("visit");
 
 			if (this._ItemRequirements == null)
 				this._ItemRequirements = GameData.Utils.Empty(this._ItemRequirements);
@@ -772,22 +864,20 @@ namespace Assets
 
 		internal void SetLanguage(string language)
 		{
-			if (this._ItemRequirements != null)
-				foreach(var item in this._ItemRequirements)
-					item.SetLanguage(language);
-			if (this._Resolutions != null)
-				foreach(var item in this._Resolutions)
-					item.SetLanguage(language);
-			if (this._SpawnRestrictions != null)
-				this._SpawnRestrictions.SetLanguage(language);
-
+			this.OnSetLanguage(language);
 		}
+
+		partial void OnSetLanguage(string language);
 
 		protected internal override void SetReadOnly()
 		{
 			base.SetReadOnly();
 			this.hashCode = this.ComputeHashCode();
+
+			this.OnSetReadOnly();
 		}
+
+		partial void OnSetReadOnly();
 
 		public bool Equals(AssignmentTemplate other)
 		{
@@ -816,6 +906,18 @@ namespace Assets
 				return this.hashCode;
 			return this.ComputeHashCode();
 		}
+
+		int IComparable.CompareTo(object obj)
+        {
+            return this.CompareTo(obj as AssignmentTemplate);
+        }
+
+        public int CompareTo(AssignmentTemplate other)
+        {
+            if (other == null)
+                return 1;
+            return string.Compare(this.Id, other.Id, StringComparison.Ordinal);
+        }
 
 		public static bool operator ==(AssignmentTemplate value1, AssignmentTemplate value2)
 		{
@@ -858,7 +960,7 @@ namespace Assets
 	/// No description is provided.
 	/// </summary>
 	
-	public sealed partial class AssignmentResolution : GameData.Entry, IEquatable<AssignmentResolution>
+	public sealed partial class AssignmentResolution : GameData.Entry, IEquatable<AssignmentResolution>, IComparable, IComparable<AssignmentResolution>
 	{
 		private int hashCode;
 
@@ -919,14 +1021,17 @@ namespace Assets
 
 		internal void Init(Func<string, object, GameData.Entry> refResolver)
 		{
-			if (refResolver == null) throw new System.ArgumentNullException("refResolver");
+			if (refResolver == null) throw new ArgumentNullException("refResolver");
 
 			this.ThrowIfReadOnly();
+			this.OnInitialize();
 		}
+
+		partial void OnInitialize();
 
 		internal void Visit(GameData.Visitor visit)
 		{
-			if (visit == null) throw new System.ArgumentNullException("visit");
+			if (visit == null) throw new ArgumentNullException("visit");
 
 			if (this._RewardItems == null)
 				this._RewardItems = GameData.Utils.Empty(this._RewardItems);
@@ -946,19 +1051,20 @@ namespace Assets
 
 		internal void SetLanguage(string language)
 		{
-			if (this._RewardItems != null)
-				foreach(var item in this._RewardItems)
-					item.SetLanguage(language);
-			if (this._BonusRewardItems != null)
-				foreach(var item in this._BonusRewardItems)
-					item.SetLanguage(language);
+			this.OnSetLanguage(language);
 		}
+
+		partial void OnSetLanguage(string language);
 
 		protected internal override void SetReadOnly()
 		{
 			base.SetReadOnly();
 			this.hashCode = this.ComputeHashCode();
+
+			this.OnSetReadOnly();
 		}
+
+		partial void OnSetReadOnly();
 
 		public bool Equals(AssignmentResolution other)
 		{
@@ -986,6 +1092,18 @@ namespace Assets
 				return this.hashCode;
 			return this.ComputeHashCode();
 		}
+
+		int IComparable.CompareTo(object obj)
+        {
+            return this.CompareTo(obj as AssignmentResolution);
+        }
+
+        public int CompareTo(AssignmentResolution other)
+        {
+            if (other == null)
+                return 1;
+			return this.Id.CompareTo(other.Id);
+        }
 
 		public static bool operator ==(AssignmentResolution value1, AssignmentResolution value2)
 		{
@@ -1026,7 +1144,7 @@ namespace Assets
 	/// No description is provided.
 	/// </summary>
 	
-	public sealed partial class CashPointTemplate : GameData.Entry, IEquatable<CashPointTemplate>
+	public sealed partial class CashPointTemplate : GameData.Entry, IEquatable<CashPointTemplate>, IComparable, IComparable<CashPointTemplate>
 	{
 		private int hashCode;
 
@@ -1098,14 +1216,17 @@ namespace Assets
 
 		internal void Init(Func<string, object, GameData.Entry> refResolver)
 		{
-			if (refResolver == null) throw new System.ArgumentNullException("refResolver");
+			if (refResolver == null) throw new ArgumentNullException("refResolver");
 
 			this.ThrowIfReadOnly();
+			this.OnInitialize();
 		}
+
+		partial void OnInitialize();
 
 		internal void Visit(GameData.Visitor visit)
 		{
-			if (visit == null) throw new System.ArgumentNullException("visit");
+			if (visit == null) throw new ArgumentNullException("visit");
 
 			if (this._SpawnRestrictions != null)
 				visit.Visit(this._SpawnRestrictions);
@@ -1114,16 +1235,20 @@ namespace Assets
 
 		internal void SetLanguage(string language)
 		{
-			if (this._SpawnRestrictions != null)
-				this._SpawnRestrictions.SetLanguage(language);
-
+			this.OnSetLanguage(language);
 		}
+
+		partial void OnSetLanguage(string language);
 
 		protected internal override void SetReadOnly()
 		{
 			base.SetReadOnly();
 			this.hashCode = this.ComputeHashCode();
+
+			this.OnSetReadOnly();
 		}
+
+		partial void OnSetReadOnly();
 
 		public bool Equals(CashPointTemplate other)
 		{
@@ -1152,6 +1277,18 @@ namespace Assets
 				return this.hashCode;
 			return this.ComputeHashCode();
 		}
+
+		int IComparable.CompareTo(object obj)
+        {
+            return this.CompareTo(obj as CashPointTemplate);
+        }
+
+        public int CompareTo(CashPointTemplate other)
+        {
+            if (other == null)
+                return 1;
+            return string.Compare(this.Id, other.Id, StringComparison.Ordinal);
+        }
 
 		public static bool operator ==(CashPointTemplate value1, CashPointTemplate value2)
 		{
@@ -1194,7 +1331,7 @@ namespace Assets
 	/// No description is provided.
 	/// </summary>
 	
-	public sealed partial class Restrictions : GameData.Entry, IEquatable<Restrictions>
+	public sealed partial class Restrictions : GameData.Entry, IEquatable<Restrictions>, IComparable, IComparable<Restrictions>
 	{
 		private int hashCode;
 
@@ -1271,7 +1408,7 @@ namespace Assets
 
 		internal void Init(Func<string, object, GameData.Entry> refResolver)
 		{
-			if (refResolver == null) throw new System.ArgumentNullException("refResolver");
+			if (refResolver == null) throw new ArgumentNullException("refResolver");
 
 			this.ThrowIfReadOnly();
 			if (this._StageMin != null)
@@ -1282,23 +1419,33 @@ namespace Assets
 			{
 				this._StageMax.Resolve(refResolver);
 			}
+			this.OnInitialize();
 		}
+
+		partial void OnInitialize();
 
 		internal void Visit(GameData.Visitor visit)
 		{
-			if (visit == null) throw new System.ArgumentNullException("visit");
+			if (visit == null) throw new ArgumentNullException("visit");
 
 		}
 
 		internal void SetLanguage(string language)
 		{
+			this.OnSetLanguage(language);
 		}
+
+		partial void OnSetLanguage(string language);
 
 		protected internal override void SetReadOnly()
 		{
 			base.SetReadOnly();
 			this.hashCode = this.ComputeHashCode();
+
+			this.OnSetReadOnly();
 		}
+
+		partial void OnSetReadOnly();
 
 		public bool Equals(Restrictions other)
 		{
@@ -1324,6 +1471,18 @@ namespace Assets
 				return this.hashCode;
 			return this.ComputeHashCode();
 		}
+
+		int IComparable.CompareTo(object obj)
+        {
+            return this.CompareTo(obj as Restrictions);
+        }
+
+        public int CompareTo(Restrictions other)
+        {
+            if (other == null)
+                return 1;
+			return this.Id.CompareTo(other.Id);
+        }
 
 		public static bool operator ==(Restrictions value1, Restrictions value2)
 		{
@@ -1360,7 +1519,7 @@ namespace Assets
 	/// No description is provided.
 	/// </summary>
 	
-	public sealed partial class Global : GameData.Entry, IEquatable<Global>
+	public sealed partial class Global : GameData.Entry, IEquatable<Global>, IComparable, IComparable<Global>
 	{
 		private int hashCode;
 
@@ -1388,26 +1547,36 @@ namespace Assets
 
 		internal void Init(Func<string, object, GameData.Entry> refResolver)
 		{
-			if (refResolver == null) throw new System.ArgumentNullException("refResolver");
+			if (refResolver == null) throw new ArgumentNullException("refResolver");
 
 			this.ThrowIfReadOnly();
+			this.OnInitialize();
 		}
+
+		partial void OnInitialize();
 
 		internal void Visit(GameData.Visitor visit)
 		{
-			if (visit == null) throw new System.ArgumentNullException("visit");
+			if (visit == null) throw new ArgumentNullException("visit");
 
 		}
 
 		internal void SetLanguage(string language)
 		{
+			this.OnSetLanguage(language);
 		}
+
+		partial void OnSetLanguage(string language);
 
 		protected internal override void SetReadOnly()
 		{
 			base.SetReadOnly();
 			this.hashCode = this.ComputeHashCode();
+
+			this.OnSetReadOnly();
 		}
+
+		partial void OnSetReadOnly();
 
 		public bool Equals(Global other)
 		{
@@ -1432,6 +1601,18 @@ namespace Assets
 				return this.hashCode;
 			return this.ComputeHashCode();
 		}
+
+		int IComparable.CompareTo(object obj)
+        {
+            return this.CompareTo(obj as Global);
+        }
+
+        public int CompareTo(Global other)
+        {
+            if (other == null)
+                return 1;
+			return this.Id.CompareTo(other.Id);
+        }
 
 		public static bool operator ==(Global value1, Global value2)
 		{
@@ -1466,7 +1647,7 @@ namespace Assets
 	/// No description is provided.
 	/// </summary>
 	
-	public sealed partial class GunShopLot : GameData.Entry, IEquatable<GunShopLot>
+	public sealed partial class GunShopLot : GameData.Entry, IEquatable<GunShopLot>, IComparable, IComparable<GunShopLot>
 	{
 		private int hashCode;
 
@@ -1546,18 +1727,21 @@ namespace Assets
 
 		internal void Init(Func<string, object, GameData.Entry> refResolver)
 		{
-			if (refResolver == null) throw new System.ArgumentNullException("refResolver");
+			if (refResolver == null) throw new ArgumentNullException("refResolver");
 
 			this.ThrowIfReadOnly();
 			if (this._Item != null)
 			{
 				this._Item.Resolve(refResolver);
 			}
+			this.OnInitialize();
 		}
+
+		partial void OnInitialize();
 
 		internal void Visit(GameData.Visitor visit)
 		{
-			if (visit == null) throw new System.ArgumentNullException("visit");
+			if (visit == null) throw new ArgumentNullException("visit");
 
 			if (this._Cost != null)
 				visit.Visit(this._Cost);
@@ -1569,19 +1753,20 @@ namespace Assets
 
 		internal void SetLanguage(string language)
 		{
-			if (this._Cost != null)
-				this._Cost.SetLanguage(language);
-
-			if (this._Restrictions != null)
-				this._Restrictions.SetLanguage(language);
-
+			this.OnSetLanguage(language);
 		}
+
+		partial void OnSetLanguage(string language);
 
 		protected internal override void SetReadOnly()
 		{
 			base.SetReadOnly();
 			this.hashCode = this.ComputeHashCode();
+
+			this.OnSetReadOnly();
 		}
+
+		partial void OnSetReadOnly();
 
 		public bool Equals(GunShopLot other)
 		{
@@ -1609,6 +1794,18 @@ namespace Assets
 				return this.hashCode;
 			return this.ComputeHashCode();
 		}
+
+		int IComparable.CompareTo(object obj)
+        {
+            return this.CompareTo(obj as GunShopLot);
+        }
+
+        public int CompareTo(GunShopLot other)
+        {
+            if (other == null)
+                return 1;
+			return this.Id.CompareTo(other.Id);
+        }
 
 		public static bool operator ==(GunShopLot value1, GunShopLot value2)
 		{
@@ -1649,7 +1846,7 @@ namespace Assets
 	/// No description is provided.
 	/// </summary>
 	
-	public sealed partial class TrainingTemplate : GameData.Entry, IEquatable<TrainingTemplate>
+	public sealed partial class TrainingTemplate : GameData.Entry, IEquatable<TrainingTemplate>, IComparable, IComparable<TrainingTemplate>
 	{
 		private int hashCode;
 
@@ -1699,14 +1896,17 @@ namespace Assets
 
 		internal void Init(Func<string, object, GameData.Entry> refResolver)
 		{
-			if (refResolver == null) throw new System.ArgumentNullException("refResolver");
+			if (refResolver == null) throw new ArgumentNullException("refResolver");
 
 			this.ThrowIfReadOnly();
+			this.OnInitialize();
 		}
+
+		partial void OnInitialize();
 
 		internal void Visit(GameData.Visitor visit)
 		{
-			if (visit == null) throw new System.ArgumentNullException("visit");
+			if (visit == null) throw new ArgumentNullException("visit");
 
 			if (this._Cost != null)
 				visit.Visit(this._Cost);
@@ -1715,16 +1915,20 @@ namespace Assets
 
 		internal void SetLanguage(string language)
 		{
-			if (this._Cost != null)
-				this._Cost.SetLanguage(language);
-
+			this.OnSetLanguage(language);
 		}
+
+		partial void OnSetLanguage(string language);
 
 		protected internal override void SetReadOnly()
 		{
 			base.SetReadOnly();
 			this.hashCode = this.ComputeHashCode();
+
+			this.OnSetReadOnly();
 		}
+
+		partial void OnSetReadOnly();
 
 		public bool Equals(TrainingTemplate other)
 		{
@@ -1751,6 +1955,18 @@ namespace Assets
 				return this.hashCode;
 			return this.ComputeHashCode();
 		}
+
+		int IComparable.CompareTo(object obj)
+        {
+            return this.CompareTo(obj as TrainingTemplate);
+        }
+
+        public int CompareTo(TrainingTemplate other)
+        {
+            if (other == null)
+                return 1;
+            return string.Compare(this.Id, other.Id, StringComparison.Ordinal);
+        }
 
 		public static bool operator ==(TrainingTemplate value1, TrainingTemplate value2)
 		{
@@ -1789,7 +2005,7 @@ namespace Assets
 	/// No description is provided.
 	/// </summary>
 	
-	public sealed partial class AbilityTemplate : GameData.Entry, IEquatable<AbilityTemplate>
+	public sealed partial class AbilityTemplate : GameData.Entry, IEquatable<AbilityTemplate>, IComparable, IComparable<AbilityTemplate>
 	{
 		private int hashCode;
 
@@ -1839,26 +2055,36 @@ namespace Assets
 
 		internal void Init(Func<string, object, GameData.Entry> refResolver)
 		{
-			if (refResolver == null) throw new System.ArgumentNullException("refResolver");
+			if (refResolver == null) throw new ArgumentNullException("refResolver");
 
 			this.ThrowIfReadOnly();
+			this.OnInitialize();
 		}
+
+		partial void OnInitialize();
 
 		internal void Visit(GameData.Visitor visit)
 		{
-			if (visit == null) throw new System.ArgumentNullException("visit");
+			if (visit == null) throw new ArgumentNullException("visit");
 
 		}
 
 		internal void SetLanguage(string language)
 		{
+			this.OnSetLanguage(language);
 		}
+
+		partial void OnSetLanguage(string language);
 
 		protected internal override void SetReadOnly()
 		{
 			base.SetReadOnly();
 			this.hashCode = this.ComputeHashCode();
+
+			this.OnSetReadOnly();
 		}
+
+		partial void OnSetReadOnly();
 
 		public bool Equals(AbilityTemplate other)
 		{
@@ -1885,6 +2111,18 @@ namespace Assets
 				return this.hashCode;
 			return this.ComputeHashCode();
 		}
+
+		int IComparable.CompareTo(object obj)
+        {
+            return this.CompareTo(obj as AbilityTemplate);
+        }
+
+        public int CompareTo(AbilityTemplate other)
+        {
+            if (other == null)
+                return 1;
+            return string.Compare(this.Id, other.Id, StringComparison.Ordinal);
+        }
 
 		public static bool operator ==(AbilityTemplate value1, AbilityTemplate value2)
 		{
@@ -1923,7 +2161,7 @@ namespace Assets
 	/// No description is provided.
 	/// </summary>
 	
-	public sealed partial class CarTemplate : GameData.Entry, IEquatable<CarTemplate>
+	public sealed partial class CarTemplate : GameData.Entry, IEquatable<CarTemplate>, IComparable, IComparable<CarTemplate>
 	{
 		private int hashCode;
 
@@ -1975,14 +2213,17 @@ namespace Assets
 
 		internal void Init(Func<string, object, GameData.Entry> refResolver)
 		{
-			if (refResolver == null) throw new System.ArgumentNullException("refResolver");
+			if (refResolver == null) throw new ArgumentNullException("refResolver");
 
 			this.ThrowIfReadOnly();
+			this.OnInitialize();
 		}
+
+		partial void OnInitialize();
 
 		internal void Visit(GameData.Visitor visit)
 		{
-			if (visit == null) throw new System.ArgumentNullException("visit");
+			if (visit == null) throw new ArgumentNullException("visit");
 
 			if (this._Bonuses == null)
 				this._Bonuses = GameData.Utils.Empty(this._Bonuses);
@@ -1997,10 +2238,10 @@ namespace Assets
 		{
 			if (this._DisplayName != null)
 				this._DisplayName.SetLanguage(language);
-			if (this._Bonuses != null)
-				foreach(var item in this._Bonuses)
-					item.SetLanguage(language);
+			this.OnSetLanguage(language);
 		}
+
+		partial void OnSetLanguage(string language);
 
 		protected internal override void SetReadOnly()
 		{
@@ -2008,7 +2249,11 @@ namespace Assets
 			if (this._DisplayName != null)
 				this._DisplayName.SetReadOnly();
 			this.hashCode = this.ComputeHashCode();
+
+			this.OnSetReadOnly();
 		}
+
+		partial void OnSetReadOnly();
 
 		public bool Equals(CarTemplate other)
 		{
@@ -2034,6 +2279,18 @@ namespace Assets
 				return this.hashCode;
 			return this.ComputeHashCode();
 		}
+
+		int IComparable.CompareTo(object obj)
+        {
+            return this.CompareTo(obj as CarTemplate);
+        }
+
+        public int CompareTo(CarTemplate other)
+        {
+            if (other == null)
+                return 1;
+            return string.Compare(this.Id, other.Id, StringComparison.Ordinal);
+        }
 
 		public static bool operator ==(CarTemplate value1, CarTemplate value2)
 		{
@@ -2070,7 +2327,7 @@ namespace Assets
 	/// No description is provided.
 	/// </summary>
 	
-	public sealed partial class WeaponModificationTemplate : GameData.Entry, IEquatable<WeaponModificationTemplate>
+	public sealed partial class WeaponModificationTemplate : GameData.Entry, IEquatable<WeaponModificationTemplate>, IComparable, IComparable<WeaponModificationTemplate>
 	{
 		private int hashCode;
 
@@ -2139,30 +2396,40 @@ namespace Assets
 
 		internal void Init(Func<string, object, GameData.Entry> refResolver)
 		{
-			if (refResolver == null) throw new System.ArgumentNullException("refResolver");
+			if (refResolver == null) throw new ArgumentNullException("refResolver");
 
 			this.ThrowIfReadOnly();
 			if (this._Ability != null)
 			{
 				this._Ability.Resolve(refResolver);
 			}
+			this.OnInitialize();
 		}
+
+		partial void OnInitialize();
 
 		internal void Visit(GameData.Visitor visit)
 		{
-			if (visit == null) throw new System.ArgumentNullException("visit");
+			if (visit == null) throw new ArgumentNullException("visit");
 
 		}
 
 		internal void SetLanguage(string language)
 		{
+			this.OnSetLanguage(language);
 		}
+
+		partial void OnSetLanguage(string language);
 
 		protected internal override void SetReadOnly()
 		{
 			base.SetReadOnly();
 			this.hashCode = this.ComputeHashCode();
+
+			this.OnSetReadOnly();
 		}
+
+		partial void OnSetReadOnly();
 
 		public bool Equals(WeaponModificationTemplate other)
 		{
@@ -2189,6 +2456,18 @@ namespace Assets
 				return this.hashCode;
 			return this.ComputeHashCode();
 		}
+
+		int IComparable.CompareTo(object obj)
+        {
+            return this.CompareTo(obj as WeaponModificationTemplate);
+        }
+
+        public int CompareTo(WeaponModificationTemplate other)
+        {
+            if (other == null)
+                return 1;
+            return string.Compare(this.Id, other.Id, StringComparison.Ordinal);
+        }
 
 		public static bool operator ==(WeaponModificationTemplate value1, WeaponModificationTemplate value2)
 		{
@@ -2227,7 +2506,7 @@ namespace Assets
 	/// No description is provided.
 	/// </summary>
 	
-	public sealed partial class WeaponTemplate : GameData.Entry, IEquatable<WeaponTemplate>
+	public sealed partial class WeaponTemplate : GameData.Entry, IEquatable<WeaponTemplate>, IComparable, IComparable<WeaponTemplate>
 	{
 		private int hashCode;
 
@@ -2321,14 +2600,17 @@ namespace Assets
 
 		internal void Init(Func<string, object, GameData.Entry> refResolver)
 		{
-			if (refResolver == null) throw new System.ArgumentNullException("refResolver");
+			if (refResolver == null) throw new ArgumentNullException("refResolver");
 
 			this.ThrowIfReadOnly();
+			this.OnInitialize();
 		}
+
+		partial void OnInitialize();
 
 		internal void Visit(GameData.Visitor visit)
 		{
-			if (visit == null) throw new System.ArgumentNullException("visit");
+			if (visit == null) throw new ArgumentNullException("visit");
 
 			if (this._Modifications == null)
 				this._Modifications = GameData.Utils.Empty(this._Modifications);
@@ -2341,16 +2623,20 @@ namespace Assets
 
 		internal void SetLanguage(string language)
 		{
-			if (this._Modifications != null)
-				foreach(var item in this._Modifications)
-					item.SetLanguage(language);
+			this.OnSetLanguage(language);
 		}
+
+		partial void OnSetLanguage(string language);
 
 		protected internal override void SetReadOnly()
 		{
 			base.SetReadOnly();
 			this.hashCode = this.ComputeHashCode();
+
+			this.OnSetReadOnly();
 		}
+
+		partial void OnSetReadOnly();
 
 		public bool Equals(WeaponTemplate other)
 		{
@@ -2381,6 +2667,18 @@ namespace Assets
 				return this.hashCode;
 			return this.ComputeHashCode();
 		}
+
+		int IComparable.CompareTo(object obj)
+        {
+            return this.CompareTo(obj as WeaponTemplate);
+        }
+
+        public int CompareTo(WeaponTemplate other)
+        {
+            if (other == null)
+                return 1;
+            return string.Compare(this.Id, other.Id, StringComparison.Ordinal);
+        }
 
 		public static bool operator ==(WeaponTemplate value1, WeaponTemplate value2)
 		{
@@ -2427,7 +2725,7 @@ namespace Assets
 	/// No description is provided.
 	/// </summary>
 	
-	public sealed partial class UtilityItemBonusTemplate : GameData.Entry, IEquatable<UtilityItemBonusTemplate>
+	public sealed partial class UtilityItemBonusTemplate : GameData.Entry, IEquatable<UtilityItemBonusTemplate>, IComparable, IComparable<UtilityItemBonusTemplate>
 	{
 		private int hashCode;
 
@@ -2496,30 +2794,40 @@ namespace Assets
 
 		internal void Init(Func<string, object, GameData.Entry> refResolver)
 		{
-			if (refResolver == null) throw new System.ArgumentNullException("refResolver");
+			if (refResolver == null) throw new ArgumentNullException("refResolver");
 
 			this.ThrowIfReadOnly();
 			if (this._Ability != null)
 			{
 				this._Ability.Resolve(refResolver);
 			}
+			this.OnInitialize();
 		}
+
+		partial void OnInitialize();
 
 		internal void Visit(GameData.Visitor visit)
 		{
-			if (visit == null) throw new System.ArgumentNullException("visit");
+			if (visit == null) throw new ArgumentNullException("visit");
 
 		}
 
 		internal void SetLanguage(string language)
 		{
+			this.OnSetLanguage(language);
 		}
+
+		partial void OnSetLanguage(string language);
 
 		protected internal override void SetReadOnly()
 		{
 			base.SetReadOnly();
 			this.hashCode = this.ComputeHashCode();
+
+			this.OnSetReadOnly();
 		}
+
+		partial void OnSetReadOnly();
 
 		public bool Equals(UtilityItemBonusTemplate other)
 		{
@@ -2546,6 +2854,18 @@ namespace Assets
 				return this.hashCode;
 			return this.ComputeHashCode();
 		}
+
+		int IComparable.CompareTo(object obj)
+        {
+            return this.CompareTo(obj as UtilityItemBonusTemplate);
+        }
+
+        public int CompareTo(UtilityItemBonusTemplate other)
+        {
+            if (other == null)
+                return 1;
+			return this.Id.CompareTo(other.Id);
+        }
 
 		public static bool operator ==(UtilityItemBonusTemplate value1, UtilityItemBonusTemplate value2)
 		{
@@ -2584,7 +2904,7 @@ namespace Assets
 	/// No description is provided.
 	/// </summary>
 	
-	public sealed partial class UtilityItemTemplate : GameData.Entry, IEquatable<UtilityItemTemplate>
+	public sealed partial class UtilityItemTemplate : GameData.Entry, IEquatable<UtilityItemTemplate>, IComparable, IComparable<UtilityItemTemplate>
 	{
 		private int hashCode;
 
@@ -2623,14 +2943,17 @@ namespace Assets
 
 		internal void Init(Func<string, object, GameData.Entry> refResolver)
 		{
-			if (refResolver == null) throw new System.ArgumentNullException("refResolver");
+			if (refResolver == null) throw new ArgumentNullException("refResolver");
 
 			this.ThrowIfReadOnly();
+			this.OnInitialize();
 		}
+
+		partial void OnInitialize();
 
 		internal void Visit(GameData.Visitor visit)
 		{
-			if (visit == null) throw new System.ArgumentNullException("visit");
+			if (visit == null) throw new ArgumentNullException("visit");
 
 			if (this._Bonuses == null)
 				this._Bonuses = GameData.Utils.Empty(this._Bonuses);
@@ -2643,16 +2966,20 @@ namespace Assets
 
 		internal void SetLanguage(string language)
 		{
-			if (this._Bonuses != null)
-				foreach(var item in this._Bonuses)
-					item.SetLanguage(language);
+			this.OnSetLanguage(language);
 		}
+
+		partial void OnSetLanguage(string language);
 
 		protected internal override void SetReadOnly()
 		{
 			base.SetReadOnly();
 			this.hashCode = this.ComputeHashCode();
+
+			this.OnSetReadOnly();
 		}
+
+		partial void OnSetReadOnly();
 
 		public bool Equals(UtilityItemTemplate other)
 		{
@@ -2678,6 +3005,18 @@ namespace Assets
 				return this.hashCode;
 			return this.ComputeHashCode();
 		}
+
+		int IComparable.CompareTo(object obj)
+        {
+            return this.CompareTo(obj as UtilityItemTemplate);
+        }
+
+        public int CompareTo(UtilityItemTemplate other)
+        {
+            if (other == null)
+                return 1;
+            return string.Compare(this.Id, other.Id, StringComparison.Ordinal);
+        }
 
 		public static bool operator ==(UtilityItemTemplate value1, UtilityItemTemplate value2)
 		{
@@ -2714,7 +3053,7 @@ namespace Assets
 	/// No description is provided.
 	/// </summary>
 	
-	public sealed partial class AbilityRollTemplate : GameData.Entry, IEquatable<AbilityRollTemplate>
+	public sealed partial class AbilityRollTemplate : GameData.Entry, IEquatable<AbilityRollTemplate>, IComparable, IComparable<AbilityRollTemplate>
 	{
 		private int hashCode;
 
@@ -2816,30 +3155,40 @@ namespace Assets
 
 		internal void Init(Func<string, object, GameData.Entry> refResolver)
 		{
-			if (refResolver == null) throw new System.ArgumentNullException("refResolver");
+			if (refResolver == null) throw new ArgumentNullException("refResolver");
 
 			this.ThrowIfReadOnly();
 			if (this._Ability != null)
 			{
 				this._Ability.Resolve(refResolver);
 			}
+			this.OnInitialize();
 		}
+
+		partial void OnInitialize();
 
 		internal void Visit(GameData.Visitor visit)
 		{
-			if (visit == null) throw new System.ArgumentNullException("visit");
+			if (visit == null) throw new ArgumentNullException("visit");
 
 		}
 
 		internal void SetLanguage(string language)
 		{
+			this.OnSetLanguage(language);
 		}
+
+		partial void OnSetLanguage(string language);
 
 		protected internal override void SetReadOnly()
 		{
 			base.SetReadOnly();
 			this.hashCode = this.ComputeHashCode();
+
+			this.OnSetReadOnly();
 		}
+
+		partial void OnSetReadOnly();
 
 		public bool Equals(AbilityRollTemplate other)
 		{
@@ -2869,6 +3218,18 @@ namespace Assets
 				return this.hashCode;
 			return this.ComputeHashCode();
 		}
+
+		int IComparable.CompareTo(object obj)
+        {
+            return this.CompareTo(obj as AbilityRollTemplate);
+        }
+
+        public int CompareTo(AbilityRollTemplate other)
+        {
+            if (other == null)
+                return 1;
+			return this.Id.CompareTo(other.Id);
+        }
 
 		public static bool operator ==(AbilityRollTemplate value1, AbilityRollTemplate value2)
 		{
@@ -2913,7 +3274,7 @@ namespace Assets
 	/// No description is provided.
 	/// </summary>
 	
-	public sealed partial class PlaycardTemplate : GameData.Entry, IEquatable<PlaycardTemplate>
+	public sealed partial class PlaycardTemplate : GameData.Entry, IEquatable<PlaycardTemplate>, IComparable, IComparable<PlaycardTemplate>
 	{
 		private int hashCode;
 
@@ -3018,14 +3379,17 @@ namespace Assets
 
 		internal void Init(Func<string, object, GameData.Entry> refResolver)
 		{
-			if (refResolver == null) throw new System.ArgumentNullException("refResolver");
+			if (refResolver == null) throw new ArgumentNullException("refResolver");
 
 			this.ThrowIfReadOnly();
+			this.OnInitialize();
 		}
+
+		partial void OnInitialize();
 
 		internal void Visit(GameData.Visitor visit)
 		{
-			if (visit == null) throw new System.ArgumentNullException("visit");
+			if (visit == null) throw new ArgumentNullException("visit");
 
 			if (this._Abilities == null)
 				this._Abilities = GameData.Utils.Empty(this._Abilities);
@@ -3038,16 +3402,20 @@ namespace Assets
 
 		internal void SetLanguage(string language)
 		{
-			if (this._Abilities != null)
-				foreach(var item in this._Abilities)
-					item.SetLanguage(language);
+			this.OnSetLanguage(language);
 		}
+
+		partial void OnSetLanguage(string language);
 
 		protected internal override void SetReadOnly()
 		{
 			base.SetReadOnly();
 			this.hashCode = this.ComputeHashCode();
+
+			this.OnSetReadOnly();
 		}
+
+		partial void OnSetReadOnly();
 
 		public bool Equals(PlaycardTemplate other)
 		{
@@ -3079,6 +3447,18 @@ namespace Assets
 				return this.hashCode;
 			return this.ComputeHashCode();
 		}
+
+		int IComparable.CompareTo(object obj)
+        {
+            return this.CompareTo(obj as PlaycardTemplate);
+        }
+
+        public int CompareTo(PlaycardTemplate other)
+        {
+            if (other == null)
+                return 1;
+            return string.Compare(this.Id, other.Id, StringComparison.Ordinal);
+        }
 
 		public static bool operator ==(PlaycardTemplate value1, PlaycardTemplate value2)
 		{
@@ -3127,7 +3507,7 @@ namespace Assets
 	/// No description is provided.
 	/// </summary>
 	
-	public sealed partial class NonPlayerPlaycardTemplate : GameData.Entry, IEquatable<NonPlayerPlaycardTemplate>
+	public sealed partial class NonPlayerPlaycardTemplate : GameData.Entry, IEquatable<NonPlayerPlaycardTemplate>, IComparable, IComparable<NonPlayerPlaycardTemplate>
 	{
 		private int hashCode;
 
@@ -3294,7 +3674,7 @@ namespace Assets
 
 		internal void Init(Func<string, object, GameData.Entry> refResolver)
 		{
-			if (refResolver == null) throw new System.ArgumentNullException("refResolver");
+			if (refResolver == null) throw new ArgumentNullException("refResolver");
 
 			this.ThrowIfReadOnly();
 			if (this._Playcard != null)
@@ -3317,23 +3697,33 @@ namespace Assets
 			{
 				this._Weapon.Resolve(refResolver);
 			}
+			this.OnInitialize();
 		}
+
+		partial void OnInitialize();
 
 		internal void Visit(GameData.Visitor visit)
 		{
-			if (visit == null) throw new System.ArgumentNullException("visit");
+			if (visit == null) throw new ArgumentNullException("visit");
 
 		}
 
 		internal void SetLanguage(string language)
 		{
+			this.OnSetLanguage(language);
 		}
+
+		partial void OnSetLanguage(string language);
 
 		protected internal override void SetReadOnly()
 		{
 			base.SetReadOnly();
 			this.hashCode = this.ComputeHashCode();
+
+			this.OnSetReadOnly();
 		}
+
+		partial void OnSetReadOnly();
 
 		public bool Equals(NonPlayerPlaycardTemplate other)
 		{
@@ -3362,6 +3752,18 @@ namespace Assets
 				return this.hashCode;
 			return this.ComputeHashCode();
 		}
+
+		int IComparable.CompareTo(object obj)
+        {
+            return this.CompareTo(obj as NonPlayerPlaycardTemplate);
+        }
+
+        public int CompareTo(NonPlayerPlaycardTemplate other)
+        {
+            if (other == null)
+                return 1;
+            return string.Compare(this.Id, other.Id, StringComparison.Ordinal);
+        }
 
 		public static bool operator ==(NonPlayerPlaycardTemplate value1, NonPlayerPlaycardTemplate value2)
 		{
@@ -3403,42 +3805,42 @@ namespace Assets
 	
 	public enum ItemType: sbyte
 	{
-		Goods = 10,
 		None = 0,
 		Special = 1,
 		Weapon = 2,
 		WeaponModification = 3,
 		UtilityItem = 4,
 		Car = 5,
+		Goods = 10,
 	}
 
 	
 	public enum ItemRarity: int
 	{
-		Legendary = 3,
-		Rare = 2,
 		Common = 1,
+		Rare = 2,
+		Legendary = 3,
 	}
 
 	[Flags]
 	public enum ItemFlags: int
 	{
-		NotTradeable = 1,
 		None = 0,
+		NotTradeable = 1,
 	}
 
 	
 	public enum AssignmentType: int
 	{
-		Raid = 2,
 		Task = 1,
+		Raid = 2,
 	}
 
 	
 	public enum CashPointType: int
 	{
-		Illegal = 2,
 		Legal = 1,
+		Illegal = 2,
 	}
 
 	
@@ -3469,9 +3871,9 @@ namespace Assets
 	
 	public enum ItemSlot: int
 	{
-		Utility = 3,
-		Body = 2,
 		Headwear = 1,
+		Body = 2,
+		Utility = 3,
 	}
 
 
@@ -3481,51 +3883,71 @@ namespace Assets
 		{
 			public sealed class CollectionList
 			{
-				public HashSet<ItemTemplate> ItemTemplate;
-				public HashSet<Reward> Reward;
-				public HashSet<Requirement> Requirement;
-				public HashSet<StageTemplate> StageTemplate;
-				public HashSet<AssignmentTemplate> AssignmentTemplate;
-				public HashSet<AssignmentResolution> AssignmentResolution;
-				public HashSet<CashPointTemplate> CashPointTemplate;
-				public HashSet<Restrictions> Restrictions;
-				public HashSet<Global> Global;
-				public HashSet<GunShopLot> GunShopLot;
-				public HashSet<TrainingTemplate> TrainingTemplate;
-				public HashSet<AbilityTemplate> AbilityTemplate;
-				public HashSet<CarTemplate> CarTemplate;
-				public HashSet<WeaponModificationTemplate> WeaponModificationTemplate;
-				public HashSet<WeaponTemplate> WeaponTemplate;
-				public HashSet<UtilityItemBonusTemplate> UtilityItemBonusTemplate;
-				public HashSet<UtilityItemTemplate> UtilityItemTemplate;
-				public HashSet<AbilityRollTemplate> AbilityRollTemplate;
-				public HashSet<PlaycardTemplate> PlaycardTemplate;
-				public HashSet<NonPlayerPlaycardTemplate> NonPlayerPlaycardTemplate;
+				public List<ItemTemplate> ItemTemplate;
+				public List<Reward> Reward;
+				public List<Requirement> Requirement;
+				public List<StageTemplate> StageTemplate;
+				public List<AssignmentTemplate> AssignmentTemplate;
+				public List<AssignmentResolution> AssignmentResolution;
+				public List<CashPointTemplate> CashPointTemplate;
+				public List<Restrictions> Restrictions;
+				public List<Global> Global;
+				public List<GunShopLot> GunShopLot;
+				public List<TrainingTemplate> TrainingTemplate;
+				public List<AbilityTemplate> AbilityTemplate;
+				public List<CarTemplate> CarTemplate;
+				public List<WeaponModificationTemplate> WeaponModificationTemplate;
+				public List<WeaponTemplate> WeaponTemplate;
+				public List<UtilityItemBonusTemplate> UtilityItemBonusTemplate;
+				public List<UtilityItemTemplate> UtilityItemTemplate;
+				public List<AbilityRollTemplate> AbilityRollTemplate;
+				public List<PlaycardTemplate> PlaycardTemplate;
+				public List<NonPlayerPlaycardTemplate> NonPlayerPlaycardTemplate;
 			}
 
 			public CollectionList Collections;
 		}
 
-		public Dictionary<String, ItemTemplate> ItemTemplateById;
-		public Dictionary<Int32, Reward> RewardById;
-		public Dictionary<Int32, Requirement> RequirementById;
-		public Dictionary<Int32, StageTemplate> StageTemplateById;
-		public Dictionary<String, AssignmentTemplate> AssignmentTemplateById;
-		public Dictionary<Int32, AssignmentResolution> AssignmentResolutionById;
-		public Dictionary<String, CashPointTemplate> CashPointTemplateById;
-		public Dictionary<Int32, Restrictions> RestrictionsById;
-		public Dictionary<Int32, Global> GlobalById;
-		public Dictionary<Int32, GunShopLot> GunShopLotById;
-		public Dictionary<String, TrainingTemplate> TrainingTemplateById;
-		public Dictionary<String, AbilityTemplate> AbilityTemplateById;
-		public Dictionary<String, CarTemplate> CarTemplateById;
-		public Dictionary<String, WeaponModificationTemplate> WeaponModificationTemplateById;
-		public Dictionary<String, WeaponTemplate> WeaponTemplateById;
-		public Dictionary<Int32, UtilityItemBonusTemplate> UtilityItemBonusTemplateById;
-		public Dictionary<String, UtilityItemTemplate> UtilityItemTemplateById;
-		public Dictionary<Int32, AbilityRollTemplate> AbilityRollTemplateById;
-		public Dictionary<String, PlaycardTemplate> PlaycardTemplateById;
-		public Dictionary<String, NonPlayerPlaycardTemplate> NonPlayerPlaycardTemplateById;
+		private List<ItemTemplate> allItemTemplate;
+		private Dictionary<String, ItemTemplate> allItemTemplateById;
+		private List<Reward> allReward;
+		private Dictionary<Int32, Reward> allRewardById;
+		private List<Requirement> allRequirement;
+		private Dictionary<Int32, Requirement> allRequirementById;
+		private List<StageTemplate> allStageTemplate;
+		private Dictionary<Int32, StageTemplate> allStageTemplateById;
+		private List<AssignmentTemplate> allAssignmentTemplate;
+		private Dictionary<String, AssignmentTemplate> allAssignmentTemplateById;
+		private List<AssignmentResolution> allAssignmentResolution;
+		private Dictionary<Int32, AssignmentResolution> allAssignmentResolutionById;
+		private List<CashPointTemplate> allCashPointTemplate;
+		private Dictionary<String, CashPointTemplate> allCashPointTemplateById;
+		private List<Restrictions> allRestrictions;
+		private Dictionary<Int32, Restrictions> allRestrictionsById;
+		private List<Global> allGlobal;
+		private Dictionary<Int32, Global> allGlobalById;
+		private List<GunShopLot> allGunShopLot;
+		private Dictionary<Int32, GunShopLot> allGunShopLotById;
+		private List<TrainingTemplate> allTrainingTemplate;
+		private Dictionary<String, TrainingTemplate> allTrainingTemplateById;
+		private List<AbilityTemplate> allAbilityTemplate;
+		private Dictionary<String, AbilityTemplate> allAbilityTemplateById;
+		private List<CarTemplate> allCarTemplate;
+		private Dictionary<String, CarTemplate> allCarTemplateById;
+		private List<WeaponModificationTemplate> allWeaponModificationTemplate;
+		private Dictionary<String, WeaponModificationTemplate> allWeaponModificationTemplateById;
+		private List<WeaponTemplate> allWeaponTemplate;
+		private Dictionary<String, WeaponTemplate> allWeaponTemplateById;
+		private List<UtilityItemBonusTemplate> allUtilityItemBonusTemplate;
+		private Dictionary<Int32, UtilityItemBonusTemplate> allUtilityItemBonusTemplateById;
+		private List<UtilityItemTemplate> allUtilityItemTemplate;
+		private Dictionary<String, UtilityItemTemplate> allUtilityItemTemplateById;
+		private List<AbilityRollTemplate> allAbilityRollTemplate;
+		private Dictionary<Int32, AbilityRollTemplate> allAbilityRollTemplateById;
+		private List<PlaycardTemplate> allPlaycardTemplate;
+		private Dictionary<String, PlaycardTemplate> allPlaycardTemplateById;
+		private List<NonPlayerPlaycardTemplate> allNonPlayerPlaycardTemplate;
+		private Dictionary<String, NonPlayerPlaycardTemplate> allNonPlayerPlaycardTemplateById;
 
 #pragma warning disable 0414 // The private field `structure' is assigned but its value is never used
 		private readonly Structure structure;
@@ -3536,766 +3958,867 @@ namespace Assets
 
 		public GameData(TextReader textReader)
 		{
-			if (textReader == null) throw new System.ArgumentNullException("textReader");
+			if (textReader == null) throw new ArgumentNullException("textReader");
 			this.structure = this.ReadStructure(textReader);
 
-			this.Prepare();
+			this.Initialize();
 		}
 
-		private void Prepare()
+		private void Initialize()
 		{
 #pragma warning disable 0168 // The variable `resolver' is declared but never used
 			var resolver = (Func<string, object, Entry>)this.Resolve;
 #pragma warning restore 0168
 
-			if (this.structure.Collections.ItemTemplate == null) this.structure.Collections.ItemTemplate = new HashSet<ItemTemplate>();
-			if (this.structure.Collections.Reward == null) this.structure.Collections.Reward = new HashSet<Reward>();
-			if (this.structure.Collections.Requirement == null) this.structure.Collections.Requirement = new HashSet<Requirement>();
-			if (this.structure.Collections.StageTemplate == null) this.structure.Collections.StageTemplate = new HashSet<StageTemplate>();
-			if (this.structure.Collections.AssignmentTemplate == null) this.structure.Collections.AssignmentTemplate = new HashSet<AssignmentTemplate>();
-			if (this.structure.Collections.AssignmentResolution == null) this.structure.Collections.AssignmentResolution = new HashSet<AssignmentResolution>();
-			if (this.structure.Collections.CashPointTemplate == null) this.structure.Collections.CashPointTemplate = new HashSet<CashPointTemplate>();
-			if (this.structure.Collections.Restrictions == null) this.structure.Collections.Restrictions = new HashSet<Restrictions>();
-			if (this.structure.Collections.Global == null) this.structure.Collections.Global = new HashSet<Global>();
-			if (this.structure.Collections.GunShopLot == null) this.structure.Collections.GunShopLot = new HashSet<GunShopLot>();
-			if (this.structure.Collections.TrainingTemplate == null) this.structure.Collections.TrainingTemplate = new HashSet<TrainingTemplate>();
-			if (this.structure.Collections.AbilityTemplate == null) this.structure.Collections.AbilityTemplate = new HashSet<AbilityTemplate>();
-			if (this.structure.Collections.CarTemplate == null) this.structure.Collections.CarTemplate = new HashSet<CarTemplate>();
-			if (this.structure.Collections.WeaponModificationTemplate == null) this.structure.Collections.WeaponModificationTemplate = new HashSet<WeaponModificationTemplate>();
-			if (this.structure.Collections.WeaponTemplate == null) this.structure.Collections.WeaponTemplate = new HashSet<WeaponTemplate>();
-			if (this.structure.Collections.UtilityItemBonusTemplate == null) this.structure.Collections.UtilityItemBonusTemplate = new HashSet<UtilityItemBonusTemplate>();
-			if (this.structure.Collections.UtilityItemTemplate == null) this.structure.Collections.UtilityItemTemplate = new HashSet<UtilityItemTemplate>();
-			if (this.structure.Collections.AbilityRollTemplate == null) this.structure.Collections.AbilityRollTemplate = new HashSet<AbilityRollTemplate>();
-			if (this.structure.Collections.PlaycardTemplate == null) this.structure.Collections.PlaycardTemplate = new HashSet<PlaycardTemplate>();
-			if (this.structure.Collections.NonPlayerPlaycardTemplate == null) this.structure.Collections.NonPlayerPlaycardTemplate = new HashSet<NonPlayerPlaycardTemplate>();
+			if (this.structure.Collections.ItemTemplate == null) this.structure.Collections.ItemTemplate = new List<ItemTemplate>();
+			if (this.allItemTemplate == null) this.allItemTemplate = new List<ItemTemplate>();
+			if (this.structure.Collections.Reward == null) this.structure.Collections.Reward = new List<Reward>();
+			if (this.allReward == null) this.allReward = new List<Reward>();
+			if (this.structure.Collections.Requirement == null) this.structure.Collections.Requirement = new List<Requirement>();
+			if (this.allRequirement == null) this.allRequirement = new List<Requirement>();
+			if (this.structure.Collections.StageTemplate == null) this.structure.Collections.StageTemplate = new List<StageTemplate>();
+			if (this.allStageTemplate == null) this.allStageTemplate = new List<StageTemplate>();
+			if (this.structure.Collections.AssignmentTemplate == null) this.structure.Collections.AssignmentTemplate = new List<AssignmentTemplate>();
+			if (this.allAssignmentTemplate == null) this.allAssignmentTemplate = new List<AssignmentTemplate>();
+			if (this.structure.Collections.AssignmentResolution == null) this.structure.Collections.AssignmentResolution = new List<AssignmentResolution>();
+			if (this.allAssignmentResolution == null) this.allAssignmentResolution = new List<AssignmentResolution>();
+			if (this.structure.Collections.CashPointTemplate == null) this.structure.Collections.CashPointTemplate = new List<CashPointTemplate>();
+			if (this.allCashPointTemplate == null) this.allCashPointTemplate = new List<CashPointTemplate>();
+			if (this.structure.Collections.Restrictions == null) this.structure.Collections.Restrictions = new List<Restrictions>();
+			if (this.allRestrictions == null) this.allRestrictions = new List<Restrictions>();
+			if (this.structure.Collections.Global == null) this.structure.Collections.Global = new List<Global>();
+			if (this.allGlobal == null) this.allGlobal = new List<Global>();
+			if (this.structure.Collections.GunShopLot == null) this.structure.Collections.GunShopLot = new List<GunShopLot>();
+			if (this.allGunShopLot == null) this.allGunShopLot = new List<GunShopLot>();
+			if (this.structure.Collections.TrainingTemplate == null) this.structure.Collections.TrainingTemplate = new List<TrainingTemplate>();
+			if (this.allTrainingTemplate == null) this.allTrainingTemplate = new List<TrainingTemplate>();
+			if (this.structure.Collections.AbilityTemplate == null) this.structure.Collections.AbilityTemplate = new List<AbilityTemplate>();
+			if (this.allAbilityTemplate == null) this.allAbilityTemplate = new List<AbilityTemplate>();
+			if (this.structure.Collections.CarTemplate == null) this.structure.Collections.CarTemplate = new List<CarTemplate>();
+			if (this.allCarTemplate == null) this.allCarTemplate = new List<CarTemplate>();
+			if (this.structure.Collections.WeaponModificationTemplate == null) this.structure.Collections.WeaponModificationTemplate = new List<WeaponModificationTemplate>();
+			if (this.allWeaponModificationTemplate == null) this.allWeaponModificationTemplate = new List<WeaponModificationTemplate>();
+			if (this.structure.Collections.WeaponTemplate == null) this.structure.Collections.WeaponTemplate = new List<WeaponTemplate>();
+			if (this.allWeaponTemplate == null) this.allWeaponTemplate = new List<WeaponTemplate>();
+			if (this.structure.Collections.UtilityItemBonusTemplate == null) this.structure.Collections.UtilityItemBonusTemplate = new List<UtilityItemBonusTemplate>();
+			if (this.allUtilityItemBonusTemplate == null) this.allUtilityItemBonusTemplate = new List<UtilityItemBonusTemplate>();
+			if (this.structure.Collections.UtilityItemTemplate == null) this.structure.Collections.UtilityItemTemplate = new List<UtilityItemTemplate>();
+			if (this.allUtilityItemTemplate == null) this.allUtilityItemTemplate = new List<UtilityItemTemplate>();
+			if (this.structure.Collections.AbilityRollTemplate == null) this.structure.Collections.AbilityRollTemplate = new List<AbilityRollTemplate>();
+			if (this.allAbilityRollTemplate == null) this.allAbilityRollTemplate = new List<AbilityRollTemplate>();
+			if (this.structure.Collections.PlaycardTemplate == null) this.structure.Collections.PlaycardTemplate = new List<PlaycardTemplate>();
+			if (this.allPlaycardTemplate == null) this.allPlaycardTemplate = new List<PlaycardTemplate>();
+			if (this.structure.Collections.NonPlayerPlaycardTemplate == null) this.structure.Collections.NonPlayerPlaycardTemplate = new List<NonPlayerPlaycardTemplate>();
+			if (this.allNonPlayerPlaycardTemplate == null) this.allNonPlayerPlaycardTemplate = new List<NonPlayerPlaycardTemplate>();
 
 			this.FlattenStructure();
 
-			this.ItemTemplateById = Utils.WhereNotNull(this.structure.Collections.ItemTemplate, entry => entry.Id).ToDictionary(entry => entry.Id);
-			this.RewardById = Utils.WhereNotNull(this.structure.Collections.Reward, entry => entry.Id).ToDictionary(entry => entry.Id);
-			this.RequirementById = Utils.WhereNotNull(this.structure.Collections.Requirement, entry => entry.Id).ToDictionary(entry => entry.Id);
-			this.StageTemplateById = Utils.WhereNotNull(this.structure.Collections.StageTemplate, entry => entry.Id).ToDictionary(entry => entry.Id);
-			this.AssignmentTemplateById = Utils.WhereNotNull(this.structure.Collections.AssignmentTemplate, entry => entry.Id).ToDictionary(entry => entry.Id);
-			this.AssignmentResolutionById = Utils.WhereNotNull(this.structure.Collections.AssignmentResolution, entry => entry.Id).ToDictionary(entry => entry.Id);
-			this.CashPointTemplateById = Utils.WhereNotNull(this.structure.Collections.CashPointTemplate, entry => entry.Id).ToDictionary(entry => entry.Id);
-			this.RestrictionsById = Utils.WhereNotNull(this.structure.Collections.Restrictions, entry => entry.Id).ToDictionary(entry => entry.Id);
-			this.GlobalById = Utils.WhereNotNull(this.structure.Collections.Global, entry => entry.Id).ToDictionary(entry => entry.Id);
-			this.GunShopLotById = Utils.WhereNotNull(this.structure.Collections.GunShopLot, entry => entry.Id).ToDictionary(entry => entry.Id);
-			this.TrainingTemplateById = Utils.WhereNotNull(this.structure.Collections.TrainingTemplate, entry => entry.Id).ToDictionary(entry => entry.Id);
-			this.AbilityTemplateById = Utils.WhereNotNull(this.structure.Collections.AbilityTemplate, entry => entry.Id).ToDictionary(entry => entry.Id);
-			this.CarTemplateById = Utils.WhereNotNull(this.structure.Collections.CarTemplate, entry => entry.Id).ToDictionary(entry => entry.Id);
-			this.WeaponModificationTemplateById = Utils.WhereNotNull(this.structure.Collections.WeaponModificationTemplate, entry => entry.Id).ToDictionary(entry => entry.Id);
-			this.WeaponTemplateById = Utils.WhereNotNull(this.structure.Collections.WeaponTemplate, entry => entry.Id).ToDictionary(entry => entry.Id);
-			this.UtilityItemBonusTemplateById = Utils.WhereNotNull(this.structure.Collections.UtilityItemBonusTemplate, entry => entry.Id).ToDictionary(entry => entry.Id);
-			this.UtilityItemTemplateById = Utils.WhereNotNull(this.structure.Collections.UtilityItemTemplate, entry => entry.Id).ToDictionary(entry => entry.Id);
-			this.AbilityRollTemplateById = Utils.WhereNotNull(this.structure.Collections.AbilityRollTemplate, entry => entry.Id).ToDictionary(entry => entry.Id);
-			this.PlaycardTemplateById = Utils.WhereNotNull(this.structure.Collections.PlaycardTemplate, entry => entry.Id).ToDictionary(entry => entry.Id);
-			this.NonPlayerPlaycardTemplateById = Utils.WhereNotNull(this.structure.Collections.NonPlayerPlaycardTemplate, entry => entry.Id).ToDictionary(entry => entry.Id);
+			this.allItemTemplate.Sort();
+			this.allItemTemplateById = Utils.WhereNotNull(this.allItemTemplate, entry => entry.Id).ToDictionary(entry => entry.Id);
+			this.allReward.Sort();
+			this.allRewardById = Utils.WhereNotNull(this.allReward, entry => entry.Id).ToDictionary(entry => entry.Id);
+			this.allRequirement.Sort();
+			this.allRequirementById = Utils.WhereNotNull(this.allRequirement, entry => entry.Id).ToDictionary(entry => entry.Id);
+			this.allStageTemplate.Sort();
+			this.allStageTemplateById = Utils.WhereNotNull(this.allStageTemplate, entry => entry.Id).ToDictionary(entry => entry.Id);
+			this.allAssignmentTemplate.Sort();
+			this.allAssignmentTemplateById = Utils.WhereNotNull(this.allAssignmentTemplate, entry => entry.Id).ToDictionary(entry => entry.Id);
+			this.allAssignmentResolution.Sort();
+			this.allAssignmentResolutionById = Utils.WhereNotNull(this.allAssignmentResolution, entry => entry.Id).ToDictionary(entry => entry.Id);
+			this.allCashPointTemplate.Sort();
+			this.allCashPointTemplateById = Utils.WhereNotNull(this.allCashPointTemplate, entry => entry.Id).ToDictionary(entry => entry.Id);
+			this.allRestrictions.Sort();
+			this.allRestrictionsById = Utils.WhereNotNull(this.allRestrictions, entry => entry.Id).ToDictionary(entry => entry.Id);
+			this.allGlobal.Sort();
+			this.allGlobalById = Utils.WhereNotNull(this.allGlobal, entry => entry.Id).ToDictionary(entry => entry.Id);
+			this.allGunShopLot.Sort();
+			this.allGunShopLotById = Utils.WhereNotNull(this.allGunShopLot, entry => entry.Id).ToDictionary(entry => entry.Id);
+			this.allTrainingTemplate.Sort();
+			this.allTrainingTemplateById = Utils.WhereNotNull(this.allTrainingTemplate, entry => entry.Id).ToDictionary(entry => entry.Id);
+			this.allAbilityTemplate.Sort();
+			this.allAbilityTemplateById = Utils.WhereNotNull(this.allAbilityTemplate, entry => entry.Id).ToDictionary(entry => entry.Id);
+			this.allCarTemplate.Sort();
+			this.allCarTemplateById = Utils.WhereNotNull(this.allCarTemplate, entry => entry.Id).ToDictionary(entry => entry.Id);
+			this.allWeaponModificationTemplate.Sort();
+			this.allWeaponModificationTemplateById = Utils.WhereNotNull(this.allWeaponModificationTemplate, entry => entry.Id).ToDictionary(entry => entry.Id);
+			this.allWeaponTemplate.Sort();
+			this.allWeaponTemplateById = Utils.WhereNotNull(this.allWeaponTemplate, entry => entry.Id).ToDictionary(entry => entry.Id);
+			this.allUtilityItemBonusTemplate.Sort();
+			this.allUtilityItemBonusTemplateById = Utils.WhereNotNull(this.allUtilityItemBonusTemplate, entry => entry.Id).ToDictionary(entry => entry.Id);
+			this.allUtilityItemTemplate.Sort();
+			this.allUtilityItemTemplateById = Utils.WhereNotNull(this.allUtilityItemTemplate, entry => entry.Id).ToDictionary(entry => entry.Id);
+			this.allAbilityRollTemplate.Sort();
+			this.allAbilityRollTemplateById = Utils.WhereNotNull(this.allAbilityRollTemplate, entry => entry.Id).ToDictionary(entry => entry.Id);
+			this.allPlaycardTemplate.Sort();
+			this.allPlaycardTemplateById = Utils.WhereNotNull(this.allPlaycardTemplate, entry => entry.Id).ToDictionary(entry => entry.Id);
+			this.allNonPlayerPlaycardTemplate.Sort();
+			this.allNonPlayerPlaycardTemplateById = Utils.WhereNotNull(this.allNonPlayerPlaycardTemplate, entry => entry.Id).ToDictionary(entry => entry.Id);
 
-			foreach(var entry in this.structure.Collections.ItemTemplate)
+			foreach(var entry in this.allItemTemplate)
 			{
 				entry.Init(resolver);
 				entry.SetReadOnly();
 			}
-			foreach(var entry in this.structure.Collections.Reward)
+			foreach(var entry in this.allReward)
 			{
 				entry.Init(resolver);
 				entry.SetReadOnly();
 			}
-			foreach(var entry in this.structure.Collections.Requirement)
+			foreach(var entry in this.allRequirement)
 			{
 				entry.Init(resolver);
 				entry.SetReadOnly();
 			}
-			foreach(var entry in this.structure.Collections.StageTemplate)
+			foreach(var entry in this.allStageTemplate)
 			{
 				entry.Init(resolver);
 				entry.SetReadOnly();
 			}
-			foreach(var entry in this.structure.Collections.AssignmentTemplate)
+			foreach(var entry in this.allAssignmentTemplate)
 			{
 				entry.Init(resolver);
 				entry.SetReadOnly();
 			}
-			foreach(var entry in this.structure.Collections.AssignmentResolution)
+			foreach(var entry in this.allAssignmentResolution)
 			{
 				entry.Init(resolver);
 				entry.SetReadOnly();
 			}
-			foreach(var entry in this.structure.Collections.CashPointTemplate)
+			foreach(var entry in this.allCashPointTemplate)
 			{
 				entry.Init(resolver);
 				entry.SetReadOnly();
 			}
-			foreach(var entry in this.structure.Collections.Restrictions)
+			foreach(var entry in this.allRestrictions)
 			{
 				entry.Init(resolver);
 				entry.SetReadOnly();
 			}
-			foreach(var entry in this.structure.Collections.Global)
+			foreach(var entry in this.allGlobal)
 			{
 				entry.Init(resolver);
 				entry.SetReadOnly();
 			}
-			foreach(var entry in this.structure.Collections.GunShopLot)
+			foreach(var entry in this.allGunShopLot)
 			{
 				entry.Init(resolver);
 				entry.SetReadOnly();
 			}
-			foreach(var entry in this.structure.Collections.TrainingTemplate)
+			foreach(var entry in this.allTrainingTemplate)
 			{
 				entry.Init(resolver);
 				entry.SetReadOnly();
 			}
-			foreach(var entry in this.structure.Collections.AbilityTemplate)
+			foreach(var entry in this.allAbilityTemplate)
 			{
 				entry.Init(resolver);
 				entry.SetReadOnly();
 			}
-			foreach(var entry in this.structure.Collections.CarTemplate)
+			foreach(var entry in this.allCarTemplate)
 			{
 				entry.Init(resolver);
 				entry.SetReadOnly();
 			}
-			foreach(var entry in this.structure.Collections.WeaponModificationTemplate)
+			foreach(var entry in this.allWeaponModificationTemplate)
 			{
 				entry.Init(resolver);
 				entry.SetReadOnly();
 			}
-			foreach(var entry in this.structure.Collections.WeaponTemplate)
+			foreach(var entry in this.allWeaponTemplate)
 			{
 				entry.Init(resolver);
 				entry.SetReadOnly();
 			}
-			foreach(var entry in this.structure.Collections.UtilityItemBonusTemplate)
+			foreach(var entry in this.allUtilityItemBonusTemplate)
 			{
 				entry.Init(resolver);
 				entry.SetReadOnly();
 			}
-			foreach(var entry in this.structure.Collections.UtilityItemTemplate)
+			foreach(var entry in this.allUtilityItemTemplate)
 			{
 				entry.Init(resolver);
 				entry.SetReadOnly();
 			}
-			foreach(var entry in this.structure.Collections.AbilityRollTemplate)
+			foreach(var entry in this.allAbilityRollTemplate)
 			{
 				entry.Init(resolver);
 				entry.SetReadOnly();
 			}
-			foreach(var entry in this.structure.Collections.PlaycardTemplate)
+			foreach(var entry in this.allPlaycardTemplate)
 			{
 				entry.Init(resolver);
 				entry.SetReadOnly();
 			}
-			foreach(var entry in this.structure.Collections.NonPlayerPlaycardTemplate)
+			foreach(var entry in this.allNonPlayerPlaycardTemplate)
 			{
 				entry.Init(resolver);
 				entry.SetReadOnly();
 			}
-			this.Initialize();
+			this.OnInitialize();
 		}
 
-		partial void Initialize();
+		partial void OnInitialize();
 
 		// ItemTemplate -> Id
 		public ItemTemplate GetItemTemplate(String id)
 		{
 			var value = default(ItemTemplate);
-			if (this.ItemTemplateById.TryGetValue(id, out value) == false)
+			if (this.allItemTemplateById.TryGetValue(id, out value) == false)
 				throw new System.ArgumentException(string.Format("Unable find ItemTemplate with Id '{0}'.", id) ,"id");
 			return value;
 		}
 		public bool HasItemTemplate(String id)
 		{
-			return this.ItemTemplateById.ContainsKey(id);
+			return this.allItemTemplateById.ContainsKey(id);
 		}
 		public ItemTemplate FindItemTemplate(String id)
 		{
 			var value = default(ItemTemplate);
-			this.ItemTemplateById.TryGetValue(id, out value);
+			this.allItemTemplateById.TryGetValue(id, out value);
 			return value;
 		}
 		public bool TryGetItemTemplate(String id, out ItemTemplate value)
 		{
-			return this.ItemTemplateById.TryGetValue(id, out value);
+			return this.allItemTemplateById.TryGetValue(id, out value);
 		}
-		public Dictionary<String, ItemTemplate>.ValueCollection GetItemTemplates()
+		public ReadOnlyList<ItemTemplate> GetItemTemplates(bool onlyRoot = false)
 		{
-			return this.ItemTemplateById.Values;
+			if(onlyRoot)
+				return new ReadOnlyList<ItemTemplate>(this.structure.Collections.ItemTemplate);
+			else
+				return new ReadOnlyList<ItemTemplate>(this.allItemTemplate);
 		}
 		// Reward -> Id
 		public Reward GetReward(Int32 id)
 		{
 			var value = default(Reward);
-			if (this.RewardById.TryGetValue(id, out value) == false)
+			if (this.allRewardById.TryGetValue(id, out value) == false)
 				throw new System.ArgumentException(string.Format("Unable find Reward with Id '{0}'.", id) ,"id");
 			return value;
 		}
 		public bool HasReward(Int32 id)
 		{
-			return this.RewardById.ContainsKey(id);
+			return this.allRewardById.ContainsKey(id);
 		}
 		public Reward FindReward(Int32 id)
 		{
 			var value = default(Reward);
-			this.RewardById.TryGetValue(id, out value);
+			this.allRewardById.TryGetValue(id, out value);
 			return value;
 		}
 		public bool TryGetReward(Int32 id, out Reward value)
 		{
-			return this.RewardById.TryGetValue(id, out value);
+			return this.allRewardById.TryGetValue(id, out value);
 		}
-		public Dictionary<Int32, Reward>.ValueCollection GetRewards()
+		public ReadOnlyList<Reward> GetRewards(bool onlyRoot = false)
 		{
-			return this.RewardById.Values;
+			if(onlyRoot)
+				return new ReadOnlyList<Reward>(this.structure.Collections.Reward);
+			else
+				return new ReadOnlyList<Reward>(this.allReward);
 		}
 		// Requirement -> Id
 		public Requirement GetRequirement(Int32 id)
 		{
 			var value = default(Requirement);
-			if (this.RequirementById.TryGetValue(id, out value) == false)
+			if (this.allRequirementById.TryGetValue(id, out value) == false)
 				throw new System.ArgumentException(string.Format("Unable find Requirement with Id '{0}'.", id) ,"id");
 			return value;
 		}
 		public bool HasRequirement(Int32 id)
 		{
-			return this.RequirementById.ContainsKey(id);
+			return this.allRequirementById.ContainsKey(id);
 		}
 		public Requirement FindRequirement(Int32 id)
 		{
 			var value = default(Requirement);
-			this.RequirementById.TryGetValue(id, out value);
+			this.allRequirementById.TryGetValue(id, out value);
 			return value;
 		}
 		public bool TryGetRequirement(Int32 id, out Requirement value)
 		{
-			return this.RequirementById.TryGetValue(id, out value);
+			return this.allRequirementById.TryGetValue(id, out value);
 		}
-		public Dictionary<Int32, Requirement>.ValueCollection GetRequirements()
+		public ReadOnlyList<Requirement> GetRequirements(bool onlyRoot = false)
 		{
-			return this.RequirementById.Values;
+			if(onlyRoot)
+				return new ReadOnlyList<Requirement>(this.structure.Collections.Requirement);
+			else
+				return new ReadOnlyList<Requirement>(this.allRequirement);
 		}
 		// StageTemplate -> Id
 		public StageTemplate GetStageTemplate(Int32 id)
 		{
 			var value = default(StageTemplate);
-			if (this.StageTemplateById.TryGetValue(id, out value) == false)
+			if (this.allStageTemplateById.TryGetValue(id, out value) == false)
 				throw new System.ArgumentException(string.Format("Unable find StageTemplate with Id '{0}'.", id) ,"id");
 			return value;
 		}
 		public bool HasStageTemplate(Int32 id)
 		{
-			return this.StageTemplateById.ContainsKey(id);
+			return this.allStageTemplateById.ContainsKey(id);
 		}
 		public StageTemplate FindStageTemplate(Int32 id)
 		{
 			var value = default(StageTemplate);
-			this.StageTemplateById.TryGetValue(id, out value);
+			this.allStageTemplateById.TryGetValue(id, out value);
 			return value;
 		}
 		public bool TryGetStageTemplate(Int32 id, out StageTemplate value)
 		{
-			return this.StageTemplateById.TryGetValue(id, out value);
+			return this.allStageTemplateById.TryGetValue(id, out value);
 		}
-		public Dictionary<Int32, StageTemplate>.ValueCollection GetStageTemplates()
+		public ReadOnlyList<StageTemplate> GetStageTemplates(bool onlyRoot = false)
 		{
-			return this.StageTemplateById.Values;
+			if(onlyRoot)
+				return new ReadOnlyList<StageTemplate>(this.structure.Collections.StageTemplate);
+			else
+				return new ReadOnlyList<StageTemplate>(this.allStageTemplate);
 		}
 		// AssignmentTemplate -> Id
 		public AssignmentTemplate GetAssignmentTemplate(String id)
 		{
 			var value = default(AssignmentTemplate);
-			if (this.AssignmentTemplateById.TryGetValue(id, out value) == false)
+			if (this.allAssignmentTemplateById.TryGetValue(id, out value) == false)
 				throw new System.ArgumentException(string.Format("Unable find AssignmentTemplate with Id '{0}'.", id) ,"id");
 			return value;
 		}
 		public bool HasAssignmentTemplate(String id)
 		{
-			return this.AssignmentTemplateById.ContainsKey(id);
+			return this.allAssignmentTemplateById.ContainsKey(id);
 		}
 		public AssignmentTemplate FindAssignmentTemplate(String id)
 		{
 			var value = default(AssignmentTemplate);
-			this.AssignmentTemplateById.TryGetValue(id, out value);
+			this.allAssignmentTemplateById.TryGetValue(id, out value);
 			return value;
 		}
 		public bool TryGetAssignmentTemplate(String id, out AssignmentTemplate value)
 		{
-			return this.AssignmentTemplateById.TryGetValue(id, out value);
+			return this.allAssignmentTemplateById.TryGetValue(id, out value);
 		}
-		public Dictionary<String, AssignmentTemplate>.ValueCollection GetAssignmentTemplates()
+		public ReadOnlyList<AssignmentTemplate> GetAssignmentTemplates(bool onlyRoot = false)
 		{
-			return this.AssignmentTemplateById.Values;
+			if(onlyRoot)
+				return new ReadOnlyList<AssignmentTemplate>(this.structure.Collections.AssignmentTemplate);
+			else
+				return new ReadOnlyList<AssignmentTemplate>(this.allAssignmentTemplate);
 		}
 		// AssignmentResolution -> Id
 		public AssignmentResolution GetAssignmentResolution(Int32 id)
 		{
 			var value = default(AssignmentResolution);
-			if (this.AssignmentResolutionById.TryGetValue(id, out value) == false)
+			if (this.allAssignmentResolutionById.TryGetValue(id, out value) == false)
 				throw new System.ArgumentException(string.Format("Unable find AssignmentResolution with Id '{0}'.", id) ,"id");
 			return value;
 		}
 		public bool HasAssignmentResolution(Int32 id)
 		{
-			return this.AssignmentResolutionById.ContainsKey(id);
+			return this.allAssignmentResolutionById.ContainsKey(id);
 		}
 		public AssignmentResolution FindAssignmentResolution(Int32 id)
 		{
 			var value = default(AssignmentResolution);
-			this.AssignmentResolutionById.TryGetValue(id, out value);
+			this.allAssignmentResolutionById.TryGetValue(id, out value);
 			return value;
 		}
 		public bool TryGetAssignmentResolution(Int32 id, out AssignmentResolution value)
 		{
-			return this.AssignmentResolutionById.TryGetValue(id, out value);
+			return this.allAssignmentResolutionById.TryGetValue(id, out value);
 		}
-		public Dictionary<Int32, AssignmentResolution>.ValueCollection GetAssignmentResolutions()
+		public ReadOnlyList<AssignmentResolution> GetAssignmentResolutions(bool onlyRoot = false)
 		{
-			return this.AssignmentResolutionById.Values;
+			if(onlyRoot)
+				return new ReadOnlyList<AssignmentResolution>(this.structure.Collections.AssignmentResolution);
+			else
+				return new ReadOnlyList<AssignmentResolution>(this.allAssignmentResolution);
 		}
 		// CashPointTemplate -> Id
 		public CashPointTemplate GetCashPointTemplate(String id)
 		{
 			var value = default(CashPointTemplate);
-			if (this.CashPointTemplateById.TryGetValue(id, out value) == false)
+			if (this.allCashPointTemplateById.TryGetValue(id, out value) == false)
 				throw new System.ArgumentException(string.Format("Unable find CashPointTemplate with Id '{0}'.", id) ,"id");
 			return value;
 		}
 		public bool HasCashPointTemplate(String id)
 		{
-			return this.CashPointTemplateById.ContainsKey(id);
+			return this.allCashPointTemplateById.ContainsKey(id);
 		}
 		public CashPointTemplate FindCashPointTemplate(String id)
 		{
 			var value = default(CashPointTemplate);
-			this.CashPointTemplateById.TryGetValue(id, out value);
+			this.allCashPointTemplateById.TryGetValue(id, out value);
 			return value;
 		}
 		public bool TryGetCashPointTemplate(String id, out CashPointTemplate value)
 		{
-			return this.CashPointTemplateById.TryGetValue(id, out value);
+			return this.allCashPointTemplateById.TryGetValue(id, out value);
 		}
-		public Dictionary<String, CashPointTemplate>.ValueCollection GetCashPointTemplates()
+		public ReadOnlyList<CashPointTemplate> GetCashPointTemplates(bool onlyRoot = false)
 		{
-			return this.CashPointTemplateById.Values;
+			if(onlyRoot)
+				return new ReadOnlyList<CashPointTemplate>(this.structure.Collections.CashPointTemplate);
+			else
+				return new ReadOnlyList<CashPointTemplate>(this.allCashPointTemplate);
 		}
 		// Restrictions -> Id
 		public Restrictions GetRestrictions(Int32 id)
 		{
 			var value = default(Restrictions);
-			if (this.RestrictionsById.TryGetValue(id, out value) == false)
+			if (this.allRestrictionsById.TryGetValue(id, out value) == false)
 				throw new System.ArgumentException(string.Format("Unable find Restrictions with Id '{0}'.", id) ,"id");
 			return value;
 		}
 		public bool HasRestrictions(Int32 id)
 		{
-			return this.RestrictionsById.ContainsKey(id);
+			return this.allRestrictionsById.ContainsKey(id);
 		}
 		public Restrictions FindRestrictions(Int32 id)
 		{
 			var value = default(Restrictions);
-			this.RestrictionsById.TryGetValue(id, out value);
+			this.allRestrictionsById.TryGetValue(id, out value);
 			return value;
 		}
 		public bool TryGetRestrictions(Int32 id, out Restrictions value)
 		{
-			return this.RestrictionsById.TryGetValue(id, out value);
+			return this.allRestrictionsById.TryGetValue(id, out value);
 		}
-		public Dictionary<Int32, Restrictions>.ValueCollection GetRestrictions()
+		public ReadOnlyList<Restrictions> GetRestrictions(bool onlyRoot = false)
 		{
-			return this.RestrictionsById.Values;
+			if(onlyRoot)
+				return new ReadOnlyList<Restrictions>(this.structure.Collections.Restrictions);
+			else
+				return new ReadOnlyList<Restrictions>(this.allRestrictions);
 		}
 		// Global -> Id
 		public Global GetGlobal(Int32 id)
 		{
 			var value = default(Global);
-			if (this.GlobalById.TryGetValue(id, out value) == false)
+			if (this.allGlobalById.TryGetValue(id, out value) == false)
 				throw new System.ArgumentException(string.Format("Unable find Global with Id '{0}'.", id) ,"id");
 			return value;
 		}
 		public bool HasGlobal(Int32 id)
 		{
-			return this.GlobalById.ContainsKey(id);
+			return this.allGlobalById.ContainsKey(id);
 		}
 		public Global FindGlobal(Int32 id)
 		{
 			var value = default(Global);
-			this.GlobalById.TryGetValue(id, out value);
+			this.allGlobalById.TryGetValue(id, out value);
 			return value;
 		}
 		public bool TryGetGlobal(Int32 id, out Global value)
 		{
-			return this.GlobalById.TryGetValue(id, out value);
+			return this.allGlobalById.TryGetValue(id, out value);
 		}
-		public Dictionary<Int32, Global>.ValueCollection GetGlobals()
+		public ReadOnlyList<Global> GetGlobals(bool onlyRoot = false)
 		{
-			return this.GlobalById.Values;
+			if(onlyRoot)
+				return new ReadOnlyList<Global>(this.structure.Collections.Global);
+			else
+				return new ReadOnlyList<Global>(this.allGlobal);
 		}
-		private Global SingleGlobal;
-		public Global Global { get { return this.SingleGlobal ?? (this.SingleGlobal = this.GlobalById.Values.Single()); } }
+		// Global -> Instance
+		private Global theGlobal;
+		public Global Global { get { return this.theGlobal ?? (this.theGlobal = this.allGlobalById.Values.Single()); } }
 		// GunShopLot -> Id
 		public GunShopLot GetGunShopLot(Int32 id)
 		{
 			var value = default(GunShopLot);
-			if (this.GunShopLotById.TryGetValue(id, out value) == false)
+			if (this.allGunShopLotById.TryGetValue(id, out value) == false)
 				throw new System.ArgumentException(string.Format("Unable find GunShopLot with Id '{0}'.", id) ,"id");
 			return value;
 		}
 		public bool HasGunShopLot(Int32 id)
 		{
-			return this.GunShopLotById.ContainsKey(id);
+			return this.allGunShopLotById.ContainsKey(id);
 		}
 		public GunShopLot FindGunShopLot(Int32 id)
 		{
 			var value = default(GunShopLot);
-			this.GunShopLotById.TryGetValue(id, out value);
+			this.allGunShopLotById.TryGetValue(id, out value);
 			return value;
 		}
 		public bool TryGetGunShopLot(Int32 id, out GunShopLot value)
 		{
-			return this.GunShopLotById.TryGetValue(id, out value);
+			return this.allGunShopLotById.TryGetValue(id, out value);
 		}
-		public Dictionary<Int32, GunShopLot>.ValueCollection GetGunShopLots()
+		public ReadOnlyList<GunShopLot> GetGunShopLots(bool onlyRoot = false)
 		{
-			return this.GunShopLotById.Values;
+			if(onlyRoot)
+				return new ReadOnlyList<GunShopLot>(this.structure.Collections.GunShopLot);
+			else
+				return new ReadOnlyList<GunShopLot>(this.allGunShopLot);
 		}
 		// TrainingTemplate -> Id
 		public TrainingTemplate GetTrainingTemplate(String id)
 		{
 			var value = default(TrainingTemplate);
-			if (this.TrainingTemplateById.TryGetValue(id, out value) == false)
+			if (this.allTrainingTemplateById.TryGetValue(id, out value) == false)
 				throw new System.ArgumentException(string.Format("Unable find TrainingTemplate with Id '{0}'.", id) ,"id");
 			return value;
 		}
 		public bool HasTrainingTemplate(String id)
 		{
-			return this.TrainingTemplateById.ContainsKey(id);
+			return this.allTrainingTemplateById.ContainsKey(id);
 		}
 		public TrainingTemplate FindTrainingTemplate(String id)
 		{
 			var value = default(TrainingTemplate);
-			this.TrainingTemplateById.TryGetValue(id, out value);
+			this.allTrainingTemplateById.TryGetValue(id, out value);
 			return value;
 		}
 		public bool TryGetTrainingTemplate(String id, out TrainingTemplate value)
 		{
-			return this.TrainingTemplateById.TryGetValue(id, out value);
+			return this.allTrainingTemplateById.TryGetValue(id, out value);
 		}
-		public Dictionary<String, TrainingTemplate>.ValueCollection GetTrainingTemplates()
+		public ReadOnlyList<TrainingTemplate> GetTrainingTemplates(bool onlyRoot = false)
 		{
-			return this.TrainingTemplateById.Values;
+			if(onlyRoot)
+				return new ReadOnlyList<TrainingTemplate>(this.structure.Collections.TrainingTemplate);
+			else
+				return new ReadOnlyList<TrainingTemplate>(this.allTrainingTemplate);
 		}
 		// AbilityTemplate -> Id
 		public AbilityTemplate GetAbilityTemplate(String id)
 		{
 			var value = default(AbilityTemplate);
-			if (this.AbilityTemplateById.TryGetValue(id, out value) == false)
+			if (this.allAbilityTemplateById.TryGetValue(id, out value) == false)
 				throw new System.ArgumentException(string.Format("Unable find AbilityTemplate with Id '{0}'.", id) ,"id");
 			return value;
 		}
 		public bool HasAbilityTemplate(String id)
 		{
-			return this.AbilityTemplateById.ContainsKey(id);
+			return this.allAbilityTemplateById.ContainsKey(id);
 		}
 		public AbilityTemplate FindAbilityTemplate(String id)
 		{
 			var value = default(AbilityTemplate);
-			this.AbilityTemplateById.TryGetValue(id, out value);
+			this.allAbilityTemplateById.TryGetValue(id, out value);
 			return value;
 		}
 		public bool TryGetAbilityTemplate(String id, out AbilityTemplate value)
 		{
-			return this.AbilityTemplateById.TryGetValue(id, out value);
+			return this.allAbilityTemplateById.TryGetValue(id, out value);
 		}
-		public Dictionary<String, AbilityTemplate>.ValueCollection GetAbilityTemplates()
+		public ReadOnlyList<AbilityTemplate> GetAbilityTemplates(bool onlyRoot = false)
 		{
-			return this.AbilityTemplateById.Values;
+			if(onlyRoot)
+				return new ReadOnlyList<AbilityTemplate>(this.structure.Collections.AbilityTemplate);
+			else
+				return new ReadOnlyList<AbilityTemplate>(this.allAbilityTemplate);
 		}
 		// CarTemplate -> Id
 		public CarTemplate GetCarTemplate(String id)
 		{
 			var value = default(CarTemplate);
-			if (this.CarTemplateById.TryGetValue(id, out value) == false)
+			if (this.allCarTemplateById.TryGetValue(id, out value) == false)
 				throw new System.ArgumentException(string.Format("Unable find CarTemplate with Id '{0}'.", id) ,"id");
 			return value;
 		}
 		public bool HasCarTemplate(String id)
 		{
-			return this.CarTemplateById.ContainsKey(id);
+			return this.allCarTemplateById.ContainsKey(id);
 		}
 		public CarTemplate FindCarTemplate(String id)
 		{
 			var value = default(CarTemplate);
-			this.CarTemplateById.TryGetValue(id, out value);
+			this.allCarTemplateById.TryGetValue(id, out value);
 			return value;
 		}
 		public bool TryGetCarTemplate(String id, out CarTemplate value)
 		{
-			return this.CarTemplateById.TryGetValue(id, out value);
+			return this.allCarTemplateById.TryGetValue(id, out value);
 		}
-		public Dictionary<String, CarTemplate>.ValueCollection GetCarTemplates()
+		public ReadOnlyList<CarTemplate> GetCarTemplates(bool onlyRoot = false)
 		{
-			return this.CarTemplateById.Values;
+			if(onlyRoot)
+				return new ReadOnlyList<CarTemplate>(this.structure.Collections.CarTemplate);
+			else
+				return new ReadOnlyList<CarTemplate>(this.allCarTemplate);
 		}
 		// WeaponModificationTemplate -> Id
 		public WeaponModificationTemplate GetWeaponModificationTemplate(String id)
 		{
 			var value = default(WeaponModificationTemplate);
-			if (this.WeaponModificationTemplateById.TryGetValue(id, out value) == false)
+			if (this.allWeaponModificationTemplateById.TryGetValue(id, out value) == false)
 				throw new System.ArgumentException(string.Format("Unable find WeaponModificationTemplate with Id '{0}'.", id) ,"id");
 			return value;
 		}
 		public bool HasWeaponModificationTemplate(String id)
 		{
-			return this.WeaponModificationTemplateById.ContainsKey(id);
+			return this.allWeaponModificationTemplateById.ContainsKey(id);
 		}
 		public WeaponModificationTemplate FindWeaponModificationTemplate(String id)
 		{
 			var value = default(WeaponModificationTemplate);
-			this.WeaponModificationTemplateById.TryGetValue(id, out value);
+			this.allWeaponModificationTemplateById.TryGetValue(id, out value);
 			return value;
 		}
 		public bool TryGetWeaponModificationTemplate(String id, out WeaponModificationTemplate value)
 		{
-			return this.WeaponModificationTemplateById.TryGetValue(id, out value);
+			return this.allWeaponModificationTemplateById.TryGetValue(id, out value);
 		}
-		public Dictionary<String, WeaponModificationTemplate>.ValueCollection GetWeaponModificationTemplates()
+		public ReadOnlyList<WeaponModificationTemplate> GetWeaponModificationTemplates(bool onlyRoot = false)
 		{
-			return this.WeaponModificationTemplateById.Values;
+			if(onlyRoot)
+				return new ReadOnlyList<WeaponModificationTemplate>(this.structure.Collections.WeaponModificationTemplate);
+			else
+				return new ReadOnlyList<WeaponModificationTemplate>(this.allWeaponModificationTemplate);
 		}
 		// WeaponTemplate -> Id
 		public WeaponTemplate GetWeaponTemplate(String id)
 		{
 			var value = default(WeaponTemplate);
-			if (this.WeaponTemplateById.TryGetValue(id, out value) == false)
+			if (this.allWeaponTemplateById.TryGetValue(id, out value) == false)
 				throw new System.ArgumentException(string.Format("Unable find WeaponTemplate with Id '{0}'.", id) ,"id");
 			return value;
 		}
 		public bool HasWeaponTemplate(String id)
 		{
-			return this.WeaponTemplateById.ContainsKey(id);
+			return this.allWeaponTemplateById.ContainsKey(id);
 		}
 		public WeaponTemplate FindWeaponTemplate(String id)
 		{
 			var value = default(WeaponTemplate);
-			this.WeaponTemplateById.TryGetValue(id, out value);
+			this.allWeaponTemplateById.TryGetValue(id, out value);
 			return value;
 		}
 		public bool TryGetWeaponTemplate(String id, out WeaponTemplate value)
 		{
-			return this.WeaponTemplateById.TryGetValue(id, out value);
+			return this.allWeaponTemplateById.TryGetValue(id, out value);
 		}
-		public Dictionary<String, WeaponTemplate>.ValueCollection GetWeaponTemplates()
+		public ReadOnlyList<WeaponTemplate> GetWeaponTemplates(bool onlyRoot = false)
 		{
-			return this.WeaponTemplateById.Values;
+			if(onlyRoot)
+				return new ReadOnlyList<WeaponTemplate>(this.structure.Collections.WeaponTemplate);
+			else
+				return new ReadOnlyList<WeaponTemplate>(this.allWeaponTemplate);
 		}
 		// UtilityItemBonusTemplate -> Id
 		public UtilityItemBonusTemplate GetUtilityItemBonusTemplate(Int32 id)
 		{
 			var value = default(UtilityItemBonusTemplate);
-			if (this.UtilityItemBonusTemplateById.TryGetValue(id, out value) == false)
+			if (this.allUtilityItemBonusTemplateById.TryGetValue(id, out value) == false)
 				throw new System.ArgumentException(string.Format("Unable find UtilityItemBonusTemplate with Id '{0}'.", id) ,"id");
 			return value;
 		}
 		public bool HasUtilityItemBonusTemplate(Int32 id)
 		{
-			return this.UtilityItemBonusTemplateById.ContainsKey(id);
+			return this.allUtilityItemBonusTemplateById.ContainsKey(id);
 		}
 		public UtilityItemBonusTemplate FindUtilityItemBonusTemplate(Int32 id)
 		{
 			var value = default(UtilityItemBonusTemplate);
-			this.UtilityItemBonusTemplateById.TryGetValue(id, out value);
+			this.allUtilityItemBonusTemplateById.TryGetValue(id, out value);
 			return value;
 		}
 		public bool TryGetUtilityItemBonusTemplate(Int32 id, out UtilityItemBonusTemplate value)
 		{
-			return this.UtilityItemBonusTemplateById.TryGetValue(id, out value);
+			return this.allUtilityItemBonusTemplateById.TryGetValue(id, out value);
 		}
-		public Dictionary<Int32, UtilityItemBonusTemplate>.ValueCollection GetUtilityItemBonusTemplates()
+		public ReadOnlyList<UtilityItemBonusTemplate> GetUtilityItemBonusTemplates(bool onlyRoot = false)
 		{
-			return this.UtilityItemBonusTemplateById.Values;
+			if(onlyRoot)
+				return new ReadOnlyList<UtilityItemBonusTemplate>(this.structure.Collections.UtilityItemBonusTemplate);
+			else
+				return new ReadOnlyList<UtilityItemBonusTemplate>(this.allUtilityItemBonusTemplate);
 		}
 		// UtilityItemTemplate -> Id
 		public UtilityItemTemplate GetUtilityItemTemplate(String id)
 		{
 			var value = default(UtilityItemTemplate);
-			if (this.UtilityItemTemplateById.TryGetValue(id, out value) == false)
+			if (this.allUtilityItemTemplateById.TryGetValue(id, out value) == false)
 				throw new System.ArgumentException(string.Format("Unable find UtilityItemTemplate with Id '{0}'.", id) ,"id");
 			return value;
 		}
 		public bool HasUtilityItemTemplate(String id)
 		{
-			return this.UtilityItemTemplateById.ContainsKey(id);
+			return this.allUtilityItemTemplateById.ContainsKey(id);
 		}
 		public UtilityItemTemplate FindUtilityItemTemplate(String id)
 		{
 			var value = default(UtilityItemTemplate);
-			this.UtilityItemTemplateById.TryGetValue(id, out value);
+			this.allUtilityItemTemplateById.TryGetValue(id, out value);
 			return value;
 		}
 		public bool TryGetUtilityItemTemplate(String id, out UtilityItemTemplate value)
 		{
-			return this.UtilityItemTemplateById.TryGetValue(id, out value);
+			return this.allUtilityItemTemplateById.TryGetValue(id, out value);
 		}
-		public Dictionary<String, UtilityItemTemplate>.ValueCollection GetUtilityItemTemplates()
+		public ReadOnlyList<UtilityItemTemplate> GetUtilityItemTemplates(bool onlyRoot = false)
 		{
-			return this.UtilityItemTemplateById.Values;
+			if(onlyRoot)
+				return new ReadOnlyList<UtilityItemTemplate>(this.structure.Collections.UtilityItemTemplate);
+			else
+				return new ReadOnlyList<UtilityItemTemplate>(this.allUtilityItemTemplate);
 		}
 		// AbilityRollTemplate -> Id
 		public AbilityRollTemplate GetAbilityRollTemplate(Int32 id)
 		{
 			var value = default(AbilityRollTemplate);
-			if (this.AbilityRollTemplateById.TryGetValue(id, out value) == false)
+			if (this.allAbilityRollTemplateById.TryGetValue(id, out value) == false)
 				throw new System.ArgumentException(string.Format("Unable find AbilityRollTemplate with Id '{0}'.", id) ,"id");
 			return value;
 		}
 		public bool HasAbilityRollTemplate(Int32 id)
 		{
-			return this.AbilityRollTemplateById.ContainsKey(id);
+			return this.allAbilityRollTemplateById.ContainsKey(id);
 		}
 		public AbilityRollTemplate FindAbilityRollTemplate(Int32 id)
 		{
 			var value = default(AbilityRollTemplate);
-			this.AbilityRollTemplateById.TryGetValue(id, out value);
+			this.allAbilityRollTemplateById.TryGetValue(id, out value);
 			return value;
 		}
 		public bool TryGetAbilityRollTemplate(Int32 id, out AbilityRollTemplate value)
 		{
-			return this.AbilityRollTemplateById.TryGetValue(id, out value);
+			return this.allAbilityRollTemplateById.TryGetValue(id, out value);
 		}
-		public Dictionary<Int32, AbilityRollTemplate>.ValueCollection GetAbilityRollTemplates()
+		public ReadOnlyList<AbilityRollTemplate> GetAbilityRollTemplates(bool onlyRoot = false)
 		{
-			return this.AbilityRollTemplateById.Values;
+			if(onlyRoot)
+				return new ReadOnlyList<AbilityRollTemplate>(this.structure.Collections.AbilityRollTemplate);
+			else
+				return new ReadOnlyList<AbilityRollTemplate>(this.allAbilityRollTemplate);
 		}
 		// PlaycardTemplate -> Id
 		public PlaycardTemplate GetPlaycardTemplate(String id)
 		{
 			var value = default(PlaycardTemplate);
-			if (this.PlaycardTemplateById.TryGetValue(id, out value) == false)
+			if (this.allPlaycardTemplateById.TryGetValue(id, out value) == false)
 				throw new System.ArgumentException(string.Format("Unable find PlaycardTemplate with Id '{0}'.", id) ,"id");
 			return value;
 		}
 		public bool HasPlaycardTemplate(String id)
 		{
-			return this.PlaycardTemplateById.ContainsKey(id);
+			return this.allPlaycardTemplateById.ContainsKey(id);
 		}
 		public PlaycardTemplate FindPlaycardTemplate(String id)
 		{
 			var value = default(PlaycardTemplate);
-			this.PlaycardTemplateById.TryGetValue(id, out value);
+			this.allPlaycardTemplateById.TryGetValue(id, out value);
 			return value;
 		}
 		public bool TryGetPlaycardTemplate(String id, out PlaycardTemplate value)
 		{
-			return this.PlaycardTemplateById.TryGetValue(id, out value);
+			return this.allPlaycardTemplateById.TryGetValue(id, out value);
 		}
-		public Dictionary<String, PlaycardTemplate>.ValueCollection GetPlaycardTemplates()
+		public ReadOnlyList<PlaycardTemplate> GetPlaycardTemplates(bool onlyRoot = false)
 		{
-			return this.PlaycardTemplateById.Values;
+			if(onlyRoot)
+				return new ReadOnlyList<PlaycardTemplate>(this.structure.Collections.PlaycardTemplate);
+			else
+				return new ReadOnlyList<PlaycardTemplate>(this.allPlaycardTemplate);
 		}
 		// NonPlayerPlaycardTemplate -> Id
 		public NonPlayerPlaycardTemplate GetNonPlayerPlaycardTemplate(String id)
 		{
 			var value = default(NonPlayerPlaycardTemplate);
-			if (this.NonPlayerPlaycardTemplateById.TryGetValue(id, out value) == false)
+			if (this.allNonPlayerPlaycardTemplateById.TryGetValue(id, out value) == false)
 				throw new System.ArgumentException(string.Format("Unable find NonPlayerPlaycardTemplate with Id '{0}'.", id) ,"id");
 			return value;
 		}
 		public bool HasNonPlayerPlaycardTemplate(String id)
 		{
-			return this.NonPlayerPlaycardTemplateById.ContainsKey(id);
+			return this.allNonPlayerPlaycardTemplateById.ContainsKey(id);
 		}
 		public NonPlayerPlaycardTemplate FindNonPlayerPlaycardTemplate(String id)
 		{
 			var value = default(NonPlayerPlaycardTemplate);
-			this.NonPlayerPlaycardTemplateById.TryGetValue(id, out value);
+			this.allNonPlayerPlaycardTemplateById.TryGetValue(id, out value);
 			return value;
 		}
 		public bool TryGetNonPlayerPlaycardTemplate(String id, out NonPlayerPlaycardTemplate value)
 		{
-			return this.NonPlayerPlaycardTemplateById.TryGetValue(id, out value);
+			return this.allNonPlayerPlaycardTemplateById.TryGetValue(id, out value);
 		}
-		public Dictionary<String, NonPlayerPlaycardTemplate>.ValueCollection GetNonPlayerPlaycardTemplates()
+		public ReadOnlyList<NonPlayerPlaycardTemplate> GetNonPlayerPlaycardTemplates(bool onlyRoot = false)
 		{
-			return this.NonPlayerPlaycardTemplateById.Values;
+			if(onlyRoot)
+				return new ReadOnlyList<NonPlayerPlaycardTemplate>(this.structure.Collections.NonPlayerPlaycardTemplate);
+			else
+				return new ReadOnlyList<NonPlayerPlaycardTemplate>(this.allNonPlayerPlaycardTemplate);
 		}
 
 
 		public IEnumerable<Entry> GetAllEntries()
 		{
-			foreach (var entry in this.structure.Collections.ItemTemplate) yield return entry;
-			foreach (var entry in this.structure.Collections.Reward) yield return entry;
-			foreach (var entry in this.structure.Collections.Requirement) yield return entry;
-			foreach (var entry in this.structure.Collections.StageTemplate) yield return entry;
-			foreach (var entry in this.structure.Collections.AssignmentTemplate) yield return entry;
-			foreach (var entry in this.structure.Collections.AssignmentResolution) yield return entry;
-			foreach (var entry in this.structure.Collections.CashPointTemplate) yield return entry;
-			foreach (var entry in this.structure.Collections.Restrictions) yield return entry;
-			foreach (var entry in this.structure.Collections.Global) yield return entry;
-			foreach (var entry in this.structure.Collections.GunShopLot) yield return entry;
-			foreach (var entry in this.structure.Collections.TrainingTemplate) yield return entry;
-			foreach (var entry in this.structure.Collections.AbilityTemplate) yield return entry;
-			foreach (var entry in this.structure.Collections.CarTemplate) yield return entry;
-			foreach (var entry in this.structure.Collections.WeaponModificationTemplate) yield return entry;
-			foreach (var entry in this.structure.Collections.WeaponTemplate) yield return entry;
-			foreach (var entry in this.structure.Collections.UtilityItemBonusTemplate) yield return entry;
-			foreach (var entry in this.structure.Collections.UtilityItemTemplate) yield return entry;
-			foreach (var entry in this.structure.Collections.AbilityRollTemplate) yield return entry;
-			foreach (var entry in this.structure.Collections.PlaycardTemplate) yield return entry;
-			foreach (var entry in this.structure.Collections.NonPlayerPlaycardTemplate) yield return entry;
+			foreach (var entry in this.allItemTemplate) yield return entry;
+			foreach (var entry in this.allReward) yield return entry;
+			foreach (var entry in this.allRequirement) yield return entry;
+			foreach (var entry in this.allStageTemplate) yield return entry;
+			foreach (var entry in this.allAssignmentTemplate) yield return entry;
+			foreach (var entry in this.allAssignmentResolution) yield return entry;
+			foreach (var entry in this.allCashPointTemplate) yield return entry;
+			foreach (var entry in this.allRestrictions) yield return entry;
+			foreach (var entry in this.allGlobal) yield return entry;
+			foreach (var entry in this.allGunShopLot) yield return entry;
+			foreach (var entry in this.allTrainingTemplate) yield return entry;
+			foreach (var entry in this.allAbilityTemplate) yield return entry;
+			foreach (var entry in this.allCarTemplate) yield return entry;
+			foreach (var entry in this.allWeaponModificationTemplate) yield return entry;
+			foreach (var entry in this.allWeaponTemplate) yield return entry;
+			foreach (var entry in this.allUtilityItemBonusTemplate) yield return entry;
+			foreach (var entry in this.allUtilityItemTemplate) yield return entry;
+			foreach (var entry in this.allAbilityRollTemplate) yield return entry;
+			foreach (var entry in this.allPlaycardTemplate) yield return entry;
+			foreach (var entry in this.allNonPlayerPlaycardTemplate) yield return entry;
 
 			yield break;
 		}
 
 		public void SetLanguage(string language)
 		{
-			if (language == null) throw new System.ArgumentNullException("language");
+			if (language == null) throw new ArgumentNullException("language");
 
-			foreach(var entry in this.structure.Collections.ItemTemplate)
+			foreach(var entry in this.allItemTemplate)
 				entry.SetLanguage(language);
-			foreach(var entry in this.structure.Collections.Reward)
+			foreach(var entry in this.allReward)
 				entry.SetLanguage(language);
-			foreach(var entry in this.structure.Collections.Requirement)
+			foreach(var entry in this.allRequirement)
 				entry.SetLanguage(language);
-			foreach(var entry in this.structure.Collections.StageTemplate)
+			foreach(var entry in this.allStageTemplate)
 				entry.SetLanguage(language);
-			foreach(var entry in this.structure.Collections.AssignmentTemplate)
+			foreach(var entry in this.allAssignmentTemplate)
 				entry.SetLanguage(language);
-			foreach(var entry in this.structure.Collections.AssignmentResolution)
+			foreach(var entry in this.allAssignmentResolution)
 				entry.SetLanguage(language);
-			foreach(var entry in this.structure.Collections.CashPointTemplate)
+			foreach(var entry in this.allCashPointTemplate)
 				entry.SetLanguage(language);
-			foreach(var entry in this.structure.Collections.Restrictions)
+			foreach(var entry in this.allRestrictions)
 				entry.SetLanguage(language);
-			foreach(var entry in this.structure.Collections.Global)
+			foreach(var entry in this.allGlobal)
 				entry.SetLanguage(language);
-			foreach(var entry in this.structure.Collections.GunShopLot)
+			foreach(var entry in this.allGunShopLot)
 				entry.SetLanguage(language);
-			foreach(var entry in this.structure.Collections.TrainingTemplate)
+			foreach(var entry in this.allTrainingTemplate)
 				entry.SetLanguage(language);
-			foreach(var entry in this.structure.Collections.AbilityTemplate)
+			foreach(var entry in this.allAbilityTemplate)
 				entry.SetLanguage(language);
-			foreach(var entry in this.structure.Collections.CarTemplate)
+			foreach(var entry in this.allCarTemplate)
 				entry.SetLanguage(language);
-			foreach(var entry in this.structure.Collections.WeaponModificationTemplate)
+			foreach(var entry in this.allWeaponModificationTemplate)
 				entry.SetLanguage(language);
-			foreach(var entry in this.structure.Collections.WeaponTemplate)
+			foreach(var entry in this.allWeaponTemplate)
 				entry.SetLanguage(language);
-			foreach(var entry in this.structure.Collections.UtilityItemBonusTemplate)
+			foreach(var entry in this.allUtilityItemBonusTemplate)
 				entry.SetLanguage(language);
-			foreach(var entry in this.structure.Collections.UtilityItemTemplate)
+			foreach(var entry in this.allUtilityItemTemplate)
 				entry.SetLanguage(language);
-			foreach(var entry in this.structure.Collections.AbilityRollTemplate)
+			foreach(var entry in this.allAbilityRollTemplate)
 				entry.SetLanguage(language);
-			foreach(var entry in this.structure.Collections.PlaycardTemplate)
+			foreach(var entry in this.allPlaycardTemplate)
 				entry.SetLanguage(language);
-			foreach(var entry in this.structure.Collections.NonPlayerPlaycardTemplate)
+			foreach(var entry in this.allNonPlayerPlaycardTemplate)
 				entry.SetLanguage(language);
 		}
 
 		private Entry Resolve(string entityId, object id)
 		{
-			if (entityId == null) throw new System.ArgumentNullException("entityId");
+			if (entityId == null) throw new ArgumentNullException("entityId");
 
 #pragma warning disable 1522 // Empty switch block
 			switch (entityId)
@@ -4401,7 +4924,7 @@ namespace Assets
 
 		private void FlattenStructure()
 		{
-			var flatteningStructureVisitor = new FlatteningStructureVisitor(this.structure);
+			var flatteningStructureVisitor = new FlatteningStructureVisitor(this);
 			this.ApplyVisitor(flatteningStructureVisitor);
 		}
 
@@ -4431,35 +4954,35 @@ namespace Assets
 
 		private class FlatteningStructureVisitor : Visitor
 		{
-			private Structure structure;
+			private GameData gameData;
 
-			public FlatteningStructureVisitor(Structure structure)
+			public FlatteningStructureVisitor(GameData gameData)
 			{
-				if (structure == null) throw new System.ArgumentNullException("structure");
+				if (gameData == null) throw new System.ArgumentNullException("gameData");
 
-				this.structure = structure;
+				this.gameData = gameData;
 			}
 
-			public override void Visit(ItemTemplate value) { this.structure.Collections.ItemTemplate.Add(value); base.Visit(value); }
-			public override void Visit(Reward value) { this.structure.Collections.Reward.Add(value); base.Visit(value); }
-			public override void Visit(Requirement value) { this.structure.Collections.Requirement.Add(value); base.Visit(value); }
-			public override void Visit(StageTemplate value) { this.structure.Collections.StageTemplate.Add(value); base.Visit(value); }
-			public override void Visit(AssignmentTemplate value) { this.structure.Collections.AssignmentTemplate.Add(value); base.Visit(value); }
-			public override void Visit(AssignmentResolution value) { this.structure.Collections.AssignmentResolution.Add(value); base.Visit(value); }
-			public override void Visit(CashPointTemplate value) { this.structure.Collections.CashPointTemplate.Add(value); base.Visit(value); }
-			public override void Visit(Restrictions value) { this.structure.Collections.Restrictions.Add(value); base.Visit(value); }
-			public override void Visit(Global value) { this.structure.Collections.Global.Add(value); base.Visit(value); }
-			public override void Visit(GunShopLot value) { this.structure.Collections.GunShopLot.Add(value); base.Visit(value); }
-			public override void Visit(TrainingTemplate value) { this.structure.Collections.TrainingTemplate.Add(value); base.Visit(value); }
-			public override void Visit(AbilityTemplate value) { this.structure.Collections.AbilityTemplate.Add(value); base.Visit(value); }
-			public override void Visit(CarTemplate value) { this.structure.Collections.CarTemplate.Add(value); base.Visit(value); }
-			public override void Visit(WeaponModificationTemplate value) { this.structure.Collections.WeaponModificationTemplate.Add(value); base.Visit(value); }
-			public override void Visit(WeaponTemplate value) { this.structure.Collections.WeaponTemplate.Add(value); base.Visit(value); }
-			public override void Visit(UtilityItemBonusTemplate value) { this.structure.Collections.UtilityItemBonusTemplate.Add(value); base.Visit(value); }
-			public override void Visit(UtilityItemTemplate value) { this.structure.Collections.UtilityItemTemplate.Add(value); base.Visit(value); }
-			public override void Visit(AbilityRollTemplate value) { this.structure.Collections.AbilityRollTemplate.Add(value); base.Visit(value); }
-			public override void Visit(PlaycardTemplate value) { this.structure.Collections.PlaycardTemplate.Add(value); base.Visit(value); }
-			public override void Visit(NonPlayerPlaycardTemplate value) { this.structure.Collections.NonPlayerPlaycardTemplate.Add(value); base.Visit(value); }
+			public override void Visit(ItemTemplate value) { this.gameData.allItemTemplate.Add(value); base.Visit(value); }
+			public override void Visit(Reward value) { this.gameData.allReward.Add(value); base.Visit(value); }
+			public override void Visit(Requirement value) { this.gameData.allRequirement.Add(value); base.Visit(value); }
+			public override void Visit(StageTemplate value) { this.gameData.allStageTemplate.Add(value); base.Visit(value); }
+			public override void Visit(AssignmentTemplate value) { this.gameData.allAssignmentTemplate.Add(value); base.Visit(value); }
+			public override void Visit(AssignmentResolution value) { this.gameData.allAssignmentResolution.Add(value); base.Visit(value); }
+			public override void Visit(CashPointTemplate value) { this.gameData.allCashPointTemplate.Add(value); base.Visit(value); }
+			public override void Visit(Restrictions value) { this.gameData.allRestrictions.Add(value); base.Visit(value); }
+			public override void Visit(Global value) { this.gameData.allGlobal.Add(value); base.Visit(value); }
+			public override void Visit(GunShopLot value) { this.gameData.allGunShopLot.Add(value); base.Visit(value); }
+			public override void Visit(TrainingTemplate value) { this.gameData.allTrainingTemplate.Add(value); base.Visit(value); }
+			public override void Visit(AbilityTemplate value) { this.gameData.allAbilityTemplate.Add(value); base.Visit(value); }
+			public override void Visit(CarTemplate value) { this.gameData.allCarTemplate.Add(value); base.Visit(value); }
+			public override void Visit(WeaponModificationTemplate value) { this.gameData.allWeaponModificationTemplate.Add(value); base.Visit(value); }
+			public override void Visit(WeaponTemplate value) { this.gameData.allWeaponTemplate.Add(value); base.Visit(value); }
+			public override void Visit(UtilityItemBonusTemplate value) { this.gameData.allUtilityItemBonusTemplate.Add(value); base.Visit(value); }
+			public override void Visit(UtilityItemTemplate value) { this.gameData.allUtilityItemTemplate.Add(value); base.Visit(value); }
+			public override void Visit(AbilityRollTemplate value) { this.gameData.allAbilityRollTemplate.Add(value); base.Visit(value); }
+			public override void Visit(PlaycardTemplate value) { this.gameData.allPlaycardTemplate.Add(value); base.Visit(value); }
+			public override void Visit(NonPlayerPlaycardTemplate value) { this.gameData.allNonPlayerPlaycardTemplate.Add(value); base.Visit(value); }
 		}
 
 		// Build-in JSON deserialization
@@ -4770,7 +5293,7 @@ namespace Assets
 					{
 						case "ItemTemplate":
 						{
-							collections.ItemTemplate = new HashSet<ItemTemplate>();
+							collections.ItemTemplate = new List<ItemTemplate>();
 							this.ReadArrayBegin();
 							while(this.Node.Token != JsonToken.EndOfArray)
 							{
@@ -4782,7 +5305,7 @@ namespace Assets
 						}
 						case "Reward":
 						{
-							collections.Reward = new HashSet<Reward>();
+							collections.Reward = new List<Reward>();
 							this.ReadArrayBegin();
 							while(this.Node.Token != JsonToken.EndOfArray)
 							{
@@ -4794,7 +5317,7 @@ namespace Assets
 						}
 						case "Requirement":
 						{
-							collections.Requirement = new HashSet<Requirement>();
+							collections.Requirement = new List<Requirement>();
 							this.ReadArrayBegin();
 							while(this.Node.Token != JsonToken.EndOfArray)
 							{
@@ -4806,7 +5329,7 @@ namespace Assets
 						}
 						case "StageTemplate":
 						{
-							collections.StageTemplate = new HashSet<StageTemplate>();
+							collections.StageTemplate = new List<StageTemplate>();
 							this.ReadArrayBegin();
 							while(this.Node.Token != JsonToken.EndOfArray)
 							{
@@ -4818,7 +5341,7 @@ namespace Assets
 						}
 						case "AssignmentTemplate":
 						{
-							collections.AssignmentTemplate = new HashSet<AssignmentTemplate>();
+							collections.AssignmentTemplate = new List<AssignmentTemplate>();
 							this.ReadArrayBegin();
 							while(this.Node.Token != JsonToken.EndOfArray)
 							{
@@ -4830,7 +5353,7 @@ namespace Assets
 						}
 						case "AssignmentResolution":
 						{
-							collections.AssignmentResolution = new HashSet<AssignmentResolution>();
+							collections.AssignmentResolution = new List<AssignmentResolution>();
 							this.ReadArrayBegin();
 							while(this.Node.Token != JsonToken.EndOfArray)
 							{
@@ -4842,7 +5365,7 @@ namespace Assets
 						}
 						case "CashPointTemplate":
 						{
-							collections.CashPointTemplate = new HashSet<CashPointTemplate>();
+							collections.CashPointTemplate = new List<CashPointTemplate>();
 							this.ReadArrayBegin();
 							while(this.Node.Token != JsonToken.EndOfArray)
 							{
@@ -4854,7 +5377,7 @@ namespace Assets
 						}
 						case "Restrictions":
 						{
-							collections.Restrictions = new HashSet<Restrictions>();
+							collections.Restrictions = new List<Restrictions>();
 							this.ReadArrayBegin();
 							while(this.Node.Token != JsonToken.EndOfArray)
 							{
@@ -4866,7 +5389,7 @@ namespace Assets
 						}
 						case "Global":
 						{
-							collections.Global = new HashSet<Global>();
+							collections.Global = new List<Global>();
 							this.ReadArrayBegin();
 							while(this.Node.Token != JsonToken.EndOfArray)
 							{
@@ -4878,7 +5401,7 @@ namespace Assets
 						}
 						case "GunShopLot":
 						{
-							collections.GunShopLot = new HashSet<GunShopLot>();
+							collections.GunShopLot = new List<GunShopLot>();
 							this.ReadArrayBegin();
 							while(this.Node.Token != JsonToken.EndOfArray)
 							{
@@ -4890,7 +5413,7 @@ namespace Assets
 						}
 						case "TrainingTemplate":
 						{
-							collections.TrainingTemplate = new HashSet<TrainingTemplate>();
+							collections.TrainingTemplate = new List<TrainingTemplate>();
 							this.ReadArrayBegin();
 							while(this.Node.Token != JsonToken.EndOfArray)
 							{
@@ -4902,7 +5425,7 @@ namespace Assets
 						}
 						case "AbilityTemplate":
 						{
-							collections.AbilityTemplate = new HashSet<AbilityTemplate>();
+							collections.AbilityTemplate = new List<AbilityTemplate>();
 							this.ReadArrayBegin();
 							while(this.Node.Token != JsonToken.EndOfArray)
 							{
@@ -4914,7 +5437,7 @@ namespace Assets
 						}
 						case "CarTemplate":
 						{
-							collections.CarTemplate = new HashSet<CarTemplate>();
+							collections.CarTemplate = new List<CarTemplate>();
 							this.ReadArrayBegin();
 							while(this.Node.Token != JsonToken.EndOfArray)
 							{
@@ -4926,7 +5449,7 @@ namespace Assets
 						}
 						case "WeaponModificationTemplate":
 						{
-							collections.WeaponModificationTemplate = new HashSet<WeaponModificationTemplate>();
+							collections.WeaponModificationTemplate = new List<WeaponModificationTemplate>();
 							this.ReadArrayBegin();
 							while(this.Node.Token != JsonToken.EndOfArray)
 							{
@@ -4938,7 +5461,7 @@ namespace Assets
 						}
 						case "WeaponTemplate":
 						{
-							collections.WeaponTemplate = new HashSet<WeaponTemplate>();
+							collections.WeaponTemplate = new List<WeaponTemplate>();
 							this.ReadArrayBegin();
 							while(this.Node.Token != JsonToken.EndOfArray)
 							{
@@ -4950,7 +5473,7 @@ namespace Assets
 						}
 						case "UtilityItemBonusTemplate":
 						{
-							collections.UtilityItemBonusTemplate = new HashSet<UtilityItemBonusTemplate>();
+							collections.UtilityItemBonusTemplate = new List<UtilityItemBonusTemplate>();
 							this.ReadArrayBegin();
 							while(this.Node.Token != JsonToken.EndOfArray)
 							{
@@ -4962,7 +5485,7 @@ namespace Assets
 						}
 						case "UtilityItemTemplate":
 						{
-							collections.UtilityItemTemplate = new HashSet<UtilityItemTemplate>();
+							collections.UtilityItemTemplate = new List<UtilityItemTemplate>();
 							this.ReadArrayBegin();
 							while(this.Node.Token != JsonToken.EndOfArray)
 							{
@@ -4974,7 +5497,7 @@ namespace Assets
 						}
 						case "AbilityRollTemplate":
 						{
-							collections.AbilityRollTemplate = new HashSet<AbilityRollTemplate>();
+							collections.AbilityRollTemplate = new List<AbilityRollTemplate>();
 							this.ReadArrayBegin();
 							while(this.Node.Token != JsonToken.EndOfArray)
 							{
@@ -4986,7 +5509,7 @@ namespace Assets
 						}
 						case "PlaycardTemplate":
 						{
-							collections.PlaycardTemplate = new HashSet<PlaycardTemplate>();
+							collections.PlaycardTemplate = new List<PlaycardTemplate>();
 							this.ReadArrayBegin();
 							while(this.Node.Token != JsonToken.EndOfArray)
 							{
@@ -4998,7 +5521,7 @@ namespace Assets
 						}
 						case "NonPlayerPlaycardTemplate":
 						{
-							collections.NonPlayerPlaycardTemplate = new HashSet<NonPlayerPlaycardTemplate>();
+							collections.NonPlayerPlaycardTemplate = new List<NonPlayerPlaycardTemplate>();
 							this.ReadArrayBegin();
 							while(this.Node.Token != JsonToken.EndOfArray)
 							{
@@ -8425,6 +8948,49 @@ namespace Assets
 			public static T Defererence<T>(Reference<T> reference) where T : Entry
 			{
 				return reference.Value;
+			}
+		}
+
+		public struct ReadOnlyList<T> : IEnumerable<T>
+		{
+			private readonly List<T> list;
+
+			public int Count { get { return this.list.Count; } }
+			public T this[int index] { get { return this.list[index]; } }
+
+			public ReadOnlyList(List<T> list)
+			{
+				this.list = list;
+			}
+
+			public bool Contains(T item)
+			{
+				return list.Contains(item);
+			}
+			public T Find(Predicate<T> match)
+			{
+				return list.Find(match);
+			}
+			public T[] ToArray()
+			{
+				return this.list.ToArray();
+			}
+			public List<T> ToList()
+			{
+				return new List<T>(this.list);
+			}
+
+			public List<T>.Enumerator GetEnumerator()
+			{
+				return list.GetEnumerator();
+			}
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				return list.GetEnumerator();
+			}
+			IEnumerator<T> IEnumerable<T>.GetEnumerator()
+			{
+				return list.GetEnumerator();
 			}
 		}
 
