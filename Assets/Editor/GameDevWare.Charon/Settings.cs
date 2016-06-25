@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using Assets.Editor.GameDevWare.Charon.Utils;
 using UnityEditor;
 using UnityEngine;
@@ -28,7 +29,7 @@ using UnityEngine;
 namespace Assets.Editor.GameDevWare.Charon
 {
 	[InitializeOnLoad, Serializable]
-	class Settings : ScriptableObject
+	internal class Settings : ScriptableObject
 	{
 		public const string PREF_PREFIX = "Charon_";
 		public const string SETTINGS_PATH = "Assets/Editor/GameDevWare.Charon/Settings.asset";
@@ -41,13 +42,11 @@ namespace Assets.Editor.GameDevWare.Charon
 		public string LicenseServerAddress;
 		public Browser Browser;
 		public int ToolsPort;
-		public List<string> GameDataPaths;
+		public string[] GameDataPaths;
 		public bool Verbose;
 		public bool SuppressRecoveryScripts;
 		[HideInInspector]
 		public string SelectedLicense;
-		[HideInInspector]
-		public int Version;
 
 		static Settings()
 		{
@@ -66,23 +65,22 @@ namespace Assets.Editor.GameDevWare.Charon
 				settings.GameDataPaths = (from id in AssetDatabase.FindAssets("GameData")
 										  let path = FileUtils.MakeProjectRelative(AssetDatabase.GUIDToAssetPath(id))
 										  where path != null && path.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
-										  select path).ToList();
+										  select path).ToArray();
 				settings.SelectedLicense = null;
 				settings.LicenseServerAddress = null;
 				settings.Verbose = false;
+				AssetDatabase.CreateAsset(settings, SETTINGS_PATH);
 			}
 			settings.Validate();
 
 			return settings;
 		}
-		public void Save()
+		internal void Save()
 		{
 			this.Validate();
 
 			try
 			{
-				if (AssetDatabase.LoadAssetAtPath<Settings>(SETTINGS_PATH) == null)
-					AssetDatabase.CreateAsset(this, SETTINGS_PATH);
 				EditorUtility.SetDirty(this);
 				AssetDatabase.SaveAssets();
 			}
@@ -98,27 +96,28 @@ namespace Assets.Editor.GameDevWare.Charon
 				RecoveryScripts.Generate();
 		}
 
-		public void Validate()
+		private void Validate()
 		{
-			if (this.GameDataPaths == null) this.GameDataPaths = new List<string>();
+			if (this.GameDataPaths == null) this.GameDataPaths = new string[0];
 			var newPaths = this.GameDataPaths
 				.Select<string, string>(FileUtils.MakeProjectRelative)
 				.Where(p => !string.IsNullOrEmpty(p) && File.Exists(p))
 				.Distinct()
-				.ToList();
+				.ToArray();
 
 			if (!newPaths.SequenceEqual(this.GameDataPaths))
 			{
 				this.GameDataPaths = newPaths;
-				this.Version++;
+				EditorUtility.SetDirty(this);
 			}
 
 			if (string.IsNullOrEmpty(this.ToolsPath) || File.Exists(this.ToolsPath) == false)
 			{
 				this.ToolsPath = (from id in AssetDatabase.FindAssets("t:DefaultAsset Charon")
-					let path = FileUtils.MakeProjectRelative(AssetDatabase.GUIDToAssetPath(id))
-					where path != null && path.EndsWith(".exe", StringComparison.OrdinalIgnoreCase)
-					select path).FirstOrDefault() ?? DEFAULT_TOOLS_PATH;
+								  let path = FileUtils.MakeProjectRelative(AssetDatabase.GUIDToAssetPath(id))
+								  where path != null && path.EndsWith(".exe", StringComparison.OrdinalIgnoreCase)
+								  select path).FirstOrDefault() ?? DEFAULT_TOOLS_PATH;
+				EditorUtility.SetDirty(this);
 			}
 
 			this.ToolsPath = FileUtils.MakeProjectRelative(this.ToolsPath) ?? ToolsPath;
@@ -126,20 +125,53 @@ namespace Assets.Editor.GameDevWare.Charon
 			if (this.ToolsPort < 5000)
 			{
 				this.ToolsPort = 5000;
-				this.Version++;
+				EditorUtility.SetDirty(this);
 			}
 			if (this.ToolsPort > 65535)
 			{
 				this.ToolsPort = 65535;
-				this.Version++;
+				EditorUtility.SetDirty(this);
 			}
 		}
 
-		public Uri GetLicenseServerAddress()
+		internal Uri GetLicenseServerAddress()
 		{
 			if (string.IsNullOrEmpty(this.LicenseServerAddress) || this.LicenseServerAddress.All(char.IsWhiteSpace))
 				return new Uri(DEFAULT_LICENSE_SERVER_ADDRESS);
 			return new Uri(this.LicenseServerAddress);
+		}
+		internal static string GetAppDataPath()
+		{
+			return Path.Combine(Path.GetFullPath("./Library/Charon/Users"), FileUtils.SanitizeFileName(Environment.UserName ?? "Default"));
+		}
+
+		internal bool RemoveGameDataPath(string pathToRemove)
+		{
+			if (pathToRemove == null) throw new ArgumentNullException("pathToRemove");
+
+			var oldGameDataPaths = default(string[]);
+			var newGameDataPaths = default(string[]);
+			do
+			{
+				oldGameDataPaths = this.GameDataPaths;
+				newGameDataPaths = oldGameDataPaths.Where(p => p != pathToRemove).ToArray();
+			} while (Interlocked.CompareExchange(ref this.GameDataPaths, newGameDataPaths, oldGameDataPaths) != oldGameDataPaths);
+
+			return oldGameDataPaths.Length != newGameDataPaths.Length;
+		}
+		internal bool AddGameDataPath(string pathToAdd)
+		{
+			if (pathToAdd == null) throw new ArgumentNullException("pathToAdd");
+
+			var oldGameDataPaths = default(string[]);
+			var newGameDataPaths = default(string[]);
+			do
+			{
+				oldGameDataPaths = this.GameDataPaths;
+				newGameDataPaths = oldGameDataPaths.Union(new[] { pathToAdd }).ToArray();
+			} while (Interlocked.CompareExchange(ref this.GameDataPaths, newGameDataPaths, oldGameDataPaths) != oldGameDataPaths);
+
+			return oldGameDataPaths.Length != newGameDataPaths.Length;
 		}
 
 		public override string ToString()
@@ -147,11 +179,6 @@ namespace Assets.Editor.GameDevWare.Charon
 			return "Tools Path: " + this.ToolsPath + Environment.NewLine + " " +
 				   "Tool Port: " + this.ToolsPort + Environment.NewLine + " " +
 				   "Game Data Paths: " + string.Join(", ", this.GameDataPaths.ToArray()) + Environment.NewLine + " ";
-		}
-
-		internal static string GetAppDataPath()
-		{
-			return Path.Combine(Path.GetFullPath("./Library/Charon/Users"), FileUtils.SanitizeFileName(Environment.UserName ?? "Default"));
 		}
 	}
 }

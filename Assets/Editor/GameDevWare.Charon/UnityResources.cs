@@ -1,7 +1,7 @@
 ﻿/*
-	Copyright (c) 2016 Denis Zykov
+	Copyright (c) 2015 Denis Zykov
 
-	This is part of "Charon: Game Data Editor" Unity Plugin.
+	This is part of Charon Game Data Editor Unity Plugin.
 
 	Charon Game Data Editor Unity Plugin is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -92,10 +92,10 @@ namespace Assets.Editor.GameDevWare.Charon {
         public const string UI_UNITYPLUGIN_WINDOWDOWNLOADMONO = "b) If it doesn't exists you can press 'Download Mono' button below and try again.";
         public const string UI_UNITYPLUGIN_WINDOWDOWNLOADMONOBUTTON = "Download Mono";
         public const string UI_UNITYPLUGIN_WINDOWEDITBUTTON = "Edit";
-        public const string UI_UNITYPLUGIN_WINDOWEDITORISOPENED = "Browser is currently opened for '{0}'. Close this window after you finished work.";
-        public const string UI_UNITYPLUGIN_WINDOWEDITORLOADING = "Please wait while Game Data Editor is loading...";
+        public const string UI_UNITYPLUGIN_WINDOWEDITORCHECKINGRUNTIME = "Checking runtime and executable...";
+        public const string UI_UNITYPLUGIN_WINDOWEDITORCHECKINGLICENSE = "Checking license...";
         public const string UI_UNITYPLUGIN_WINDOWEDITORTITLE = "Editor";
-        public const string UI_UNITYPLUGIN_WINDOWEDITORWASCRASHED = "Game Data Editor has crashed :(";
+        public const string UI_UNITYPLUGIN_WINDOWEDITORCOPYINGEXECUTABLE = "Copying executable to Temp directory...";
         public const string UI_UNITYPLUGIN_WINDOWFAILEDTOSTARTEDITOR = "Failed to start Game Data editor due errors:";
         public const string UI_UNITYPLUGIN_WINDOWFAILEDTOSTARTEDITORTIMEOUT = "Failed to start Game Data editor due errors: Aborted by timeout.";
         public const string UI_UNITYPLUGIN_WINDOWFINDMONOMANUALLY = "a) You can manually locate Mono Runtime by pressing 'Browse...' button.";
@@ -162,6 +162,8 @@ namespace Assets.Editor.GameDevWare.Charon {
         public const string UI_UNITYPLUGIN_WINDOWSERIALNUMBER = "Serial Number";
         public const string UI_UNITYPLUGIN_WINDOWSIGNINBUTTON = "Sign In";
         public const string UI_UNITYPLUGIN_WINDOWTYPE = "Type";
+        public const string UI_UNITYPLUGIN_WINDOWEDITORLAUNCHINGEXECUTABLE = "Launching editor's executable...";
+        public const string UI_UNITYPLUGIN_WINDOWEDITOROPENINGBROWSER = "Opening brower...";
 #else
         public const string LANGUAGE = "en";
         public const string UI_UNITYPLUGIN_GENERATEASSETCANTFINDGAMEDATACLASS = "Asset generation failed: unable to find GameData's type in CSharp assemblies. Make sure there is no compilation errors.";
@@ -222,10 +224,10 @@ namespace Assets.Editor.GameDevWare.Charon {
         public const string UI_UNITYPLUGIN_WINDOWDOWNLOADMONO = "b) If it doesn't exists you can press 'Download Mono' button below and try again.";
         public const string UI_UNITYPLUGIN_WINDOWDOWNLOADMONOBUTTON = "Download Mono";
         public const string UI_UNITYPLUGIN_WINDOWEDITBUTTON = "Edit";
-        public const string UI_UNITYPLUGIN_WINDOWEDITORISOPENED = "Browser is currently opened for '{0}'. Close this window after you finished work.";
-        public const string UI_UNITYPLUGIN_WINDOWEDITORLOADING = "Please wait while Game Data Editor is loading...";
+        public const string UI_UNITYPLUGIN_WINDOWEDITORCHECKINGRUNTIME = "Checking runtime and executable...";
+        public const string UI_UNITYPLUGIN_WINDOWEDITORCHECKINGLICENSE = "Checking license...";
         public const string UI_UNITYPLUGIN_WINDOWEDITORTITLE = "Editor";
-        public const string UI_UNITYPLUGIN_WINDOWEDITORWASCRASHED = "Game Data Editor has crashed :(";
+        public const string UI_UNITYPLUGIN_WINDOWEDITORCOPYINGEXECUTABLE = "Copying executable to Temp directory...";
         public const string UI_UNITYPLUGIN_WINDOWFAILEDTOSTARTEDITOR = "Failed to start Game Data editor due errors:";
         public const string UI_UNITYPLUGIN_WINDOWFAILEDTOSTARTEDITORTIMEOUT = "Failed to start Game Data editor due errors: Aborted by timeout.";
         public const string UI_UNITYPLUGIN_WINDOWFINDMONOMANUALLY = "a) You can manually locate Mono Runtime by pressing 'Browse...' button.";
@@ -292,6 +294,8 @@ namespace Assets.Editor.GameDevWare.Charon {
         public const string UI_UNITYPLUGIN_WINDOWSERIALNUMBER = "Serial Number";
         public const string UI_UNITYPLUGIN_WINDOWSIGNINBUTTON = "Sign In";
         public const string UI_UNITYPLUGIN_WINDOWTYPE = "Type";
+        public const string UI_UNITYPLUGIN_WINDOWEDITORLAUNCHINGEXECUTABLE = "Launching editor's executable...";
+        public const string UI_UNITYPLUGIN_WINDOWEDITOROPENINGBROWSER = "Opening brower...";
 #endif
     }
 #endif

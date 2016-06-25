@@ -20,14 +20,14 @@ namespace Assets.Editor.GameDevWare.Charon.Utils
 
 		public static CharonCheckResult CheckCharon()
 		{
-			if (!File.Exists(Settings.Current.ToolsPath))
+			if (string.IsNullOrEmpty(Settings.Current.ToolsPath) || !File.Exists(Settings.Current.ToolsPath))
 				return CharonCheckResult.MissingExecutable;
 #if UNITY_EDITOR_WIN
-			if (Get45or451FromRegistry() == null && File.Exists(MonoPath) == false)
+			if (Get45or451FromRegistry() == null && (string.IsNullOrEmpty(MonoPath) || File.Exists(MonoPath) == false))
 				return CharonCheckResult.MissingRuntime;
 #else
-			if (File.Exists(MonoPath) == false)
-				return ToolsCheckResult.MissingRuntime;
+			if (string.IsNullOrEmpty(MonoPath) || File.Exists(MonoPath) == false)
+				return CharonCheckResult.MissingRuntime;
 #endif
 			return CharonCheckResult.Ok;
 		}
@@ -46,7 +46,11 @@ namespace Assets.Editor.GameDevWare.Charon.Utils
 		}
 		public static Promise<ToolExecutionResult> RunCharonAsTool(params string[] arguments)
 		{
-			return Run(new ToolExecutionOptions(Settings.Current.ToolsPath, arguments)
+			var toolsPath = Settings.Current.ToolsPath;
+			if (string.IsNullOrEmpty(toolsPath))
+				throw new InvalidOperationException("Unable to launch Charon.exe tool because path to it is null or empty.");
+
+			return Run(new ToolExecutionOptions(toolsPath, arguments)
 			{
 				CaptureStandartOutput = true,
 				CaptureStandartError = true,
@@ -139,7 +143,10 @@ namespace Assets.Editor.GameDevWare.Charon.Utils
 					yield return Promise.Delayed(TimeSpan.FromMilliseconds(50));
 				}
 
-				UnityEngine.Debug.Log(string.Format("Process #{1} '{0}' has exited with code {2}.", options.StartInfo.FileName, process.Id, process.ExitCode));
+				result.ExitCode = process.ExitCode;
+
+				if (Settings.Current.Verbose)
+					UnityEngine.Debug.Log(string.Format("Process #{1} '{0}' has exited with code {2}.", options.StartInfo.FileName, result.ProcessId, result.ExitCode));
 
 				yield return result;
 			}

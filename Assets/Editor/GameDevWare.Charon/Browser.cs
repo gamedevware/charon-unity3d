@@ -19,7 +19,7 @@
 
 namespace Assets.Editor.GameDevWare.Charon
 {
-	enum Browser
+	internal enum Browser
 	{
 		UnityEmbedded = 0,
 		SystemDefault,

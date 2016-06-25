@@ -26,7 +26,7 @@ using UnityEngine;
 
 namespace Assets.Editor.GameDevWare.Charon
 {
-	sealed class GameDataSettings
+	internal sealed class GameDataSettings
 	{
 		public enum CodeGenerator
 		{

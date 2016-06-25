@@ -40,14 +40,14 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 
 		public static void OnSelectionChanged()
 		{
-			if (Selection.activeObject == null || Settings.Current.GameDataPaths.Contains(FileUtils.MakeProjectRelative(AssetDatabase.GetAssetPath(Selection.activeObject))) == false)
+			if (Selection.activeObject == null || Array.IndexOf(Settings.Current.GameDataPaths, FileUtils.MakeProjectRelative(AssetDatabase.GetAssetPath(Selection.activeObject))) == -1)
 				return;
 
 			try
 			{
 				var templateAsset = Selection.activeObject.GetType();
 				var inspectorWindowType = typeof(PopupWindow).Assembly.GetType("UnityEditor.InspectorWindow");
-				var inspectorWindow = EditorWindow.GetWindow(inspectorWindowType);
+				var inspectorWindow = UnityEditor.EditorWindow.GetWindow(inspectorWindowType);
 				var activeEditorTracker = inspectorWindow.GetFieldValue("m_Tracker");
 				var customEditorAttributesType = typeof(PopupWindow).Assembly.GetType("UnityEditor.CustomEditorAttributes");
 				var customEditorsList = (System.Collections.IList)customEditorAttributesType.GetFieldValue("kSCustomEditors");
@@ -76,7 +76,7 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 		{
 			var gameDataAsset = (Object)this.target;
 			var gameDataPath = FileUtils.MakeProjectRelative(AssetDatabase.GetAssetPath(gameDataAsset));
-			if (Settings.Current.GameDataPaths.Contains(gameDataPath) == false)
+			if (Array.IndexOf(Settings.Current.GameDataPaths, FileUtils.MakeProjectRelative(AssetDatabase.GetAssetPath(Selection.activeObject))) == -1)
 			{
 				this.DrawDefaultInspector();
 				return;
@@ -147,8 +147,8 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 			GUI.enabled = true;
 			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOWUNTRACTBUTTON))
 			{
-				Settings.Current.GameDataPaths.Remove(gameDataPath);
-				Settings.Current.Version++;
+				Settings.Current.RemoveGameDataPath(gameDataPath);
+				Settings.Current.Save();
 			}
 			EditorGUILayout.EndHorizontal();
 

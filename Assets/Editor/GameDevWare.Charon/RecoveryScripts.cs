@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Assets.Editor.GameDevWare.Charon.Utils;
@@ -26,7 +27,7 @@ using Debug = UnityEngine.Debug;
 
 namespace Assets.Editor.GameDevWare.Charon
 {
-	class RecoveryScripts
+	internal class RecoveryScripts
 	{
 		private const string RECOVERYSCRIPTS_PATH = "./Library/Charon/RecoveryScripts";
 #if UNITY_EDITOR_WIN
@@ -44,10 +45,9 @@ namespace Assets.Editor.GameDevWare.Charon
 		{
 			try
 			{
-				var paths = Settings.Current.GameDataPaths.ToArray();
-				for (var i = 0; i < paths.Length; i++)
+				var paths = new HashSet<string>(Settings.Current.GameDataPaths);
+				foreach (var gameDataPath in paths)
 				{
-					var gameDataPath = paths[i];
 					if (File.Exists(gameDataPath) == false)
 						continue;
 

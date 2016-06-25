@@ -29,7 +29,7 @@ using UnityEngine;
 
 namespace Assets.Editor.GameDevWare.Charon.Windows
 {
-	internal class LicenseActivationWindow : EditorWindow
+	internal class LicenseActivationWindow : UnityEditor.EditorWindow
 	{
 		private enum Mode { SignIn, SelectLicense, SignUp }
 		private string email;
@@ -67,7 +67,7 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 		public static Promise ShowAsync(bool autoClose = true)
 		{
 			var promise = new Promise();
-			var window = EditorWindow.GetWindow<LicenseActivationWindow>(utility: true);
+			var window = UnityEditor.EditorWindow.GetWindow<LicenseActivationWindow>(utility: true);
 
 			window.Done += (sender, args) => promise.TrySetCompleted();
 			window.Cancel += (sender, args) => promise.TrySetFailed(args.GetException());

@@ -23,7 +23,7 @@ using System.Reflection;
 
 namespace Assets.Editor.GameDevWare.Charon
 {
-	class ValidationException : Exception
+	internal class ValidationException : Exception
 	{
 		private static readonly FieldInfo StackTraceField = typeof(Exception).GetField("stack_trace", BindingFlags.NonPublic | BindingFlags.Instance);
 		private readonly static Dictionary<int, string> ReferenceByExceptionId = new Dictionary<int, string>();

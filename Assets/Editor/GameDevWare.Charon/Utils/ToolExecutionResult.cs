@@ -18,7 +18,7 @@ namespace Assets.Editor.GameDevWare.Charon.Utils
 		public bool HasPendingData { get { return this.standartStreamOpenStatus != 0; } }
 
 		public int ProcessId { get; private set; }
-		public int ExitCode { get; private set; }
+		public int ExitCode { get; set; }
 
 		public ToolExecutionResult(ToolExecutionOptions options, Process process)
 		{

@@ -27,7 +27,7 @@ using UnityEngine;
 
 namespace Assets.Editor.GameDevWare.Charon.Utils
 {
-	static class FileUtils
+	internal static class FileUtils
 	{
 		private readonly static char[] InvalidFileNameChars = Path.GetInvalidFileNameChars();
 

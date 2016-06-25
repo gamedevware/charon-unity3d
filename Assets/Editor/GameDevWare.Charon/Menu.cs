@@ -34,7 +34,7 @@ using UnityEngine;
 // ReSharper disable UnusedMember.Local
 namespace Assets.Editor.GameDevWare.Charon
 {
-	static class Menu
+	internal static class Menu
 	{
 		public const string ToolsPrefix = "Tools/Charon/";
 		public const string TroubleshootingPrefix = ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUTROUBLESHOOTING + "/";
@@ -141,7 +141,7 @@ namespace Assets.Editor.GameDevWare.Charon
 		[MenuItem(TroubleshootingPrefix + Resources.UI_UNITYPLUGIN_MENUREPORTISSUE, false, 7)]
 		private static void ReportIssue()
 		{
-			EditorWindow.GetWindow<ReportIssueWindow>(utility: true);
+			UnityEditor.EditorWindow.GetWindow<ReportIssueWindow>(utility: true);
 		}
 
 		[MenuItem(TroubleshootingPrefix + Resources.UI_UNITYPLUGIN_MENUCHECKRUNTIME, false, 6)]
@@ -179,7 +179,7 @@ namespace Assets.Editor.GameDevWare.Charon
 		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUABOUT, false, 12)]
 		private static void About()
 		{
-			EditorWindow.GetWindow<AboutWindow>(utility: true);
+			UnityEditor.EditorWindow.GetWindow<AboutWindow>(utility: true);
 		}
 
 		[MenuItem("Assets/Create/GameData")]
@@ -202,8 +202,8 @@ namespace Assets.Editor.GameDevWare.Charon
 
 			File.WriteAllText(gameDataPath, "{ \"ToolsVersion\": \"0.0.0.0\" }");
 			AssetDatabase.Refresh();
-			Settings.Current.GameDataPaths.Add(gameDataPath);
-			Settings.Current.Version++;
+			Settings.Current.AddGameDataPath(gameDataPath);
+			EditorUtility.SetDirty(Settings.Current);
 		}
 		[MenuItem("Assets/Create/GameData", true)]
 		private static bool CreateGameDataAssetCheck()
@@ -220,7 +220,7 @@ namespace Assets.Editor.GameDevWare.Charon
 			if (consoleWindowType == null)
 				return;
 
-			var consoleWindow = EditorWindow.GetWindow(consoleWindowType);
+			var consoleWindow = UnityEditor.EditorWindow.GetWindow(consoleWindowType);
 			consoleWindow.Focus();
 		}
 
@@ -245,7 +245,7 @@ namespace Assets.Editor.GameDevWare.Charon
 			{
 				if (Settings.Current.GameDataPaths.Contains(gameDataPath))
 					continue;
-				Settings.Current.GameDataPaths.Add(gameDataPath);
+				Settings.Current.AddGameDataPath(gameDataPath);
 			}
 
 			var paths = Settings.Current.GameDataPaths.ToArray();
@@ -258,7 +258,7 @@ namespace Assets.Editor.GameDevWare.Charon
 				if (!File.Exists(fullGameDataPath))
 				{
 					Debug.LogWarning(string.Format("Asset at '{0}' is not found.", gameDataPath));
-					Settings.Current.GameDataPaths.Remove(gameDataPath);
+					Settings.Current.RemoveGameDataPath(gameDataPath);
 					continue;
 				}
 
@@ -271,12 +271,13 @@ namespace Assets.Editor.GameDevWare.Charon
 					Settings.Current.Verbose ? "--verbose" : ""
 				);
 				yield return checkProcess;
-				if (Settings.Current.Verbose) Debug.Log(string.Format("Check complete exit code: '{0}'", checkProcess.GetResult().ExitCode));
-				if (checkProcess.GetResult().ExitCode != 0)
+				var checkResult = checkProcess.GetResult();
+				if (Settings.Current.Verbose) Debug.Log(string.Format("Check complete exit code: '{0}'", checkResult.ExitCode));
+				if (checkResult.ExitCode != 0)
 				{
 					Debug.LogWarning(string.Format(Resources.UI_UNITYPLUGIN_SCANASSETSKIPPED, gameDataPath));
-					if (Settings.Current.Verbose) Debug.LogWarning("Validation error: " + Environment.NewLine + checkProcess.GetResult().GetErrorData());
-					Settings.Current.GameDataPaths.Remove(gameDataPath);
+					if (Settings.Current.Verbose) Debug.LogWarning("Validation errors: " + Environment.NewLine + checkResult.GetOutputData() + checkResult.GetErrorData());
+					Settings.Current.RemoveGameDataPath(gameDataPath);
 				}
 				else
 				{
@@ -286,8 +287,7 @@ namespace Assets.Editor.GameDevWare.Charon
 			}
 			if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESSDONE, 1);
 
-			Debug.Log(string.Format(Resources.UI_UNITYPLUGIN_SCANCOMPLETE, found, Settings.Current.GameDataPaths.Count));
-			Settings.Current.Version++;
+			Debug.Log(string.Format(Resources.UI_UNITYPLUGIN_SCANCOMPLETE, found, Settings.Current.GameDataPaths.Length));
 			Settings.Current.Save();
 		}
 		public static IEnumerable GenerateCodeAndAssetsAsync(string path = null, Action<string, float> progressCallback = null)
@@ -596,7 +596,7 @@ namespace Assets.Editor.GameDevWare.Charon
 		public static IEnumerable CheckForUpdatesAsync(Action<string, float> progressCallback = null)
 		{
 			var toolsVersion = default(Version);
-			var toolsPath = Settings.Current.ToolsPath;
+			var toolsPath = Path.GetFullPath(Settings.Current.ToolsPath);
 			if (File.Exists(toolsPath))
 			{
 				if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESSCHECKINGTOOLSVERSION, 0.05f);
@@ -608,6 +608,9 @@ namespace Assets.Editor.GameDevWare.Charon
 				if (string.IsNullOrEmpty(outputData) == false)
 					toolsVersion = new Version(outputData);
 			}
+
+			if (Settings.Current.Verbose)
+				Debug.Log(string.Format("Current tools path: {0}.", toolsPath));
 
 			if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESSGETTINGAVAILABLEBUILDS, 0.10f);
 
@@ -670,8 +673,18 @@ namespace Assets.Editor.GameDevWare.Charon
 			{
 				if (File.Exists(toolsPath))
 					File.Delete(toolsPath);
+				if (Directory.Exists(toolsPath))
+					Directory.Delete(toolsPath);
+
+				if (Directory.Exists(Path.GetDirectoryName(toolsPath)) == false)
+					Directory.CreateDirectory(Path.GetDirectoryName(toolsPath));
 
 				File.Move(downloadPath, toolsPath);
+			}
+			catch (Exception moveError)
+			{
+				Debug.LogWarning(string.Format("Failed to move downloaded file from '{0}' to {1}. {2}.", downloadPath, toolsPath, moveError.Message));
+				Debug.LogError(moveError);
 			}
 			finally
 			{
@@ -686,7 +699,7 @@ namespace Assets.Editor.GameDevWare.Charon
 
 			ToolsRunner.ToolShadowCopyPath = FileUtil.GetUniqueTempPathInProject();
 
-			if (File.Exists(Settings.Current.ToolsPath))
+			if (File.Exists(toolsPath))
 			{
 				if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESSCHECKINGTOOLSVERSION, 0.95f);
 

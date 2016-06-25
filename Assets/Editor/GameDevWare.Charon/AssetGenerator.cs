@@ -24,11 +24,12 @@ using Assets.Editor.GameDevWare.Charon.Utils;
 using Assets.Editor.GameDevWare.Charon.Windows;
 using UnityEditor;
 using UnityEngine;
+// ReSharper disable UnusedMember.Local
 
 namespace Assets.Editor.GameDevWare.Charon
 {
 	[InitializeOnLoad, Serializable]
-	class AssetGenerator : ScriptableObject
+	internal sealed class AssetGenerator : ScriptableObject
 	{
 		private const string PREFS_KEY = Settings.PREF_PREFIX + "AssetGenerationList";
 		public const string LIST_SPLITTER = ";";
@@ -52,7 +53,7 @@ namespace Assets.Editor.GameDevWare.Charon
 			this.OnDisable();
 		}
 
-		protected void Awake()
+		private void Awake()
 		{
 			System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(GameDataInspector).TypeHandle);
 
@@ -64,7 +65,7 @@ namespace Assets.Editor.GameDevWare.Charon
 				this.AssetGenerationList = new HashSet<string>(listStr.Split(ListSplitterChars, StringSplitOptions.RemoveEmptyEntries));
 		}
 
-		protected void OnEnable()
+		private void OnEnable()
 		{
 			if (this.AssetGenerationList == null || this.AssetGenerationList.Count <= 0)
 				return;
@@ -79,7 +80,7 @@ namespace Assets.Editor.GameDevWare.Charon
 			this.AssetGenerationList.Clear();
 		}
 
-		protected void OnDisable()
+		private void OnDisable()
 		{
 			if (this.AssetGenerationList == null || this.AssetGenerationList.Count == 0)
 				return;

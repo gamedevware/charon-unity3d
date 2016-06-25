@@ -27,12 +27,12 @@ using UnityEngine;
 
 namespace Assets.Editor.GameDevWare.Charon
 {
-	class ChangeHooks : AssetPostprocessor
+	internal class ChangeHooks : AssetPostprocessor
 	{
-		private static Dictionary<string, FileSystemWatcher> watchers = new Dictionary<string, FileSystemWatcher>(StringComparer.Ordinal);
-		private static Dictionary<string, string> hashes = new Dictionary<string, string>(StringComparer.Ordinal);
-		private static HashSet<string> changedAssets = new HashSet<string>(StringComparer.Ordinal);
-		private static int settingsVersion = int.MinValue;
+		private static readonly Dictionary<string, FileSystemWatcher> watchers = new Dictionary<string, FileSystemWatcher>(StringComparer.Ordinal);
+		private static readonly Dictionary<string, string> hashes = new Dictionary<string, string>(StringComparer.Ordinal);
+		private static readonly HashSet<string> changedAssets = new HashSet<string>(StringComparer.Ordinal);
+		private static string[] gameDataPaths;
 
 		static ChangeHooks()
 		{
@@ -44,7 +44,7 @@ namespace Assets.Editor.GameDevWare.Charon
 			if (Settings.Current == null)
 				return;
 
-			if (Settings.Current.Version != settingsVersion)
+			if (Settings.Current.GameDataPaths != gameDataPaths)
 			{
 				foreach (var gameDataPath in Settings.Current.GameDataPaths)
 				{
@@ -85,7 +85,7 @@ namespace Assets.Editor.GameDevWare.Charon
 					try { watcher.Dispose(); }
 					catch (Exception e) { Debug.LogError("Failed to dispose FileSystemWatcher of GameData: " + e); }
 				}
-				settingsVersion = Settings.Current.Version;
+				gameDataPaths = Settings.Current.GameDataPaths;
 			}
 
 			var changedAssetsCopy = default(string[]);
@@ -153,10 +153,9 @@ namespace Assets.Editor.GameDevWare.Charon
 
 			foreach (var deletedPath in deletedAssets)
 			{
-				if (!Settings.Current.GameDataPaths.Remove(deletedPath))
+				if (!Settings.Current.RemoveGameDataPath(deletedPath))
 					continue;
 
-				Settings.Current.Version++;
 				if (Settings.Current.Verbose)
 					Debug.Log("GameData deleted: " + deletedPath);
 				hashes.Remove(deletedPath);
@@ -173,8 +172,8 @@ namespace Assets.Editor.GameDevWare.Charon
 				if (!Settings.Current.GameDataPaths.Contains(fromPath))
 					continue;
 
-				Settings.Current.GameDataPaths.Remove(fromPath);
-				Settings.Current.GameDataPaths.Add(toPath);
+				Settings.Current.RemoveGameDataPath(fromPath);
+				Settings.Current.AddGameDataPath(toPath);
 				if (Settings.Current.Verbose)
 					Debug.Log("GameData moved: " + toPath + " from: " + fromPath);
 

@@ -26,7 +26,7 @@ using UnityEngine;
 
 namespace Assets.Editor.GameDevWare.Charon.Windows
 {
-	internal class AboutWindow : EditorWindow
+	internal class AboutWindow : UnityEditor.EditorWindow
 	{
 		private string toolsVersion = Resources.UI_UNITYPLUGIN_WINDOWCHECKINGVERSION;
 		private string licenseHolder = Resources.UI_UNITYPLUGIN_WINDOWCHECKINGVERSION;
@@ -92,10 +92,7 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 			GUILayout.EndHorizontal();
 
 			if (GUI.changed)
-			{
-				Settings.Current.Version++;
 				Settings.Current.Save();
-			}
 		}
 
 		protected void Update()
@@ -113,13 +110,7 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 				case CharonCheckResult.Ok:
 					if (this.checkToolsVersion == null)
 					{
-						this.checkToolsVersion = ToolsRunner.Run(new ToolExecutionOptions(Settings.Current.ToolsPath, "VERSION")
-						{
-							RequireDotNetRuntime = true,
-							CaptureStandartOutput = true,
-							CaptureStandartError = true,
-							ExecutionTimeout = TimeSpan.FromSeconds(5)
-						});
+						this.checkToolsVersion = ToolsRunner.RunCharonAsTool("VERSION");
 						this.checkToolsVersion.ContinueWith(r =>
 						{
 							if (r.HasErrors)

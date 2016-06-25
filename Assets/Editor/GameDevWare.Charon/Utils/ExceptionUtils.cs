@@ -24,7 +24,7 @@ using Assets.Editor.GameDevWare.Charon.Tasks;
 
 namespace Assets.Editor.GameDevWare.Charon.Utils
 {
-    static class ExceptionUtils
+	internal static class ExceptionUtils
     {
         public static Exception Unwrap(this Exception exception)
         {

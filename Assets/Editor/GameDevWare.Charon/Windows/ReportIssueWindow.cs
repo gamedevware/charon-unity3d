@@ -29,7 +29,7 @@ using UnityEngine;
 
 namespace Assets.Editor.GameDevWare.Charon.Windows
 {
-	internal class ReportIssueWindow : EditorWindow
+	internal class ReportIssueWindow : UnityEditor.EditorWindow
 	{
 		public enum IssueType
 		{

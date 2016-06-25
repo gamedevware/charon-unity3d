@@ -30,7 +30,7 @@ using UnityEngine;
 // ReSharper disable UnusedMember.Local
 namespace Assets.Editor.GameDevWare.Charon.Windows
 {
-	internal class UpdateRuntimeWindow : EditorWindow
+	internal class UpdateRuntimeWindow : UnityEditor.EditorWindow
 	{
 #if UNITY_EDITOR_WIN
 		private const string MONO_EXECUTABLE_NAME = "mono.exe";
@@ -234,7 +234,7 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 		public static Promise ShowAsync(bool autoClose = true)
 		{
 			var promise = new Promise();
-			var window = EditorWindow.GetWindow<UpdateRuntimeWindow>(utility: true);
+			var window = UnityEditor.EditorWindow.GetWindow<UpdateRuntimeWindow>(utility: true);
 
 			window.Done += (sender, args) => promise.TrySetCompleted();
 			window.Cancel += (sender, args) => promise.TrySetFailed(args.GetException());

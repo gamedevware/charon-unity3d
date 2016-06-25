@@ -24,7 +24,7 @@ using UnityEngine;
 
 namespace Assets.Editor.GameDevWare.Charon.Windows
 {
-	internal abstract class WebViewEditorWindow : EditorWindow
+	internal abstract class WebViewEditorWindow : UnityEditor.EditorWindow
 	{
 		private bool syncingFocus;
 		private int repeatedShow;
