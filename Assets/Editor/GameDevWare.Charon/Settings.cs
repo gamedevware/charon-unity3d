@@ -18,34 +18,36 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
+using Assets.Editor.GameDevWare.Charon.Json;
 using Assets.Editor.GameDevWare.Charon.Utils;
 using UnityEditor;
 using UnityEngine;
 
 namespace Assets.Editor.GameDevWare.Charon
 {
-	[InitializeOnLoad, Serializable]
-	internal class Settings : ScriptableObject
+	[Serializable]
+	internal class Settings
 	{
 		public const string PREF_PREFIX = "Charon_";
-		public const string SETTINGS_PATH = "Assets/Editor/GameDevWare.Charon/Settings.asset";
+		public const string SETTINGS_PATH = "Assets/Editor/GameDevWare.Charon/Settings.json";
 		public const string DEFAULT_TOOLS_PATH = "Assets/Editor/GameDevWare.Charon/Charon.exe";
 		public const string DEFAULT_LICENSE_SERVER_ADDRESS = "http://gamedevware.com/service/api/";
+
+		public static readonly Encoding DefaultEncoding = Encoding.UTF8;
 		public static readonly Settings Current;
 
 		public string ToolsPath;
 		public string BrowserPath;
 		public string LicenseServerAddress;
-		public Browser Browser;
+		public int Browser;
 		public int ToolsPort;
 		public string[] GameDataPaths;
 		public bool Verbose;
 		public bool SuppressRecoveryScripts;
-		[HideInInspector]
 		public string SelectedLicense;
 
 		static Settings()
@@ -55,38 +57,51 @@ namespace Assets.Editor.GameDevWare.Charon
 
 		private static Settings Load()
 		{
-			var settings = AssetDatabase.LoadAssetAtPath<Settings>(SETTINGS_PATH);
+
+			var settings = default(Settings);
+			try { settings = JsonValue.Parse(File.ReadAllText(SETTINGS_PATH, DefaultEncoding)).As<Settings>(); }
+			catch (Exception readError) { Debug.LogWarning("Failed to read settings for Charon: " + readError.Message); }
 
 			if (settings == null)
 			{
-				settings = ScriptableObject.CreateInstance<Settings>();
-				settings.ToolsPort = 43210;
-				settings.ToolsPath = null;
-				settings.GameDataPaths = (from id in AssetDatabase.FindAssets("GameData")
-										  let path = FileUtils.MakeProjectRelative(AssetDatabase.GUIDToAssetPath(id))
-										  where path != null && path.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
-										  select path).ToArray();
-				settings.SelectedLicense = null;
-				settings.LicenseServerAddress = null;
-				settings.Verbose = false;
-				AssetDatabase.CreateAsset(settings, SETTINGS_PATH);
+				settings = new Settings
+				{
+					ToolsPort = 43210,
+					ToolsPath = null,
+					GameDataPaths = (from id in AssetDatabase.FindAssets("GameData")
+									 let path = FileUtils.MakeProjectRelative(AssetDatabase.GUIDToAssetPath(id))
+									 where path != null && path.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
+									 select path).ToArray(),
+					SelectedLicense = null,
+					LicenseServerAddress = null,
+					Verbose = false
+				};
+
+				try { File.WriteAllText(SETTINGS_PATH, JsonObject.From(settings).Stringify(), DefaultEncoding); }
+				catch { /* ignore */ }
 			}
 			settings.Validate();
 
 			return settings;
 		}
+
+
 		internal void Save()
 		{
 			this.Validate();
 
 			try
 			{
-				EditorUtility.SetDirty(this);
-				AssetDatabase.SaveAssets();
+				var content = JsonObject.From(this).Stringify();
+				var currentContent = File.Exists(SETTINGS_PATH) ? File.ReadAllText(SETTINGS_PATH, DefaultEncoding) : null;
+				if (string.Equals(content, currentContent, StringComparison.OrdinalIgnoreCase))
+					return; // no changes
+
+				File.WriteAllText(SETTINGS_PATH, content, DefaultEncoding);
 			}
 			catch (Exception e)
 			{
-				Debug.LogError(string.Format("Failed to save settings in file '{0}'.", SETTINGS_PATH));
+				Debug.LogError(string.Format("Failed to save settings for Charon in file '{0}'.", SETTINGS_PATH));
 				Debug.LogError(e);
 			}
 
@@ -108,7 +123,6 @@ namespace Assets.Editor.GameDevWare.Charon
 			if (!newPaths.SequenceEqual(this.GameDataPaths))
 			{
 				this.GameDataPaths = newPaths;
-				EditorUtility.SetDirty(this);
 			}
 
 			if (string.IsNullOrEmpty(this.ToolsPath) || File.Exists(this.ToolsPath) == false)
@@ -117,21 +131,14 @@ namespace Assets.Editor.GameDevWare.Charon
 								  let path = FileUtils.MakeProjectRelative(AssetDatabase.GUIDToAssetPath(id))
 								  where path != null && path.EndsWith(".exe", StringComparison.OrdinalIgnoreCase)
 								  select path).FirstOrDefault() ?? DEFAULT_TOOLS_PATH;
-				EditorUtility.SetDirty(this);
 			}
 
 			this.ToolsPath = FileUtils.MakeProjectRelative(this.ToolsPath) ?? ToolsPath;
 
 			if (this.ToolsPort < 5000)
-			{
 				this.ToolsPort = 5000;
-				EditorUtility.SetDirty(this);
-			}
 			if (this.ToolsPort > 65535)
-			{
 				this.ToolsPort = 65535;
-				EditorUtility.SetDirty(this);
-			}
 		}
 
 		internal Uri GetLicenseServerAddress()

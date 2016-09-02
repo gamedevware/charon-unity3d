@@ -139,7 +139,7 @@ namespace Assets.Editor.GameDevWare.Charon
 				case GameDataSettings.CodeGenerator.CSharpCodeAndAsset:
 					if (!string.IsNullOrEmpty(gameDataSettings.AssetGenerationPath))
 					{
-						AssetGenerator.Instance.AddPath(gameDataPath);
+						AssetGenerator.AddPath(gameDataPath);
 						generationOptions &= ~(int)GameDataSettings.CodeGenerationOptions.SuppressJsonSerialization;
 					}
 					goto generateCSharpCode;

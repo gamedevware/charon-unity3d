@@ -28,64 +28,56 @@ using UnityEngine;
 
 namespace Assets.Editor.GameDevWare.Charon
 {
-	[InitializeOnLoad, Serializable]
-	internal sealed class AssetGenerator : ScriptableObject
+	[InitializeOnLoad]
+	internal static class AssetGenerator
 	{
 		private const string PREFS_KEY = Settings.PREF_PREFIX + "AssetGenerationList";
-		public const string LIST_SPLITTER = ";";
-		public static readonly char[] ListSplitterChars = LIST_SPLITTER.ToArray();
-
-		public static AssetGenerator Instance;
-		private HashSet<string> AssetGenerationList;
+		private const string LIST_SPLITTER = ";";
+		private static readonly char[] ListSplitterChars = LIST_SPLITTER.ToArray();
+		private static HashSet<string> AssetGenerationList = new HashSet<string>();
+		private static readonly EditorApplication.CallbackFunction InitializeCallback = Initialize;
 
 		static AssetGenerator()
 		{
-			Instance = ScriptableObject.CreateInstance<AssetGenerator>();
+			EditorApplication.update += InitializeCallback;
 		}
 
-		public void AddPath(string path)
+		private static void Initialize()
 		{
-			if (path == null) throw new ArgumentNullException("path");
+			EditorApplication.update -= InitializeCallback;
 
-			if (this.AssetGenerationList == null) this.AssetGenerationList = new HashSet<string>();
-
-			this.AssetGenerationList.Add(path);
-			this.OnDisable();
-		}
-
-		private void Awake()
-		{
 			System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(GameDataInspector).TypeHandle);
-
 
 			var listStr = EditorPrefs.GetString(PREFS_KEY);
 			if (string.IsNullOrEmpty(listStr))
-				this.AssetGenerationList = new HashSet<string>();
+				AssetGenerationList = new HashSet<string>();
 			else
-				this.AssetGenerationList = new HashSet<string>(listStr.Split(ListSplitterChars, StringSplitOptions.RemoveEmptyEntries));
-		}
-
-		private void OnEnable()
-		{
-			if (this.AssetGenerationList == null || this.AssetGenerationList.Count <= 0)
-				return;
+				AssetGenerationList = new HashSet<string>(listStr.Split(ListSplitterChars, StringSplitOptions.RemoveEmptyEntries));
 
 			if (Settings.Current.Verbose)
-				Debug.Log("Sheduling " + this.AssetGenerationList.Count + " asset generating tasks.");
+				Debug.Log("Scheduling " + AssetGenerationList.Count + " asset generating tasks.");
 
-			CoroutineScheduler.Schedule(Menu.GenerateAssetsAsync(this.AssetGenerationList.ToArray()))
+			CoroutineScheduler.Schedule(Menu.GenerateAssetsAsync(AssetGenerationList.ToArray()))
 				.IgnoreFault()
 				.ContinueWith(_ => EditorPrefs.DeleteKey(PREFS_KEY));
 
-			this.AssetGenerationList.Clear();
+			AssetGenerationList.Clear();
+			SaveList();
 		}
 
-		private void OnDisable()
+		public static void AddPath(string path)
 		{
-			if (this.AssetGenerationList == null || this.AssetGenerationList.Count == 0)
-				return;
+			if (path == null) throw new ArgumentNullException("path");
 
-			var listStr = string.Join(LIST_SPLITTER, this.AssetGenerationList.ToArray());
+			if (AssetGenerationList == null) AssetGenerationList = new HashSet<string>();
+
+			AssetGenerationList.Add(path);
+			SaveList();
+		}
+
+		private static void SaveList()
+		{
+			var listStr = string.Join(LIST_SPLITTER, AssetGenerationList.ToArray());
 			EditorPrefs.SetString(PREFS_KEY, listStr);
 		}
 	}

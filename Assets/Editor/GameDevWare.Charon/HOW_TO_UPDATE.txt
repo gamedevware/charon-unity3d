@@ -1,0 +1,2 @@
+1. Remove all files and folder except "Settings.json"
+2. Paste new files from Assets\Editor\GameDevWare.Charon into this directory except "Settings.json"

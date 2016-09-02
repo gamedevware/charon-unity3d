@@ -1,66 +1,66 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 using UnityEditor;
-using UnityEngine;
 
 using Debug = UnityEngine.Debug;
 
 namespace Assets.Editor.GameDevWare.Charon
 {
-	[InitializeOnLoad, Serializable]
-	internal sealed class GameDataEditorProcess : ScriptableObject
+	internal static class GameDataEditorProcess
 	{
 		private const string PREFS_PROCESSID_KEY = Settings.PREF_PREFIX + "EditorProcessId";
 		private const string PREFS_IMAGENAME_KEY = Settings.PREF_PREFIX + "EditorImageName";
 
-		public static GameDataEditorProcess Instance;
-		private Process process;
+		private static Process Process;
+		private static bool IsInitialized;
 
-		public bool IsRunning { get { return this.process != null && this.process.HasExited == false; } }
+		public static bool IsRunning { get { return Process != null && Process.HasExited == false; } }
 
-		static GameDataEditorProcess()
+		public static void Watch(int processId, string imageName)
 		{
-			Instance = ScriptableObject.CreateInstance<GameDataEditorProcess>();
-		}
+			Initialize();
 
-		public void Watch(int processId, string imageName)
-		{
 			//Debug.Log(string.Format("Watching for GameData's Editor process '{0}' with executable '{1}'.", processId, imageName));
 
-			this.Kill();
+			Kill();
 			try
 			{
-				this.process = Process.GetProcessById(processId);
-				if (this.process.Modules.Count > 0 && Path.GetFileName(this.process.MainModule.FileName) != Path.GetFileName(imageName))
-					throw new InvalidOperationException(string.Format("Wrong executable of watched process '{0}' while '{1}' is expected.", this.process.MainModule.FileName, imageName));
+				Process = Process.GetProcessById(processId);
+				if (Process.Modules.Count > 0 && Path.GetFileName(Process.MainModule.FileName) != Path.GetFileName(imageName))
+					throw new InvalidOperationException(string.Format("Wrong executable of watched process '{0}' while '{1}' is expected.", Process.MainModule.FileName, imageName));
 
 				// saving current process id to editor prefs
-				EditorPrefs.SetString(PREFS_PROCESSID_KEY, this.process.Id.ToString());
+				EditorPrefs.SetString(PREFS_PROCESSID_KEY, Process.Id.ToString());
 				EditorPrefs.SetString(PREFS_IMAGENAME_KEY, imageName);
 			}
 			catch
 			{
 				//Debug.LogWarning(string.Format("Failed to find editor process with id {0}.{1}{2}", processId, Environment.NewLine, e));
 
-				using (this.process)
-					this.process = null;
+				using (Process)
+					Process = null;
 			}
 		}
-		public void Kill()
+		public static void Kill()
 		{
-			if (this.IsRunning == false)
+			Initialize();
+
+			if (IsRunning == false)
 				return;
 
-			using (this.process)
+			using (Process)
 			{
-				Kill(this.process);
-				this.process = null;
+				Kill(Process);
+				Process = null;
 			}
 		}
 
 		public static void Kill(int processId)
 		{
+			Initialize();
+
 			try
 			{
 				using (var process = Process.GetProcessById(processId))
@@ -77,6 +77,8 @@ namespace Assets.Editor.GameDevWare.Charon
 		}
 		public static void Kill(Process process)
 		{
+			Initialize();
+
 			if (process == null) throw new ArgumentNullException("process");
 
 			if (process.HasExited)
@@ -104,8 +106,12 @@ namespace Assets.Editor.GameDevWare.Charon
 		}
 
 		// ReSharper disable once UnusedMember.Local
-		private void Awake()
+		private static void Initialize()
 		{
+			if (IsInitialized)
+				return;
+			IsInitialized = true;
+
 			var processIdStr = EditorPrefs.GetString(PREFS_PROCESSID_KEY) ?? "";
 			var imageNameStr = EditorPrefs.GetString(PREFS_IMAGENAME_KEY) ?? "";
 			var processId = 0;

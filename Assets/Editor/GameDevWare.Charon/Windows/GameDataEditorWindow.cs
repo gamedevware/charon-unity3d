@@ -47,8 +47,11 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 
 		protected void Awake()
 		{
-			if (GameDataEditorProcess.Instance.IsRunning == false)
+			if (GameDataEditorProcess.IsRunning == false)
+			{
+				this.titleContent = new GUIContent(Resources.UI_UNITYPLUGIN_WINDOWEDITORTITLE);
 				this.Close();
+			}
 		}
 
 		void IHasCustomMenu.AddItemsToMenu(GenericMenu menu)
@@ -115,8 +118,8 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 
 			toolsPath = Path.GetFullPath(toolsPath);
 
-			if (GameDataEditorProcess.Instance.IsRunning)
-				GameDataEditorProcess.Instance.Kill();
+			if (GameDataEditorProcess.IsRunning)
+				GameDataEditorProcess.Kill();
 
 			if (Settings.Current.Verbose)
 				Debug.Log("Starting gamedata editor at " + gameDataEditorUrl + "...");
@@ -197,16 +200,16 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 				yield break;
 			}
 
-			GameDataEditorProcess.Instance.Watch(toolsProcessTask.GetResult().ProcessId, shadowCopyOfTools);
+			GameDataEditorProcess.Watch(toolsProcessTask.GetResult().ProcessId, shadowCopyOfTools);
 
 			EditorUtility.DisplayProgressBar(title, Resources.UI_UNITYPLUGIN_WINDOWEDITOROPENINGBROWSER, 0.90f);
 
-			switch (Settings.Current.Browser)
+			switch ((Browser)Settings.Current.Browser)
 			{
 				case Browser.UnityEmbedded:
 					var nearPanels = typeof(SceneView);
 					var editorWindow = EditorWindow.GetWindow<GameDataEditorWindow>(nearPanels);
-					editorWindow.titleContent = new GUIContent(Path.GetFileName(gameDataPath));
+					editorWindow.titleContent = new GUIContent(title);
 					editorWindow.LoadUrl(gameDataEditorUrl + reference);
 					editorWindow.SetWebViewVisibility(true);
 					editorWindow.Repaint();

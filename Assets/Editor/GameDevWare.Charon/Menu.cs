@@ -202,8 +202,7 @@ namespace Assets.Editor.GameDevWare.Charon
 
 			File.WriteAllText(gameDataPath, "{ \"ToolsVersion\": \"0.0.0.0\" }");
 			AssetDatabase.Refresh();
-			Settings.Current.AddGameDataPath(gameDataPath);
-			EditorUtility.SetDirty(Settings.Current);
+			Settings.Current.AddGameDataPath(gameDataPath);			
 		}
 		[MenuItem("Assets/Create/GameData", true)]
 		private static bool CreateGameDataAssetCheck()
@@ -334,7 +333,7 @@ namespace Assets.Editor.GameDevWare.Charon
 						case GameDataSettings.CodeGenerator.CSharpCodeAndAsset:
 							if (!string.IsNullOrEmpty(gameDataSettings.AssetGenerationPath))
 							{
-								AssetGenerator.Instance.AddPath(gameDataPath);
+								AssetGenerator.AddPath(gameDataPath);
 								generationOptions &= ~(int)GameDataSettings.CodeGenerationOptions.SuppressJsonSerialization;
 							}
 							goto generateCSharpCode;

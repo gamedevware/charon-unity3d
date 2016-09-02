@@ -65,8 +65,8 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 			Settings.Current.ToolsPath = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_WINDOWTOOLSPATH, Settings.Current.ToolsPath);
 			GUI.enabled = true;
 			Settings.Current.ToolsPort = EditorGUILayout.IntField(Resources.UI_UNITYPLUGIN_WINDOWTOOLSPORT, Settings.Current.ToolsPort);
-			Settings.Current.Browser = (Browser)EditorGUILayout.EnumPopup(Resources.UI_UNITYPLUGIN_WINDOWBROWSER, Settings.Current.Browser);
-			if (Settings.Current.Browser == Browser.Custom)
+			Settings.Current.Browser = Convert.ToInt32(EditorGUILayout.EnumPopup(Resources.UI_UNITYPLUGIN_WINDOWBROWSER, (Browser)Settings.Current.Browser));
+			if (Settings.Current.Browser == (int)Browser.Custom)
 			{
 				EditorGUILayout.BeginHorizontal();
 				{
