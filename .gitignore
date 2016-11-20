@@ -5,7 +5,6 @@
 *.nupkg
 *.obj
 *.opensdf
-*.meta
 *.pdb
 *.ReSharper
 *.sdf
@@ -17,15 +16,12 @@ _ReSharper*
 *.csproj
 *.sln
 *.userprefs
-*.exe
-*.dll
 
 .vs
 bin/
 obj/
 packages/
 deploy/
-charon_unity*
 Assembly*
 Library/
 Temp/
