@@ -1,6 +1,6 @@
-namespace Assets.Editor.GameDevWare.Charon.Models
+namespace GameDevWare.Charon.Models
 {
-	public sealed class AccountRef
+	internal sealed class AccountRef
 	{
 		public string Id { get; set; }
 		public string FirstName { get; set; }

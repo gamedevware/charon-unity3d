@@ -19,17 +19,17 @@
 
 using System;
 using System.IO;
-using Assets.Editor.GameDevWare.Charon.Models;
-using Assets.Editor.GameDevWare.Charon.Tasks;
-using Assets.Editor.GameDevWare.Charon.Utils;
+using GameDevWare.Charon.Models;
+using GameDevWare.Charon.Tasks;
+using GameDevWare.Charon.Utils;
 using UnityEditor;
 using UnityEngine;
 
 // ReSharper disable UnusedMember.Local
 
-namespace Assets.Editor.GameDevWare.Charon.Windows
+namespace GameDevWare.Charon.Windows
 {
-	internal class LicenseActivationWindow : UnityEditor.EditorWindow
+	internal class LicenseActivationWindow : EditorWindow
 	{
 		private enum Mode { SignIn, SelectLicense, SignUp }
 		private string email;
@@ -67,7 +67,7 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 		public static Promise ShowAsync(bool autoClose = true)
 		{
 			var promise = new Promise();
-			var window = UnityEditor.EditorWindow.GetWindow<LicenseActivationWindow>(utility: true);
+			var window = GetWindow<LicenseActivationWindow>(utility: true);
 
 			window.Done += (sender, args) => promise.TrySetCompleted();
 			window.Cancel += (sender, args) => promise.TrySetFailed(args.GetException());

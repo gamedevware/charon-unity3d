@@ -22,12 +22,12 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using Assets.Editor.GameDevWare.Charon.Json;
-using Assets.Editor.GameDevWare.Charon.Utils;
+using GameDevWare.Charon.Json;
+using GameDevWare.Charon.Utils;
 using UnityEditor;
 using UnityEngine;
 
-namespace Assets.Editor.GameDevWare.Charon
+namespace GameDevWare.Charon
 {
 	[Serializable]
 	internal class Settings
@@ -47,7 +47,6 @@ namespace Assets.Editor.GameDevWare.Charon
 		public int ToolsPort;
 		public string[] GameDataPaths;
 		public bool Verbose;
-		public bool SuppressRecoveryScripts;
 		public string SelectedLicense;
 
 		static Settings()
@@ -104,11 +103,6 @@ namespace Assets.Editor.GameDevWare.Charon
 				Debug.LogError(string.Format("Failed to save settings for Charon in file '{0}'.", SETTINGS_PATH));
 				Debug.LogError(e);
 			}
-
-			if (this.SuppressRecoveryScripts)
-				RecoveryScripts.Clear();
-			else
-				RecoveryScripts.Generate();
 		}
 
 		private void Validate()

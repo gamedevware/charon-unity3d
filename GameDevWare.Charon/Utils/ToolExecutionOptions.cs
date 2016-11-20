@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 
-namespace Assets.Editor.GameDevWare.Charon.Utils
+namespace GameDevWare.Charon.Utils
 {
 	public sealed class ToolExecutionOptions
 	{

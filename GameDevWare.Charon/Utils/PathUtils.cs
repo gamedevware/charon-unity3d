@@ -25,11 +25,11 @@ using System.Text;
 using System.Threading;
 using UnityEngine;
 
-namespace Assets.Editor.GameDevWare.Charon.Utils
+namespace GameDevWare.Charon.Utils
 {
 	internal static class FileUtils
 	{
-		private readonly static char[] InvalidFileNameChars = Path.GetInvalidFileNameChars();
+		private static readonly char[] InvalidFileNameChars = Path.GetInvalidFileNameChars();
 
 
 		public static string MakeProjectRelative(string path)

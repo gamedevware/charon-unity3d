@@ -1,6 +1,6 @@
-﻿namespace Assets.Editor.GameDevWare.Charon.Models
+﻿namespace GameDevWare.Charon.Models
 {
-	public sealed class OrganizationRef
+	internal sealed class OrganizationRef
 	{
 		public string Id { get; set; }
 		public string Name { get; set; }

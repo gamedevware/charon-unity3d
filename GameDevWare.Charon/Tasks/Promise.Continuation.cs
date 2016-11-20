@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Assets.Editor.GameDevWare.Charon.Tasks
+namespace GameDevWare.Charon.Tasks
 {
 	partial class Promise
 	{

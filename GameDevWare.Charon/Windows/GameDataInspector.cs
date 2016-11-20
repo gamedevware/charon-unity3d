@@ -19,16 +19,15 @@
 
 using System;
 using System.IO;
-using System.Reflection;
-using Assets.Editor.GameDevWare.Charon.Utils;
+using GameDevWare.Charon.Utils;
 using UnityEditor;
 using UnityEngine;
 
 using Object = UnityEngine.Object;
 
-namespace Assets.Editor.GameDevWare.Charon.Windows
+namespace GameDevWare.Charon.Windows
 {
-	internal class GameDataInspector : UnityEditor.Editor
+	internal class GameDataInspector : Editor
 	{
 		private Object lastAsset;
 		private GameDataSettings gameDataSettings;
@@ -47,7 +46,7 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 			{
 				var templateAsset = Selection.activeObject.GetType();
 				var inspectorWindowType = typeof(PopupWindow).Assembly.GetType("UnityEditor.InspectorWindow");
-				var inspectorWindow = UnityEditor.EditorWindow.GetWindow(inspectorWindowType);
+				var inspectorWindow = EditorWindow.GetWindow(inspectorWindowType);
 				var activeEditorTracker = inspectorWindow.GetFieldValue("m_Tracker");
 				var customEditorAttributesType = typeof(PopupWindow).Assembly.GetType("UnityEditor.CustomEditorAttributes");
 				var customEditorsList = (System.Collections.IList)customEditorAttributesType.GetFieldValue("kSCustomEditors");

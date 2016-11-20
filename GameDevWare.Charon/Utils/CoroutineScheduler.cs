@@ -20,13 +20,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Assets.Editor.GameDevWare.Charon.Tasks;
+using GameDevWare.Charon.Tasks;
 using UnityEditor;
 using UnityEngine;
 
-namespace Assets.Editor.GameDevWare.Charon.Utils
+namespace GameDevWare.Charon.Utils
 {
-	public static class CoroutineScheduler
+	internal static class CoroutineScheduler
 	{
 		private static Promise Current;
 

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Assets.Editor.GameDevWare.Charon.Models
+namespace GameDevWare.Charon.Models
 {
-	public sealed class LicenseInfo
+	internal sealed class LicenseInfo
 	{
 		public string SerialNumber { get; set; }
 		public string Type { get; set; }

@@ -3,9 +3,9 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 
-namespace Assets.Editor.GameDevWare.Charon.Json
+namespace GameDevWare.Charon.Json
 {
-	public class JsonPrimitive : JsonValue
+	internal class JsonPrimitive : JsonValue
 	{
 		private static readonly byte[] true_bytes = Encoding.UTF8.GetBytes("true");
 		private static readonly byte[] false_bytes = Encoding.UTF8.GetBytes("false");

@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using Assets.Editor.GameDevWare.Charon.Utils;
+using GameDevWare.Charon.Utils;
 using UnityEditor;
 using UnityEngine;
 
-namespace Assets.Editor.GameDevWare.Charon.Tasks
+namespace GameDevWare.Charon.Tasks
 {
-	public class Coroutine : Coroutine<object>
+	internal class Coroutine : Coroutine<object>
 	{
 		public static readonly List<IUpdatable> UpdateList = new List<IUpdatable>();
 		public static readonly HashSet<Exception> ReportedExceptions = new HashSet<Exception>();

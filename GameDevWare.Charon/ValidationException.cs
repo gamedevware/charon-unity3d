@@ -21,12 +21,12 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Assets.Editor.GameDevWare.Charon
+namespace GameDevWare.Charon
 {
 	internal class ValidationException : Exception
 	{
 		private static readonly FieldInfo StackTraceField = typeof(Exception).GetField("stack_trace", BindingFlags.NonPublic | BindingFlags.Instance);
-		private readonly static Dictionary<int, string> ReferenceByExceptionId = new Dictionary<int, string>();
+		private static readonly Dictionary<int, string> ReferenceByExceptionId = new Dictionary<int, string>();
 		private static int lastExceptionId = 1;
 
 		public ValidationException(string gameDataPath, string id, string entityName, string path, string msg)

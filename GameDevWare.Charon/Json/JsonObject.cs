@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
-using JsonPair = System.Collections.Generic.KeyValuePair<string, Assets.Editor.GameDevWare.Charon.Json.JsonValue>;
-using JsonPairEnumerable = System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, Assets.Editor.GameDevWare.Charon.Json.JsonValue>>;
+using JsonPair = System.Collections.Generic.KeyValuePair<string, GameDevWare.Charon.Json.JsonValue>;
+using JsonPairEnumerable = System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, GameDevWare.Charon.Json.JsonValue>>;
 
-namespace Assets.Editor.GameDevWare.Charon.Json
+namespace GameDevWare.Charon.Json
 {
-	public class JsonObject : JsonValue, IDictionary<string, JsonValue>, ICollection<KeyValuePair<string, JsonValue>>
+	internal class JsonObject : JsonValue, IDictionary<string, JsonValue>, ICollection<KeyValuePair<string, JsonValue>>
 	{
 		private static readonly Dictionary<Type, Dictionary<string, MemberInfo>> TypeMembers = new Dictionary<Type, Dictionary<string, MemberInfo>>();
 		// Use SortedDictionary to make result of ToString() deterministic
@@ -45,7 +45,7 @@ namespace Assets.Editor.GameDevWare.Charon.Json
 		{
 			return map.GetEnumerator();
 		}
-		public override sealed JsonValue this[string key]
+		public sealed override JsonValue this[string key]
 		{
 			get { return map[key]; }
 			set { map[key] = value; }
@@ -165,7 +165,7 @@ namespace Assets.Editor.GameDevWare.Charon.Json
 
 			return instance;
 		}
-		new public static JsonValue From(object value)
+		public new static JsonValue From(object value)
 		{
 			if (value == null)
 				return new JsonPrimitive(default(string));

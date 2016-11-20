@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace Assets.Editor.GameDevWare.Charon.Tasks
+namespace GameDevWare.Charon.Tasks
 {
 	[Serializable, DebuggerDisplay("Count = {InnerExceptions.Count}")]
 	public class AggregateException : Exception

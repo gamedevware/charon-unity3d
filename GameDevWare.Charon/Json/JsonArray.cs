@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 
-namespace Assets.Editor.GameDevWare.Charon.Json
+namespace GameDevWare.Charon.Json
 {
-	public class JsonArray : JsonValue, IList<JsonValue>
+	internal class JsonArray : JsonValue, IList<JsonValue>
 	{
 		private readonly List<JsonValue> list;
 		public JsonArray(params JsonValue[] items)
@@ -33,7 +33,7 @@ namespace Assets.Editor.GameDevWare.Charon.Json
 		{
 			get { return false; }
 		}
-		public override sealed JsonValue this[int index]
+		public sealed override JsonValue this[int index]
 		{
 			get { return list[index]; }
 			set { list[index] = value; }

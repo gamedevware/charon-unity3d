@@ -1,6 +1,6 @@
-﻿namespace Assets.Editor.GameDevWare.Charon.Tasks
+﻿namespace GameDevWare.Charon.Tasks
 {
-	public interface IUpdatable
+	internal interface IUpdatable
 	{
 		void Update();
 	}

@@ -5,11 +5,12 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using JsonPair = System.Collections.Generic.KeyValuePair<string, Assets.Editor.GameDevWare.Charon.Json.JsonValue>;
 
-namespace Assets.Editor.GameDevWare.Charon.Json
+using JsonPair = System.Collections.Generic.KeyValuePair<string, GameDevWare.Charon.Json.JsonValue>;
+
+namespace GameDevWare.Charon.Json
 {
-	public abstract class JsonValue : IEnumerable
+	internal abstract class JsonValue : IEnumerable
 	{
 		public virtual int Count
 		{

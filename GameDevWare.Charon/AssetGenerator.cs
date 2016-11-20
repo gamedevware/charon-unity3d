@@ -20,13 +20,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Assets.Editor.GameDevWare.Charon.Utils;
-using Assets.Editor.GameDevWare.Charon.Windows;
+using GameDevWare.Charon.Utils;
+using GameDevWare.Charon.Windows;
 using UnityEditor;
 using UnityEngine;
+
 // ReSharper disable UnusedMember.Local
 
-namespace Assets.Editor.GameDevWare.Charon
+namespace GameDevWare.Charon
 {
 	[InitializeOnLoad]
 	internal static class AssetGenerator

@@ -21,7 +21,7 @@ using System;
 using UnityEditor;
 using UnityEngine;
 
-namespace Assets.Editor.GameDevWare.Charon.Utils
+namespace GameDevWare.Charon.Utils
 {
 	internal static class ProgressUtils
 	{

@@ -1,5 +1,5 @@
 ﻿
-namespace Assets.Editor.GameDevWare.Charon.Tasks
+namespace GameDevWare.Charon.Tasks
 {
 	public delegate void ActionContinuation(Promise promise);
 	public delegate void ActionContinuation<PromiseT>(Promise<PromiseT> promise);

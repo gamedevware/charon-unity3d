@@ -21,9 +21,8 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
-using Assets.Editor.GameDevWare.Charon.Models;
-using Assets.Editor.GameDevWare.Charon.Tasks;
-using Assets.Editor.GameDevWare.Charon.Utils;
+using GameDevWare.Charon.Tasks;
+using GameDevWare.Charon.Utils;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEngine;
@@ -32,7 +31,7 @@ using Debug = UnityEngine.Debug;
 
 // ReSharper disable InconsistentNaming
 
-namespace Assets.Editor.GameDevWare.Charon.Windows
+namespace GameDevWare.Charon.Windows
 {
 	internal class GameDataEditorWindow : WebViewEditorWindow, IHasCustomMenu
 	{
@@ -128,11 +127,11 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 				throw new InvalidOperationException("Interrupted by script compiler.");
 
 			// ReSharper disable once AssignNullToNotNullAttribute
-			var shadowCopyOfTools = Path.GetFullPath(Path.Combine(Utils.ToolsRunner.ToolShadowCopyPath, Path.GetFileName(toolsPath)));
+			var shadowCopyOfTools = Path.GetFullPath(Path.Combine(ToolsRunner.ToolShadowCopyPath, Path.GetFileName(toolsPath)));
 			if (File.Exists(shadowCopyOfTools) == false)
 			{
-				if (Directory.Exists(Utils.ToolsRunner.ToolShadowCopyPath) == false)
-					Directory.CreateDirectory(Utils.ToolsRunner.ToolShadowCopyPath);
+				if (Directory.Exists(ToolsRunner.ToolShadowCopyPath) == false)
+					Directory.CreateDirectory(ToolsRunner.ToolShadowCopyPath);
 
 				if (Settings.Current.Verbose)
 					Debug.Log("Shadow copying tools to " + shadowCopyOfTools + ".");
@@ -251,7 +250,7 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 			{
 				case Browser.UnityEmbedded:
 					var nearPanels = typeof(SceneView);
-					var editorWindow = EditorWindow.GetWindow<GameDataEditorWindow>(nearPanels);
+					var editorWindow = GetWindow<GameDataEditorWindow>(nearPanels);
 					editorWindow.titleContent = new GUIContent(title);
 					editorWindow.LoadUrl(gameDataEditorUrl + reference);
 					editorWindow.SetWebViewVisibility(true);

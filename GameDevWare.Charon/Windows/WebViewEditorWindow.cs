@@ -18,13 +18,13 @@
 */
 
 using System.Reflection;
-using Assets.Editor.GameDevWare.Charon.Utils;
+using GameDevWare.Charon.Utils;
 using UnityEditor;
 using UnityEngine;
 
-namespace Assets.Editor.GameDevWare.Charon.Windows
+namespace GameDevWare.Charon.Windows
 {
-	internal abstract class WebViewEditorWindow : UnityEditor.EditorWindow
+	internal abstract class WebViewEditorWindow : EditorWindow
 	{
 		private bool syncingFocus;
 		private int repeatedShow;
@@ -46,7 +46,7 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 		protected virtual void OnDestroy()
 		{
 			if (ReferenceEquals(this.webView, null) == false)
-				ScriptableObject.DestroyImmediate(webView);
+				DestroyImmediate(webView);
 			this.webView = null;
 		}
 		protected virtual void OnGUI()
@@ -132,7 +132,7 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 				var editorAsm = typeof(SceneView).Assembly;
 				var engineAsm = typeof(ScriptableObject).Assembly;
 				var webViewRect = (Rect)engineAsm.GetType("UnityEngine.GUIClip", throwOnError: true).InvokeMember("Unclip", BindingFlags.InvokeMethod | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public, null, null, new object[] { new Rect(0, 0, this.position.width, this.position.height) });
-				this.webView = ScriptableObject.CreateInstance(editorAsm.GetType("UnityEditor.WebView", throwOnError: true));
+				this.webView = CreateInstance(editorAsm.GetType("UnityEditor.WebView", throwOnError: true));
 				var hostView = this.GetFieldValue("m_Parent");
 				this.webView.Invoke("InitWebView", hostView, (int)(webViewRect.x + Paddings.x), (int)(webViewRect.y + Paddings.y), (int)(webViewRect.width - (Paddings.width + Paddings.x)), (int)(webViewRect.height - (Paddings.height + Paddings.y)), false);
 				this.webView.SetPropertyValue("hideFlags", HideFlags.HideAndDontSave);

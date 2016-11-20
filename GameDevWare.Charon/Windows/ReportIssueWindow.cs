@@ -21,27 +21,18 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using Assets.Editor.GameDevWare.Charon.Tasks;
-using Assets.Editor.GameDevWare.Charon.Utils;
+using GameDevWare.Charon.Tasks;
+using GameDevWare.Charon.Utils;
 using UnityEditor;
 using UnityEngine;
 
-namespace Assets.Editor.GameDevWare.Charon.Windows
+namespace GameDevWare.Charon.Windows
 {
-	internal class ReportIssueWindow : UnityEditor.EditorWindow
+	internal class ReportIssueWindow : EditorWindow
 	{
-		public static readonly string CharonLogPath =  Path.Combine("./Library/Charon/Logs", "Charon.log");
-#if UNITY_EDITOR_WIN
-		public static readonly string EditorLogPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Unity\Editor\Editor.log");
-		public static readonly string EditorPrevLogPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Unity\Editor\Editor-prev.log");
-#elif UNITY_EDITOR_OSX
-		public static readonly string EditorLogPath = Path.GetFullPath("~/Library/Logs/Unity/Editor.log");
-		public static readonly string EditorPrevLogPath = Path.GetFullPath("~/Library/Logs/Unity/Editor-prev.log");
-#else
+		public static readonly string CharonLogPath = string.Empty;
 		public static readonly string EditorLogPath = string.Empty;
 		public static readonly string EditorPrevLogPath = string.Empty;
-#endif
 
 		public enum IssueType
 		{
@@ -62,6 +53,21 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 		private HashSet<string> attachmentsToAdd;
 		private Promise reportCoroutine;
 
+		static ReportIssueWindow()
+		{
+			CharonLogPath = Path.Combine("./Library/Charon/Logs", "Charon.log");
+			
+			if (ToolsRunner.IsWindows)
+			{
+				EditorLogPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Unity\Editor\Editor.log");
+				EditorPrevLogPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Unity\Editor\Editor-prev.log");
+			}
+			else if (ToolsRunner.IsOsx)
+			{
+				EditorLogPath = Path.GetFullPath("~/Library/Logs/Unity/Editor.log");
+				EditorPrevLogPath = Path.GetFullPath("~/Library/Logs/Unity/Editor-prev.log");
+			}
+		}
 		public ReportIssueWindow()
 		{
 			this.titleContent = new GUIContent(Resources.UI_UNITYPLUGIN_WINDOWREPORTISSUETITLE);

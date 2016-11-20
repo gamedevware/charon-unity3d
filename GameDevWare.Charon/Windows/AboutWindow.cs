@@ -18,15 +18,15 @@
 */
 
 using System;
-using Assets.Editor.GameDevWare.Charon.Models;
-using Assets.Editor.GameDevWare.Charon.Tasks;
-using Assets.Editor.GameDevWare.Charon.Utils;
+using GameDevWare.Charon.Models;
+using GameDevWare.Charon.Tasks;
+using GameDevWare.Charon.Utils;
 using UnityEditor;
 using UnityEngine;
 
-namespace Assets.Editor.GameDevWare.Charon.Windows
+namespace GameDevWare.Charon.Windows
 {
-	internal class AboutWindow : UnityEditor.EditorWindow
+	internal class AboutWindow : EditorWindow
 	{
 		private string toolsVersion = Resources.UI_UNITYPLUGIN_WINDOWCHECKINGVERSION;
 		private string licenseHolder = Resources.UI_UNITYPLUGIN_WINDOWCHECKINGVERSION;

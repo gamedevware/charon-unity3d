@@ -5,11 +5,14 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text;
-using Assets.Editor.GameDevWare.Charon.Tasks;
+using GameDevWare.Charon.Tasks;
 using Microsoft.Win32;
 using UnityEditor;
+using UnityEngine;
 
-namespace Assets.Editor.GameDevWare.Charon.Utils
+using Coroutine = GameDevWare.Charon.Tasks.Coroutine;
+
+namespace GameDevWare.Charon.Utils
 {
 	public static class ToolsRunner
 	{
@@ -19,18 +22,24 @@ namespace Assets.Editor.GameDevWare.Charon.Utils
 		private const string MONO_PATH_EDITORPREFS_KEY = "CHARON::MONOPATH";
 
 		public static string MonoPath { get { return EditorPrefs.GetString(MONO_PATH_EDITORPREFS_KEY); } set { EditorPrefs.SetString(MONO_PATH_EDITORPREFS_KEY, value); } }
+		public static bool IsWindows { get { return Application.platform == RuntimePlatform.WindowsEditor; } }
+		public static bool IsOsx { get { return Application.platform == RuntimePlatform.OSXEditor; } }
 
 		public static CharonCheckResult CheckCharon()
 		{
 			if (string.IsNullOrEmpty(Settings.Current.ToolsPath) || !File.Exists(Settings.Current.ToolsPath))
 				return CharonCheckResult.MissingExecutable;
-#if UNITY_EDITOR_WIN
-			if (Get45or451FromRegistry() == null && (string.IsNullOrEmpty(MonoPath) || File.Exists(MonoPath) == false))
-				return CharonCheckResult.MissingRuntime;
-#else
-			if (string.IsNullOrEmpty(MonoPath) || File.Exists(MonoPath) == false)
-				return CharonCheckResult.MissingRuntime;
-#endif
+
+			if (IsWindows)
+			{
+				if (Get45or451FromRegistry() == null && (string.IsNullOrEmpty(MonoPath) || File.Exists(MonoPath) == false))
+					return CharonCheckResult.MissingRuntime;
+			}
+			else
+			{
+				if (string.IsNullOrEmpty(MonoPath) || File.Exists(MonoPath) == false)
+					return CharonCheckResult.MissingRuntime;
+			}
 			return CharonCheckResult.Ok;
 		}
 
@@ -74,17 +83,19 @@ namespace Assets.Editor.GameDevWare.Charon.Utils
 			yield return null;
 
 			var isDotNetInstalled = false;
-#if UNITY_EDITOR_WIN
-			isDotNetInstalled = Get45or451FromRegistry() != null;
-#endif
+
+			if (IsWindows)
+			{
+				isDotNetInstalled = Get45or451FromRegistry() != null;
+			}
 
 			if (options.RequireDotNetRuntime && isDotNetInstalled == false)
 			{
-				if (string.IsNullOrEmpty(ToolsRunner.MonoPath))
+				if (string.IsNullOrEmpty(MonoPath))
 					throw new InvalidOperationException("No .NET runtime found on machine.");
 
 				options.StartInfo.Arguments = ToolExecutionOptions.ConcatArguments(options.StartInfo.FileName) + " " + options.StartInfo.Arguments;
-				options.StartInfo.FileName = ToolsRunner.MonoPath;
+				options.StartInfo.FileName = MonoPath;
 			}
 
 			if (options.CaptureStandartError)
@@ -156,7 +167,7 @@ namespace Assets.Editor.GameDevWare.Charon.Utils
 			yield return result;
 		}
 
-#if UNITY_EDITOR_WIN
+
 		public static string Get45or451FromRegistry()
 		{
 			using (RegistryKey ndpKey = RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, "").OpenSubKey("SOFTWARE\\Microsoft\\NET Framework Setup\\NDP\\v4\\Full\\"))
@@ -179,7 +190,7 @@ namespace Assets.Editor.GameDevWare.Charon.Utils
 				return null;
 			}
 		}
-#endif
+
 		public static Promise UpdateCharonExecutable(Action<string, float> progressCallback = null)
 		{
 			return new Coroutine(Menu.CheckForUpdatesAsync(progressCallback));
@@ -196,6 +207,17 @@ namespace Assets.Editor.GameDevWare.Charon.Utils
 			if (sb.Length > 2)
 				sb.Length -= 2;
 			return sb.ToString();
+		}
+
+		// ReSharper disable once IdentifierTypo
+		internal static string GetProgramFilesx86()
+		{
+			if (8 == IntPtr.Size || (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("PROCESSOR_ARCHITEW6432"))))
+			{
+				return Environment.GetEnvironmentVariable("ProgramFiles(x86)");
+			}
+
+			return Environment.GetEnvironmentVariable("ProgramFiles");
 		}
 	}
 }

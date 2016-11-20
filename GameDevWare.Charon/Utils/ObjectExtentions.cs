@@ -20,7 +20,7 @@
 using System;
 using System.Reflection;
 
-namespace Assets.Editor.GameDevWare.Charon.Utils
+namespace GameDevWare.Charon.Utils
 {
 	internal static class ObjectExtentions
 	{

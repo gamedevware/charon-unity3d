@@ -1,1 +1,1 @@
-﻿{"Browser": 0, "BrowserPath": "", "GameDataPaths": ["Assets/gamedata.json"], "LicenseServerAddress": "", "SelectedLicense": "", "SuppressRecoveryScripts": false, "ToolsPath": "Assets/Editor/GameDevWare.Charon/Charon.exe", "ToolsPort": 43210, "Verbose": false}
+﻿{"Browser": 0, "BrowserPath": "", "GameDataPaths": ["Assets/gamedata.json"], "LicenseServerAddress": "", "SelectedLicense": "", "ToolsPath": "Assets/Editor/GameDevWare.Charon/Charon.exe", "ToolsPort": 43210, "Verbose": true}

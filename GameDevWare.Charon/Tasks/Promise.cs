@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 
-namespace Assets.Editor.GameDevWare.Charon.Tasks
+namespace GameDevWare.Charon.Tasks
 {
 	public partial class Promise : IAsyncResult, IDisposable
 	{
@@ -12,9 +12,7 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 		private readonly object asyncCallbackState;
 		private readonly object promiseState;
 		private bool cantBeDisposed;
-#if !UNITY_WEBGL || UNITY_EDITOR
 		private ManualResetEvent completionEvent;
-#endif
 		private Continuation continuations;
 		private AggregateException error;
 		private SynchronizationContext capturedSynchronizationContext;
@@ -24,11 +22,7 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 		public AggregateException Error { get { IsErrorObserved = true; return error; } protected set { error = value; } }
 		public object PromiseState { get { return this.promiseState; } }
 		public bool IsCompleted { get; private set; }
-#if !UNITY_WEBGL || UNITY_EDITOR
 		WaitHandle IAsyncResult.AsyncWaitHandle { get { this.EnsureCompletionEvent(); return this.completionEvent; } }
-#else
-		WaitHandle IAsyncResult.AsyncWaitHandle { get { throw new NotSupportedException(); } }
-#endif
 		object IAsyncResult.AsyncState { get { return this.asyncCallbackState; } }
 		bool IAsyncResult.CompletedSynchronously { get { return false; } }
 		private bool ContinueOnCapturedContext { get { return SynchronizationContext.Current != this.capturedSynchronizationContext && this.capturedSynchronizationContext != null && this.capturedSynchronizationContext.GetType() != typeof(SynchronizationContext); } }
@@ -57,21 +51,16 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 		}
 		public bool TrySetCompleted()
 		{
-#if !UNITY_WEBGL || UNITY_EDITOR
 			var ev = default(ManualResetEvent);
-#endif
-
 			lock (this)
 			{
 				if (this.IsCompleted || this.IsDisposed)
 					return false;
 
 				this.IsCompleted = true;
-#if !UNITY_WEBGL || UNITY_EDITOR
 				ev = this.completionEvent;
 				if (ev != null)
 					ev.Set();
-#endif
 			}
 
 			this.ExecuteContinuations();
@@ -236,7 +225,6 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 			});
 		}
 
-#if !UNITY_WEBGL || UNITY_EDITOR
 		private void EnsureCompletionEvent()
 		{
 			lock (this)
@@ -248,7 +236,6 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 
 			}
 		}
-#endif
 
 		private void ExecuteContinuations()
 		{

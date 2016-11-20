@@ -6,10 +6,10 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Mime;
-using Assets.Editor.GameDevWare.Charon.Json;
-using Assets.Editor.GameDevWare.Charon.Tasks;
+using GameDevWare.Charon.Json;
+using GameDevWare.Charon.Tasks;
 
-namespace Assets.Editor.GameDevWare.Charon.Utils
+namespace GameDevWare.Charon.Utils
 {
 	internal static class HttpUtils
 	{

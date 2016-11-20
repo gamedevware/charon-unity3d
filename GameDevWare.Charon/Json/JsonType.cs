@@ -1,6 +1,6 @@
-﻿namespace Assets.Editor.GameDevWare.Charon.Json
+﻿namespace GameDevWare.Charon.Json
 {
-	public enum JsonType
+	internal enum JsonType
 	{
 		String,
 		Number,

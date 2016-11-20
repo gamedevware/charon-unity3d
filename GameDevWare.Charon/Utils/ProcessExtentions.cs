@@ -2,9 +2,9 @@
 using System.Diagnostics;
 using System.Threading;
 
-namespace Assets.Editor.GameDevWare.Charon.Utils
+namespace GameDevWare.Charon.Utils
 {
-	public static class ProcessExtentions
+	internal static class ProcessExtentions
 	{
 		public static void EndGracefully(int processId)
 		{

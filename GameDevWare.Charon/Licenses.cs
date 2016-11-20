@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
-using System.Text;
-using Assets.Editor.GameDevWare.Charon.Json;
-using Assets.Editor.GameDevWare.Charon.Models;
-using Assets.Editor.GameDevWare.Charon.Tasks;
-using Assets.Editor.GameDevWare.Charon.Utils;
+using GameDevWare.Charon.Json;
+using GameDevWare.Charon.Models;
+using GameDevWare.Charon.Tasks;
+using GameDevWare.Charon.Utils;
 
-namespace Assets.Editor.GameDevWare.Charon
+namespace GameDevWare.Charon
 {
-	public static class Licenses
+	internal static class Licenses
 	{
 		public static Promise<LicenseInfo> GetLicense(bool scheduleCoroutine)
 		{

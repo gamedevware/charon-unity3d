@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using Assets.Editor.GameDevWare.Charon.Utils;
+using GameDevWare.Charon.Utils;
 using UnityEditor;
 
-namespace Assets.Editor.GameDevWare.Charon
+namespace GameDevWare.Charon
 {
 	internal static class GameDataEditorProcess
 	{

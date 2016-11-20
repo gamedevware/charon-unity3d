@@ -17,7 +17,7 @@
     along with this program.  If not, see http://www.gnu.org/licenses.
 */
 
-namespace Assets.Editor.GameDevWare.Charon
+namespace GameDevWare.Charon
 {
 	internal enum Browser
 	{

@@ -2,9 +2,10 @@
 using System.Diagnostics;
 using System.Text;
 using System.Threading;
+
 #pragma warning disable 420
 
-namespace Assets.Editor.GameDevWare.Charon.Utils
+namespace GameDevWare.Charon.Utils
 {
 	public sealed class ToolExecutionResult : IDisposable
 	{

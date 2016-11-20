@@ -27,7 +27,7 @@
 
 // ReSharper disable once CheckNamespace
 // ReSharper disable once EmptyNamespace
-namespace Assets.Editor.GameDevWare.Charon
+namespace GameDevWare.Charon
 {
 
 	public class Resources

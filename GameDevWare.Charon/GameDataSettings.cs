@@ -19,12 +19,12 @@
 
 using System;
 using System.IO;
-using Assets.Editor.GameDevWare.Charon.Json;
-using Assets.Editor.GameDevWare.Charon.Utils;
+using GameDevWare.Charon.Json;
+using GameDevWare.Charon.Utils;
 using UnityEditor;
 using UnityEngine;
 
-namespace Assets.Editor.GameDevWare.Charon
+namespace GameDevWare.Charon
 {
 	internal sealed class GameDataSettings
 	{
@@ -112,7 +112,7 @@ namespace Assets.Editor.GameDevWare.Charon
 			{
 				var gameDataSettingsJson = AssetImporter.GetAtPath(gameDataPath).userData;
 				if (string.IsNullOrEmpty(gameDataSettingsJson) == false)
-					gameDataSettings = JsonObject.Parse(gameDataSettingsJson).As<GameDataSettings>();
+					gameDataSettings = JsonValue.Parse(gameDataSettingsJson).As<GameDataSettings>();
 
 				if (gameDataSettings != null)
 				{

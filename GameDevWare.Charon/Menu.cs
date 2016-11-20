@@ -24,15 +24,15 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Assets.Editor.GameDevWare.Charon.Json;
-using Assets.Editor.GameDevWare.Charon.Tasks;
-using Assets.Editor.GameDevWare.Charon.Utils;
-using Assets.Editor.GameDevWare.Charon.Windows;
+using GameDevWare.Charon.Json;
+using GameDevWare.Charon.Tasks;
+using GameDevWare.Charon.Utils;
+using GameDevWare.Charon.Windows;
 using UnityEditor;
 using UnityEngine;
 
 // ReSharper disable UnusedMember.Local
-namespace Assets.Editor.GameDevWare.Charon
+namespace GameDevWare.Charon
 {
 	internal static class Menu
 	{
@@ -57,7 +57,6 @@ namespace Assets.Editor.GameDevWare.Charon
 		{
 			// why not here :D
 			UnityEditor.Menu.SetChecked(TroubleshootingPrefix + Resources.UI_UNITYPLUGIN_MENUVERBOSELOGS, Settings.Current.Verbose);
-			UnityEditor.Menu.SetChecked(TroubleshootingPrefix + Resources.UI_UNITYPLUGIN_MENURECOVERYSCRIPTS, !Settings.Current.SuppressRecoveryScripts);
 
 			return !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling;
 		}
@@ -130,18 +129,10 @@ namespace Assets.Editor.GameDevWare.Charon
 			Settings.Current.Save();
 		}
 
-		[MenuItem(TroubleshootingPrefix + Resources.UI_UNITYPLUGIN_MENURECOVERYSCRIPTS, false, 10)]
-		private static void RecoveryScripts()
-		{
-			Settings.Current.SuppressRecoveryScripts = !Settings.Current.SuppressRecoveryScripts;
-			UnityEditor.Menu.SetChecked(TroubleshootingPrefix + Resources.UI_UNITYPLUGIN_MENURECOVERYSCRIPTS, !Settings.Current.SuppressRecoveryScripts);
-			Settings.Current.Save();
-		}
-
 		[MenuItem(TroubleshootingPrefix + Resources.UI_UNITYPLUGIN_MENUREPORTISSUE, false, 7)]
 		private static void ReportIssue()
 		{
-			UnityEditor.EditorWindow.GetWindow<ReportIssueWindow>(utility: true);
+			EditorWindow.GetWindow<ReportIssueWindow>(utility: true);
 		}
 
 		[MenuItem(TroubleshootingPrefix + Resources.UI_UNITYPLUGIN_MENUOPENLOGS, false, 8)]
@@ -192,7 +183,7 @@ namespace Assets.Editor.GameDevWare.Charon
 		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUABOUT, false, 12)]
 		private static void About()
 		{
-			UnityEditor.EditorWindow.GetWindow<AboutWindow>(utility: true);
+			EditorWindow.GetWindow<AboutWindow>(utility: true);
 		}
 
 		[MenuItem("Assets/Create/GameData")]
@@ -232,16 +223,16 @@ namespace Assets.Editor.GameDevWare.Charon
 			if (consoleWindowType == null)
 				return;
 
-			var consoleWindow = UnityEditor.EditorWindow.GetWindow(consoleWindowType);
+			var consoleWindow = EditorWindow.GetWindow(consoleWindowType);
 			consoleWindow.Focus();
 		}
 
 		public static IEnumerable ScanForGameDataAsync(Action<string, float> progressCallback = null)
 		{
-			switch (Utils.ToolsRunner.CheckCharon())
+			switch (ToolsRunner.CheckCharon())
 			{
 				case CharonCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
-				case CharonCheckResult.MissingExecutable: yield return Utils.ToolsRunner.UpdateCharonExecutable(progressCallback); break;
+				case CharonCheckResult.MissingExecutable: yield return ToolsRunner.UpdateCharonExecutable(progressCallback); break;
 				case CharonCheckResult.Ok: break;
 				default: throw new InvalidOperationException("Unknown Tools check result.");
 			}
@@ -309,10 +300,10 @@ namespace Assets.Editor.GameDevWare.Charon
 		}
 		public static IEnumerable GenerateCodeAndAssetsAsync(string path = null, Action<string, float> progressCallback = null)
 		{
-			switch (Utils.ToolsRunner.CheckCharon())
+			switch (ToolsRunner.CheckCharon())
 			{
 				case CharonCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
-				case CharonCheckResult.MissingExecutable: yield return Utils.ToolsRunner.UpdateCharonExecutable(progressCallback); break;
+				case CharonCheckResult.MissingExecutable: yield return ToolsRunner.UpdateCharonExecutable(progressCallback); break;
 				case CharonCheckResult.Ok: break;
 				default: throw new InvalidOperationException("Unknown Tools check result.");
 			}
@@ -491,10 +482,10 @@ namespace Assets.Editor.GameDevWare.Charon
 		}
 		public static IEnumerable ValidateAsync(string path = null, Action<string, float> progressCallback = null)
 		{
-			switch (Utils.ToolsRunner.CheckCharon())
+			switch (ToolsRunner.CheckCharon())
 			{
 				case CharonCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
-				case CharonCheckResult.MissingExecutable: yield return Utils.ToolsRunner.UpdateCharonExecutable(progressCallback); break;
+				case CharonCheckResult.MissingExecutable: yield return ToolsRunner.UpdateCharonExecutable(progressCallback); break;
 				case CharonCheckResult.Ok: break;
 				default: throw new InvalidOperationException("Unknown Tools check result.");
 			}
@@ -579,10 +570,10 @@ namespace Assets.Editor.GameDevWare.Charon
 		}
 		public static IEnumerable ExtractT4Templates(string extractionPath)
 		{
-			switch (Utils.ToolsRunner.CheckCharon())
+			switch (ToolsRunner.CheckCharon())
 			{
 				case CharonCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
-				case CharonCheckResult.MissingExecutable: yield return Utils.ToolsRunner.UpdateCharonExecutable(ProgressUtils.ReportToLog(Resources.UI_UNITYPLUGIN_MENUCHECKUPDATES)); break;
+				case CharonCheckResult.MissingExecutable: yield return ToolsRunner.UpdateCharonExecutable(ProgressUtils.ReportToLog(Resources.UI_UNITYPLUGIN_MENUCHECKUPDATES)); break;
 				case CharonCheckResult.Ok: break;
 				default: throw new InvalidOperationException("Unknown Tools check result.");
 			}
@@ -732,7 +723,7 @@ namespace Assets.Editor.GameDevWare.Charon
 
 			// ReSharper disable once EmptyGeneralCatchClause
 			try { if (Directory.Exists(ToolsRunner.ToolShadowCopyPath)) Directory.Delete(ToolsRunner.ToolShadowCopyPath, true); }
-			catch { Debug.LogWarning(string.Format("Failed to delete directory with old copy of tools '{0}'. Please restart unity or delete it manually.", Utils.ToolsRunner.ToolShadowCopyPath)); }
+			catch { Debug.LogWarning(string.Format("Failed to delete directory with old copy of tools '{0}'. Please restart unity or delete it manually.", ToolsRunner.ToolShadowCopyPath)); }
 
 			ToolsRunner.ToolShadowCopyPath = FileUtil.GetUniqueTempPathInProject();
 

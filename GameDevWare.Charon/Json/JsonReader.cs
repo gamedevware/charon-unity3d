@@ -4,7 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 
-namespace Assets.Editor.GameDevWare.Charon.Json
+namespace GameDevWare.Charon.Json
 {
 	internal class JsonReader
 	{
