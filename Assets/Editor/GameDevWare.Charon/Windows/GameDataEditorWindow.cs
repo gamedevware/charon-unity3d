@@ -98,15 +98,15 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 
 			EditorUtility.DisplayProgressBar(title, Resources.UI_UNITYPLUGIN_WINDOWEDITORCHECKINGLICENSE, 0.10f);
 
-			var license = default(LicenseInfo);
-			while (license == null)
-			{
-				var getLicense = Licenses.GetLicense(scheduleCoroutine: true);
-				yield return getLicense;
-				license = getLicense.GetResult();
-				if (license == null)
-					yield return LicenseActivationWindow.ShowAsync();
-			}
+			//var license = default(LicenseInfo);
+			//while (license == null)
+			//{
+			//	var getLicense = Licenses.GetLicense(scheduleCoroutine: true);
+			//	yield return getLicense;
+			//	license = getLicense.GetResult();
+			//	if (license == null)
+			//		yield return LicenseActivationWindow.ShowAsync();
+			//}
 
 			var toolsPath = Settings.Current.ToolsPath;
 			var port = Settings.Current.ToolsPort;

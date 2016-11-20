@@ -35,6 +35,8 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 		private Promise<ToolExecutionResult> checkToolsVersion;
 		[NonSerialized]
 		private Promise<LicenseInfo> getLicense;
+		[NonSerialized]
+		private bool changeLicenseIsDisabled;
 
 		public AboutWindow()
 		{
@@ -55,7 +57,23 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 			GUILayout.Label(Resources.UI_UNITYPLUGIN_WINDOWINFOGROUP, EditorStyles.boldLabel);
 			EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_WINDOWTOOLSVERSIONLABEL, this.toolsVersion);
 			GUI.enabled = false;
-			EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_WINDOWLICENSEHOLDER, this.licenseHolder);
+			EditorGUILayout.BeginHorizontal();
+			{
+				EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_WINDOWLICENSEHOLDER, this.licenseHolder);
+				GUI.enabled = !this.changeLicenseIsDisabled;
+				if (GUILayout.Button(Resources.UI_UNITYPLUGIN_CHANGEBUTTON, EditorStyles.toolbarButton, GUILayout.Width(70), GUILayout.Height(18)))
+				{
+					LicenseActivationWindow.ShowAsync(autoClose: false).ContinueWith(p =>
+					{
+						this.getLicense = null;
+						this.changeLicenseIsDisabled = false;
+					});
+					this.Repaint();
+				}
+				GUI.enabled = false;
+				GUILayout.Space(5);
+			}
+			EditorGUILayout.EndHorizontal();
 			GUI.enabled = this.getLicense != null && this.getLicense.IsCompleted;
 			EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_WINDOWLICENSEKEY, this.licenseKey);
 			GUI.enabled = true;
@@ -110,6 +128,7 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 				case CharonCheckResult.Ok:
 					if (this.checkToolsVersion == null)
 					{
+						this.toolsVersion = Resources.UI_UNITYPLUGIN_WINDOWCHECKINGVERSION;
 						this.checkToolsVersion = ToolsRunner.RunCharonAsTool("VERSION");
 						this.checkToolsVersion.ContinueWith(r =>
 						{
@@ -119,9 +138,12 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 								this.toolsVersion = r.GetResult().GetOutputData() + r.GetResult().GetErrorData();
 							this.Repaint();
 						});
+						this.Repaint();
 					}
 					else if (this.checkToolsVersion != null && this.checkToolsVersion.IsCompleted && this.getLicense == null)
 					{
+						this.licenseHolder = Resources.UI_UNITYPLUGIN_WINDOWCHECKINGVERSION;
+						this.licenseKey = Resources.UI_UNITYPLUGIN_WINDOWCHECKINGVERSION;
 						this.getLicense = Licenses.GetLicense(scheduleCoroutine: true);
 						this.getLicense.ContinueWith((Promise<LicenseInfo> p) =>
 						{
@@ -138,6 +160,7 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 							}
 							this.Repaint();
 						});
+						this.Repaint();
 					}
 					break;
 
