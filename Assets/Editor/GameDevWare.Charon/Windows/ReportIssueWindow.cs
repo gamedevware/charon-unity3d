@@ -31,6 +31,18 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 {
 	internal class ReportIssueWindow : UnityEditor.EditorWindow
 	{
+		public static readonly string CharonLogPath =  Path.Combine("./Library/Charon/Logs", "Charon.log");
+#if UNITY_EDITOR_WIN
+		public static readonly string EditorLogPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Unity\Editor\Editor.log");
+		public static readonly string EditorPrevLogPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Unity\Editor\Editor-prev.log");
+#elif UNITY_EDITOR_OSX
+		public static readonly string EditorLogPath = Path.GetFullPath("~/Library/Logs/Unity/Editor.log");
+		public static readonly string EditorPrevLogPath = Path.GetFullPath("~/Library/Logs/Unity/Editor-prev.log");
+#else
+		public static readonly string EditorLogPath = string.Empty;
+		public static readonly string EditorPrevLogPath = string.Empty;
+#endif
+
 		public enum IssueType
 		{
 			Bug = 0,
@@ -71,26 +83,14 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 			this.attachmentsToAdd = new HashSet<string>();
 			this.attachmentsToRemove = new HashSet<string>();
 
-			var editorLogPath = string.Empty;
-			var editorPrevLogPath = string.Empty;
-			var charonLogPath = Path.Combine("./Library/Charon/Logs", "Charon.log");
+			if (!string.IsNullOrEmpty(EditorLogPath) && File.Exists(EditorLogPath))
+				this.attachmentsToAdd.Add(EditorLogPath);
 
-#if UNITY_EDITOR_WIN
-			editorLogPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Unity\Editor\Editor.log");
-			editorPrevLogPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Unity\Editor\Editor-prev.log");
-#elif UNITY_EDITOR_OSX
-			editorLogPath = Path.GetFullPath("~/Library/Logs/Unity/Editor.log");
-			editorLogPath = Path.GetFullPath("~/Library/Logs/Unity/Editor-prev.log");
-#else
-#endif
-			if (!string.IsNullOrEmpty(editorLogPath) && File.Exists(editorLogPath))
-				this.attachmentsToAdd.Add(editorLogPath);
+			if (!string.IsNullOrEmpty(EditorPrevLogPath) && File.Exists(EditorPrevLogPath))
+				this.attachmentsToAdd.Add(EditorPrevLogPath);
 
-			if (!string.IsNullOrEmpty(editorPrevLogPath) && File.Exists(editorPrevLogPath))
-				this.attachmentsToAdd.Add(editorPrevLogPath);
-
-			if (!string.IsNullOrEmpty(charonLogPath) && File.Exists(charonLogPath))
-				this.attachmentsToAdd.Add(charonLogPath);
+			if (!string.IsNullOrEmpty(CharonLogPath) && File.Exists(CharonLogPath))
+				this.attachmentsToAdd.Add(CharonLogPath);
 		}
 
 		protected void OnGUI()

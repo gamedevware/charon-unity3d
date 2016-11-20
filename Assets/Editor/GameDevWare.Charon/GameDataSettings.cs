@@ -73,7 +73,7 @@ namespace Assets.Editor.GameDevWare.Charon
 		public string CodeGenerationPath;
 		public string GameDataClassName;
 		public string Namespace;
-		public string EntryClassName;
+		public string DocumentClassName;
 		public int Options;
 		public int LineEnding;
 		public int Indentation;
@@ -91,7 +91,7 @@ namespace Assets.Editor.GameDevWare.Charon
 			settings.CodeGenerationPath = Path.ChangeExtension(gameDataPath, "cs");
 			settings.GameDataClassName = Path.GetFileNameWithoutExtension(gameDataPath);
 			settings.Namespace = Path.GetDirectoryName(gameDataPath).Replace("\\", ".").Replace("/", ".");
-			settings.EntryClassName = "Entry";
+			settings.DocumentClassName = "Entry";
 			settings.Options = (int)(CodeGenerationOptions.HideLocalizedStrings | CodeGenerationOptions.HideReferences | CodeGenerationOptions.SuppressDataContractAttributes);
 			return settings;
 		}

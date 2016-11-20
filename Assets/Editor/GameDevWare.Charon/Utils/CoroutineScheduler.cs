@@ -82,13 +82,13 @@ namespace Assets.Editor.GameDevWare.Charon.Utils
 			var resultPromise = new Promise<T>();
 			WaitQueue.Enqueue(() =>
 			{
-				Current = new Coroutine<T>(coroutine).ContinueWith(t =>
+				Current = new Coroutine<T>(coroutine).ContinueWith(new ActionContinuation<T>(t =>
 				{
 					CoroutineById.Remove(id);
 
 					if (t.HasErrors) resultPromise.SetFailed(t.Error);
 					else resultPromise.SetResult(t.GetResult());
-				});
+				}));
 			});
 
 			CoroutineById.Add(id, resultPromise);

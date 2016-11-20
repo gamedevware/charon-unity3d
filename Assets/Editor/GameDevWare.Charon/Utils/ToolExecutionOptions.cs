@@ -23,7 +23,7 @@ namespace Assets.Editor.GameDevWare.Charon.Utils
 				WorkingDirectory = Path.GetFullPath("./"),
 				EnvironmentVariables =
 				{
-					{ "UNITY_PROJECT_PATH", Path.GetFullPath("./").Trim(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) }
+					{ "UNITY_PROJECT_PATH", Path.GetFullPath("./").TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) }
 				},
 				CreateNoWindow = true
 			};

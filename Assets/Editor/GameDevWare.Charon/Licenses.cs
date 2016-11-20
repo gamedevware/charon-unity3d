@@ -49,13 +49,16 @@ namespace Assets.Editor.GameDevWare.Charon
 			);
 			yield return checkLicenseAsync;
 
-			var errorData = checkLicenseAsync.GetResult().GetErrorData();
-			if (string.IsNullOrEmpty(errorData) == false)
-				throw new InvalidOperationException(errorData);
+			using (var result = checkLicenseAsync.GetResult())
+			{
+				var errorData = result.GetErrorData();
+				if (string.IsNullOrEmpty(errorData) == false)
+					throw new InvalidOperationException(errorData);
 
-			var licensesArray = (JsonArray)JsonValue.Parse(checkLicenseAsync.GetResult().GetOutputData());
-			var licenses = licensesArray.As<LicenseInfo[]>();
-			yield return licenses;
+				var licensesArray = (JsonArray)JsonValue.Parse(result.GetOutputData());
+				var licenses = licensesArray.As<LicenseInfo[]>();
+				yield return licenses;
+			}
 		}
 
 		public static Promise<LicenseInfo[]> DownloadLicenses(string email, string password, bool scheduleCoroutine)
@@ -77,12 +80,16 @@ namespace Assets.Editor.GameDevWare.Charon
 			);
 			yield return checkLicenseAsync;
 
-			var errorData = checkLicenseAsync.GetResult().GetErrorData();
-			if (string.IsNullOrEmpty(errorData) == false)
-				throw new InvalidOperationException(errorData);
+			using (var result = checkLicenseAsync.GetResult())
+			{
+				var errorData = result.GetErrorData();
+				if (string.IsNullOrEmpty(errorData) == false)
+					throw new InvalidOperationException(errorData);
+			}
 
 			foreach (var step in GetLicensesAsync())
 				yield return step;
+
 		}
 
 		public static Promise<LicenseInfo[]> Register(string firstName, string lastName, string organizationName, string email, string password, string unityInvoiceNumber, bool scheduleCoroutine)
@@ -114,9 +121,12 @@ namespace Assets.Editor.GameDevWare.Charon
 
 			yield return registerAsync;
 
-			var errorData = registerAsync.GetResult().GetErrorData();
-			if (string.IsNullOrEmpty(errorData) == false)
-				throw new InvalidOperationException(errorData);
+			using (var result = registerAsync.GetResult())
+			{
+				var errorData = result.GetErrorData();
+				if (string.IsNullOrEmpty(errorData) == false)
+					throw new InvalidOperationException(errorData);
+			}
 
 			foreach (var step in DownloadLicensesAsync(email, password))
 				yield return step;

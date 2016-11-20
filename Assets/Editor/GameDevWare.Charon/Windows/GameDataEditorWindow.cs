@@ -80,7 +80,8 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 				yield return waitTask.IgnoreFault();
 
 			var title = Path.GetFileName(gameDataPath);
-			EditorUtility.DisplayProgressBar(title, Resources.UI_UNITYPLUGIN_WINDOWEDITORCHECKINGRUNTIME, 0.05f);
+			if (EditorUtility.DisplayCancelableProgressBar(title, Resources.UI_UNITYPLUGIN_WINDOWEDITORCHECKINGRUNTIME, 0.05f))
+				throw new InvalidOperationException("Interrupted by user.");
 
 			switch (ToolsRunner.CheckCharon())
 			{
@@ -96,8 +97,7 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 					throw new InvalidOperationException("Unknown Tools check result.");
 			}
 
-			EditorUtility.DisplayProgressBar(title, Resources.UI_UNITYPLUGIN_WINDOWEDITORCHECKINGLICENSE, 0.10f);
-
+			// EditorUtility.DisplayProgressBar(title, Resources.UI_UNITYPLUGIN_WINDOWEDITORCHECKINGLICENSE, 0.10f);
 			//var license = default(LicenseInfo);
 			//while (license == null)
 			//{
@@ -111,20 +111,21 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 			var toolsPath = Settings.Current.ToolsPath;
 			var port = Settings.Current.ToolsPort;
 			var gameDataEditorUrl = "http://localhost:" + port + "/";
-			var timeoutPromise = Promise.Delayed(TimeSpan.FromSeconds(10));
 
 			if (string.IsNullOrEmpty(toolsPath) || File.Exists(toolsPath) == false)
 				throw new InvalidOperationException("Unable to launch Charon.exe tool because path to it is null or empty.");
 
 			toolsPath = Path.GetFullPath(toolsPath);
 
-			if (GameDataEditorProcess.IsRunning)
-				GameDataEditorProcess.Kill();
+			GameDataEditorProcess.EndGracefully();
 
 			if (Settings.Current.Verbose)
 				Debug.Log("Starting gamedata editor at " + gameDataEditorUrl + "...");
 
-			EditorUtility.DisplayProgressBar(title, Resources.UI_UNITYPLUGIN_WINDOWEDITORCOPYINGEXECUTABLE, 0.30f);
+			if (EditorUtility.DisplayCancelableProgressBar(title, Resources.UI_UNITYPLUGIN_WINDOWEDITORCOPYINGEXECUTABLE, 0.30f))
+				throw new InvalidOperationException("Interrupted by user.");
+			if (EditorApplication.isCompiling)
+				throw new InvalidOperationException("Interrupted by script compiler.");
 
 			// ReSharper disable once AssignNullToNotNullAttribute
 			var shadowCopyOfTools = Path.GetFullPath(Path.Combine(Utils.ToolsRunner.ToolShadowCopyPath, Path.GetFileName(toolsPath)));
@@ -152,7 +153,10 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 				}
 			}
 
-			EditorUtility.DisplayProgressBar(title, Resources.UI_UNITYPLUGIN_WINDOWEDITORLAUNCHINGEXECUTABLE, 0.60f);
+			if (EditorUtility.DisplayCancelableProgressBar(title, Resources.UI_UNITYPLUGIN_WINDOWEDITORLAUNCHINGEXECUTABLE, 0.60f))
+				throw new InvalidOperationException("Interrupted by user.");
+			if (EditorApplication.isCompiling)
+				throw new InvalidOperationException("Interrupted by script compiler.");
 
 			var toolsProcessTask = ToolsRunner.Run(
 				new ToolExecutionOptions
@@ -166,8 +170,8 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 				)
 				{
 					RequireDotNetRuntime = true,
-					CaptureStandartError = true,
-					CaptureStandartOutput = true,
+					CaptureStandartError = false,
+					CaptureStandartOutput = false,
 					ExecutionTimeout = TimeSpan.Zero,
 					WaitForExit = false,
 					StartInfo =
@@ -182,27 +186,66 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 				}
 			);
 
+			toolsProcessTask.ContinueWith(t =>
+			{
+				if (t.HasErrors) return;
+				using (var result = toolsProcessTask.GetResult())
+					GameDataEditorProcess.Watch(result.Process.Id, result.Process.ProcessName);
+			});
+
 			if (Settings.Current.Verbose)
 				Debug.Log("Launching gamedata editor process.");
 
+			// wait untill server process start
+			var timeoutPromise = Promise.Delayed(TimeSpan.FromSeconds(10));
 			var startPromise = toolsProcessTask.IgnoreFault();
+			var startCompletePromise = Promise.WhenAny(timeoutPromise, startPromise);
+			var cancelPromise = new Coroutine<bool>(RunCancellableProgress(title, Resources.UI_UNITYPLUGIN_WINDOWEDITORLAUNCHINGEXECUTABLE, 0.65f, 0.80f, TimeSpan.FromSeconds(5), startCompletePromise));
 
-			yield return Promise.WhenAny(timeoutPromise, startPromise);
-
+			yield return Promise.WhenAny(timeoutPromise, startPromise, cancelPromise);
 			if (timeoutPromise.IsCompleted)
 			{
 				Debug.LogWarning(Resources.UI_UNITYPLUGIN_WINDOWFAILEDTOSTARTEDITORTIMEOUT);
-				toolsProcessTask.ContinueWith(t =>
-				{
-					if (t.HasErrors) return;
-					GameDataEditorProcess.Kill(t.GetResult().ProcessId);
-				});
 				yield break;
 			}
+			else if (cancelPromise.IsCompleted)
+			{
+				if (EditorApplication.isCompiling)
+					throw new InvalidOperationException("Interrupted by script compiler.");
+				else
+					throw new InvalidOperationException("Interrupted by user.");
+			}
 
-			GameDataEditorProcess.Watch(toolsProcessTask.GetResult().ProcessId, shadowCopyOfTools);
+			if (EditorUtility.DisplayCancelableProgressBar(title, Resources.UI_UNITYPLUGIN_WINDOWEDITORLAUNCHINGEXECUTABLE, 0.80f))
+				throw new InvalidOperationException("Interrupted by user.");
+			if (EditorApplication.isCompiling)
+				throw new InvalidOperationException("Interrupted by script compiler.");
 
-			EditorUtility.DisplayProgressBar(title, Resources.UI_UNITYPLUGIN_WINDOWEDITOROPENINGBROWSER, 0.90f);
+			// wait untill server start to respond
+			timeoutPromise = Promise.Delayed(TimeSpan.FromSeconds(10));
+			startPromise = HttpUtils.Download(new Uri(gameDataEditorUrl), timeout: TimeSpan.FromSeconds(1));
+			startCompletePromise = new Promise();
+			cancelPromise = new Coroutine<bool>(RunCancellableProgress(title, Resources.UI_UNITYPLUGIN_WINDOWEDITORLAUNCHINGEXECUTABLE, 0.80f, 0.90f, TimeSpan.FromSeconds(5), startCompletePromise));
+			while (!timeoutPromise.IsCompleted)
+			{
+				yield return startPromise.IgnoreFault();
+				if (startPromise.HasErrors == false)
+					break;
+				else
+					startPromise = HttpUtils.Download(new Uri(gameDataEditorUrl), timeout: TimeSpan.FromSeconds(1));
+			}
+			if (timeoutPromise.IsCompleted && (!startPromise.IsCompleted || startPromise.HasErrors))
+			{
+				startCompletePromise.TrySetCompleted();
+				Debug.LogWarning(Resources.UI_UNITYPLUGIN_WINDOWFAILEDTOSTARTEDITORTIMEOUT);
+				yield break;
+			}
+			startCompletePromise.TrySetCompleted();
+
+			if (EditorUtility.DisplayCancelableProgressBar(title, Resources.UI_UNITYPLUGIN_WINDOWEDITOROPENINGBROWSER, 0.95f))
+				throw new InvalidOperationException("Interrupted by user.");
+			if (EditorApplication.isCompiling)
+				throw new InvalidOperationException("Interrupted by script compiler.");
 
 			switch ((Browser)Settings.Current.Browser)
 			{
@@ -217,17 +260,31 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 					break;
 				case Browser.Custom:
 					if (string.IsNullOrEmpty(Settings.Current.BrowserPath))
-						goto SystemDefault;
-
-					var startBrowser = Process.Start(Settings.Current.BrowserPath, gameDataEditorUrl + reference);
-					startBrowser.Start();
+						goto case Browser.SystemDefault;
+					Process.Start(Settings.Current.BrowserPath, gameDataEditorUrl + reference);
 					break;
 				case Browser.SystemDefault:
-					SystemDefault:
 					EditorUtility.OpenWithDefaultApp(gameDataEditorUrl + reference);
 					break;
 			}
 		}
 
+		private static IEnumerable RunCancellableProgress(string title, string message, float fromProgress, float toProgress, TimeSpan timeInterpolationWindow, Promise cancellation)
+		{
+			var startTime = DateTime.UtcNow;
+			while (cancellation.IsCompleted == false)
+			{
+				var timeElapsed = DateTime.UtcNow - startTime;
+				var timeElapsedRatio = (float)Math.Min(1.0f, Math.Max(0.0f, timeElapsed.TotalMilliseconds / timeInterpolationWindow.TotalMilliseconds));
+				var progress = fromProgress + (toProgress - fromProgress) * timeElapsedRatio;
+
+				if (EditorUtility.DisplayCancelableProgressBar(title, message, progress) || EditorApplication.isCompiling)
+					yield return true;
+
+				yield return Promise.Delayed(TimeSpan.FromMilliseconds(100));
+			}
+
+			yield return false;
+		}
 	}
 }

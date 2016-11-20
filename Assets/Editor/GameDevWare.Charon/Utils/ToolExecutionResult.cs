@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace Assets.Editor.GameDevWare.Charon.Utils
 {
-	public sealed class ToolExecutionResult
+	public sealed class ToolExecutionResult : IDisposable
 	{
 		private const int StandartOutputOpened = 0x1 << 1;
 		private const int StandartErrorOpened = 0x1 << 2;
@@ -17,11 +17,13 @@ namespace Assets.Editor.GameDevWare.Charon.Utils
 
 		public bool HasPendingData { get { return this.standartStreamOpenStatus != 0; } }
 
+		public Process Process { get; private set; }
 		public int ProcessId { get; private set; }
 		public int ExitCode { get; set; }
 
 		public ToolExecutionResult(ToolExecutionOptions options, Process process)
 		{
+			this.Process = process;
 			this.ProcessId = process.Id;
 			this.ExitCode = int.MinValue;
 
@@ -39,6 +41,10 @@ namespace Assets.Editor.GameDevWare.Charon.Utils
 				process.ErrorDataReceived += this.OnErrorDataReceived;
 				process.BeginErrorReadLine();
 			}
+		}
+		~ToolExecutionResult()
+		{
+			this.Dispose(false);
 		}
 
 		public string GetOutputData()
@@ -60,6 +66,7 @@ namespace Assets.Editor.GameDevWare.Charon.Utils
 					status = this.standartStreamOpenStatus;
 					removedStatus = status & ~StandartErrorOpened;
 				} while (Interlocked.CompareExchange(ref this.standartStreamOpenStatus, removedStatus, status) != status);
+				this.Process.CancelErrorRead();
 			}
 			else
 			{
@@ -76,11 +83,29 @@ namespace Assets.Editor.GameDevWare.Charon.Utils
 					status = this.standartStreamOpenStatus;
 					removedStatus = status & ~StandartOutputOpened;
 				} while (Interlocked.CompareExchange(ref this.standartStreamOpenStatus, removedStatus, status) != status);
+				this.Process.CancelOutputRead();
 			}
 			else
 			{
 				this.standartOutputBuffer.Append(e.Data);
 			}
+		}
+
+		private void Dispose(bool disposed)
+		{
+			if (disposed)
+				GC.SuppressFinalize(this);
+
+			if (this.standartOutputBuffer != null)
+				this.Process.CancelOutputRead();
+			if (this.standartErrorBuffer != null)
+				this.Process.CancelErrorRead();
+			this.Process.Dispose();
+		}
+
+		public void Dispose()
+		{
+
 		}
 	}
 }

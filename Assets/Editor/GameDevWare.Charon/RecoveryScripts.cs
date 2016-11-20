@@ -160,7 +160,7 @@ namespace Assets.Editor.GameDevWare.Charon
 						.Append(" ")
 						.Append("--gameDataClassName").Append(" ").Append(gameDataSettings.GameDataClassName)
 						.Append(" ")
-						.Append("--entryClassName").Append(" ").Append(gameDataSettings.EntryClassName)
+						.Append("--documentClassName").Append(" ").Append(gameDataSettings.DocumentClassName)
 						.Append(" ")
 						.Append("--options").Append(" ").Append("\"").Append(generationOptions.ToString()).Append("\"")
 						.Append(" ")

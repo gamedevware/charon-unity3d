@@ -135,7 +135,8 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 							if (r.HasErrors)
 								this.toolsVersion = r.Error.Unwrap().Message;
 							else
-								this.toolsVersion = r.GetResult().GetOutputData() + r.GetResult().GetErrorData();
+								using(var result = r.GetResult()) 
+									this.toolsVersion = result.GetOutputData() + result.GetErrorData();
 							this.Repaint();
 						});
 						this.Repaint();

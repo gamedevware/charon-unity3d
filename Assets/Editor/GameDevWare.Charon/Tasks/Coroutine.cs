@@ -1,23 +1,4 @@
-﻿/*
-	Copyright (c) 2016 Denis Zykov
-
-	This is part of "Charon: Game Data Editor" Unity Plugin.
-
-	Charon Game Data Editor Unity Plugin is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see http://www.gnu.org/licenses.
-*/
-
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using Assets.Editor.GameDevWare.Charon.Utils;
@@ -53,19 +34,16 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 					if (error != null && ReportedExceptions.Contains(error) == false)
 					{
 						ReportedExceptions.Add(error);
-
-						Debug.LogError(task.GetType().Name + " was finished with error: " + error);
+						if (Settings.Current.Verbose)
+							Debug.LogError(error);
 					}
 				}
 			};
 		}
-
 		public Coroutine(IEnumerable coroutine, AsyncCallback callback = null, object asyncCallbackState = null, object promiseState = null)
 			: base(coroutine, callback, asyncCallbackState, promiseState)
 		{
 		}
-
-
 
 		internal static IEnumerable WaitForUpdatablePromise(Promise promise)
 		{
@@ -135,8 +113,9 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 				var error = exception.Unwrap();
 				if (Coroutine.ReportedExceptions.Contains(error) == false)
 				{
+					if (Settings.Current.Verbose)
+						Debug.LogError(error);
 					Coroutine.ReportedExceptions.Add(error.Unwrap());
-					Debug.LogError(this.GetType().Name + " was finished with error: " + error);
 				}
 
 				this.TrySetFailed(error);
@@ -154,10 +133,10 @@ namespace Assets.Editor.GameDevWare.Charon.Tasks
 		public override string ToString()
 		{
 			if (!this.IsCompleted)
-				return string.Format("{0}, running", this.GetType().Name);
+				return string.Format("{0}, running", coroutine);
 			if (this.HasErrors)
-				return string.Format("{0}, error: " + this.Error.Message, this.GetType().Name);
-			return string.Format("{0}, complete", this.GetType().Name);
+				return string.Format("{0}, error: " + this.Error.Message, coroutine);
+			return string.Format("{0}, complete", coroutine);
 		}
 	}
 }

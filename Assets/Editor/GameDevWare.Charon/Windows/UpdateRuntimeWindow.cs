@@ -42,7 +42,7 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 		private const string MONO_EXECUTABLE_NAME = "mono";
 		private static readonly string MonoDefaultLocation = @"/usr/bin";
 #endif
-		private static readonly Version MinimalMonoVersion = new Version(4, 0, 3);
+		private static readonly Version MinimalMonoVersion = new Version(4, 6, 0);
 
 		private string monoPath;
 		private string runtimeVersion;
@@ -243,8 +243,8 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 			window.autoClose = autoClose;
 #if UNITY_EDITOR_WIN
 			window.runtimeVersion = Utils.ToolsRunner.Get45or451FromRegistry();
-			window.RunCheck();
 #endif
+			window.RunCheck();
 			window.Focus();
 
 			if (Settings.Current.Verbose)

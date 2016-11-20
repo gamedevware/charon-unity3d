@@ -35,7 +35,7 @@ namespace Assets.Editor.GameDevWare.Charon.Windows
 
 		protected Rect Paddings { get; set; }
 
-		public WebViewEditorWindow()
+		protected WebViewEditorWindow()
 		{
 			this.titleContent = new GUIContent(Resources.UI_UNITYPLUGIN_WINDOWABOUTCHARONTITLE);
 			this.minSize = new Vector2(100, 100);
