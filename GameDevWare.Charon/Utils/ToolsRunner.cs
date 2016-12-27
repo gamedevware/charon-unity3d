@@ -78,6 +78,16 @@ namespace GameDevWare.Charon.Utils
 				}
 			});
 		}
+
+		public static Promise<T> RunSequentially<T>(IEnumerable coroutine)
+		{
+			return CoroutineScheduler.Schedule<T>(coroutine);
+		}
+		public static Promise RunSequentially(IEnumerable coroutine)
+		{
+			return CoroutineScheduler.Schedule(coroutine);
+		}
+
 		private static IEnumerable RunAsync(ToolExecutionOptions options)
 		{
 			yield return null;
@@ -166,7 +176,6 @@ namespace GameDevWare.Charon.Utils
 
 			yield return result;
 		}
-
 
 		public static string Get45or451FromRegistry()
 		{

@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.Serialization;
+using GameDevWare.Charon.Utils;
 
 namespace GameDevWare.Charon.Tasks
 {
@@ -126,6 +127,11 @@ namespace GameDevWare.Charon.Tasks
 			if (innerExceptions != null)
 				throw new AggregateException(this.Message, innerExceptions);
 		}
+		public Exception Unwrap()
+		{
+			return ExceptionUtils.Unwrap(this);
+		}
+
 		public override string ToString()
 		{
 			var str = base.ToString();

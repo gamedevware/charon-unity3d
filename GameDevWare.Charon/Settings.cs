@@ -30,7 +30,7 @@ using UnityEngine;
 namespace GameDevWare.Charon
 {
 	[Serializable]
-	internal class Settings
+	public class Settings
 	{
 		public const string PREF_PREFIX = "Charon_";
 		public const string SETTINGS_PATH = "Assets/Editor/GameDevWare.Charon/Settings.json";
