@@ -18,8 +18,7 @@
 */
 
 using System;
-using GameDevWare.Charon.Models;
-using GameDevWare.Charon.Tasks;
+using GameDevWare.Charon.Async;
 using GameDevWare.Charon.Utils;
 using UnityEditor;
 using UnityEngine;
@@ -32,16 +31,12 @@ namespace GameDevWare.Charon.Windows
 		private string licenseHolder = Resources.UI_UNITYPLUGIN_WINDOWCHECKINGVERSION;
 		private string licenseKey = Resources.UI_UNITYPLUGIN_WINDOWCHECKINGVERSION;
 		[NonSerialized]
-		private Promise<ToolExecutionResult> checkToolsVersion;
-		[NonSerialized]
-		private Promise<LicenseInfo> getLicense;
-		[NonSerialized]
-		private bool changeLicenseIsDisabled;
+		private Promise<Version> checkToolsVersion;
 
 		public AboutWindow()
 		{
 			this.titleContent = new GUIContent(Resources.UI_UNITYPLUGIN_WINDOWABOUTCHARONTITLE);
-			this.maxSize = minSize = new Vector2(380, 326);
+			this.maxSize = this.minSize = new Vector2(380, 326);
 			this.position = new Rect(
 				(Screen.width - this.maxSize.x) / 2,
 				(Screen.height - this.maxSize.y) / 2,
@@ -50,32 +45,12 @@ namespace GameDevWare.Charon.Windows
 			);
 		}
 
-		protected void OnGUI()
+		protected void OnGui()
 		{
 			GUILayout.Box("Charon", new GUIStyle { fontSize = 72, alignment = TextAnchor.MiddleCenter });
 			GUILayout.Space(10);
 			GUILayout.Label(Resources.UI_UNITYPLUGIN_WINDOWINFOGROUP, EditorStyles.boldLabel);
 			EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_WINDOWTOOLSVERSIONLABEL, this.toolsVersion);
-			GUI.enabled = false;
-			EditorGUILayout.BeginHorizontal();
-			{
-				EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_WINDOWLICENSEHOLDER, this.licenseHolder);
-				GUI.enabled = !this.changeLicenseIsDisabled;
-				if (GUILayout.Button(Resources.UI_UNITYPLUGIN_CHANGEBUTTON, EditorStyles.toolbarButton, GUILayout.Width(70), GUILayout.Height(18)))
-				{
-					LicenseActivationWindow.ShowAsync(autoClose: false).ContinueWith(p =>
-					{
-						this.getLicense = null;
-						this.changeLicenseIsDisabled = false;
-					});
-					this.Repaint();
-				}
-				GUI.enabled = false;
-				GUILayout.Space(5);
-			}
-			EditorGUILayout.EndHorizontal();
-			GUI.enabled = this.getLicense != null && this.getLicense.IsCompleted;
-			EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_WINDOWLICENSEKEY, this.licenseKey);
 			GUI.enabled = true;
 			GUILayout.Space(10);
 			GUILayout.Label(Resources.UI_UNITYPLUGIN_WINDOWSETTINGSGROUP, EditorStyles.boldLabel);
@@ -115,7 +90,7 @@ namespace GameDevWare.Charon.Windows
 
 		protected void Update()
 		{
-			switch (ToolsRunner.CheckCharon())
+			switch (CharonCli.CheckCharon())
 			{
 				case CharonCheckResult.MissingRuntime:
 					this.toolsVersion = Resources.UI_UNITYPLUGIN_WINDOWCHECKRESULTMISSINGMONOORDOTNET;
@@ -129,36 +104,13 @@ namespace GameDevWare.Charon.Windows
 					if (this.checkToolsVersion == null)
 					{
 						this.toolsVersion = Resources.UI_UNITYPLUGIN_WINDOWCHECKINGVERSION;
-						this.checkToolsVersion = ToolsRunner.RunCharonAsTool("VERSION");
+						this.checkToolsVersion = CharonCli.GetVersionAsync();
 						this.checkToolsVersion.ContinueWith(r =>
 						{
 							if (r.HasErrors)
 								this.toolsVersion = r.Error.Unwrap().Message;
 							else
-								using(var result = r.GetResult()) 
-									this.toolsVersion = result.GetOutputData() + result.GetErrorData();
-							this.Repaint();
-						});
-						this.Repaint();
-					}
-					else if (this.checkToolsVersion != null && this.checkToolsVersion.IsCompleted && this.getLicense == null)
-					{
-						this.licenseHolder = Resources.UI_UNITYPLUGIN_WINDOWCHECKINGVERSION;
-						this.licenseKey = Resources.UI_UNITYPLUGIN_WINDOWCHECKINGVERSION;
-						this.getLicense = Licenses.GetLicense(scheduleCoroutine: true);
-						this.getLicense.ContinueWith((Promise<LicenseInfo> p) =>
-						{
-							var selectedLicense = p.HasErrors ? default(LicenseInfo) : p.GetResult();
-							if (selectedLicense != null)
-							{
-								this.licenseHolder = selectedLicense.Recipient.FirstName + " " + selectedLicense.Recipient.LastName;
-								this.licenseKey = selectedLicense.SerialNumber;
-							}
-							else
-							{
-								this.licenseHolder = "";
-								this.licenseKey = "";
-							}
+								this.toolsVersion = r.GetResult().ToString();
 							this.Repaint();
 						});
 						this.Repaint();

@@ -21,18 +21,17 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Text.RegularExpressions;
-using GameDevWare.Charon.Tasks;
+using GameDevWare.Charon.Async;
 using GameDevWare.Charon.Utils;
 using UnityEditor;
 using UnityEngine;
+using Coroutine = GameDevWare.Charon.Async.Coroutine;
 
 // ReSharper disable UnusedMember.Local
 namespace GameDevWare.Charon.Windows
 {
 	internal class UpdateRuntimeWindow : EditorWindow
 	{
-		private static readonly string MonoExecutableName;
-		private static readonly string MonoDefaultLocation;
 		private static readonly Version MinimalMonoVersion;
 
 		private string monoPath;
@@ -40,7 +39,7 @@ namespace GameDevWare.Charon.Windows
 		[NonSerialized]
 		private Promise checkRuntimeVersionCoroutine;
 		[NonSerialized]
-		private Promise<ToolExecutionResult> runMonoTask;
+		private Promise<RunResult> runMonoTask;
 		private bool autoClose;
 
 		private event EventHandler Done;
@@ -50,26 +49,12 @@ namespace GameDevWare.Charon.Windows
 		{
 			MinimalMonoVersion = new Version(4, 6, 0);
 
-			if (ToolsRunner.IsWindows)
-			{
-				MonoExecutableName = "mono.exe";
-				MonoDefaultLocation = Path.Combine(ToolsRunner.GetProgramFilesx86(), @"Mono\bin");
-			}
-			else if (ToolsRunner.IsOsx)
-			{
-				MonoExecutableName = "mono";
-				MonoDefaultLocation = @"/Library/Frameworks/Mono.framework/Commands";
-			}
-			else
-			{
-				MonoExecutableName = "mono";
-				MonoDefaultLocation = @"/usr/bin";
-			}
+			
 		}
 		public UpdateRuntimeWindow()
 		{
 			this.titleContent = new GUIContent(Resources.UI_UNITYPLUGIN_WINDOWUPDATERUNTIMETITLE);
-			this.maxSize = minSize = new Vector2(480, 220);
+			this.maxSize = this.minSize = new Vector2(480, 220);
 			this.position = new Rect(
 				(Screen.width - this.maxSize.x) / 2,
 				(Screen.height - this.maxSize.y) / 2,
@@ -84,7 +69,7 @@ namespace GameDevWare.Charon.Windows
 			EditorGUILayout.HelpBox(Resources.UI_UNITYPLUGIN_WINDOWRUNTIMEREQUIRED + "\r\n\r\n" +
 									string.Format(Resources.UI_UNITYPLUGIN_WINDOWFINDMONOMANUALLY) + "\r\n" +
 									Resources.UI_UNITYPLUGIN_WINDOWDOWNLOADMONO + "\r\n" +
-									(ToolsRunner.IsWindows ? Resources.UI_UNITYPLUGIN_WINDOWDOWNLOADDOTNET + "\r\n\r\n" : "") +
+									(RuntimeInformation.IsWindows ? Resources.UI_UNITYPLUGIN_WINDOWDOWNLOADDOTNET + "\r\n\r\n" : "") +
 									Resources.UI_UNITYPLUGIN_WINDOWPRESSHELP, MessageType.Info);
 
 			var checkIsRunning = this.checkRuntimeVersionCoroutine != null && this.checkRuntimeVersionCoroutine.IsCompleted == false;
@@ -92,12 +77,12 @@ namespace GameDevWare.Charon.Windows
 			GUILayout.BeginHorizontal();
 			EditorGUILayout.Space();
 
-			if (ToolsRunner.IsWindows && GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOWDOWNLOADDOTNETBUTTON, GUILayout.Width(140)))
+			if (RuntimeInformation.IsWindows && GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOWDOWNLOADDOTNETBUTTON, GUILayout.Width(140)))
 				Application.OpenURL("https://www.microsoft.com/ru-RU/download/details.aspx?id=42643");
 			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOWDOWNLOADMONOBUTTON, GUILayout.Width(140)))
 				Application.OpenURL("http://www.mono-project.com/download/#download-mac");
 			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOWHELPBUTTON, GUILayout.Width(40)))
-				Application.OpenURL("https://github.com/deniszykov/charon-unity3d/blob/master/README.md");
+				Application.OpenURL("https://gamedevware.com/docs");
 			GUILayout.EndHorizontal();
 
 			GUILayout.Space(18);
@@ -128,7 +113,7 @@ namespace GameDevWare.Charon.Windows
 
 			var canCheckMono = (GUI.changed &&
 								string.IsNullOrEmpty(this.monoPath) == false &&
-								(File.Exists(Path.Combine(this.monoPath, MonoExecutableName)) ||
+								(File.Exists(Path.Combine(this.monoPath, MonoRuntimeInformation.MonoExecutableName)) ||
 									File.Exists(this.monoPath)));
 
 			// ReSharper disable once ConditionIsAlwaysTrueOrFalse
@@ -138,31 +123,31 @@ namespace GameDevWare.Charon.Windows
 
 		private void RunCheck()
 		{
-			this.checkRuntimeVersionCoroutine = new Tasks.Coroutine(this.CheckRuntimeVersionAsync());
+			this.checkRuntimeVersionCoroutine = new Coroutine(this.CheckRuntimeVersionAsync());
 		}
 		private IEnumerable CheckRuntimeVersionAsync()
 		{
 
-			if (ToolsRunner.IsWindows)
+			if (RuntimeInformation.IsWindows)
 			{
-				var dotNetRuntimeVersion = ToolsRunner.Get45or451FromRegistry();
+				var dotNetRuntimeVersion = DotNetRuntimeInformation.GetVersion();
 				if (dotNetRuntimeVersion != null)
 				{
-					UpdateRuntimeVersionLabel(dotNetRuntimeVersion, ".NET", true);
+					this.UpdateRuntimeVersionLabel(dotNetRuntimeVersion, ".NET", true);
 					this.RaiseDone(monoRuntimePath: null);
 					yield break;
 				}
 			}
 
-			var monoRuntimePath = File.Exists(this.monoPath) ? this.monoPath : Path.Combine(this.monoPath, MonoExecutableName);
+			var monoRuntimePath = File.Exists(this.monoPath) ? this.monoPath : Path.Combine(this.monoPath, MonoRuntimeInformation.MonoExecutableName);
 			if (string.IsNullOrEmpty(monoRuntimePath))
 				yield break;
 
 			this.runtimeVersion = Resources.UI_UNITYPLUGIN_WINDOWCHECKINGMONO;
-			this.runMonoTask = ToolsRunner.Run(new ToolExecutionOptions(monoRuntimePath, "--version")
+			this.runMonoTask = CommandLine.Run(new RunOptions(monoRuntimePath, "--version")
 			{
-				CaptureStandartOutput = true,
-				CaptureStandartError = true,
+				CaptureStandardOutput = true,
+				CaptureStandardError = true,
 				ExecutionTimeout = TimeSpan.FromSeconds(5)
 			});
 			yield return this.runMonoTask.IgnoreFault();
@@ -202,7 +187,7 @@ namespace GameDevWare.Charon.Windows
 
 		private void RaiseDone(string monoRuntimePath)
 		{
-			ToolsRunner.MonoPath = monoRuntimePath;
+			MonoRuntimeInformation.MonoPath = monoRuntimePath;
 			if (this.Done != null)
 				this.Done(this, EventArgs.Empty);
 			this.Done = null;
@@ -212,7 +197,7 @@ namespace GameDevWare.Charon.Windows
 				return;
 
 			if (Settings.Current.Verbose)
-				Debug.Log(string.Format("'{0}' window is closed with selected Mono Runtime path: {1}. Runtime version: {2}.", this.titleContent.text, ToolsRunner.MonoPath, this.runtimeVersion));
+				Debug.Log(string.Format("'{0}' window is closed with selected Mono Runtime path: {1}. Runtime version: {2}.", this.titleContent.text, MonoRuntimeInformation.MonoPath, this.runtimeVersion));
 			this.Close();
 		}
 		private void RaiseCancel()
@@ -248,10 +233,10 @@ namespace GameDevWare.Charon.Windows
 			window.Done += (sender, args) => promise.TrySetCompleted();
 			window.Cancel += (sender, args) => promise.TrySetFailed(args.GetException());
 
-			window.monoPath = string.IsNullOrEmpty(ToolsRunner.MonoPath) ? MonoDefaultLocation : ToolsRunner.MonoPath;
+			window.monoPath = string.IsNullOrEmpty(MonoRuntimeInformation.MonoPath) ? MonoRuntimeInformation.MonoDefaultLocation : MonoRuntimeInformation.MonoPath;
 			window.autoClose = autoClose;
-			if (ToolsRunner.IsWindows)
-				window.runtimeVersion = ToolsRunner.Get45or451FromRegistry();
+			if (RuntimeInformation.IsWindows)
+				window.runtimeVersion = DotNetRuntimeInformation.GetVersion();
 
 			window.RunCheck();
 			window.Focus();

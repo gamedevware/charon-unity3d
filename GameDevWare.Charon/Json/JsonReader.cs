@@ -23,65 +23,66 @@ namespace GameDevWare.Charon.Json
 		}
 		public JsonValue Read()
 		{
-			var v = ReadCore();
-			SkipSpaces();
-			if (ReadChar() >= 0)
-				throw JsonError(String.Format("extra characters in JSON input"));
+			var v = this.ReadCore();
+			this.SkipSpaces();
+			if (this.ReadChar() >= 0)
+				throw this.JsonError(String.Format("extra characters in JSON input"));
 			return v;
 		}
 		private JsonValue ReadCore()
 		{
-			SkipSpaces();
-			var c = PeekChar();
+			this.SkipSpaces();
+			var c = this.PeekChar();
 			if (c < 0)
-				throw JsonError("Incomplete JSON input");
+				throw this.JsonError("Incomplete JSON input");
 			switch (c)
 			{
 				case '[':
-					ReadChar();
+					this.ReadChar();
 					var list = new List<JsonValue>();
-					SkipSpaces();
-					if (PeekChar() == ']')
+					this.SkipSpaces();
+					if (this.PeekChar() == ']')
 					{
-						ReadChar();
+						this.ReadChar();
 						return new JsonArray(list);
 					}
 					while (true)
 					{
-						list.Add(ReadCore());
-						SkipSpaces();
-						c = PeekChar();
+						list.Add(this.ReadCore());
+						this.SkipSpaces();
+						c = this.PeekChar();
 						if (c != ',')
 							break;
-						ReadChar();
+
+						this.ReadChar();
 					}
-					if (ReadChar() != ']')
-						throw JsonError("JSON array must end with ']'");
+					if (this.ReadChar() != ']')
+						throw this.JsonError("JSON array must end with ']'");
 					return new JsonArray(list);
 				case '{':
-					ReadChar();
+					this.ReadChar();
 					var obj = new List<KeyValuePair<string, JsonValue>>();
-					SkipSpaces();
-					if (PeekChar() == '}')
+					this.SkipSpaces();
+					if (this.PeekChar() == '}')
 					{
-						ReadChar();
+						this.ReadChar();
 						return new JsonObject(obj);
 					}
 					while (true)
 					{
-						SkipSpaces();
-						if (PeekChar() == '}')
+						this.SkipSpaces();
+						if (this.PeekChar() == '}')
 						{
-							ReadChar();
+							this.ReadChar();
 							break;
 						}
-						var name = ReadStringLiteral();
-						SkipSpaces();
-						Expect(':');
-						SkipSpaces();
-						obj.Add(new KeyValuePair<string, JsonValue>(name, ReadCore())); // it does not reject duplicate names.
-						SkipSpaces();
-						c = ReadChar();
+						var name = this.ReadStringLiteral();
+						this.SkipSpaces();
+						this.Expect(':');
+						this.SkipSpaces();
+						obj.Add(new KeyValuePair<string, JsonValue>(name, this.ReadCore())); // it does not reject duplicate names.
+						this.SkipSpaces();
+						c = this.ReadChar();
 						if (c == ',')
 							continue;
 						if (c == '}')
@@ -90,47 +91,47 @@ namespace GameDevWare.Charon.Json
 					return new JsonObject(obj);
 
 				case 't':
-					Expect("true");
+					this.Expect("true");
 					return new JsonPrimitive(true);
 				case 'f':
-					Expect("false");
+					this.Expect("false");
 					return new JsonPrimitive(false);
 				case 'n':
-					Expect("null");
+					this.Expect("null");
 					return null;
 				case '"':
-					return new JsonPrimitive(ReadStringLiteral());
+					return new JsonPrimitive(this.ReadStringLiteral());
 				default:
 					if ('0' <= c && c <= '9' || c == '-')
-						return ReadNumericLiteral();
-					throw JsonError(String.Format("Unexpected character '{0}'", (char) c));
+						return this.ReadNumericLiteral();
+					throw this.JsonError(String.Format("Unexpected character '{0}'", (char) c));
 			}
 		}
 		private int PeekChar()
 		{
-			if (!hasPeek)
+			if (!this.hasPeek)
 			{
-				peek = r.Read();
-				hasPeek = true;
+				this.peek = this.r.Read();
+				this.hasPeek = true;
 			}
-			return peek;
+			return this.peek;
 		}
 		private int ReadChar()
 		{
-			var v = hasPeek ? peek : r.Read();
+			var v = this.hasPeek ? this.peek : this.r.Read();
 
-			hasPeek = false;
+			this.hasPeek = false;
 
-			if (prevLf)
+			if (this.prevLf)
 			{
-				line++;
-				column = 0;
-				prevLf = false;
+				this.line++;
+				this.column = 0;
+				this.prevLf = false;
 			}
 
 			if (v == '\n')
-				prevLf = true;
-			column++;
+				this.prevLf = true;
+			this.column++;
 
 			return v;
 		}
@@ -138,13 +139,13 @@ namespace GameDevWare.Charon.Json
 		{
 			while (true)
 			{
-				switch (PeekChar())
+				switch (this.PeekChar())
 				{
 					case ' ':
 					case '\t':
 					case '\r':
 					case '\n':
-						ReadChar();
+						this.ReadChar();
 						continue;
 					default:
 						return;
@@ -156,46 +157,46 @@ namespace GameDevWare.Charon.Json
 		{
 			var sb = new StringBuilder();
 
-			if (PeekChar() == '-')
-				sb.Append((char) ReadChar());
+			if (this.PeekChar() == '-')
+				sb.Append((char)this.ReadChar());
 
 			int c;
 			var x = 0;
-			var zeroStart = PeekChar() == '0';
+			var zeroStart = this.PeekChar() == '0';
 			for (;; x++)
 			{
-				c = PeekChar();
+				c = this.PeekChar();
 				if (c < '0' || '9' < c)
 					break;
-				sb.Append((char) ReadChar());
+				sb.Append((char)this.ReadChar());
 				if (zeroStart && x == 1)
-					throw JsonError("leading zeros are not allowed");
+					throw this.JsonError("leading zeros are not allowed");
 			}
 			if (x == 0) // Reached e.g. for "- "
-				throw JsonError("Invalid JSON numeric literal; no digit found");
+				throw this.JsonError("Invalid JSON numeric literal; no digit found");
 
 			// fraction
 			var hasFrac = false;
 			var fdigits = 0;
-			if (PeekChar() == '.')
+			if (this.PeekChar() == '.')
 			{
 				hasFrac = true;
-				sb.Append((char) ReadChar());
-				if (PeekChar() < 0)
-					throw JsonError("Invalid JSON numeric literal; extra dot");
+				sb.Append((char)this.ReadChar());
+				if (this.PeekChar() < 0)
+					throw this.JsonError("Invalid JSON numeric literal; extra dot");
 				while (true)
 				{
-					c = PeekChar();
+					c = this.PeekChar();
 					if (c < '0' || '9' < c)
 						break;
-					sb.Append((char) ReadChar());
+					sb.Append((char)this.ReadChar());
 					fdigits++;
 				}
 				if (fdigits == 0)
-					throw JsonError("Invalid JSON numeric literal; extra dot");
+					throw this.JsonError("Invalid JSON numeric literal; extra dot");
 			}
 
-			c = PeekChar();
+			c = this.PeekChar();
 			if (c != 'e' && c != 'E')
 			{
 				if (!hasFrac)
@@ -219,24 +220,24 @@ namespace GameDevWare.Charon.Json
 			else
 			{
 				// exponent
-				sb.Append((char) ReadChar());
-				if (PeekChar() < 0)
+				sb.Append((char)this.ReadChar());
+				if (this.PeekChar() < 0)
 					throw new ArgumentException("Invalid JSON numeric literal; incomplete exponent");
 
-				c = PeekChar();
+				c = this.PeekChar();
 				if (c == '-')
-					sb.Append((char) ReadChar());
+					sb.Append((char)this.ReadChar());
 				else if (c == '+')
-					sb.Append((char) ReadChar());
+					sb.Append((char)this.ReadChar());
 
-				if (PeekChar() < 0)
-					throw JsonError("Invalid JSON numeric literal; incomplete exponent");
+				if (this.PeekChar() < 0)
+					throw this.JsonError("Invalid JSON numeric literal; incomplete exponent");
 				while (true)
 				{
-					c = PeekChar();
+					c = this.PeekChar();
 					if (c < '0' || '9' < c)
 						break;
-					sb.Append((char) ReadChar());
+					sb.Append((char)this.ReadChar());
 				}
 			}
 
@@ -244,57 +245,57 @@ namespace GameDevWare.Charon.Json
 		}
 		private string ReadStringLiteral()
 		{
-			if (PeekChar() != '"')
-				throw JsonError("Invalid JSON string literal format");
+			if (this.PeekChar() != '"')
+				throw this.JsonError("Invalid JSON string literal format");
 
-			ReadChar();
-			vb.Length = 0;
+			this.ReadChar();
+			this.vb.Length = 0;
 			while (true)
 			{
-				var c = ReadChar();
+				var c = this.ReadChar();
 				if (c < 0)
-					throw JsonError("JSON string is not closed");
+					throw this.JsonError("JSON string is not closed");
 				if (c == '"')
-					return vb.ToString();
+					return this.vb.ToString();
 				if (c != '\\')
 				{
-					vb.Append((char) c);
+					this.vb.Append((char) c);
 					continue;
 				}
 
 				// escaped expression
-				c = ReadChar();
+				c = this.ReadChar();
 				if (c < 0)
-					throw JsonError("Invalid JSON string literal; incomplete escape sequence");
+					throw this.JsonError("Invalid JSON string literal; incomplete escape sequence");
 				switch (c)
 				{
 					case '"':
 					case '\\':
 					case '/':
-						vb.Append((char) c);
+						this.vb.Append((char) c);
 						break;
 					case 'b':
-						vb.Append('\x8');
+						this.vb.Append('\x8');
 						break;
 					case 'f':
-						vb.Append('\f');
+						this.vb.Append('\f');
 						break;
 					case 'n':
-						vb.Append('\n');
+						this.vb.Append('\n');
 						break;
 					case 'r':
-						vb.Append('\r');
+						this.vb.Append('\r');
 						break;
 					case 't':
-						vb.Append('\t');
+						this.vb.Append('\t');
 						break;
 					case 'u':
 						ushort cp = 0;
 						for (var i = 0; i < 4; i++)
 						{
 							cp <<= 4;
-							if ((c = ReadChar()) < 0)
-								throw JsonError("Incomplete unicode character escape literal");
+							if ((c = this.ReadChar()) < 0)
+								throw this.JsonError("Incomplete unicode character escape literal");
 							if ('0' <= c && c <= '9')
 								cp += (ushort) (c - '0');
 							if ('A' <= c && c <= 'F')
@@ -302,30 +303,31 @@ namespace GameDevWare.Charon.Json
 							if ('a' <= c && c <= 'f')
 								cp += (ushort) (c - 'a' + 10);
 						}
-						vb.Append((char) cp);
+
+						this.vb.Append((char) cp);
 						break;
 					default:
-						throw JsonError("Invalid JSON string literal; unexpected escape character");
+						throw this.JsonError("Invalid JSON string literal; unexpected escape character");
 				}
 			}
 		}
 		private void Expect(char expected)
 		{
 			int c;
-			if ((c = ReadChar()) != expected)
-				throw JsonError(String.Format("Expected '{0}', got '{1}'", expected, (char) c));
+			if ((c = this.ReadChar()) != expected)
+				throw this.JsonError(String.Format("Expected '{0}', got '{1}'", expected, (char) c));
 		}
 		private void Expect(string expected)
 		{
 			for (var i = 0; i < expected.Length; i++)
 			{
-				if (ReadChar() != expected[i])
-					throw JsonError(String.Format("Expected '{0}', differed at {1}", expected, i));
+				if (this.ReadChar() != expected[i])
+					throw this.JsonError(String.Format("Expected '{0}', differed at {1}", expected, i));
 			}
 		}
 		private Exception JsonError(string msg)
 		{
-			return new ArgumentException(String.Format("{0}. At line {1}, column {2}", msg, line, column));
+			return new ArgumentException(String.Format("{0}. At line {1}, column {2}", msg, this.line, this.column));
 		}
 	}
 }

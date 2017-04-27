@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using GameDevWare.Charon.Async;
 using GameDevWare.Charon.Utils;
 using UnityEditor;
 using UnityEngine;
@@ -29,10 +30,10 @@ namespace GameDevWare.Charon
 {
 	internal class ChangeHooks : AssetPostprocessor
 	{
-		private static readonly Dictionary<string, FileSystemWatcher> watchers = new Dictionary<string, FileSystemWatcher>(StringComparer.Ordinal);
-		private static readonly Dictionary<string, string> hashes = new Dictionary<string, string>(StringComparer.Ordinal);
-		private static readonly HashSet<string> changedAssets = new HashSet<string>(StringComparer.Ordinal);
-		private static string[] gameDataPaths;
+		private static readonly Dictionary<string, FileSystemWatcher> Watchers = new Dictionary<string, FileSystemWatcher>(StringComparer.Ordinal);
+		private static readonly Dictionary<string, string> GameDataHashByPath = new Dictionary<string, string>(StringComparer.Ordinal);
+		private static readonly HashSet<string> ChangedAssetPaths = new HashSet<string>(StringComparer.Ordinal);
+		private static int LastWatchedGameDataTrackerVersion;
 
 		static ChangeHooks()
 		{
@@ -44,25 +45,27 @@ namespace GameDevWare.Charon
 			if (Settings.Current == null)
 				return;
 
-			if (Settings.Current.GameDataPaths != gameDataPaths)
+			if (LastWatchedGameDataTrackerVersion != GameDataTracker.Version)
 			{
-				foreach (var gameDataPath in Settings.Current.GameDataPaths)
+				var gameDataPaths = new HashSet<string>(GameDataTracker.All);
+				foreach (var gameDataPath in gameDataPaths)
 				{
-					if (watchers.ContainsKey(gameDataPath) || File.Exists(gameDataPath) == false)
+					if (Watchers.ContainsKey(gameDataPath) || File.Exists(gameDataPath) == false)
 						continue;
 
 					try
 					{
 						var fullPath = Path.GetFullPath(gameDataPath);
-						var watcher = new FileSystemWatcher(Path.GetDirectoryName(fullPath))
+						var directoryName = Path.GetDirectoryName(fullPath);
+						var watcher = new FileSystemWatcher(directoryName)
 						{
 							NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size
 						};
 						watcher.Filter = Path.GetFileName(fullPath);
 						watcher.Changed += GameDataChanged;
-						watchers.Add(gameDataPath, watcher);
+						Watchers.Add(gameDataPath, watcher);
 
-						try { hashes[gameDataPath] = FileUtils.ComputeMd5Hash(gameDataPath); }
+						try { GameDataHashByPath[gameDataPath] = PathUtils.ComputeMd5Hash(gameDataPath); }
 						catch
 						{
 							// ignored
@@ -75,26 +78,26 @@ namespace GameDevWare.Charon
 					}
 				}
 
-				foreach (var gameDataPath in watchers.Keys.ToArray())
+				foreach (var gameDataPath in Watchers.Keys.ToArray())
 				{
-					if (Settings.Current.GameDataPaths.Contains(gameDataPath))
+					if (gameDataPaths.Contains(gameDataPath))
 						continue;
 
-					var watcher = watchers[gameDataPath];
-					watchers.Remove(gameDataPath);
+					var watcher = Watchers[gameDataPath];
+					Watchers.Remove(gameDataPath);
 					try { watcher.Dispose(); }
 					catch (Exception e) { Debug.LogError("Failed to dispose FileSystemWatcher of GameData: " + e); }
 				}
-				gameDataPaths = Settings.Current.GameDataPaths;
+				LastWatchedGameDataTrackerVersion = GameDataTracker.Version;
 			}
 
 			var changedAssetsCopy = default(string[]);
-			lock (changedAssets)
+			lock (ChangedAssetPaths)
 			{
-				if (changedAssets.Count > 0)
+				if (ChangedAssetPaths.Count > 0)
 				{
-					changedAssetsCopy = changedAssets.ToArray();
-					changedAssets.Clear();
+					changedAssetsCopy = ChangedAssetPaths.ToArray();
+					ChangedAssetPaths.Clear();
 				}
 			}
 
@@ -105,7 +108,7 @@ namespace GameDevWare.Charon
 					if (Settings.Current.Verbose)
 						Debug.Log("Changed Asset: " + changedAsset);
 
-					if (!File.Exists(changedAsset) || Settings.Current.GameDataPaths.Contains(changedAsset) == false)
+					if (!File.Exists(changedAsset) || GameDataTracker.IsTracked(changedAsset) == false)
 						continue;
 					var gameDataSettings = GameDataSettings.Load(changedAsset);
 					if (!gameDataSettings.AutoGeneration)
@@ -114,7 +117,7 @@ namespace GameDevWare.Charon
 					var assetHash = default(string);
 					try
 					{
-						assetHash = FileUtils.ComputeMd5Hash(changedAsset);
+						assetHash = PathUtils.ComputeMd5Hash(changedAsset);
 					}
 					catch (Exception e)
 					{
@@ -123,7 +126,7 @@ namespace GameDevWare.Charon
 					}
 
 					var oldAssetHash = default(string);
-					if (hashes.TryGetValue(changedAsset, out oldAssetHash) && assetHash == oldAssetHash)
+					if (GameDataHashByPath.TryGetValue(changedAsset, out oldAssetHash) && assetHash == oldAssetHash)
 						continue; // not changed
 
 					if (EditorApplication.isUpdating)
@@ -132,7 +135,7 @@ namespace GameDevWare.Charon
 					if (Settings.Current.Verbose)
 						Debug.Log("Asset's " + changedAsset + " hash has changed from " + (oldAssetHash ?? "<none>") + " to " + assetHash);
 
-					hashes[changedAsset] = assetHash;
+					GameDataHashByPath[changedAsset] = assetHash;
 					CoroutineScheduler.Schedule
 					(
 						Menu.GenerateCodeAndAssetsAsync(
@@ -146,6 +149,7 @@ namespace GameDevWare.Charon
 		}
 
 		// ReSharper disable once UnusedMember.Local
+		// ReSharper disable once IdentifierTypo
 		private static void OnPostprocessAllAssets(string[] _, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
 		{
 			if (Settings.Current == null)
@@ -153,40 +157,42 @@ namespace GameDevWare.Charon
 
 			foreach (var deletedPath in deletedAssets)
 			{
-				if (!Settings.Current.RemoveGameDataPath(deletedPath))
+				if (!GameDataTracker.Untrack(deletedPath))
 					continue;
 
 				if (Settings.Current.Verbose)
 					Debug.Log("GameData deleted: " + deletedPath);
-				hashes.Remove(deletedPath);
+
+				GameDataHashByPath.Remove(deletedPath);
 			}
 			for (var i = 0; i < movedAssets.Length; i++)
 			{
-				var fromPath = FileUtils.MakeProjectRelative(movedFromAssetPaths[i]);
-				var toPath = FileUtils.MakeProjectRelative(movedAssets[i]);
+				var fromPath = PathUtils.MakeProjectRelative(movedFromAssetPaths[i]);
+				var toPath = PathUtils.MakeProjectRelative(movedAssets[i]);
 				if (fromPath == null || toPath == null) continue;
 
 				if (Path.GetFullPath(Settings.Current.ToolsPath) == fromPath)
 					Settings.Current.ToolsPath = toPath;
 
-				if (!Settings.Current.GameDataPaths.Contains(fromPath))
+				if (!GameDataTracker.IsTracked(fromPath))
 					continue;
 
-				Settings.Current.RemoveGameDataPath(fromPath);
-				Settings.Current.AddGameDataPath(toPath);
+				GameDataTracker.Untrack(fromPath);
+				GameDataTracker.Track(toPath);
+
 				if (Settings.Current.Verbose)
 					Debug.Log("GameData moved: " + toPath + " from: " + fromPath);
 
-				hashes.Remove(fromPath);
-				hashes.Remove(toPath);
+				GameDataHashByPath.Remove(fromPath);
+				GameDataHashByPath.Remove(toPath);
 			}
 		}
 
 		private static void GameDataChanged(object sender, FileSystemEventArgs e)
 		{
-			var path = FileUtils.MakeProjectRelative(e.FullPath);
-			lock (changedAssets)
-				changedAssets.Add(path);
+			var path = PathUtils.MakeProjectRelative(e.FullPath);
+			lock (ChangedAssetPaths)
+				ChangedAssetPaths.Add(path);
 		}
 	}
 }

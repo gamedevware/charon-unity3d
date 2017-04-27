@@ -124,23 +124,25 @@ namespace GameDevWare.Charon.Json
 		{
 			if (stream == null)
 				throw new ArgumentNullException("stream");
-			Save(new StreamWriter(stream));
+
+			this.Save(new StreamWriter(stream));
 		}
 		public virtual void Save(TextWriter textWriter)
 		{
 			if (textWriter == null)
 				throw new ArgumentNullException("textWriter");
-			SaveInternal(textWriter);
+
+			this.SaveInternal(textWriter);
 		}
 		public string Stringify()
 		{
 			var stringWriter = new StringWriter(CultureInfo.InvariantCulture);
-			Save(stringWriter);
+			this.Save(stringWriter);
 			return stringWriter.ToString();
 		}
 		private void SaveInternal(TextWriter w)
 		{
-			switch (JsonType)
+			switch (this.JsonType)
 			{
 				case JsonType.Object:
 					w.Write('{');
@@ -150,7 +152,7 @@ namespace GameDevWare.Charon.Json
 						if (following)
 							w.Write(", ");
 						w.Write('\"');
-						w.Write(EscapeString(pair.Key));
+						w.Write(this.EscapeString(pair.Key));
 						w.Write("\": ");
 						if (pair.Value == null)
 							w.Write("null");
@@ -180,7 +182,7 @@ namespace GameDevWare.Charon.Json
 					break;
 				case JsonType.String:
 					w.Write('"');
-					w.Write(EscapeString(((JsonPrimitive)this).GetFormattedString()));
+					w.Write(this.EscapeString(((JsonPrimitive)this).GetFormattedString()));
 					w.Write('"');
 					break;
 				default:
@@ -191,12 +193,12 @@ namespace GameDevWare.Charon.Json
 		public abstract object As(Type type);
 		public T As<T>()
 		{
-			return (T)As(typeof(T));
+			return (T)this.As(typeof(T));
 		}
 		public override string ToString()
 		{
 			var sw = new StringWriter();
-			Save(sw);
+			this.Save(sw);
 			return sw.ToString();
 		}
 		// Characters which have to be escaped:
@@ -230,12 +232,12 @@ namespace GameDevWare.Charon.Json
 
 			for (var i = 0; i < src.Length; i++)
 			{
-				if (NeedEscape(src, i))
+				if (this.NeedEscape(src, i))
 				{
 					var sb = new StringBuilder();
 					if (i > 0)
 						sb.Append(src, 0, i);
-					return DoEscapeString(sb, src, i);
+					return this.DoEscapeString(sb, src, i);
 				}
 			}
 			return src;
@@ -245,7 +247,7 @@ namespace GameDevWare.Charon.Json
 			var start = cur;
 			for (var i = cur; i < src.Length; i++)
 			{
-				if (NeedEscape(src, i))
+				if (this.NeedEscape(src, i))
 				{
 					sb.Append(src, start, i - start);
 					switch (src[i])

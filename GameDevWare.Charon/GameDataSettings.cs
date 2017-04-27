@@ -26,27 +26,13 @@ using UnityEngine;
 
 namespace GameDevWare.Charon
 {
-	internal sealed class GameDataSettings
+	internal sealed partial class GameDataSettings
 	{
 		public enum CodeGenerator
 		{
 			None,
 			CSharp,
 			CSharpCodeAndAsset
-		}
-
-		[Flags]
-		public enum CodeGenerationOptions
-		{
-			LazyReferences = 0x1 << 0,
-			HideReferences = 0x1 << 1,
-			HideLocalizedStrings = 0x1 << 2,
-			SuppressEntryClass = 0x1 << 4,
-			SuppressGameDataClass = 0x1 << 5,
-			SuppressJsonSerialization = 0x1 << 6,
-			SuppressLocalizedStringClass = 0x1 << 7,
-			SuppressReferenceClass = 0x1 << 8,
-			SuppressDataContractAttributes = 0x1 << 9,
 		}
 
 		public enum LineEndings
@@ -74,6 +60,7 @@ namespace GameDevWare.Charon
 		public string GameDataClassName;
 		public string Namespace;
 		public string DocumentClassName;
+		public string[] ScriptingAssemblies;
 		public int Options;
 		public int LineEnding;
 		public int Indentation;
@@ -116,8 +103,8 @@ namespace GameDevWare.Charon
 
 				if (gameDataSettings != null)
 				{
-					gameDataSettings.CodeGenerationPath = FileUtils.MakeProjectRelative(gameDataSettings.CodeGenerationPath);
-					gameDataSettings.AssetGenerationPath = FileUtils.MakeProjectRelative(gameDataSettings.AssetGenerationPath);
+					gameDataSettings.CodeGenerationPath = PathUtils.MakeProjectRelative(gameDataSettings.CodeGenerationPath);
+					gameDataSettings.AssetGenerationPath = PathUtils.MakeProjectRelative(gameDataSettings.AssetGenerationPath);
 					if (string.IsNullOrEmpty(gameDataSettings.CodeGenerationPath))
 						gameDataSettings.CodeGenerationPath = Path.ChangeExtension(gameDataPath, "cs");
 				}

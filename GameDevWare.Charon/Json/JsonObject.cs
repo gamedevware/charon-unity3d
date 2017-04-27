@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
+
 using JsonPair = System.Collections.Generic.KeyValuePair<string, GameDevWare.Charon.Json.JsonValue>;
 using JsonPairEnumerable = System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, GameDevWare.Charon.Json.JsonValue>>;
 
@@ -16,18 +17,18 @@ namespace GameDevWare.Charon.Json
 		private readonly SortedDictionary<string, JsonValue> map;
 		public JsonObject(params JsonPair[] items)
 		{
-			map = new SortedDictionary<string, JsonValue>(StringComparer.Ordinal);
+			this.map = new SortedDictionary<string, JsonValue>(StringComparer.Ordinal);
 
 			if (items != null)
-				AddRange(items);
+				this.AddRange(items);
 		}
 		public JsonObject(JsonPairEnumerable items)
 		{
 			if (items == null)
 				throw new ArgumentNullException("items");
 
-			map = new SortedDictionary<string, JsonValue>(StringComparer.Ordinal);
-			AddRange(items);
+			this.map = new SortedDictionary<string, JsonValue>(StringComparer.Ordinal);
+			this.AddRange(items);
 		}
 		public override JsonType JsonType
 		{
@@ -35,69 +36,69 @@ namespace GameDevWare.Charon.Json
 		}
 		public override int Count
 		{
-			get { return map.Count; }
+			get { return this.map.Count; }
 		}
 		public IEnumerator<JsonPair> GetEnumerator()
 		{
-			return map.GetEnumerator();
+			return this.map.GetEnumerator();
 		}
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			return map.GetEnumerator();
+			return this.map.GetEnumerator();
 		}
 		public sealed override JsonValue this[string key]
 		{
-			get { return map[key]; }
-			set { map[key] = value; }
+			get { return this.map[key]; }
+			set { this.map[key] = value; }
 		}
 		public ICollection<string> Keys
 		{
-			get { return map.Keys; }
+			get { return this.map.Keys; }
 		}
 		public ICollection<JsonValue> Values
 		{
-			get { return map.Values; }
+			get { return this.map.Values; }
 		}
 		public void Add(string key, JsonValue value)
 		{
 			if (key == null)
 				throw new ArgumentNullException("key");
 
-			map.Add(key, value);
+			this.map.Add(key, value);
 		}
 		public void Add(JsonPair pair)
 		{
-			Add(pair.Key, pair.Value);
+			this.Add(pair.Key, pair.Value);
 		}
 		public void Clear()
 		{
-			map.Clear();
+			this.map.Clear();
 		}
 		bool ICollection<JsonPair>.Contains(JsonPair item)
 		{
-			return (map as ICollection<JsonPair>).Contains(item);
+			return (this.map as ICollection<JsonPair>).Contains(item);
 		}
 		bool ICollection<JsonPair>.Remove(JsonPair item)
 		{
-			return (map as ICollection<JsonPair>).Remove(item);
+			return (this.map as ICollection<JsonPair>).Remove(item);
 		}
 		public override bool ContainsKey(string key)
 		{
 			if (key == null)
 				throw new ArgumentNullException("key");
 
-			return map.ContainsKey(key);
+			return this.map.ContainsKey(key);
 		}
 		public void CopyTo(JsonPair[] array, int arrayIndex)
 		{
-			(map as ICollection<JsonPair>).CopyTo(array, arrayIndex);
+			(this.map as ICollection<JsonPair>).CopyTo(array, arrayIndex);
 		}
 		public bool Remove(string key)
 		{
 			if (key == null)
 				throw new ArgumentNullException("key");
 
-			return map.Remove(key);
+			return this.map.Remove(key);
 		}
 		bool ICollection<JsonPair>.IsReadOnly
 		{
@@ -105,7 +106,7 @@ namespace GameDevWare.Charon.Json
 		}
 		public bool TryGetValue(string key, out JsonValue value)
 		{
-			return map.TryGetValue(key, out value);
+			return this.map.TryGetValue(key, out value);
 		}
 		public void AddRange(JsonPairEnumerable items)
 		{
@@ -113,21 +114,21 @@ namespace GameDevWare.Charon.Json
 				throw new ArgumentNullException("items");
 
 			foreach (var pair in items)
-				map.Add(pair.Key, pair.Value);
+				this.map.Add(pair.Key, pair.Value);
 		}
 		public void AddRange(params JsonPair[] items)
 		{
-			AddRange((JsonPairEnumerable)items);
+			this.AddRange((JsonPairEnumerable)items);
 		}
 		public override void Save(Stream stream)
 		{
 			if (stream == null)
 				throw new ArgumentNullException("stream");
 			stream.WriteByte((byte)'{');
-			foreach (var pair in map)
+			foreach (var pair in this.map)
 			{
 				stream.WriteByte((byte)'"');
-				var bytes = Encoding.UTF8.GetBytes(EscapeString(pair.Key));
+				var bytes = Encoding.UTF8.GetBytes(this.EscapeString(pair.Key));
 				stream.Write(bytes, 0, bytes.Length);
 				stream.WriteByte((byte)'"');
 				stream.WriteByte((byte)',');

@@ -19,9 +19,12 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using GameDevWare.Charon.Tasks;
+using System.Linq;
+using System.Reflection.Emit;
+using GameDevWare.Charon.Async;
 using GameDevWare.Charon.Utils;
 using UnityEditor;
 using UnityEditor.Callbacks;
@@ -64,7 +67,7 @@ namespace GameDevWare.Charon.Windows
 		private static bool OnOpenAsset(int instanceID, int exceptionId)
 		{
 			var gameDataPath = AssetDatabase.GetAssetPath(instanceID);
-			if (Array.IndexOf(Settings.Current.GameDataPaths, gameDataPath) == -1)
+			if (GameDataTracker.IsGameDataFile(gameDataPath) == false)
 				return false;
 
 			var reference = ValidationException.GetReference(exceptionId);
@@ -82,13 +85,13 @@ namespace GameDevWare.Charon.Windows
 			if (EditorUtility.DisplayCancelableProgressBar(title, Resources.UI_UNITYPLUGIN_WINDOWEDITORCHECKINGRUNTIME, 0.05f))
 				throw new InvalidOperationException("Interrupted by user.");
 
-			switch (ToolsRunner.CheckCharon())
+			switch (CharonCli.CheckCharon())
 			{
 				case CharonCheckResult.MissingRuntime:
 					yield return UpdateRuntimeWindow.ShowAsync();
 					break;
 				case CharonCheckResult.MissingExecutable:
-					yield return ToolsRunner.UpdateCharonExecutable(ProgressUtils.ReportToLog(Resources.UI_UNITYPLUGIN_MENUCHECKUPDATES));
+					yield return CharonCli.UpdateCharonExecutableAsync(ProgressUtils.ReportToLog(Resources.UI_UNITYPLUGIN_MENUCHECKUPDATES));
 					break;
 				case CharonCheckResult.Ok:
 					break;
@@ -96,25 +99,8 @@ namespace GameDevWare.Charon.Windows
 					throw new InvalidOperationException("Unknown Tools check result.");
 			}
 
-			// EditorUtility.DisplayProgressBar(title, Resources.UI_UNITYPLUGIN_WINDOWEDITORCHECKINGLICENSE, 0.10f);
-			//var license = default(LicenseInfo);
-			//while (license == null)
-			//{
-			//	var getLicense = Licenses.GetLicense(scheduleCoroutine: true);
-			//	yield return getLicense;
-			//	license = getLicense.GetResult();
-			//	if (license == null)
-			//		yield return LicenseActivationWindow.ShowAsync();
-			//}
-
-			var toolsPath = Settings.Current.ToolsPath;
 			var port = Settings.Current.ToolsPort;
 			var gameDataEditorUrl = "http://localhost:" + port + "/";
-
-			if (string.IsNullOrEmpty(toolsPath) || File.Exists(toolsPath) == false)
-				throw new InvalidOperationException("Unable to launch Charon.exe tool because path to it is null or empty.");
-
-			toolsPath = Path.GetFullPath(toolsPath);
 
 			GameDataEditorProcess.EndGracefully();
 
@@ -126,70 +112,18 @@ namespace GameDevWare.Charon.Windows
 			if (EditorApplication.isCompiling)
 				throw new InvalidOperationException("Interrupted by script compiler.");
 
-			// ReSharper disable once AssignNullToNotNullAttribute
-			var shadowCopyOfTools = Path.GetFullPath(Path.Combine(ToolsRunner.ToolShadowCopyPath, Path.GetFileName(toolsPath)));
-			if (File.Exists(shadowCopyOfTools) == false)
-			{
-				if (Directory.Exists(ToolsRunner.ToolShadowCopyPath) == false)
-					Directory.CreateDirectory(ToolsRunner.ToolShadowCopyPath);
-
-				if (Settings.Current.Verbose)
-					Debug.Log("Shadow copying tools to " + shadowCopyOfTools + ".");
-
-				File.Copy(toolsPath, shadowCopyOfTools, overwrite: true);
-
-				var configPath = toolsPath + ".config";
-				var configShadowPath = shadowCopyOfTools + ".config";
-				if (File.Exists(configPath))
-				{
-					if (Settings.Current.Verbose)
-						Debug.Log("Shadow copying tools configuration to " + configShadowPath + ".");
-					File.Copy(configPath, configShadowPath);
-				}
-				else
-				{
-					Debug.LogWarning("Missing required configuration file at '" + configPath + "'.");
-				}
-			}
-
 			if (EditorUtility.DisplayCancelableProgressBar(title, Resources.UI_UNITYPLUGIN_WINDOWEDITORLAUNCHINGEXECUTABLE, 0.60f))
 				throw new InvalidOperationException("Interrupted by user.");
 			if (EditorApplication.isCompiling)
 				throw new InvalidOperationException("Interrupted by script compiler.");
 
-			var toolsProcessTask = ToolsRunner.Run(
-				new ToolExecutionOptions
-				(
-					shadowCopyOfTools,
+			var charonRunTask = CharonCli.Listen(gameDataPath, port, shadowCopy: true);
 
-					"LISTEN", Path.GetFullPath(gameDataPath),
-					"--port", port.ToString(),
-					"--parentPid", Process.GetCurrentProcess().Id.ToString(),
-					Settings.Current.Verbose ? "--verbose" : ""
-				)
-				{
-					RequireDotNetRuntime = true,
-					CaptureStandartError = false,
-					CaptureStandartOutput = false,
-					ExecutionTimeout = TimeSpan.Zero,
-					WaitForExit = false,
-					StartInfo =
-					{
-						EnvironmentVariables =
-						{
-							{ "CHARON_APP_DATA", Settings.GetAppDataPath() },
-							{ "CHARON_LICENSE_SERVER", Settings.Current.LicenseServerAddress },
-							{ "CHARON_SELECTED_LICENSE", Settings.Current.SelectedLicense },
-						}
-					}
-				}
-			);
-
-			toolsProcessTask.ContinueWith(t =>
+			charonRunTask.ContinueWith(t =>
 			{
 				if (t.HasErrors) return;
-				using (var result = toolsProcessTask.GetResult())
-					GameDataEditorProcess.Watch(result.Process.Id, result.Process.ProcessName);
+				using (var process = t.GetResult())
+					GameDataEditorProcess.Watch(process);
 			});
 
 			if (Settings.Current.Verbose)
@@ -197,7 +131,7 @@ namespace GameDevWare.Charon.Windows
 
 			// wait untill server process start
 			var timeoutPromise = Promise.Delayed(TimeSpan.FromSeconds(10));
-			var startPromise = toolsProcessTask.IgnoreFault();
+			var startPromise = charonRunTask.IgnoreFault();
 			var startCompletePromise = Promise.WhenAny(timeoutPromise, startPromise);
 			var cancelPromise = new Coroutine<bool>(RunCancellableProgress(title, Resources.UI_UNITYPLUGIN_WINDOWEDITORLAUNCHINGEXECUTABLE, 0.65f, 0.80f, TimeSpan.FromSeconds(5), startCompletePromise));
 
@@ -254,6 +188,9 @@ namespace GameDevWare.Charon.Windows
 					editorWindow.titleContent = new GUIContent(title);
 					editorWindow.LoadUrl(gameDataEditorUrl + reference);
 					editorWindow.SetWebViewVisibility(true);
+
+					yield return Promise.Delayed(TimeSpan.FromSeconds(2));
+
 					editorWindow.Repaint();
 					editorWindow.Focus();
 					break;
@@ -267,6 +204,7 @@ namespace GameDevWare.Charon.Windows
 					break;
 			}
 		}
+
 
 		private static IEnumerable RunCancellableProgress(string title, string message, float fromProgress, float toProgress, TimeSpan timeInterpolationWindow, Promise cancellation)
 		{

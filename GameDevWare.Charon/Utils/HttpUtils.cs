@@ -1,4 +1,23 @@
-﻿using System;
+﻿/*
+	Copyright (c) 2016 Denis Zykov
+
+	This is part of "Charon: Game Data Editor" Unity Plugin.
+
+	Charon Game Data Editor Unity Plugin is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see http://www.gnu.org/licenses.
+*/
+
+using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Diagnostics;
@@ -6,14 +25,14 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Mime;
+using GameDevWare.Charon.Async;
 using GameDevWare.Charon.Json;
-using GameDevWare.Charon.Tasks;
 
 namespace GameDevWare.Charon.Utils
 {
 	internal static class HttpUtils
 	{
-		private const int BufferSize = 32 * 1024;
+		private const int BUFFER_SIZE = 32 * 1024;
 
 		public static Promise DownloadToFile(Uri url, string downloadToFilePath, NameValueCollection requestHeader = null, Action<long, long> downloadProgressCallback = null, TimeSpan timeout = default(TimeSpan))
 		{
@@ -24,9 +43,9 @@ namespace GameDevWare.Charon.Utils
 			if (string.IsNullOrEmpty(downloadDir) == false && Directory.Exists(downloadDir) == false)
 				Directory.CreateDirectory(downloadDir);
 
-			const bool leaveOpen = false;
-			var downloadToStream = new FileStream(downloadToFilePath, FileMode.Create, FileAccess.Write, FileShare.None, BufferSize, FileOptions.None);
-			var downloadCoroutine = new Coroutine<long>(DownloadToAsync(url, downloadToStream, leaveOpen, requestHeader, downloadProgressCallback, timeout));
+			const bool LEAVE_OPEN = false;
+			var downloadToStream = new FileStream(downloadToFilePath, FileMode.Create, FileAccess.Write, FileShare.None, BUFFER_SIZE, FileOptions.None);
+			var downloadCoroutine = new Coroutine<long>(DownloadToAsync(url, downloadToStream, LEAVE_OPEN, requestHeader, downloadProgressCallback, timeout));
 			return downloadCoroutine;
 		}
 		public static Promise<FileStream> Download(Uri url, NameValueCollection requestHeader = null, Action<long, long> downloadProgressCallback = null, TimeSpan timeout = default(TimeSpan))
@@ -43,8 +62,8 @@ namespace GameDevWare.Charon.Utils
 		public static Promise<T> GetJson<T>(Uri url, NameValueCollection requestHeader = null, Action<long, long> downloadProgressCallback = null, TimeSpan timeout = default(TimeSpan))
 		{
 			var memoryStream = new MemoryStream();
-			const bool leaveOpen = true;
-			return new Coroutine<long>(DownloadToAsync(url, memoryStream, leaveOpen, requestHeader, downloadProgressCallback, timeout)).ContinueWith(new FuncContinuation<T>(p =>
+			const bool LEAVE_OPEN = true;
+			return new Coroutine<long>(DownloadToAsync(url, memoryStream, LEAVE_OPEN, requestHeader, downloadProgressCallback, timeout)).ContinueWith(new FuncContinuation<T>(p =>
 			{
 				if (p.HasErrors)
 					throw p.Error.Unwrap();
@@ -112,7 +131,7 @@ namespace GameDevWare.Charon.Utils
 			var writen = 0L;
 			try
 			{
-				var buffer = new byte[BufferSize];
+				var buffer = new byte[BUFFER_SIZE];
 				var read = 0;
 				do
 				{

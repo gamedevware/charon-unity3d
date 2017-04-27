@@ -27,13 +27,13 @@ namespace GameDevWare.Charon
 	{
 		private static readonly FieldInfo StackTraceField = typeof(Exception).GetField("stack_trace", BindingFlags.NonPublic | BindingFlags.Instance);
 		private static readonly Dictionary<int, string> ReferenceByExceptionId = new Dictionary<int, string>();
-		private static int lastExceptionId = 1;
+		private static int LastExceptionId = 1;
 
 		public ValidationException(string gameDataPath, string id, string entityName, string path, string msg)
 			: base(string.Format("{0}:{1} {2}", entityName, id, msg))
 		{
 
-			var exceptionId = lastExceptionId++;
+			var exceptionId = LastExceptionId++;
 			StackTraceField.SetValue(this, path + "() (at " + gameDataPath + ":" + exceptionId + ")");
 
 			var reference = "#edit/" + entityName + "/" + id;

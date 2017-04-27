@@ -21,7 +21,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using GameDevWare.Charon.Tasks;
+using System.Linq;
+using GameDevWare.Charon.Async;
 using GameDevWare.Charon.Utils;
 using UnityEditor;
 using UnityEngine;
@@ -33,14 +34,6 @@ namespace GameDevWare.Charon.Windows
 		public static readonly string CharonLogPath = string.Empty;
 		public static readonly string EditorLogPath = string.Empty;
 		public static readonly string EditorPrevLogPath = string.Empty;
-
-		public enum IssueType
-		{
-			Bug = 0,
-			NewFeature,
-			Improvement,
-			Question
-		}
 
 		public string Reporter;
 		public string Description;
@@ -55,14 +48,14 @@ namespace GameDevWare.Charon.Windows
 
 		static ReportIssueWindow()
 		{
-			CharonLogPath = Path.Combine("./Library/Charon/Logs", "Charon.log");
-			
-			if (ToolsRunner.IsWindows)
+			CharonLogPath = Path.Combine(CharonCli.DATA_DIRECTORY + "Logs", "Charon.log");
+
+			if (RuntimeInformation.IsWindows)
 			{
 				EditorLogPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Unity\Editor\Editor.log");
 				EditorPrevLogPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Unity\Editor\Editor-prev.log");
 			}
-			else if (ToolsRunner.IsOsx)
+			else if (RuntimeInformation.IsOsx)
 			{
 				EditorLogPath = Path.GetFullPath("~/Library/Logs/Unity/Editor.log");
 				EditorPrevLogPath = Path.GetFullPath("~/Library/Logs/Unity/Editor-prev.log");
@@ -99,7 +92,7 @@ namespace GameDevWare.Charon.Windows
 				this.attachmentsToAdd.Add(CharonLogPath);
 		}
 
-		protected void OnGUI()
+		protected void OnGui()
 		{
 			GUILayout.Space(5);
 			if (string.IsNullOrEmpty(this.ThanksMessage))
@@ -183,27 +176,16 @@ namespace GameDevWare.Charon.Windows
 
 		private Promise ReportIssue(string reporter, string description, IssueType type, HashSet<string> attachments)
 		{
-			return CoroutineScheduler.Schedule<bool>(ReportIssueAsync(reporter, description, type, attachments));
+			return CoroutineScheduler.Schedule<bool>(this.ReportIssueAsync(reporter, description, type, attachments));
 		}
 		private IEnumerable ReportIssueAsync(string reporter, string description, IssueType type, HashSet<string> attachments)
 		{
-			var arguments = new List<string>
-			{
-				"SERVER", "REPORTISSUE",
-				"--reporter", reporter,
-				"--description", description,
-				"--type", type.ToString()
-			};
-			if (attachments != null && attachments.Count > 0)
-			{
-				arguments.Add("--attachments");
-				foreach (var attachment in attachments)
-					arguments.Add(attachment);
-			}
-			if (Settings.Current.Verbose)
-				arguments.Add("--verbose");
+			if (reporter == null) throw new ArgumentNullException("reporter");
+			if (description == null) throw new ArgumentNullException("description");
 
-			var reportIssue = ToolsRunner.RunCharonAsTool(arguments.ToArray());
+			if (attachments == null) attachments = new HashSet<string>();
+
+			var reportIssue = CharonCli.ReportIssueAsync(reporter, type, description, attachments.ToArray());
 			yield return reportIssue.IgnoreFault();
 
 			var errorOutput = reportIssue.HasErrors ? reportIssue.Error.Message : reportIssue.GetResult().GetErrorData();

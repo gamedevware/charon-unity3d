@@ -46,10 +46,10 @@ namespace GameDevWare.Charon.Windows
 		protected virtual void OnDestroy()
 		{
 			if (ReferenceEquals(this.webView, null) == false)
-				DestroyImmediate(webView);
+				DestroyImmediate(this.webView);
 			this.webView = null;
 		}
-		protected virtual void OnGUI()
+		protected virtual void OnGui()
 		{
 			if (!this.WebViewExists)
 				return;
@@ -67,7 +67,7 @@ namespace GameDevWare.Charon.Windows
 			{
 				var engineAsm = typeof(ScriptableObject).Assembly;
 				var webViewRect = (Rect)engineAsm.GetType("UnityEngine.GUIClip", throwOnError: true).InvokeMember("Unclip", BindingFlags.InvokeMethod | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public, null, null, new object[] { new Rect(0, 0, this.position.width, this.position.height) });
-				this.webView.Invoke("SetSizeAndPosition", (int)(webViewRect.x + Paddings.x), (int)(webViewRect.y + Paddings.y), (int)(webViewRect.width - (Paddings.width + Paddings.x)), (int)(webViewRect.height - (Paddings.height + Paddings.y)));
+				this.webView.Invoke("SetSizeAndPosition", (int)(webViewRect.x + this.Paddings.x), (int)(webViewRect.y + this.Paddings.y), (int)(webViewRect.width - (this.Paddings.width + this.Paddings.x)), (int)(webViewRect.height - (this.Paddings.height + this.Paddings.y)));
 			}
 		}
 
@@ -134,7 +134,7 @@ namespace GameDevWare.Charon.Windows
 				var webViewRect = (Rect)engineAsm.GetType("UnityEngine.GUIClip", throwOnError: true).InvokeMember("Unclip", BindingFlags.InvokeMethod | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public, null, null, new object[] { new Rect(0, 0, this.position.width, this.position.height) });
 				this.webView = CreateInstance(editorAsm.GetType("UnityEditor.WebView", throwOnError: true));
 				var hostView = this.GetFieldValue("m_Parent");
-				this.webView.Invoke("InitWebView", hostView, (int)(webViewRect.x + Paddings.x), (int)(webViewRect.y + Paddings.y), (int)(webViewRect.width - (Paddings.width + Paddings.x)), (int)(webViewRect.height - (Paddings.height + Paddings.y)), false);
+				this.webView.Invoke("InitWebView", hostView, (int)(webViewRect.x + this.Paddings.x), (int)(webViewRect.y + this.Paddings.y), (int)(webViewRect.width - (this.Paddings.width + this.Paddings.x)), (int)(webViewRect.height - (this.Paddings.height + this.Paddings.y)), false);
 				this.webView.SetPropertyValue("hideFlags", HideFlags.HideAndDontSave);
 			}
 			this.webView.Invoke("SetDelegateObject", this);

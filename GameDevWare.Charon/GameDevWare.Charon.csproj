@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.20506</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{1C3C0445-A778-EA2D-A4A8-47620BF099A5}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GameDevWare.Charon</RootNamespace>
+    <AssemblyName>GameDevWare.Charon</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <BaseDirectory>Assets</BaseDirectory>
+    <EditorDirectory>E:/apps/unity/Editor</EditorDirectory>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>0169</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>0169</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.XML" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="UnityEditor">
+      <HintPath>..\..\..\..\apps\unity\Editor\Data\Managed\UnityEditor.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>..\..\..\..\apps\unity\Editor\Data\Managed\UnityEngine.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssetGenerator.cs" />
+    <Compile Include="Browser.cs" />
+    <Compile Include="ChangeHooks.cs" />
+    <Compile Include="Utils\CodeGenerationOptions.cs" />
+    <Compile Include="GameDataEditorProcess.cs" />
+    <Compile Include="GameDataSettings.cs" />
+    <Compile Include="Json\JsonArray.cs" />
+    <Compile Include="Json\JsonObject.cs" />
+    <Compile Include="Json\JsonPrimitive.cs" />
+    <Compile Include="Json\JsonReader.cs" />
+    <Compile Include="Json\JsonType.cs" />
+    <Compile Include="Json\JsonValue.cs" />
+    <Compile Include="Menu.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="Async\AggregateException.cs" />
+    <Compile Include="Async\Coroutine.cs" />
+    <Compile Include="Async\IUpdatable.cs" />
+    <Compile Include="Async\Promise.Continuation.cs" />
+    <Compile Include="Async\Promise.cs" />
+    <Compile Include="Async\PromiseContinuation.cs" />
+    <Compile Include="UnityResources.cs" />
+    <Compile Include="Utils\CharonCheckResult.cs" />
+    <Compile Include="Utils\CharonCli.cs" />
+    <Compile Include="Async\CoroutineScheduler.cs" />
+    <Compile Include="Utils\CommandInput.cs" />
+    <Compile Include="Utils\CommandOutput.cs" />
+    <Compile Include="Utils\DotNetRuntimeInformation.cs" />
+    <Compile Include="Utils\ExceptionUtils.cs" />
+    <Compile Include="Utils\ExportMode.cs" />
+    <Compile Include="Utils\GameDataTracker.cs" />
+    <Compile Include="Utils\HttpUtils.cs" />
+    <Compile Include="Utils\ImportMode.cs" />
+    <Compile Include="Utils\IssueType.cs" />
+    <Compile Include="Utils\MonoRuntimeInformation.cs" />
+    <Compile Include="Utils\RuntimeInformation.cs" />
+    <Compile Include="Utils\UnityObjectExtensions.cs" />
+    <Compile Include="Utils\PathUtils.cs" />
+    <Compile Include="Utils\ProcessExtensions.cs" />
+    <Compile Include="Utils\ProgressUtils.cs" />
+    <Compile Include="Utils\RunOptions.cs" />
+    <Compile Include="Utils\RunResult.cs" />
+    <Compile Include="Utils\CommandLine.cs" />
+    <Compile Include="Utils\ValidationOptions.cs" />
+    <Compile Include="ValidationException.cs" />
+    <Compile Include="Windows\AboutWindow.cs" />
+    <Compile Include="Windows\GameDataEditorWindow.cs" />
+    <Compile Include="Windows\GameDataInspector.cs" />
+    <Compile Include="Windows\ReportIssueWindow.cs" />
+    <Compile Include="Windows\UpdateRuntimeWindow.cs" />
+    <Compile Include="Windows\WebViewEditorWindow.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="AfterBuild">
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../GameDevWare.Charon.Unity/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+  </Target>
+</Project>

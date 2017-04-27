@@ -24,8 +24,8 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Text;
+using GameDevWare.Charon.Async;
 using GameDevWare.Charon.Json;
-using GameDevWare.Charon.Tasks;
 using GameDevWare.Charon.Utils;
 using GameDevWare.Charon.Windows;
 using UnityEditor;
@@ -36,32 +36,19 @@ namespace GameDevWare.Charon
 {
 	internal static class Menu
 	{
-		public const string ToolsPrefix = "Tools/Charon/";
-		public const string TroubleshootingPrefix = ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUTROUBLESHOOTING + "/";
+		public const string TOOLS_PREFIX = "Tools/Charon/";
+		public const string TROUBLESHOOTING_PREFIX = TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENUTROUBLESHOOTING + "/";
 
-		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUSCANFORNEWASSETS, false, 1)]
-		private static void ScanForGameData()
-		{
-			if (!ScanForGameDataCheck()) return;
-
-			var scanCoroutine = CoroutineScheduler.Schedule
-			(
-				ScanForGameDataAsync(
-					progressCallback: ProgressUtils.ShowProgressBar(Resources.UI_UNITYPLUGIN_MENUSCANNINGASSETS))
-			);
-			scanCoroutine.ContinueWith(ProgressUtils.HideProgressBar);
-			FocusConsoleWindow();
-		}
-		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUSCANFORNEWASSETS, true, 1)]
+		[MenuItem(TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENUSCANFORNEWASSETS, true, 1)]
 		private static bool ScanForGameDataCheck()
 		{
 			// why not here :D
-			UnityEditor.Menu.SetChecked(TroubleshootingPrefix + Resources.UI_UNITYPLUGIN_MENUVERBOSELOGS, Settings.Current.Verbose);
+			UnityEditor.Menu.SetChecked(TROUBLESHOOTING_PREFIX + Resources.UI_UNITYPLUGIN_MENUVERBOSELOGS, Settings.Current.Verbose);
 
 			return !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling;
 		}
 
-		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUGENERATECODEANDASSETS, false, 2)]
+		[MenuItem(TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENUGENERATECODEANDASSETS, false, 2)]
 		private static void GenerateCodeAndAssets()
 		{
 			if (!GenerateCodeAndAssetsCheck()) return;
@@ -74,13 +61,13 @@ namespace GameDevWare.Charon
 			generateCoroutine.ContinueWith(ProgressUtils.HideProgressBar);
 			FocusConsoleWindow();
 		}
-		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUGENERATECODEANDASSETS, true, 2)]
+		[MenuItem(TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENUGENERATECODEANDASSETS, true, 2)]
 		private static bool GenerateCodeAndAssetsCheck()
 		{
 			return !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling;
 		}
 
-		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUVALIDATEASSETS, false, 3)]
+		[MenuItem(TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENUVALIDATEASSETS, false, 3)]
 		private static void ValidateAll()
 		{
 			if (!ValidateAllCheck()) return;
@@ -93,13 +80,13 @@ namespace GameDevWare.Charon
 			validateCoroutine.ContinueWith(ProgressUtils.HideProgressBar);
 			FocusConsoleWindow();
 		}
-		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUVALIDATEASSETS, true, 3)]
+		[MenuItem(TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENUVALIDATEASSETS, true, 3)]
 		private static bool ValidateAllCheck()
 		{
 			return !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling;
 		}
 
-		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUEXTRACTT4TEMPLATES, false, 5)]
+		[MenuItem(TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENUEXTRACTT4TEMPLATES, false, 5)]
 		private static void ExtractT4Templates()
 		{
 			if (!ExtractT4TemplatesCheck())
@@ -115,52 +102,52 @@ namespace GameDevWare.Charon
 			);
 			FocusConsoleWindow();
 		}
-		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUEXTRACTT4TEMPLATES, true, 5)]
+		[MenuItem(TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENUEXTRACTT4TEMPLATES, true, 5)]
 		private static bool ExtractT4TemplatesCheck()
 		{
 			return !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling;
 		}
 
-		[MenuItem(TroubleshootingPrefix + Resources.UI_UNITYPLUGIN_MENUVERBOSELOGS, false, 9)]
+		[MenuItem(TROUBLESHOOTING_PREFIX + Resources.UI_UNITYPLUGIN_MENUVERBOSELOGS, false, 9)]
 		private static void VerboseLogs()
 		{
 			Settings.Current.Verbose = !Settings.Current.Verbose;
-			UnityEditor.Menu.SetChecked(TroubleshootingPrefix + Resources.UI_UNITYPLUGIN_MENUVERBOSELOGS, Settings.Current.Verbose);
+			UnityEditor.Menu.SetChecked(TROUBLESHOOTING_PREFIX + Resources.UI_UNITYPLUGIN_MENUVERBOSELOGS, Settings.Current.Verbose);
 			Settings.Current.Save();
 		}
 
-		[MenuItem(TroubleshootingPrefix + Resources.UI_UNITYPLUGIN_MENUREPORTISSUE, false, 7)]
+		[MenuItem(TROUBLESHOOTING_PREFIX + Resources.UI_UNITYPLUGIN_MENUREPORTISSUE, false, 7)]
 		private static void ReportIssue()
 		{
 			EditorWindow.GetWindow<ReportIssueWindow>(utility: true);
 		}
 
-		[MenuItem(TroubleshootingPrefix + Resources.UI_UNITYPLUGIN_MENUOPENLOGS, false, 8)]
+		[MenuItem(TROUBLESHOOTING_PREFIX + Resources.UI_UNITYPLUGIN_MENUOPENLOGS, false, 8)]
 		private static void OpenLogs()
 		{
 			if (string.IsNullOrEmpty(ReportIssueWindow.CharonLogPath) == false && File.Exists(ReportIssueWindow.CharonLogPath))
 				EditorUtility.OpenWithDefaultApp(ReportIssueWindow.CharonLogPath);
 		}
 
-		[MenuItem(TroubleshootingPrefix + Resources.UI_UNITYPLUGIN_MENUOPENLOGS, true, 8)]
+		[MenuItem(TROUBLESHOOTING_PREFIX + Resources.UI_UNITYPLUGIN_MENUOPENLOGS, true, 8)]
 		private static bool OpenLogsCheck()
 		{
 			return string.IsNullOrEmpty(ReportIssueWindow.CharonLogPath) == false && File.Exists(ReportIssueWindow.CharonLogPath);
 		}
 
-		[MenuItem(TroubleshootingPrefix + Resources.UI_UNITYPLUGIN_MENUCHECKRUNTIME, false, 6)]
+		[MenuItem(TROUBLESHOOTING_PREFIX + Resources.UI_UNITYPLUGIN_MENUCHECKRUNTIME, false, 6)]
 		private static void CheckRuntime()
 		{
 			UpdateRuntimeWindow.ShowAsync(autoClose: false);
 		}
 
-		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUDOCUMENTATION, false, 10)]
+		[MenuItem(TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENUDOCUMENTATION, false, 10)]
 		private static void ShowDocumentation()
 		{
 			Application.OpenURL("https://github.com/deniszykov/charon-unity3d/blob/master/README.md");
 		}
 
-		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUCHECKUPDATES, false, 11)]
+		[MenuItem(TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENUCHECKUPDATES, false, 11)]
 		private static void CheckUpdates()
 		{
 			if (!CheckUpdatesCheck()) return;
@@ -174,19 +161,19 @@ namespace GameDevWare.Charon
 			FocusConsoleWindow();
 		}
 
-		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUCHECKUPDATES, true, 11)]
+		[MenuItem(TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENUCHECKUPDATES, true, 11)]
 		private static bool CheckUpdatesCheck()
 		{
 			return !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling;
 		}
 
-		[MenuItem(ToolsPrefix + Resources.UI_UNITYPLUGIN_MENUABOUT, false, 12)]
+		[MenuItem(TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENUABOUT, false, 12)]
 		private static void About()
 		{
 			EditorWindow.GetWindow<AboutWindow>(utility: true);
 		}
 
-		[MenuItem("Assets/Create/GameData")]
+		[MenuItem("Assets/Create/" + Resources.UI_UNITYPLUGIN_MENUCREATEGAMEDATAJSON)]
 		private static void CreateGameDataAsset()
 		{
 			if (!CreateGameDataAssetCheck()) return;
@@ -195,6 +182,8 @@ namespace GameDevWare.Charon
 			if (File.Exists(location))
 				location = Path.GetDirectoryName(location);
 
+			System.Diagnostics.Debug.Assert(location != null, "location != null");
+
 			var i = 1;
 			var gameDataPath = Path.Combine(location, "GameData.json");
 
@@ -202,13 +191,12 @@ namespace GameDevWare.Charon
 				gameDataPath = Path.Combine(location, "GameData" + (i++) + ".json");
 
 
-			gameDataPath = FileUtils.MakeProjectRelative(gameDataPath);
+			gameDataPath = PathUtils.MakeProjectRelative(gameDataPath);
 
-			File.WriteAllText(gameDataPath, "{ \"ToolsVersion\": \"0.0.0.0\" }");
+			File.WriteAllText(gameDataPath, "");
 			AssetDatabase.Refresh();
-			Settings.Current.AddGameDataPath(gameDataPath);
 		}
-		[MenuItem("Assets/Create/GameData", true)]
+		[MenuItem("Assets/Create/" + Resources.UI_UNITYPLUGIN_MENUCREATEGAMEDATAJSON, true)]
 		private static bool CreateGameDataAssetCheck()
 		{
 			if (Selection.activeObject == null)
@@ -227,88 +215,17 @@ namespace GameDevWare.Charon
 			consoleWindow.Focus();
 		}
 
-		public static IEnumerable ScanForGameDataAsync(Action<string, float> progressCallback = null)
-		{
-			switch (ToolsRunner.CheckCharon())
-			{
-				case CharonCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
-				case CharonCheckResult.MissingExecutable: yield return ToolsRunner.UpdateCharonExecutable(progressCallback); break;
-				case CharonCheckResult.Ok: break;
-				default: throw new InvalidOperationException("Unknown Tools check result.");
-			}
-
-			if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_MENUSCANNINGASSETS, 0);
-			var gameDataFiles = (from id in AssetDatabase.FindAssets("t:TextAsset").Concat(AssetDatabase.FindAssets("t:DefaultAsset"))
-								 let path = AssetDatabase.GUIDToAssetPath(id)
-								 where path != null && path.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
-								 select path);
-
-			var found = 0;
-			foreach (var gameDataPath in gameDataFiles)
-			{
-				if (Settings.Current.GameDataPaths.Contains(gameDataPath))
-					continue;
-				Settings.Current.AddGameDataPath(gameDataPath);
-			}
-
-			var paths = Settings.Current.GameDataPaths.ToArray();
-			var total = paths.Length;
-			for (var i = 0; i < paths.Length; i++)
-			{
-				var gameDataPath = paths[i];
-				var fullGameDataPath = Path.GetFullPath(gameDataPath);
-				if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_PROGRESSCURRENTTARGETIS, gameDataPath), (float)i / total);
-				if (!File.Exists(fullGameDataPath))
-				{
-					Debug.LogWarning(string.Format("Asset at '{0}' is not found.", gameDataPath));
-					Settings.Current.RemoveGameDataPath(gameDataPath);
-					continue;
-				}
-
-				if (Settings.Current.Verbose) Debug.Log(string.Format("Checking '{0}'...", gameDataPath));
-				if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_SCANRUNVALIDATIONFOR, gameDataPath), (float)i / total);
-
-				var checkProcess = ToolsRunner.RunCharonAsTool
-				(
-					"DATA", "VALIDATE", fullGameDataPath,
-					Settings.Current.Verbose ? "--verbose" : ""
-				);
-				yield return checkProcess;
-				using (var checkResult = checkProcess.GetResult())
-				{
-					if (Settings.Current.Verbose)
-						Debug.Log(string.Format("Check complete exit code: '{0}'", checkResult.ExitCode));
-					if (checkResult.ExitCode != 0)
-					{
-						Debug.LogWarning(string.Format(Resources.UI_UNITYPLUGIN_SCANASSETSKIPPED, gameDataPath));
-						if (Settings.Current.Verbose)
-							Debug.LogWarning("Validation errors: " + Environment.NewLine + checkResult.GetOutputData() + checkResult.GetErrorData());
-						Settings.Current.RemoveGameDataPath(gameDataPath);
-					}
-					else
-					{
-						if (Settings.Current.Verbose)
-							Debug.Log(string.Format("Adding '{0}' to tracked GameData files.", gameDataPath));
-						found++;
-					}
-				}
-			}
-			if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESSDONE, 1);
-
-			Debug.Log(string.Format(Resources.UI_UNITYPLUGIN_SCANCOMPLETE, found, Settings.Current.GameDataPaths.Length));
-			Settings.Current.Save();
-		}
 		public static IEnumerable GenerateCodeAndAssetsAsync(string path = null, Action<string, float> progressCallback = null)
 		{
-			switch (ToolsRunner.CheckCharon())
+			switch (CharonCli.CheckCharon())
 			{
 				case CharonCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
-				case CharonCheckResult.MissingExecutable: yield return ToolsRunner.UpdateCharonExecutable(progressCallback); break;
+				case CharonCheckResult.MissingExecutable: yield return CharonCli.UpdateCharonExecutableAsync(progressCallback); break;
 				case CharonCheckResult.Ok: break;
 				default: throw new InvalidOperationException("Unknown Tools check result.");
 			}
 
-			var paths = !string.IsNullOrEmpty(path) ? new string[] { path } : Settings.Current.GameDataPaths.ToArray();
+			var paths = !string.IsNullOrEmpty(path) ? new[] { path } : GameDataTracker.All.ToArray();
 			var total = paths.Length;
 			var forceReImportList = new List<string>();
 			for (var i = 0; i < paths.Length; i++)
@@ -318,113 +235,122 @@ namespace GameDevWare.Charon
 					continue;
 				if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_PROGRESSCURRENTTARGETIS, gameDataPath), (float)i / total);
 
-
 				var gameDataObj = AssetDatabase.LoadAssetAtPath(gameDataPath, typeof(UnityEngine.Object));
 				var assetImport = AssetImporter.GetAtPath(gameDataPath);
 				if (assetImport == null)
 					continue;
 
 				var gameDataSettings = GameDataSettings.Load(gameDataObj);
-				var codeGenerationPath = FileUtils.MakeProjectRelative(gameDataSettings.CodeGenerationPath);
+				var codeGenerationPath = PathUtils.MakeProjectRelative(gameDataSettings.CodeGenerationPath);
 				if (gameDataSettings.Generator == (int)GameDataSettings.CodeGenerator.None)
 					continue;
 
 				var generationOptions = gameDataSettings.Options;
+				if (Array.IndexOf(Settings.SupportedExtensions, Settings.EXTENSION_EXPRESSIONS) == -1) // no expression library installed
+					generationOptions |= (int)CodeGenerationOptions.DisableExpressions;
+
 				// trying to touch gamedata file
 				var touchGamedata = new Coroutine<FileStream>(TouchGameDataFile(gameDataPath));
 				yield return touchGamedata;
+				touchGamedata.GetResult().Dispose(); // release touched file
 
-				using (touchGamedata.GetResult())
+				var generator = (GameDataSettings.CodeGenerator)gameDataSettings.Generator;
+				switch (generator)
 				{
-					var generator = (GameDataSettings.CodeGenerator)gameDataSettings.Generator;
-					switch (generator)
-					{
-						case GameDataSettings.CodeGenerator.CSharpCodeAndAsset:
-							if (!string.IsNullOrEmpty(gameDataSettings.AssetGenerationPath))
-							{
-								AssetGenerator.AddPath(gameDataPath);
-								generationOptions &= ~(int)GameDataSettings.CodeGenerationOptions.SuppressJsonSerialization;
-							}
-							goto generateCSharpCode;
-						case GameDataSettings.CodeGenerator.CSharp:
-							generateCSharpCode:
-							if (Settings.Current.Verbose)
-								Debug.Log(string.Format("Generating C# code for '{0}'...", gameDataPath));
-							if (progressCallback != null)
-								progressCallback(string.Format(Resources.UI_UNITYPLUGIN_GENERATECODEFOR, gameDataPath), (float)i / total);
-							var generateProcess = ToolsRunner.RunCharonAsTool(
-								"DATA", generator == GameDataSettings.CodeGenerator.CSharp ? "GENERATECSHARPCODE" : "GENERATEUNITYCSHARPCODE",
-								Path.GetFullPath(gameDataPath),
-								"--namespace",
-								gameDataSettings.Namespace,
-								"--gameDataClassName",
-								gameDataSettings.GameDataClassName,
-								"--documentClassName",
-								gameDataSettings.DocumentClassName,
-								"--options",
-								generationOptions.ToString(),
-								"--output",
-								Path.GetFullPath(codeGenerationPath),
-								Settings.Current.Verbose ? "--verbose" : ""
+					case GameDataSettings.CodeGenerator.CSharpCodeAndAsset:
+						if (!string.IsNullOrEmpty(gameDataSettings.AssetGenerationPath))
+						{
+							AssetGenerator.AddPath(gameDataPath);
+							generationOptions &= ~(int)(CodeGenerationOptions.DisableJsonSerialization |
+								CodeGenerationOptions.DisableBsonSerialization |
+								CodeGenerationOptions.DisableMessagePackSerialization |
+								CodeGenerationOptions.DisableXmlSerialization
 							);
-							yield return generateProcess;
+						}
+						goto generateCSharpCode;
+					case GameDataSettings.CodeGenerator.CSharp:
+						generateCSharpCode:
+						if (Settings.Current.Verbose)
+							Debug.Log(string.Format("Generating C# code for '{0}'...", gameDataPath));
+						if (progressCallback != null)
+							progressCallback(string.Format(Resources.UI_UNITYPLUGIN_GENERATECODEFOR, gameDataPath), (float)i / total);
 
-							if (Settings.Current.Verbose)
-								Debug.Log(string.Format("Generation complete, exit code: '{0}'", generateProcess.GetResult().ExitCode));
-							using (var generateResult = generateProcess.GetResult())
+						var generateProcess = generator == GameDataSettings.CodeGenerator.CSharp
+							? CharonCli.GenerateCSharpCodeAsync
+							(
+								gameDataPath,
+								Path.GetFullPath(codeGenerationPath),
+								(CodeGenerationOptions)generationOptions,
+								gameDataSettings.DocumentClassName,
+								gameDataSettings.GameDataClassName,
+								gameDataSettings.Namespace
+							)
+							: CharonCli.GenerateUnityCSharpCodeAsync
+							(
+								gameDataPath,
+								Path.GetFullPath(codeGenerationPath),
+								(CodeGenerationOptions)generationOptions,
+								gameDataSettings.DocumentClassName,
+								gameDataSettings.GameDataClassName,
+								gameDataSettings.Namespace
+							);
+						yield return generateProcess;
+
+						if (Settings.Current.Verbose)
+							Debug.Log(string.Format("Generation complete, exit code: '{0}'", generateProcess.GetResult().ExitCode));
+						using (var generateResult = generateProcess.GetResult())
+						{
+							if (generateResult.ExitCode != 0)
 							{
-								if (generateResult.ExitCode != 0)
-								{
-									Debug.LogWarning(string.Format(Resources.UI_UNITYPLUGIN_GENERATEFAILEDDUEERRORS, gameDataPath, generateResult.GetErrorData()));
-								}
-								else
-								{
-									if (Settings.Current.Verbose)
-										Debug.Log(string.Format("Code generation for '{0}' is complete.", gameDataPath));
+								Debug.LogWarning(string.Format(Resources.UI_UNITYPLUGIN_GENERATEFAILEDDUEERRORS, gameDataPath, generateResult.GetErrorData()));
+							}
+							else
+							{
+								if (Settings.Current.Verbose)
+									Debug.Log(string.Format("Code generation for '{0}' is complete.", gameDataPath));
 
-									forceReImportList.Add(codeGenerationPath);
+								forceReImportList.Add(codeGenerationPath);
 
-									if (gameDataSettings.LineEnding != 0 ||
-										gameDataSettings.Indentation != 0)
+								if (gameDataSettings.LineEnding != 0 ||
+									gameDataSettings.Indentation != 0)
+								{
+									if (progressCallback != null)
+										progressCallback(string.Format(Resources.UI_UNITYPLUGIN_GENERATEREFORMATCODE, gameDataPath), (float)i / total);
+
+									var code = new StringBuilder(File.ReadAllText(codeGenerationPath));
+									switch ((GameDataSettings.LineEndings)gameDataSettings.LineEnding)
 									{
-										if (progressCallback != null)
-											progressCallback(string.Format(Resources.UI_UNITYPLUGIN_GENERATEREFORMATCODE, gameDataPath), (float)i / total);
-
-										var code = new StringBuilder(File.ReadAllText(codeGenerationPath));
-										switch ((GameDataSettings.LineEndings)gameDataSettings.LineEnding)
-										{
-											case GameDataSettings.LineEndings.Windows:
-												// already windows
-												break;
-											case GameDataSettings.LineEndings.Unix:
-												code.Replace("\r\n", "\n");
-												break;
-											default:
-												throw new InvalidOperationException(string.Format("Unknown LineEnding value '{0}' is set for {1}", gameDataSettings.LineEnding, gameDataPath));
-										}
-										switch ((GameDataSettings.Indentations)gameDataSettings.Indentation)
-										{
-											case GameDataSettings.Indentations.Tab:
-												// already tabs
-												break;
-											case GameDataSettings.Indentations.FourSpaces:
-												code.Replace("\t", "    ");
-												break;
-											case GameDataSettings.Indentations.TwoSpaces:
-												code.Replace("\t", "  ");
-												break;
-											default:
-												throw new InvalidOperationException(string.Format("Unknown indentation value '{0}' is set for {1}", gameDataSettings.Indentation, gameDataPath));
-										}
-										File.WriteAllText(codeGenerationPath, code.ToString());
+										case GameDataSettings.LineEndings.Windows:
+											// already windows
+											break;
+										case GameDataSettings.LineEndings.Unix:
+											code.Replace("\r\n", "\n");
+											break;
+										default:
+											throw new InvalidOperationException(string.Format("Unknown LineEnding value '{0}' is set for {1}", gameDataSettings.LineEnding, gameDataPath));
 									}
+									switch ((GameDataSettings.Indentations)gameDataSettings.Indentation)
+									{
+										case GameDataSettings.Indentations.Tab:
+											// already tabs
+											break;
+										case GameDataSettings.Indentations.FourSpaces:
+											code.Replace("\t", "    ");
+											break;
+										case GameDataSettings.Indentations.TwoSpaces:
+											code.Replace("\t", "  ");
+											break;
+										default:
+											throw new InvalidOperationException(string.Format("Unknown indentation value '{0}' is set for {1}", gameDataSettings.Indentation, gameDataPath));
+									}
+									File.WriteAllText(codeGenerationPath, code.ToString());
 								}
 							}
-							break;
-						default:
-							Debug.LogError("Unknown code/asset generator type " + (GameDataSettings.CodeGenerator)gameDataSettings.Generator + ".");
-							break;
-					}
+						}
+						break;
+					default:
+						Debug.LogError("Unknown code/asset generator type " + (GameDataSettings.CodeGenerator)gameDataSettings.Generator + ".");
+						break;
 				}
 			}
 			if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_GENERATEREFRESHINGASSETS, 0.99f);
@@ -449,7 +375,7 @@ namespace GameDevWare.Charon
 					continue;
 
 				var gameDataSettings = GameDataSettings.Load(gameDataObj);
-				var assetGenerationPath = FileUtils.MakeProjectRelative(gameDataSettings.AssetGenerationPath);
+				var assetGenerationPath = PathUtils.MakeProjectRelative(gameDataSettings.AssetGenerationPath);
 				if (string.IsNullOrEmpty(assetGenerationPath))
 					continue;
 
@@ -457,9 +383,13 @@ namespace GameDevWare.Charon
 				var touchGamedata = new Coroutine<FileStream>(TouchGameDataFile(gameDataPath));
 				yield return touchGamedata;
 
-				using (touchGamedata.GetResult())
-				using (var gameDataTextReader = new StreamReader(gameDataPath, Encoding.UTF8))
+				using (var file = touchGamedata.GetResult())
 				{
+					var gameDataBytes = new byte[file.Length];
+					int read, offset = 0;
+					while ((read = file.Read(gameDataBytes, offset, gameDataBytes.Length - offset)) > 0)
+						offset += read;
+
 					var gameDataType = Type.GetType(gameDataSettings.Namespace + "." + gameDataSettings.GameDataClassName + ", Assembly-CSharp", throwOnError: false) ??
 									   Type.GetType(gameDataSettings.Namespace + "." + gameDataSettings.GameDataClassName + ", Assembly-CSharp-firstpass", throwOnError: false) ??
 									   Type.GetType(gameDataSettings.Namespace + "." + gameDataSettings.GameDataClassName + ", Assembly-CSharp-Editor", throwOnError: false);
@@ -469,9 +399,9 @@ namespace GameDevWare.Charon
 						continue;
 					}
 
-					var gameDataJson = gameDataTextReader.ReadToEnd();
-					var gameDataAsset = (ScriptableObject)ScriptableObject.CreateInstance(gameDataType);
-					gameDataAsset.SetFieldValue("jsonText", gameDataJson);
+					var gameDataAsset = ScriptableObject.CreateInstance(gameDataType);
+					gameDataAsset.SetFieldValue("dataBytes", gameDataBytes);
+					gameDataAsset.SetFieldValue("format", 0);
 					AssetDatabase.CreateAsset(gameDataAsset, assetGenerationPath);
 					AssetDatabase.SaveAssets();
 				}
@@ -482,16 +412,16 @@ namespace GameDevWare.Charon
 		}
 		public static IEnumerable ValidateAsync(string path = null, Action<string, float> progressCallback = null)
 		{
-			switch (ToolsRunner.CheckCharon())
+			switch (CharonCli.CheckCharon())
 			{
 				case CharonCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
-				case CharonCheckResult.MissingExecutable: yield return ToolsRunner.UpdateCharonExecutable(progressCallback); break;
+				case CharonCheckResult.MissingExecutable: yield return CharonCli.UpdateCharonExecutableAsync(progressCallback); break;
 				case CharonCheckResult.Ok: break;
 				default: throw new InvalidOperationException("Unknown Tools check result.");
 			}
 
 			var reports = new Dictionary<string, object>();
-			var paths = !string.IsNullOrEmpty(path) ? new string[] { path } : Settings.Current.GameDataPaths.ToArray();
+			var paths = !string.IsNullOrEmpty(path) ? new[] { path } : GameDataTracker.All.ToArray();
 			var total = paths.Length;
 			for (var i = 0; i < paths.Length; i++)
 			{
@@ -502,13 +432,9 @@ namespace GameDevWare.Charon
 
 				if (Settings.Current.Verbose) Debug.Log(string.Format("Validating GameData at '{0}'...", gameDataPath));
 				if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_VALIDATERUNFOR, gameDataPath), (float)i / total);
-				var validateProcess = ToolsRunner.RunCharonAsTool
-				(
-					"DATA", "VALIDATE", Path.GetFullPath(gameDataPath),
-					"--output", "out",
-					"--outputFormat", "json",
-					Settings.Current.Verbose ? "--verbose" : ""
-				);
+
+				var output = CommandOutput.JsonObject();
+				var validateProcess = CharonCli.ValidateAsync(Path.GetFullPath(gameDataPath), ValidationOptions.None, output);
 				yield return validateProcess;
 
 				using (var validateResult = validateProcess.GetResult())
@@ -524,20 +450,20 @@ namespace GameDevWare.Charon
 					{
 						try
 						{
-							var report = default(JsonObject);
-							reports.Add(gameDataPath, report = (JsonObject)JsonValue.Parse(validateResult.GetOutputData()));
+							var report = output.ReadAs<JsonObject>();
+							reports.Add(gameDataPath, report);
 							var success = (bool)report["success"];
 							var totalErrors = 0;
 							if (!success)
 							{
 								var items = (JsonArray)report["items"];
 								System.Diagnostics.Debug.Assert(items != null, "items != null");
-								foreach (JsonObject record in items)
+								foreach (var record in items.Cast<JsonObject>())
 								{
 									var errors = record.ContainsKey("errors") ? ((JsonArray)record["errors"]) : null;
 									if (errors != null)
 									{
-										foreach (JsonObject error in errors)
+										foreach (var error in errors.Cast<JsonObject>())
 										{
 											var id = record["id"] is JsonPrimitive ? Convert.ToString(((JsonPrimitive)record["id"]).Value) : record["id"].Stringify();
 											var entityName = (string)record["entityName"];
@@ -570,20 +496,16 @@ namespace GameDevWare.Charon
 		}
 		public static IEnumerable ExtractT4Templates(string extractionPath)
 		{
-			switch (ToolsRunner.CheckCharon())
+			switch (CharonCli.CheckCharon())
 			{
 				case CharonCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
-				case CharonCheckResult.MissingExecutable: yield return ToolsRunner.UpdateCharonExecutable(ProgressUtils.ReportToLog(Resources.UI_UNITYPLUGIN_MENUCHECKUPDATES)); break;
+				case CharonCheckResult.MissingExecutable: yield return CharonCli.UpdateCharonExecutableAsync(ProgressUtils.ReportToLog(Resources.UI_UNITYPLUGIN_MENUCHECKUPDATES)); break;
 				case CharonCheckResult.Ok: break;
 				default: throw new InvalidOperationException("Unknown Tools check result.");
 			}
 
 			if (Settings.Current.Verbose) Debug.Log(string.Format("Extracting T4 Templates to '{0}'...", extractionPath));
-			var dumpProcess = ToolsRunner.RunCharonAsTool
-			(
-				"DUMPCODEGENERATOR", Path.GetFullPath(extractionPath),
-				Settings.Current.Verbose ? "--verbose" : ""
-			);
+			var dumpProcess = CharonCli.DumpTemplatesAsync(extractionPath);
 			yield return dumpProcess;
 
 			using (var dumpResult = dumpProcess.GetResult())
@@ -609,7 +531,9 @@ namespace GameDevWare.Charon
 				catch (IOException e)
 				{
 					if (Settings.Current.Verbose)
-						Debug.LogWarning("Attempt #" + attempt + " to touch " + path + " file has failed with IO error: " + e);
+						Debug.LogWarning("Attempt #" + attempt + " to touch " + path + " file has failed with IO error: " + Environment.NewLine + e);
+					if (gameDataFile != null)
+						gameDataFile.Dispose();
 				}
 				yield return Promise.Delayed(TimeSpan.FromSeconds(1));
 			}
@@ -623,15 +547,10 @@ namespace GameDevWare.Charon
 			{
 				if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESSCHECKINGTOOLSVERSION, 0.05f);
 
-				var checkToolsVersion = ToolsRunner.RunCharonAsTool("VERSION");
+				var checkToolsVersion = CharonCli.GetVersionAsync();
 				yield return checkToolsVersion.IgnoreFault();
 
-				using (var checkToolsVersionResult = checkToolsVersion.HasErrors ? default(ToolExecutionResult) : checkToolsVersion.GetResult())
-				{
-					var outputData = checkToolsVersionResult != null ? checkToolsVersionResult.GetOutputData() : null;
-					if (string.IsNullOrEmpty(outputData) == false)
-						toolsVersion = new Version(outputData);
-				}
+				toolsVersion = checkToolsVersion.HasErrors ? default(Version) : checkToolsVersion.GetResult();
 			}
 
 			if (Settings.Current.Verbose)
@@ -686,11 +605,11 @@ namespace GameDevWare.Charon
 			var downloadHeaders = new NameValueCollection { { "Accept", "application/octet-stream" } };
 			var downloadUrl = new Uri(licenseServerAddress, "Build?product=Charon&id=" + Uri.EscapeDataString(lastVersion.ToString()));
 			var downloadPath = Path.GetTempFileName();
-			yield return HttpUtils.DownloadToFile(downloadUrl, downloadPath, downloadHeaders, (readed, total) =>
+			yield return HttpUtils.DownloadToFile(downloadUrl, downloadPath, downloadHeaders, (read, total) =>
 			{
 				if (progressCallback == null || total == 0)
 					return;
-				progressCallback(string.Format(Resources.UI_UNITYPLUGIN_PROGRESSDOWNLOADINGS, (float)readed / 1024 / 1024, total / 1024 / 1024), 0.10f + (0.80f * Math.Min(1.0f, (float)readed / total)));
+				progressCallback(string.Format(Resources.UI_UNITYPLUGIN_PROGRESSDOWNLOADINGS, (float)read / 1024 / 1024, total / 1024 / 1024), 0.10f + (0.80f * Math.Min(1.0f, (float)read / total)));
 			});
 
 			var windows = UnityEngine.Resources.FindObjectsOfTypeAll<GameDataEditorWindow>();
@@ -704,8 +623,10 @@ namespace GameDevWare.Charon
 				if (Directory.Exists(toolsPath))
 					Directory.Delete(toolsPath);
 
-				if (Directory.Exists(Path.GetDirectoryName(toolsPath)) == false)
-					Directory.CreateDirectory(Path.GetDirectoryName(toolsPath));
+				var toolsDirectory = Path.GetDirectoryName(toolsPath);
+				System.Diagnostics.Debug.Assert(toolsDirectory != null, "toolsDirectory != null");
+				if (Directory.Exists(toolsDirectory) == false)
+					Directory.CreateDirectory(toolsDirectory);
 
 				File.Move(downloadPath, toolsPath);
 			}
@@ -720,26 +641,14 @@ namespace GameDevWare.Charon
 				try { if (File.Exists(downloadPath)) File.Delete(downloadPath); }
 				catch { }
 			}
-
-			// ReSharper disable once EmptyGeneralCatchClause
-			try { if (Directory.Exists(ToolsRunner.ToolShadowCopyPath)) Directory.Delete(ToolsRunner.ToolShadowCopyPath, true); }
-			catch { Debug.LogWarning(string.Format("Failed to delete directory with old copy of tools '{0}'. Please restart unity or delete it manually.", ToolsRunner.ToolShadowCopyPath)); }
-
-			ToolsRunner.ToolShadowCopyPath = FileUtil.GetUniqueTempPathInProject();
-
+			
 			if (File.Exists(toolsPath))
 			{
 				if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESSCHECKINGTOOLSVERSION, 0.95f);
 
-				var checkToolsVersion = ToolsRunner.RunCharonAsTool("VERSION");
+				var checkToolsVersion = CharonCli.GetVersionAsync();
 				yield return checkToolsVersion.IgnoreFault();
-
-				using (var checkToolsVersionResult = checkToolsVersion.HasErrors ? default(ToolExecutionResult) : checkToolsVersion.GetResult())
-				{
-					var outputData = checkToolsVersionResult != null ? checkToolsVersionResult.GetOutputData() : null;
-					if (string.IsNullOrEmpty(outputData) == false)
-						toolsVersion = new Version(outputData);
-				}
+				toolsVersion = checkToolsVersion.HasErrors ? default(Version) : checkToolsVersion.GetResult();
 			}
 
 			Debug.Log(string.Format("{1} version is '{0}'. Update is complete.", toolsVersion, Path.GetFileName(toolsPath)));
