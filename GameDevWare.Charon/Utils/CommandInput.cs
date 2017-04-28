@@ -20,8 +20,9 @@
 using System;
 using System.IO;
 using System.Runtime.CompilerServices;
+using GameDevWare.Charon.Async;
 using GameDevWare.Charon.Json;
-
+using UnityEngine;
 using IOFile = System.IO.File;
 
 namespace GameDevWare.Charon.Utils
@@ -112,17 +113,33 @@ namespace GameDevWare.Charon.Utils
 			};
 		}
 
+		internal Promise<RunResult> StickWith(Promise<RunResult> runTask)
+		{
+			if (runTask == null) throw new ArgumentNullException("runTask");
+
+			runTask.ContinueWith(t =>
+			{
+				this.Dispose();
+			});
+
+			return runTask;
+		}
+
 		/// <inheritdoc />
 		private void ReleaseUnmanagedResources()
 		{
 			if (this.temporaryFile != null && IOFile.Exists(this.temporaryFile))
+			{
+				if (Settings.Current.Verbose)
+					Debug.Log(string.Format("Removing temporary input file '{0}'.", this.temporaryFile));
 				IOFile.Delete(this.temporaryFile);
+			}
 
 			this.temporaryFile = null;
 		}
 
 		/// <inheritdoc />
-		void IDisposable.Dispose()
+		public void Dispose()
 		{
 			this.ReleaseUnmanagedResources();
 			GC.SuppressFinalize(this);

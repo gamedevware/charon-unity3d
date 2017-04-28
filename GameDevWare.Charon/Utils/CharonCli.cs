@@ -163,6 +163,7 @@ namespace GameDevWare.Charon.Utils
 					"--outputFormattingOptions", output.FormattingOptions
 				)
 			);
+			input.StickWith(runTask);
 			return output.Capture(runTask);
 		}
 
@@ -194,6 +195,8 @@ namespace GameDevWare.Charon.Utils
 					"--outputFormattingOptions", output.FormattingOptions
 				)
 			);
+
+			input.StickWith(runTask);
 			return output.Capture(runTask);
 		}
 
@@ -225,6 +228,7 @@ namespace GameDevWare.Charon.Utils
 					"--outputFormattingOptions", output.FormattingOptions
 				)
 			);
+			input.StickWith(runTask);
 			return output.Capture(runTask);
 		}
 
@@ -275,6 +279,7 @@ namespace GameDevWare.Charon.Utils
 					"--inputFormattingOptions", input.FormattingOptions
 				)
 			);
+			input.StickWith(runTask);
 			return runTask;
 		}
 
@@ -350,6 +355,7 @@ namespace GameDevWare.Charon.Utils
 					"--inputFormattingOptions", input.FormattingOptions
 				)
 			);
+			input.StickWith(runTask);
 			return runTask;
 		}
 
