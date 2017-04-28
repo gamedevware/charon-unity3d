@@ -34,6 +34,9 @@ namespace GameDevWare.Charon.Async
 
 		public static bool IsRunning { get { return Current != null && Current.IsCompleted == false; } }
 
+		[ThreadStatic]
+		public static string CurrentId;
+
 		static CoroutineScheduler()
 		{
 			EditorApplication.update += Update;
@@ -81,17 +84,51 @@ namespace GameDevWare.Charon.Async
 			var resultPromise = new Promise<T>();
 			WaitQueue.Enqueue(() =>
 			{
-				Current = new Coroutine<T>(coroutine).ContinueWith(new ActionContinuation<T>(t =>
-				{
-					CoroutineById.Remove(id);
-
-					if (t.HasErrors) resultPromise.SetFailed(t.Error);
-					else resultPromise.SetResult(t.GetResult());
-				}));
+				Current = new Coroutine<T>(WrapCoroutine(coroutine, id, resultPromise));
 			});
 
 			CoroutineById.Add(id, resultPromise);
 			return resultPromise;
+		}
+
+		private static IEnumerable WrapCoroutine<T>(IEnumerable coroutine, string id, Promise<T> resultPromise)
+		{
+			if (coroutine == null) throw new ArgumentNullException("coroutine");
+			if (id == null) throw new ArgumentNullException("id");
+			if (resultPromise == null) throw new ArgumentNullException("resultPromise");
+
+			var result = default(T);
+			var enumerator = coroutine.GetEnumerator();
+			var hasNext = default(bool);
+			do
+			{
+				try
+				{
+					CurrentId = id;
+					hasNext = enumerator.MoveNext();
+					CurrentId = null;
+				}
+				catch (Exception executionError)
+				{
+					CurrentId = null;
+					CoroutineById.Remove(id);
+					resultPromise.TrySetFailed(executionError);
+					yield break;
+				}
+
+				if (hasNext)
+				{
+					if (enumerator.Current is T)
+						result = (T)enumerator.Current;
+
+					yield return enumerator.Current;
+				}
+
+			} while (hasNext);
+
+			CurrentId = null;
+			CoroutineById.Remove(id);
+			resultPromise.TrySetResult(result);
 		}
 	}
 }

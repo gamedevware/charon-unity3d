@@ -20,6 +20,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using GameDevWare.Charon.Async;
@@ -92,7 +93,8 @@ namespace GameDevWare.Charon.Windows
 				this.attachmentsToAdd.Add(CharonLogPath);
 		}
 
-		protected void OnGui()
+		[SuppressMessage("ReSharper", "InconsistentNaming")]
+		protected void OnGUI()
 		{
 			GUILayout.Space(5);
 			if (string.IsNullOrEmpty(this.ThanksMessage))
@@ -176,7 +178,7 @@ namespace GameDevWare.Charon.Windows
 
 		private Promise ReportIssue(string reporter, string description, IssueType type, HashSet<string> attachments)
 		{
-			return CoroutineScheduler.Schedule<bool>(this.ReportIssueAsync(reporter, description, type, attachments));
+			return CoroutineScheduler.Schedule<bool>(this.ReportIssueAsync(reporter, description, type, attachments), "ui::ReportIssue");
 		}
 		private IEnumerable ReportIssueAsync(string reporter, string description, IssueType type, HashSet<string> attachments)
 		{
@@ -190,7 +192,7 @@ namespace GameDevWare.Charon.Windows
 
 			var errorOutput = reportIssue.HasErrors ? reportIssue.Error.Message : reportIssue.GetResult().GetErrorData();
 			if (string.IsNullOrEmpty(errorOutput) == false)
-				throw new InvalidOperationException("Failed to report issue: " + (errorOutput.Length > 0 ? errorOutput : "An unknown error occured. Please report this issue directly to developer."));
+				throw new InvalidOperationException("Failed to report issue: " + (errorOutput.Length > 0 ? errorOutput : "An unknown error occurred. Please report this issue directly to developer."));
 		}
 
 		protected void Update()

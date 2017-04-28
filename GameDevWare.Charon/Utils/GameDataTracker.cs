@@ -79,7 +79,7 @@ namespace GameDevWare.Charon.Utils
 		}
 		public static bool IsGameDataFile(string gameDataPath)
 		{
-			if (gameDataPath == null) throw new ArgumentNullException("gameDataPath");
+			if (string.IsNullOrEmpty(gameDataPath)) return false;
 
 			foreach (var gameDataExtension in GameDataExtensions)
 			{

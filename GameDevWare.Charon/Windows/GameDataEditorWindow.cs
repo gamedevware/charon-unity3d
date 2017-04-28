@@ -44,7 +44,7 @@ namespace GameDevWare.Charon.Windows
 		{
 			this.titleContent = new GUIContent(Resources.UI_UNITYPLUGIN_WINDOWEDITORTITLE);
 			this.minSize = new Vector2(300, 300);
-			this.Paddings = new Rect(3, 3, 3, 3);
+			this.Padding = new Rect(3, 3, 3, 3);
 		}
 
 		protected void Awake()

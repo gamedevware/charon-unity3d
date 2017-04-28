@@ -400,7 +400,7 @@ namespace GameDevWare.Charon.Async
 
 				if (this.HasErrors)
 				{
-					if (this.Error.InnerExceptions.Count == 1)
+					if (this.Error.InnerExceptions.Count == 1 && this.Error.InnerException != null)
 						throw this.Error.InnerException;
 					throw this.Error;
 				}

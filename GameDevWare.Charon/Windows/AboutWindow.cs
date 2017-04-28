@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using GameDevWare.Charon.Async;
 using GameDevWare.Charon.Utils;
 using UnityEditor;
@@ -45,7 +46,8 @@ namespace GameDevWare.Charon.Windows
 			);
 		}
 
-		protected void OnGui()
+		[SuppressMessage("ReSharper", "InconsistentNaming")]
+		protected void OnGUI()
 		{
 			GUILayout.Box("Charon", new GUIStyle { fontSize = 72, alignment = TextAnchor.MiddleCenter });
 			GUILayout.Space(10);

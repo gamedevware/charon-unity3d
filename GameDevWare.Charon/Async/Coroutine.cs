@@ -83,7 +83,7 @@ namespace GameDevWare.Charon.Async
 		}
 
 	}
-	public class Coroutine<T> : Promise<T>, IUpdatable
+	internal class Coroutine<T> : Promise<T>, IUpdatable
 	{
 		private readonly IEnumerator coroutine;
 		private object current;

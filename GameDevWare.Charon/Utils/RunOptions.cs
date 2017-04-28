@@ -34,6 +34,7 @@ namespace GameDevWare.Charon.Utils
 		public ProcessStartInfo StartInfo { get; private set; }
 		public TimeSpan ExecutionTimeout { get; set; }
 		public TimeSpan TerminationTimeout { get; set; }
+		internal bool Schedule { get; set; }
 
 		public RunOptions(string executablePath, params string[] arguments)
 		{

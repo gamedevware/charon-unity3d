@@ -34,7 +34,7 @@ namespace GameDevWare.Charon.Utils
 
 		public static string MakeProjectRelative(string path)
 		{
-			if (String.IsNullOrEmpty(path)) return null;
+			if (string.IsNullOrEmpty(path)) return null;
 			var fullPath = Path.GetFullPath(Environment.CurrentDirectory).Replace("\\", "/");
 			path = Path.GetFullPath(path).Replace("\\", "/");
 
@@ -94,7 +94,7 @@ namespace GameDevWare.Charon.Utils
 		}
 		internal static string GetProgramFilesx86()
 		{
-			if (8 == IntPtr.Size || (!String.IsNullOrEmpty(Environment.GetEnvironmentVariable("PROCESSOR_ARCHITEW6432"))))
+			if (8 == IntPtr.Size || (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("PROCESSOR_ARCHITEW6432"))))
 			{
 				return Environment.GetEnvironmentVariable("ProgramFiles(x86)");
 			}

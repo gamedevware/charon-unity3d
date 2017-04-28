@@ -26,7 +26,7 @@ namespace GameDevWare.Charon.Json
 			var v = this.ReadCore();
 			this.SkipSpaces();
 			if (this.ReadChar() >= 0)
-				throw this.JsonError(String.Format("extra characters in JSON input"));
+				throw this.JsonError("extra characters in JSON input");
 			return v;
 		}
 		private JsonValue ReadCore()
@@ -104,7 +104,7 @@ namespace GameDevWare.Charon.Json
 				default:
 					if ('0' <= c && c <= '9' || c == '-')
 						return this.ReadNumericLiteral();
-					throw this.JsonError(String.Format("Unexpected character '{0}'", (char) c));
+					throw this.JsonError(string.Format("Unexpected character '{0}'", (char) c));
 			}
 		}
 		private int PeekChar()
@@ -315,19 +315,19 @@ namespace GameDevWare.Charon.Json
 		{
 			int c;
 			if ((c = this.ReadChar()) != expected)
-				throw this.JsonError(String.Format("Expected '{0}', got '{1}'", expected, (char) c));
+				throw this.JsonError(string.Format("Expected '{0}', got '{1}'", expected, (char) c));
 		}
 		private void Expect(string expected)
 		{
 			for (var i = 0; i < expected.Length; i++)
 			{
 				if (this.ReadChar() != expected[i])
-					throw this.JsonError(String.Format("Expected '{0}', differed at {1}", expected, i));
+					throw this.JsonError(string.Format("Expected '{0}', differed at {1}", expected, i));
 			}
 		}
 		private Exception JsonError(string msg)
 		{
-			return new ArgumentException(String.Format("{0}. At line {1}, column {2}", msg, this.line, this.column));
+			return new ArgumentException(string.Format("{0}. At line {1}, column {2}", msg, this.line, this.column));
 		}
 	}
 }

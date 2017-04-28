@@ -148,7 +148,7 @@ namespace GameDevWare.Charon.Json
 		public override object As(Type type)
 		{
 			var instance = Activator.CreateInstance(type);
-			var members = (Dictionary<string, MemberInfo>)GetTypeMembers(type);
+			var members = GetTypeMembers(type);
 
 			foreach (var pair in this.map)
 			{
@@ -186,7 +186,7 @@ namespace GameDevWare.Charon.Json
 				pairs.Add(new JsonPair(memberKv.Key, JsonValue.From(memberValue)));
 			}
 
-			return new JsonObject(pairs); ;
+			return new JsonObject(pairs); 
 		}
 		private static Dictionary<string, MemberInfo> GetTypeMembers(Type type)
 		{

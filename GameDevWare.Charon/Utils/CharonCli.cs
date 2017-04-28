@@ -37,17 +37,17 @@ namespace GameDevWare.Charon.Utils
 
 		public static CharonCheckResult CheckCharon()
 		{
-			if (String.IsNullOrEmpty(Settings.Current.ToolsPath) || !File.Exists(Settings.Current.ToolsPath))
+			if (string.IsNullOrEmpty(Settings.Current.ToolsPath) || !File.Exists(Settings.Current.ToolsPath))
 				return CharonCheckResult.MissingExecutable;
 
 			if (RuntimeInformation.IsWindows)
 			{
-				if (DotNetRuntimeInformation.GetVersion() == null && (String.IsNullOrEmpty(MonoRuntimeInformation.MonoPath) || File.Exists(MonoRuntimeInformation.MonoPath) == false))
+				if (DotNetRuntimeInformation.GetVersion() == null && (string.IsNullOrEmpty(MonoRuntimeInformation.MonoPath) || File.Exists(MonoRuntimeInformation.MonoPath) == false))
 					return CharonCheckResult.MissingRuntime;
 			}
 			else
 			{
-				if (String.IsNullOrEmpty(MonoRuntimeInformation.MonoPath) || File.Exists(MonoRuntimeInformation.MonoPath) == false)
+				if (string.IsNullOrEmpty(MonoRuntimeInformation.MonoPath) || File.Exists(MonoRuntimeInformation.MonoPath) == false)
 					return CharonCheckResult.MissingRuntime;
 			}
 			return CharonCheckResult.Ok;
@@ -71,6 +71,8 @@ namespace GameDevWare.Charon.Utils
 				{
 					if (Settings.Current.Verbose)
 						Debug.Log("Making shadow copy of '" + Path.GetFileName(charonPath) + "' to '" + shadowDirectory + "'.");
+
+					Directory.CreateDirectory(shadowDirectory);
 
 					var shadowCharonPath = Path.Combine(shadowDirectory, Path.GetFileName(charonPath));
 					File.Copy(charonPath, shadowCharonPath, overwrite: true);
@@ -153,10 +155,10 @@ namespace GameDevWare.Charon.Utils
 				RunOptions.FlattenArguments(
 					"DATA", "CREATE", gameDataPath,
 					"--entity", entity,
-					"--input", input.Type,
+					"--input", input.Source,
 					"--inputFormat", input.Format,
 					"--inputFormattingOptions", input.FormattingOptions,
-					"--output", output.Type,
+					"--output", output.Target,
 					"--outputFormat", output.Format,
 					"--outputFormattingOptions", output.FormattingOptions
 				)
@@ -184,10 +186,10 @@ namespace GameDevWare.Charon.Utils
 					"DATA", "UPDATE", gameDataPath,
 					"--entity", entity,
 					"--id", id,
-					"--input", input.Type,
+					"--input", input.Source,
 					"--inputFormat", input.Format,
 					"--inputFormattingOptions", input.FormattingOptions,
-					"--output", output.Type,
+					"--output", output.Target,
 					"--outputFormat", output.Format,
 					"--outputFormattingOptions", output.FormattingOptions
 				)
@@ -215,10 +217,10 @@ namespace GameDevWare.Charon.Utils
 					"DATA", "DELETE", gameDataPath,
 					"--entity", entity,
 					"--id", id,
-					"--input", input.Type,
+					"--input", input.Source,
 					"--inputFormat", input.Format,
 					"--inputFormattingOptions", input.FormattingOptions,
-					"--output", output.Type,
+					"--output", output.Target,
 					"--outputFormat", output.Format,
 					"--outputFormattingOptions", output.FormattingOptions
 				)
@@ -241,7 +243,7 @@ namespace GameDevWare.Charon.Utils
 					"DATA", "FIND", gameDataPath,
 					"--entity", entity,
 					"--id", id,
-					"--output", output.Type,
+					"--output", output.Target,
 					"--outputFormat", output.Format,
 					"--outputFormattingOptions", output.FormattingOptions
 				)
@@ -268,7 +270,7 @@ namespace GameDevWare.Charon.Utils
 					"DATA", "IMPORT", gameDataPath,
 					"--entities", entities,
 					"--mode", mode,
-					"--input", input.Type,
+					"--input", input.Source,
 					"--inputFormat", input.Format,
 					"--inputFormattingOptions", input.FormattingOptions
 				)
@@ -307,7 +309,7 @@ namespace GameDevWare.Charon.Utils
 					"--attributes", attributes,
 					"--languages", Array.ConvertAll(languages, l => l.Name),
 					"--mode", mode,
-					"--output", output.Type,
+					"--output", output.Target,
 					"--outputFormat", output.Format,
 					"--outputFormattingOptions", output.FormattingOptions
 				)
@@ -326,7 +328,7 @@ namespace GameDevWare.Charon.Utils
 			(
 				RunOptions.FlattenArguments(
 					"DATA", "Backup", gameDataPath,
-					"--output", output.Type,
+					"--output", output.Target,
 					"--outputFormat", output.Format,
 					"--outputFormattingOptions", output.FormattingOptions
 				)
@@ -343,7 +345,7 @@ namespace GameDevWare.Charon.Utils
 			(
 				RunOptions.FlattenArguments(
 					"DATA", "RESTORE", gameDataPath,
-					"--input", input.Type,
+					"--input", input.Source,
 					"--inputFormat", input.Format,
 					"--inputFormattingOptions", input.FormattingOptions
 				)
@@ -363,7 +365,7 @@ namespace GameDevWare.Charon.Utils
 				RunOptions.FlattenArguments(
 					"DATA", "VALIDATE", gameDataPath,
 					"--validationOptions", ((int)validationOptions).ToString(),
-					"--output", output.Type,
+					"--output", output.Target,
 					"--outputFormat", output.Format,
 					"--outputFormattingOptions", output.FormattingOptions
 				)
@@ -502,15 +504,16 @@ namespace GameDevWare.Charon.Utils
 
 			if (File.Exists(charonPath) == false) throw new IOException(string.Format("File '{0}' doesn't exists.", charonPath));
 
-			arguments = arguments.Concat(new [] { Settings.Current.Verbose ? "--verbose" : "" }).ToArray();
+			arguments = arguments.Concat(new[] { Settings.Current.Verbose ? "--verbose" : "" }).ToArray();
 
-			return CommandLine.Run(new RunOptions(charonPath, arguments)
+			var runTask = CommandLine.Run(new RunOptions(charonPath, arguments)
 			{
 				CaptureStandardOutput = true,
 				CaptureStandardError = true,
 				ExecutionTimeout = TimeSpan.FromSeconds(30),
 				RequireDotNetRuntime = true,
 				WaitForExit = true,
+				Schedule = CoroutineScheduler.CurrentId == null,
 				StartInfo =
 				{
 					EnvironmentVariables =
@@ -520,6 +523,17 @@ namespace GameDevWare.Charon.Utils
 					}
 				}
 			});
+
+			runTask.ContinueWith(t =>
+			{
+				var result = t.GetResult();
+				if (result.ExitCode != 0)
+					throw new InvalidOperationException(result.GetErrorData() ?? string.Format("An error occurred. Process exited with code: {0}.", result.ExitCode));
+				else
+					return result;
+			});
+
+			return runTask;
 		}
 		private static string[] FindAndLoadScriptingAssemblies(string gameDataPath)
 		{

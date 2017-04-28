@@ -17,6 +17,7 @@
     along with this program.  If not, see http://www.gnu.org/licenses.
 */
 
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using GameDevWare.Charon.Utils;
 using UnityEditor;
@@ -33,7 +34,7 @@ namespace GameDevWare.Charon.Windows
 		[SerializeField]
 		private ScriptableObject webView;
 
-		protected Rect Paddings { get; set; }
+		protected Rect Padding { get; set; }
 
 		protected WebViewEditorWindow()
 		{
@@ -49,7 +50,8 @@ namespace GameDevWare.Charon.Windows
 				DestroyImmediate(this.webView);
 			this.webView = null;
 		}
-		protected virtual void OnGui()
+		[SuppressMessage("ReSharper", "InconsistentNaming")]
+		protected virtual void OnGUI()
 		{
 			if (!this.WebViewExists)
 				return;
@@ -67,7 +69,7 @@ namespace GameDevWare.Charon.Windows
 			{
 				var engineAsm = typeof(ScriptableObject).Assembly;
 				var webViewRect = (Rect)engineAsm.GetType("UnityEngine.GUIClip", throwOnError: true).InvokeMember("Unclip", BindingFlags.InvokeMethod | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public, null, null, new object[] { new Rect(0, 0, this.position.width, this.position.height) });
-				this.webView.Invoke("SetSizeAndPosition", (int)(webViewRect.x + this.Paddings.x), (int)(webViewRect.y + this.Paddings.y), (int)(webViewRect.width - (this.Paddings.width + this.Paddings.x)), (int)(webViewRect.height - (this.Paddings.height + this.Paddings.y)));
+				this.webView.Invoke("SetSizeAndPosition", (int)(webViewRect.x + this.Padding.x), (int)(webViewRect.y + this.Padding.y), (int)(webViewRect.width - (this.Padding.width + this.Padding.x)), (int)(webViewRect.height - (this.Padding.height + this.Padding.y)));
 			}
 		}
 
@@ -134,7 +136,7 @@ namespace GameDevWare.Charon.Windows
 				var webViewRect = (Rect)engineAsm.GetType("UnityEngine.GUIClip", throwOnError: true).InvokeMember("Unclip", BindingFlags.InvokeMethod | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public, null, null, new object[] { new Rect(0, 0, this.position.width, this.position.height) });
 				this.webView = CreateInstance(editorAsm.GetType("UnityEditor.WebView", throwOnError: true));
 				var hostView = this.GetFieldValue("m_Parent");
-				this.webView.Invoke("InitWebView", hostView, (int)(webViewRect.x + this.Paddings.x), (int)(webViewRect.y + this.Paddings.y), (int)(webViewRect.width - (this.Paddings.width + this.Paddings.x)), (int)(webViewRect.height - (this.Paddings.height + this.Paddings.y)), false);
+				this.webView.Invoke("InitWebView", hostView, (int)(webViewRect.x + this.Padding.x), (int)(webViewRect.y + this.Padding.y), (int)(webViewRect.width - (this.Padding.width + this.Padding.x)), (int)(webViewRect.height - (this.Padding.height + this.Padding.y)), false);
 				this.webView.SetPropertyValue("hideFlags", HideFlags.HideAndDontSave);
 			}
 			this.webView.Invoke("SetDelegateObject", this);

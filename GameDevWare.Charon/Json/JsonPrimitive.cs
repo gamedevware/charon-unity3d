@@ -158,6 +158,7 @@ namespace GameDevWare.Charon.Json
 		{
 			if (type.IsEnum)
 				return Enum.Parse(type, Convert.ToString(this.Value, CultureInfo.InvariantCulture), true);
+
 			return Convert.ChangeType(this.Value, type, CultureInfo.InvariantCulture);
 		}
 	}

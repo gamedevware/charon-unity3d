@@ -433,7 +433,7 @@ namespace GameDevWare.Charon
 				if (Settings.Current.Verbose) Debug.Log(string.Format("Validating GameData at '{0}'...", gameDataPath));
 				if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_VALIDATERUNFOR, gameDataPath), (float)i / total);
 
-				var output = CommandOutput.JsonObject();
+				var output = CommandOutput.CaptureJson();
 				var validateProcess = CharonCli.ValidateAsync(Path.GetFullPath(gameDataPath), ValidationOptions.None, output);
 				yield return validateProcess;
 
@@ -450,7 +450,7 @@ namespace GameDevWare.Charon
 					{
 						try
 						{
-							var report = output.ReadAs<JsonObject>();
+							var report = output.ReadJsonAs<JsonObject>();
 							reports.Add(gameDataPath, report);
 							var success = (bool)report["success"];
 							var totalErrors = 0;

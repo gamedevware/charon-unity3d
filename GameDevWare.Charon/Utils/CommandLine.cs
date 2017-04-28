@@ -38,16 +38,15 @@ namespace GameDevWare.Charon.Utils
 		{
 			if (options == null) throw new ArgumentNullException("options");
 
-			return new Coroutine<RunResult>(RunAsync(options));
+			if (options.Schedule)
+				return Schedule<RunResult>(RunAsync(options));
+			else
+				return new Coroutine<RunResult>(RunAsync(options));
 		}
 
-		public static Promise<T> RunSequentially<T>(IEnumerable coroutine)
+		private static Promise<T> Schedule<T>(IEnumerable coroutine)
 		{
 			return CoroutineScheduler.Schedule<T>(coroutine);
-		}
-		public static Promise RunSequentially(IEnumerable coroutine)
-		{
-			return CoroutineScheduler.Schedule(coroutine);
 		}
 
 		private static IEnumerable RunAsync(RunOptions options)

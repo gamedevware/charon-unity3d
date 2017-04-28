@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text.RegularExpressions;
 using GameDevWare.Charon.Async;
@@ -63,7 +64,7 @@ namespace GameDevWare.Charon.Windows
 			);
 		}
 
-		// ReSharper disable once InconsistentNaming
+		[SuppressMessage("ReSharper", "InconsistentNaming")]
 		protected void OnGUI()
 		{
 			EditorGUILayout.HelpBox(Resources.UI_UNITYPLUGIN_WINDOWRUNTIMEREQUIRED + "\r\n\r\n" +

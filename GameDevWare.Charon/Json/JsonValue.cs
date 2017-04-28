@@ -108,7 +108,7 @@ namespace GameDevWare.Charon.Json
 				return new JsonPrimitive((TimeSpan)ret);
 			if (ret is Uri)
 				return new JsonPrimitive((Uri)ret);
-			throw new NotSupportedException(String.Format("Unexpected parser return type: {0}", ret.GetType()));
+			throw new NotSupportedException(string.Format("Unexpected parser return type: {0}", ret.GetType()));
 		}
 		public static JsonValue Parse(string jsonString)
 		{
@@ -125,7 +125,7 @@ namespace GameDevWare.Charon.Json
 			if (stream == null)
 				throw new ArgumentNullException("stream");
 
-			this.Save(new StreamWriter(stream));
+			this.Save(new StreamWriter(stream, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false)));
 		}
 		public virtual void Save(TextWriter textWriter)
 		{
@@ -214,15 +214,15 @@ namespace GameDevWare.Charon.Json
 		{
 			var c = src[i];
 			return c < 32 || c == '"' || c == '\\'
-				// Broken lead surrogate
+				   // Broken lead surrogate
 				   || (c >= '\uD800' && c <= '\uDBFF' &&
 					   (i == src.Length - 1 || src[i + 1] < '\uDC00' || src[i + 1] > '\uDFFF'))
-				// Broken tail surrogate
+				   // Broken tail surrogate
 				   || (c >= '\uDC00' && c <= '\uDFFF' &&
 					   (i == 0 || src[i - 1] < '\uD800' || src[i - 1] > '\uDBFF'))
-				// To produce valid JavaScript
+				   // To produce valid JavaScript
 				   || c == '\u2028' || c == '\u2029'
-				// Escape "</" for <script> tags
+				   // Escape "</" for <script> tags
 				   || (c == '/' && i > 0 && src[i - 1] == '<');
 		}
 		internal string EscapeString(string src)
@@ -486,45 +486,47 @@ namespace GameDevWare.Charon.Json
 		{
 			var jsonValue = default(JsonValue);
 			if (value is bool)
-				jsonValue = (JsonValue)(bool)value;
+				jsonValue = (bool)value;
 			else if (value is byte)
-				jsonValue = (JsonValue)(byte)value;
+				jsonValue = (byte)value;
 			else if (value is char)
-				jsonValue = (JsonValue)(char)value;
+				jsonValue = (char)value;
 			else if (value is decimal)
-				jsonValue = (JsonValue)(decimal)value;
+				jsonValue = (decimal)value;
 			else if (value is double)
-				jsonValue = (JsonValue)(double)value;
+				jsonValue = (double)value;
 			else if (value is float)
-				jsonValue = (JsonValue)(float)value;
+				jsonValue = (float)value;
 			else if (value is int)
-				jsonValue = (JsonValue)(int)value;
+				jsonValue = (int)value;
 			else if (value is long)
-				jsonValue = (JsonValue)(long)value;
+				jsonValue = (long)value;
 			else if (value is sbyte)
-				jsonValue = (JsonValue)(sbyte)value;
+				jsonValue = (sbyte)value;
 			else if (value is short)
-				jsonValue = (JsonValue)(short)value;
+				jsonValue = (short)value;
 			else if (value is string)
-				jsonValue = (JsonValue)(string)value;
+				jsonValue = (string)value;
 			else if (value is uint)
-				jsonValue = (JsonValue)(uint)value;
+				jsonValue = (uint)value;
 			else if (value is ulong)
-				jsonValue = (JsonValue)(ulong)value;
+				jsonValue = (ulong)value;
 			else if (value is ushort)
-				jsonValue = (JsonValue)(ushort)value;
+				jsonValue = (ushort)value;
 			else if (value is DateTime)
-				jsonValue = (JsonValue)(DateTime)value;
+				jsonValue = (DateTime)value;
 			else if (value is DateTimeOffset)
-				jsonValue = (JsonValue)(DateTimeOffset)value;
+				jsonValue = (DateTimeOffset)value;
 			else if (value is TimeSpan)
-				jsonValue = (JsonValue)(TimeSpan)value;
+				jsonValue = (TimeSpan)value;
 			else if (value is Guid)
-				jsonValue = (JsonValue)(Guid)value;
+				jsonValue = (Guid)value;
 			else if (value is Uri)
-				jsonValue = (JsonValue)(Uri)value;
+				jsonValue = (Uri)value;
 			else if (value is IEnumerable)
+				// ReSharper disable RedundantTypeArgumentsOfMethod
 				jsonValue = new JsonArray(((IEnumerable)value).Cast<object>().Select<object, JsonValue>(From).ToArray());
+				// ReSharper restore RedundantTypeArgumentsOfMethod
 			else
 				jsonValue = JsonObject.From(value);
 
