@@ -48,7 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssetGenerator.cs" />
-    <Compile Include="Browser.cs" />
+    <Compile Include="BrowserType.cs" />
     <Compile Include="ChangeHooks.cs" />
     <Compile Include="Utils\CodeGenerationOptions.cs" />
     <Compile Include="GameDataEditorProcess.cs" />
@@ -69,7 +69,7 @@
     <Compile Include="Async\Promise.cs" />
     <Compile Include="Async\PromiseContinuation.cs" />
     <Compile Include="UnityResources.cs" />
-    <Compile Include="Utils\CharonCheckResult.cs" />
+    <Compile Include="Utils\RequirementsCheckResult.cs" />
     <Compile Include="Utils\CharonCli.cs" />
     <Compile Include="Async\CoroutineScheduler.cs" />
     <Compile Include="Utils\CommandInput.cs" />
@@ -98,6 +98,14 @@
     <Compile Include="Windows\ReportIssueWindow.cs" />
     <Compile Include="Windows\UpdateRuntimeWindow.cs" />
     <Compile Include="Windows\WebViewEditorWindow.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ReleaseNotes.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\GameDevWare.Charon.Unity\Assets\Editor\GameDevWare.Charon\Charon.exe.config">
+      <Link>Charon.exe.config</Link>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterBuild">

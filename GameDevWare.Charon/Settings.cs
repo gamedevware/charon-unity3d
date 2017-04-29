@@ -23,7 +23,6 @@ using System.Linq;
 using System.Text;
 using GameDevWare.Charon.Json;
 using GameDevWare.Charon.Utils;
-using UnityEditor;
 using UnityEngine;
 
 namespace GameDevWare.Charon
@@ -32,25 +31,39 @@ namespace GameDevWare.Charon
 	public class Settings
 	{
 		public const string PREF_PREFIX = "Charon_";
-		public const string BASE_PATH = "Assets/Editor/GameDevWare.Charon/";
-		public const string SETTINGS_PATH = BASE_PATH + "Settings.json";
-		public const string DEFAULT_TOOLS_PATH = BASE_PATH + "Charon.exe";
-		public const string DEFAULT_LICENSE_SERVER_ADDRESS = "http://gamedevware.com/service/api/";
+
+		public const string DEFAULT_SERVER_ADDRESS = "http://gamedevware.com/service/api/";
+
+		public static readonly string AppDataPath;
+		public static readonly string BasePath;
+		public static readonly string SettingsPath;
+		public static readonly string CharonPath;
+
 		public const string EXTENSION_EXPRESSIONS = "Expressions";
 
 		public static readonly Encoding DefaultEncoding = Encoding.UTF8;
 		public static readonly Settings Current;
 		public static readonly string[] SupportedExtensions;
 
-		public string ToolsPath;
-		public string BrowserPath;
-		public string LicenseServerAddress;
 		public int Browser;
-		public int ToolsPort;
+		public string BrowserPath;
+		public string ServerAddress;
+		public string EditorVersion;
+		public int EditorPort;
 		public bool Verbose;
 
 		static Settings()
 		{
+			if (typeof(Settings).Assembly.GetName().Name == "GameDevWare.Charon")
+				BasePath = Path.GetDirectoryName(typeof(Settings).Assembly.Location);
+
+			if (BasePath == null)
+				BasePath = Path.GetFullPath("Assets/Editor/GameDevWare.Charon");
+
+			AppDataPath = Path.GetFullPath("./Library/Charon/");
+			SettingsPath = Path.Combine(BasePath, "Settings.json");
+			CharonPath = Path.Combine(AppDataPath, "Charon.exe");
+
 			Current = Load();
 
 			var expressionsAreLoaded = AppDomain.CurrentDomain.GetAssemblies().Any(a => a.GetName().Name == "GameDevWare.Dynamic.Expressions" || a.GetType("GameDevWare.Dynamic.Expressions.AotCompilation", throwOnError: false) != null);
@@ -61,27 +74,25 @@ namespace GameDevWare.Charon
 		{
 
 			var settings = default(Settings);
-			try { settings = JsonValue.Parse(File.ReadAllText(SETTINGS_PATH, DefaultEncoding)).As<Settings>(); }
+			try { settings = JsonValue.Parse(File.ReadAllText(SettingsPath, DefaultEncoding)).As<Settings>(); }
 			catch (Exception readError) { Debug.LogWarning("Failed to read settings for Charon: " + readError.Message); }
 
 			if (settings == null)
 			{
 				settings = new Settings
 				{
-					ToolsPort = 43210,
-					ToolsPath = null,
-					LicenseServerAddress = null,
+					EditorPort = UnityEngine.Random.Range(10000, 50000),
+					ServerAddress = null,
 					Verbose = false
 				};
 
-				try { File.WriteAllText(SETTINGS_PATH, JsonObject.From(settings).Stringify(), DefaultEncoding); }
+				try { File.WriteAllText(SettingsPath, JsonObject.From(settings).Stringify(), DefaultEncoding); }
 				catch { /* ignore */ }
 			}
 			settings.Validate();
 
 			return settings;
 		}
-
 
 		internal void Save()
 		{
@@ -90,52 +101,48 @@ namespace GameDevWare.Charon
 			try
 			{
 				var content = JsonObject.From(this).Stringify();
-				var currentContent = File.Exists(SETTINGS_PATH) ? File.ReadAllText(SETTINGS_PATH, DefaultEncoding) : null;
+				var currentContent = File.Exists(SettingsPath) ? File.ReadAllText(SettingsPath, DefaultEncoding) : null;
 				if (string.Equals(content, currentContent, StringComparison.OrdinalIgnoreCase))
 					return; // no changes
 
-				File.WriteAllText(SETTINGS_PATH, content, DefaultEncoding);
+				File.WriteAllText(SettingsPath, content, DefaultEncoding);
 			}
 			catch (Exception e)
 			{
-				Debug.LogError(string.Format("Failed to save settings for Charon in file '{0}'.", SETTINGS_PATH));
+				Debug.LogError(string.Format("Failed to save settings for Charon in file '{0}'.", SettingsPath));
 				Debug.LogError(e);
 			}
 		}
 
 		private void Validate()
 		{
-			if (string.IsNullOrEmpty(this.ToolsPath) || File.Exists(this.ToolsPath) == false)
-			{
-				this.ToolsPath = (from id in AssetDatabase.FindAssets("t:DefaultAsset Charon")
-								  let path = PathUtils.MakeProjectRelative(AssetDatabase.GUIDToAssetPath(id))
-								  where path != null && path.EndsWith(".exe", StringComparison.OrdinalIgnoreCase)
-								  select path).FirstOrDefault() ?? DEFAULT_TOOLS_PATH;
-			}
-
-			this.ToolsPath = PathUtils.MakeProjectRelative(this.ToolsPath) ?? this.ToolsPath;
-
-			if (this.ToolsPort < 5000)
-				this.ToolsPort = 5000;
-			if (this.ToolsPort > 65535)
-				this.ToolsPort = 65535;
+			if (this.EditorPort < 5000)
+				this.EditorPort = 5000;
+			if (this.EditorPort > 65535)
+				this.EditorPort = 65535;
 		}
 
-		internal Uri GetLicenseServerAddress()
+		internal Uri GetServerAddress()
 		{
-			if (string.IsNullOrEmpty(this.LicenseServerAddress) || this.LicenseServerAddress.All(char.IsWhiteSpace))
-				return new Uri(DEFAULT_LICENSE_SERVER_ADDRESS);
-			return new Uri(this.LicenseServerAddress);
+			if (string.IsNullOrEmpty(this.ServerAddress) || this.ServerAddress.All(char.IsWhiteSpace))
+				return new Uri(DEFAULT_SERVER_ADDRESS);
+			return new Uri(this.ServerAddress);
 		}
-		internal static string GetAppDataPath()
+		internal static string GetLocalUserDataPath()
 		{
-			return Path.Combine(Path.GetFullPath("./Library/Charon/Users"), PathUtils.SanitizeFileName(Environment.UserName ?? "Default"));
+			return Path.Combine(Path.Combine(AppDataPath, Path.GetFullPath("Users")), PathUtils.SanitizeFileName(Environment.UserName ?? "Default"));
+		}
+		internal static Version GetCurrentAssetVersion()
+		{
+			if (typeof(Settings).Assembly.GetName().Name == "GameDevWare.Charon")
+				return typeof(Settings).Assembly.GetName().Version;
+			else
+				return null;
 		}
 
 		public override string ToString()
 		{
-			return "Tools Path: " + this.ToolsPath + Environment.NewLine + " " +
-				   "Tool Port: " + this.ToolsPort + Environment.NewLine + " ";
+			return string.Format("Browser: {0}, Browser path: {1}, Server Address: {2}, Editor Port: {3}, Editor Version: {4}, Verbose: {5}", (BrowserType)this.Browser, this.BrowserPath, this.ServerAddress, this.EditorPort, this.EditorVersion, this.Verbose);
 		}
 	}
 }

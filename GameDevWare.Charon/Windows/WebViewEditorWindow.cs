@@ -38,7 +38,7 @@ namespace GameDevWare.Charon.Windows
 
 		protected WebViewEditorWindow()
 		{
-			this.titleContent = new GUIContent(Resources.UI_UNITYPLUGIN_WINDOWABOUTCHARONTITLE);
+			this.titleContent = new GUIContent("View");
 			this.minSize = new Vector2(100, 100);
 		}
 
@@ -141,6 +141,8 @@ namespace GameDevWare.Charon.Windows
 			}
 			this.webView.Invoke("SetDelegateObject", this);
 			this.webView.Invoke("LoadURL", url);
+
+
 			if (Settings.Current.Verbose)
 				Debug.Log("WebView is loading '" + url + "'.");
 		}

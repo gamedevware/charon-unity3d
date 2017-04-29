@@ -113,7 +113,7 @@ namespace GameDevWare.Charon.Async
 					CurrentId = null;
 					CoroutineById.Remove(id);
 					resultPromise.TrySetFailed(executionError);
-					yield break;
+					throw;
 				}
 
 				if (hasNext)

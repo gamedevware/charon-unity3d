@@ -28,15 +28,15 @@ namespace GameDevWare.Charon.Windows
 {
 	internal class AboutWindow : EditorWindow
 	{
-		private string toolsVersion = Resources.UI_UNITYPLUGIN_WINDOWCHECKINGVERSION;
-		private string licenseHolder = Resources.UI_UNITYPLUGIN_WINDOWCHECKINGVERSION;
-		private string licenseKey = Resources.UI_UNITYPLUGIN_WINDOWCHECKINGVERSION;
+		private string toolsVersion = Resources.UI_UNITYPLUGIN_WINDOW_CHECKING_VERSION;
+		private string licenseHolder = Resources.UI_UNITYPLUGIN_WINDOW_CHECKING_VERSION;
+		private string licenseKey = Resources.UI_UNITYPLUGIN_WINDOW_CHECKING_VERSION;
 		[NonSerialized]
 		private Promise<Version> checkToolsVersion;
 
 		public AboutWindow()
 		{
-			this.titleContent = new GUIContent(Resources.UI_UNITYPLUGIN_WINDOWABOUTCHARONTITLE);
+			this.titleContent = new GUIContent(Resources.UI_UNITYPLUGIN_WINDOW_ABOUT_CHARON_TITLE);
 			this.maxSize = this.minSize = new Vector2(380, 326);
 			this.position = new Rect(
 				(Screen.width - this.maxSize.x) / 2,
@@ -51,24 +51,21 @@ namespace GameDevWare.Charon.Windows
 		{
 			GUILayout.Box("Charon", new GUIStyle { fontSize = 72, alignment = TextAnchor.MiddleCenter });
 			GUILayout.Space(10);
-			GUILayout.Label(Resources.UI_UNITYPLUGIN_WINDOWINFOGROUP, EditorStyles.boldLabel);
-			EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_WINDOWTOOLSVERSIONLABEL, this.toolsVersion);
+			GUILayout.Label(Resources.UI_UNITYPLUGIN_WINDOW_INFO_GROUP, EditorStyles.boldLabel);
+			EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_WINDOW_TOOLS_VERSION_LABEL, this.toolsVersion);
 			GUI.enabled = true;
 			GUILayout.Space(10);
-			GUILayout.Label(Resources.UI_UNITYPLUGIN_WINDOWSETTINGSGROUP, EditorStyles.boldLabel);
-			GUI.enabled = System.IO.File.Exists(Settings.Current.ToolsPath) == false;
-			Settings.Current.ToolsPath = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_WINDOWTOOLSPATH, Settings.Current.ToolsPath);
-			GUI.enabled = true;
-			Settings.Current.ToolsPort = EditorGUILayout.IntField(Resources.UI_UNITYPLUGIN_WINDOWTOOLSPORT, Settings.Current.ToolsPort);
-			Settings.Current.Browser = Convert.ToInt32(EditorGUILayout.EnumPopup(Resources.UI_UNITYPLUGIN_WINDOWBROWSER, (Browser)Settings.Current.Browser));
-			if (Settings.Current.Browser == (int)Browser.Custom)
+			GUILayout.Label(Resources.UI_UNITYPLUGIN_WINDOW_SETTINGS_GROUP, EditorStyles.boldLabel);
+			Settings.Current.EditorPort = EditorGUILayout.IntField(Resources.UI_UNITYPLUGIN_WINDOW_TOOLS_PORT, Settings.Current.EditorPort);
+			Settings.Current.Browser = Convert.ToInt32(EditorGUILayout.EnumPopup(Resources.UI_UNITYPLUGIN_WINDOW_BROWSER, (BrowserType)Settings.Current.Browser));
+			if (Settings.Current.Browser == (int)BrowserType.Custom)
 			{
 				EditorGUILayout.BeginHorizontal();
 				{
-					Settings.Current.BrowserPath = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_WINDOWBROWSERPATH, Settings.Current.BrowserPath);
-					if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOWBROWSEBUTTON, EditorStyles.toolbarButton, GUILayout.Width(70), GUILayout.Height(18)))
+					Settings.Current.BrowserPath = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_WINDOW_BROWSER_PATH, Settings.Current.BrowserPath);
+					if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_BROWSE_BUTTON, EditorStyles.toolbarButton, GUILayout.Width(70), GUILayout.Height(18)))
 					{
-						Settings.Current.BrowserPath = EditorUtility.OpenFilePanel(Resources.UI_UNITYPLUGIN_WINDOWBROWSERPATHTITLE, "", "");
+						Settings.Current.BrowserPath = EditorUtility.OpenFilePanel(Resources.UI_UNITYPLUGIN_WINDOW_BROWSER_PATH_TITLE, "", "");
 						GUI.changed = true;
 						this.Repaint();
 					}
@@ -82,7 +79,7 @@ namespace GameDevWare.Charon.Windows
 			GUILayout.Space(18);
 			GUILayout.BeginHorizontal();
 			EditorGUILayout.Space();
-			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOWOKBUTTON, GUILayout.Width(80)))
+			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_OK_BUTTON, GUILayout.Width(80)))
 				this.Close();
 			GUILayout.EndHorizontal();
 
@@ -92,20 +89,20 @@ namespace GameDevWare.Charon.Windows
 
 		protected void Update()
 		{
-			switch (CharonCli.CheckCharon())
+			switch (CharonCli.CheckRequirements())
 			{
-				case CharonCheckResult.MissingRuntime:
-					this.toolsVersion = Resources.UI_UNITYPLUGIN_WINDOWCHECKRESULTMISSINGMONOORDOTNET;
+				case RequirementsCheckResult.MissingRuntime:
+					this.toolsVersion = Resources.UI_UNITYPLUGIN_WINDOW_CHECK_RESULT_MISSING_MONO_OR_DOTNET;
 					break;
-				case CharonCheckResult.MissingExecutable:
-					this.toolsVersion = Resources.UI_UNITYPLUGIN_WINDOWCHECKRESULTMISSINGTOOLS;
+				case RequirementsCheckResult.MissingExecutable:
+					this.toolsVersion = Resources.UI_UNITYPLUGIN_WINDOWCHECK_RESULT_MISSING_TOOLS;
 					this.licenseHolder = "";
 					this.licenseKey = "";
 					break;
-				case CharonCheckResult.Ok:
+				case RequirementsCheckResult.Ok:
 					if (this.checkToolsVersion == null)
 					{
-						this.toolsVersion = Resources.UI_UNITYPLUGIN_WINDOWCHECKINGVERSION;
+						this.toolsVersion = Resources.UI_UNITYPLUGIN_WINDOW_CHECKING_VERSION;
 						this.checkToolsVersion = CharonCli.GetVersionAsync();
 						this.checkToolsVersion.ContinueWith(r =>
 						{

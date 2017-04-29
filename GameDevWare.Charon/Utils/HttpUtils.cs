@@ -59,6 +59,11 @@ namespace GameDevWare.Charon.Utils
 				return File.OpenRead(tmpFilePath);
 			});
 		}
+		public static Promise DownloadTo(Stream downloadToStream, Uri url, NameValueCollection requestHeader = null, Action<long, long> downloadProgressCallback = null, TimeSpan timeout = default(TimeSpan))
+		{
+			var downloadCoroutine = new Coroutine<long>(DownloadToAsync(url, downloadToStream, true, requestHeader, downloadProgressCallback, timeout));
+			return downloadCoroutine;
+		}
 		public static Promise<T> GetJson<T>(Uri url, NameValueCollection requestHeader = null, Action<long, long> downloadProgressCallback = null, TimeSpan timeout = default(TimeSpan))
 		{
 			var memoryStream = new MemoryStream();
@@ -111,11 +116,17 @@ namespace GameDevWare.Charon.Utils
 				}
 			}
 
-			var getResponseAsync = request.BeginGetResponse(null, null);
+			if (Settings.Current.Verbose)
+				UnityEngine.Debug.Log(string.Format("Staring new request to [{0}]'{1}'.", request.Method, request.RequestUri));
+
+			var getResponseAsync = request.BeginGetResponse(ar => request.EndGetResponse(ar), null);
 			yield return getResponseAsync;
 			var response = (HttpWebResponse)request.EndGetResponse(getResponseAsync);
 			var responseStream = response.GetResponseStream();
 			Debug.Assert(responseStream != null, "responseStream != null");
+
+			if (Settings.Current.Verbose)
+				UnityEngine.Debug.Log(string.Format("Got '{2}' response for [{0}]'{1}' request.", request.Method, request.RequestUri, response.StatusCode));
 
 			if (response.StatusCode != HttpStatusCode.OK)
 				throw new WebException(string.Format("An unexpected status code '{0}' returned for request '{1}'.", response.StatusCode, url));
@@ -137,11 +148,13 @@ namespace GameDevWare.Charon.Utils
 				{
 					var readAsync = responseStream.BeginRead(buffer, 0, buffer.Length, ar => responseStream.EndRead(ar), null);
 					yield return readAsync;
+
 					read = responseStream.EndRead(readAsync);
 					if (read <= 0) continue;
 
 					var writeAsync = downloadToStream.BeginWrite(buffer, 0, read, downloadToStream.EndWrite, null);
 					yield return writeAsync;
+
 					writen += read;
 
 					if (downloadProgressCallback != null) downloadProgressCallback(writen, totalLength);

@@ -17,12 +17,12 @@
     along with this program.  If not, see http://www.gnu.org/licenses.
 */
 
-namespace GameDevWare.Charon
+namespace GameDevWare.Charon.Utils
 {
-	internal enum Browser
+	public enum RequirementsCheckResult
 	{
-		UnityEmbedded = 0,
-		SystemDefault,
-		Custom
+		Ok,
+		MissingRuntime,
+		MissingExecutable
 	}
 }

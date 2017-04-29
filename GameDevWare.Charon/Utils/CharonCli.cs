@@ -32,25 +32,24 @@ namespace GameDevWare.Charon.Utils
 {
 	public static class CharonCli
 	{
-		public const string DATA_DIRECTORY = "./Library/Charon/";
-		public const string TEMP_DIRECTORY = DATA_DIRECTORY + "Temp/";
+		public static readonly string TempDirectory = Path.Combine(Settings.AppDataPath, "Temp/");
 
-		public static CharonCheckResult CheckCharon()
+		public static RequirementsCheckResult CheckRequirements()
 		{
-			if (string.IsNullOrEmpty(Settings.Current.ToolsPath) || !File.Exists(Settings.Current.ToolsPath))
-				return CharonCheckResult.MissingExecutable;
+			if (string.IsNullOrEmpty(Settings.CharonPath) || !File.Exists(Settings.CharonPath))
+				return RequirementsCheckResult.MissingExecutable;
 
 			if (RuntimeInformation.IsWindows)
 			{
 				if (DotNetRuntimeInformation.GetVersion() == null && (string.IsNullOrEmpty(MonoRuntimeInformation.MonoPath) || File.Exists(MonoRuntimeInformation.MonoPath) == false))
-					return CharonCheckResult.MissingRuntime;
+					return RequirementsCheckResult.MissingRuntime;
 			}
 			else
 			{
 				if (string.IsNullOrEmpty(MonoRuntimeInformation.MonoPath) || File.Exists(MonoRuntimeInformation.MonoPath) == false)
-					return CharonCheckResult.MissingRuntime;
+					return RequirementsCheckResult.MissingRuntime;
 			}
-			return CharonCheckResult.Ok;
+			return RequirementsCheckResult.Ok;
 		}
 
 		internal static Promise<Process> Listen(string gameDataPath, int port, bool shadowCopy = true)
@@ -58,7 +57,7 @@ namespace GameDevWare.Charon.Utils
 			if (string.IsNullOrEmpty(gameDataPath)) throw new ArgumentException("Value cannot be null or empty.", "gameDataPath");
 			if (port <= 0 || port > ushort.MaxValue) throw new ArgumentOutOfRangeException("port");
 
-			var charonPath = Path.GetFullPath(Settings.Current.ToolsPath);
+			var charonPath = Path.GetFullPath(Settings.CharonPath);
 
 			if (File.Exists(gameDataPath) == false) throw new IOException(string.Format("File '{0}' doesn't exists.", gameDataPath));
 			if (File.Exists(charonPath) == false) throw new IOException(string.Format("File '{0}' doesn't exists.", charonPath));
@@ -66,7 +65,7 @@ namespace GameDevWare.Charon.Utils
 			if (shadowCopy)
 			{
 				var charonMd5 = PathUtils.ComputeMd5Hash(charonPath);
-				var shadowDirectory = Path.GetFullPath(Path.Combine(TEMP_DIRECTORY, charonMd5));
+				var shadowDirectory = Path.GetFullPath(Path.Combine(TempDirectory, charonMd5));
 				if (Directory.Exists(shadowDirectory) == false)
 				{
 					if (Settings.Current.Verbose)
@@ -126,8 +125,8 @@ namespace GameDevWare.Charon.Utils
 					{
 						EnvironmentVariables =
 						{
-							{ "CHARON_APP_DATA", Settings.GetAppDataPath() },
-							{ "CHARON_LICENSE_SERVER", Settings.Current.LicenseServerAddress }
+							{ "CHARON_APP_DATA", Settings.GetLocalUserDataPath() },
+							{ "CHARON_SERVER", Settings.Current.ServerAddress }
 						}
 					}
 				}
@@ -138,7 +137,7 @@ namespace GameDevWare.Charon.Utils
 
 		public static Promise UpdateCharonExecutableAsync(Action<string, float> progressCallback = null)
 		{
-			return new Coroutine(Menu.CheckForUpdatesAsync(progressCallback));
+			return new Coroutine(Menu.CheckForCharonUpdatesAsync(progressCallback));
 		}
 
 		public static Promise<RunResult> CreateDocumentAsync(string gameDataPath, string entity, CommandInput input, CommandOutput output)
@@ -506,7 +505,7 @@ namespace GameDevWare.Charon.Utils
 
 		private static Promise<RunResult> RunInternal(params string[] arguments)
 		{
-			var charonPath = Settings.Current.ToolsPath;
+			var charonPath = Settings.CharonPath;
 
 			if (File.Exists(charonPath) == false) throw new IOException(string.Format("File '{0}' doesn't exists.", charonPath));
 
@@ -524,8 +523,8 @@ namespace GameDevWare.Charon.Utils
 				{
 					EnvironmentVariables =
 					{
-						{ "CHARON_APP_DATA", Settings.GetAppDataPath() },
-						{ "CHARON_LICENSE_SERVER", Settings.Current.LicenseServerAddress },
+						{ "CHARON_APP_DATA", Settings.GetLocalUserDataPath() },
+						{ "CHARON_SERVER", Settings.Current.ServerAddress },
 					}
 				}
 			});

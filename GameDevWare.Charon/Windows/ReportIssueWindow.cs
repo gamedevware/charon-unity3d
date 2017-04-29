@@ -49,7 +49,7 @@ namespace GameDevWare.Charon.Windows
 
 		static ReportIssueWindow()
 		{
-			CharonLogPath = Path.Combine(CharonCli.DATA_DIRECTORY + "Logs", "Charon.log");
+			CharonLogPath = Path.Combine(Path.Combine(Settings.AppDataPath, "Logs"), "Charon.log");
 
 			if (RuntimeInformation.IsWindows)
 			{
@@ -64,7 +64,7 @@ namespace GameDevWare.Charon.Windows
 		}
 		public ReportIssueWindow()
 		{
-			this.titleContent = new GUIContent(Resources.UI_UNITYPLUGIN_WINDOWREPORTISSUETITLE);
+			this.titleContent = new GUIContent(Resources.UI_UNITYPLUGIN_WINDOW_REPORT_ISSUE_TITLE);
 			this.position = new Rect(
 				(Screen.width - this.minSize.x) / 2,
 				(Screen.height - this.minSize.y) / 2,
@@ -100,8 +100,8 @@ namespace GameDevWare.Charon.Windows
 			if (string.IsNullOrEmpty(this.ThanksMessage))
 			{
 				GUI.enabled = this.reportCoroutine == null || this.reportCoroutine.IsCompleted;
-				this.Reporter = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_WINDOWREPORTERLABEL, this.Reporter);
-				this.Type = (IssueType)EditorGUILayout.EnumPopup(Resources.UI_UNITYPLUGIN_WINDOWTYPELABEL, this.Type);
+				this.Reporter = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_WINDOW_REPORTER_LABEL, this.Reporter);
+				this.Type = (IssueType)EditorGUILayout.EnumPopup(Resources.UI_UNITYPLUGIN_WINDOW_TYPE_LABEL, this.Type);
 				this.Description = EditorGUILayout.TextArea(this.Description, GUILayout.Height(120));
 
 				GUILayout.Space(5);
@@ -113,15 +113,15 @@ namespace GameDevWare.Charon.Windows
 				foreach (var attachmentFile in this.Attachments)
 				{
 					var fileInfo = new FileInfo(attachmentFile);
-					if (GUILayout.Toggle(true, string.Format(Resources.UI_UNITYPLUGIN_WINDOWATTACHFILECHECKBOX, fileInfo.Name, fileInfo.Length / 1024.0 / 1024.0)) == false)
+					if (GUILayout.Toggle(true, string.Format(Resources.UI_UNITYPLUGIN_WINDOW_ATTACH_FILE_CHECKBOX, fileInfo.Name, fileInfo.Length / 1024.0 / 1024.0)) == false)
 						this.attachmentsToRemove.Add(attachmentFile);
 				}
 
 				GUILayout.BeginHorizontal();
 				EditorGUILayout.Space();
-				if (GUILayout.Button(Resources.UI_UNITYPLUGIN_ATTACHFILEBUTTON, EditorStyles.toolbarButton, GUILayout.Width(70), GUILayout.Height(18)))
+				if (GUILayout.Button(Resources.UI_UNITYPLUGIN_ATTACH_FILE_BUTTON, EditorStyles.toolbarButton, GUILayout.Width(70), GUILayout.Height(18)))
 				{
-					var file = EditorUtility.OpenFilePanel(Resources.UI_UNITYPLUGIN_SELECTFILETOATTACHTITLE, "", "");
+					var file = EditorUtility.OpenFilePanel(Resources.UI_UNITYPLUGIN_SELECT_FILE_TO_ATTACH_TITLE, "", "");
 					if (!string.IsNullOrEmpty(file) && File.Exists(file))
 						this.attachmentsToAdd.Add(Path.GetFullPath(file));
 				}
@@ -136,7 +136,7 @@ namespace GameDevWare.Charon.Windows
 				GUILayout.BeginHorizontal();
 				EditorGUILayout.Space();
 				GUI.enabled = !string.IsNullOrEmpty(this.Reporter) && !string.IsNullOrEmpty(this.Description) && (this.reportCoroutine == null || this.reportCoroutine.IsCompleted);
-				if (GUILayout.Button(Resources.UI_UNITYPLUGIN_REPORTBUTTON, GUILayout.Width(80)))
+				if (GUILayout.Button(Resources.UI_UNITYPLUGIN_REPORT_BUTTON, GUILayout.Width(80)))
 				{
 					this.reportCoroutine = this.ReportIssue(this.Reporter, this.Description, this.Type, this.Attachments).ContinueWith(p =>
 					{
@@ -153,7 +153,7 @@ namespace GameDevWare.Charon.Windows
 							this.attachmentsToAdd = null;
 							this.attachmentsToRemove = null;
 
-							this.ThanksMessage = Resources.UI_UNITYPLUGIN_WINDOWREPORTTHANKSMESSAGE;
+							this.ThanksMessage = Resources.UI_UNITYPLUGIN_WINDOW_REPORT_THANKS_MESSAGE;
 							Promise.Delayed(TimeSpan.FromSeconds(3)).ContinueWith(_ => this.Close());
 						}
 						this.Repaint();

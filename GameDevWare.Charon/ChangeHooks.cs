@@ -170,10 +170,7 @@ namespace GameDevWare.Charon
 				var fromPath = PathUtils.MakeProjectRelative(movedFromAssetPaths[i]);
 				var toPath = PathUtils.MakeProjectRelative(movedAssets[i]);
 				if (fromPath == null || toPath == null) continue;
-
-				if (Path.GetFullPath(Settings.Current.ToolsPath) == fromPath)
-					Settings.Current.ToolsPath = toPath;
-
+				
 				if (!GameDataTracker.IsTracked(fromPath))
 					continue;
 

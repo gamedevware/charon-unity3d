@@ -54,7 +54,7 @@ namespace GameDevWare.Charon.Windows
 		}
 		public UpdateRuntimeWindow()
 		{
-			this.titleContent = new GUIContent(Resources.UI_UNITYPLUGIN_WINDOWUPDATERUNTIMETITLE);
+			this.titleContent = new GUIContent(Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_RUNTIME_TITLE);
 			this.maxSize = this.minSize = new Vector2(480, 220);
 			this.position = new Rect(
 				(Screen.width - this.maxSize.x) / 2,
@@ -67,48 +67,48 @@ namespace GameDevWare.Charon.Windows
 		[SuppressMessage("ReSharper", "InconsistentNaming")]
 		protected void OnGUI()
 		{
-			EditorGUILayout.HelpBox(Resources.UI_UNITYPLUGIN_WINDOWRUNTIMEREQUIRED + "\r\n\r\n" +
-									string.Format(Resources.UI_UNITYPLUGIN_WINDOWFINDMONOMANUALLY) + "\r\n" +
-									Resources.UI_UNITYPLUGIN_WINDOWDOWNLOADMONO + "\r\n" +
-									(RuntimeInformation.IsWindows ? Resources.UI_UNITYPLUGIN_WINDOWDOWNLOADDOTNET + "\r\n\r\n" : "") +
-									Resources.UI_UNITYPLUGIN_WINDOWPRESSHELP, MessageType.Info);
+			EditorGUILayout.HelpBox(Resources.UI_UNITYPLUGIN_WINDOW_RUNTIME_REQUIRED + "\r\n\r\n" +
+									string.Format(Resources.UI_UNITYPLUGIN_WINDOW_FIND_MONO_MANUALLY) + "\r\n" +
+									Resources.UI_UNITYPLUGIN_WINDOW_DOWNLOAD_MONO + "\r\n" +
+									(RuntimeInformation.IsWindows ? Resources.UI_UNITYPLUGIN_WINDOW_DOWNLOAD_DOTNET + "\r\n\r\n" : "") +
+									Resources.UI_UNITYPLUGIN_WINDOW_PRESS_HELP , MessageType.Info);
 
 			var checkIsRunning = this.checkRuntimeVersionCoroutine != null && this.checkRuntimeVersionCoroutine.IsCompleted == false;
 			GUI.enabled = !checkIsRunning;
 			GUILayout.BeginHorizontal();
 			EditorGUILayout.Space();
 
-			if (RuntimeInformation.IsWindows && GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOWDOWNLOADDOTNETBUTTON, GUILayout.Width(140)))
+			if (RuntimeInformation.IsWindows && GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_DOWNLOAD_DOTNET_BUTTON, GUILayout.Width(140)))
 				Application.OpenURL("https://www.microsoft.com/ru-RU/download/details.aspx?id=42643");
-			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOWDOWNLOADMONOBUTTON, GUILayout.Width(140)))
+			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_DOWNLOAD_MONO_BUTTON, GUILayout.Width(140)))
 				Application.OpenURL("http://www.mono-project.com/download/#download-mac");
-			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOWHELPBUTTON, GUILayout.Width(40)))
+			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_HELP_BUTTON, GUILayout.Width(40)))
 				Application.OpenURL("https://gamedevware.com/docs");
 			GUILayout.EndHorizontal();
 
 			GUILayout.Space(18);
 			EditorGUILayout.BeginHorizontal();
 			{
-				this.monoPath = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_WINDOWPATHTOMONO, this.monoPath);
-				if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOWBROWSEBUTTON, EditorStyles.toolbarButton, GUILayout.Width(70), GUILayout.Height(18)))
+				this.monoPath = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_WINDOW_PATH_TO_MONO, this.monoPath);
+				if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_BROWSE_BUTTON, EditorStyles.toolbarButton, GUILayout.Width(70), GUILayout.Height(18)))
 				{
-					this.monoPath = EditorUtility.OpenFolderPanel(Resources.UI_UNITYPLUGIN_WINDOWPATHTOMONO, "", "");
+					this.monoPath = EditorUtility.OpenFolderPanel(Resources.UI_UNITYPLUGIN_WINDOW_PATH_TO_MONO, "", "");
 					GUI.changed = true;
 					this.Repaint();
 				}
 				GUILayout.Space(5);
 			}
 			EditorGUILayout.EndHorizontal();
-			EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_WINDOWRUNTIMEVERSION, this.runtimeVersion, new GUIStyle { richText = true });
+			EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_WINDOW_RUNTIME_VERSION, this.runtimeVersion, new GUIStyle { richText = true });
 
 			GUILayout.Space(18);
 			GUILayout.BeginHorizontal();
 			EditorGUILayout.Space();
-			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOWRECHECKBUTTON, GUILayout.Width(80)))
+			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_RE_CHECK_BUTTON, GUILayout.Width(80)))
 				this.RunCheck();
 
 			GUI.enabled = true;
-			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOWCANCELBUTTON, GUILayout.Width(80)))
+			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_CANCEL_BUTTON, GUILayout.Width(80)))
 				this.Close();
 			GUILayout.EndHorizontal();
 
@@ -144,7 +144,7 @@ namespace GameDevWare.Charon.Windows
 			if (string.IsNullOrEmpty(monoRuntimePath))
 				yield break;
 
-			this.runtimeVersion = Resources.UI_UNITYPLUGIN_WINDOWCHECKINGMONO;
+			this.runtimeVersion = Resources.UI_UNITYPLUGIN_WINDOW_CHECKING_MONO;
 			this.runMonoTask = CommandLine.Run(new RunOptions(monoRuntimePath, "--version")
 			{
 				CaptureStandardOutput = true,
@@ -161,9 +161,9 @@ namespace GameDevWare.Charon.Windows
 			if (!monoRuntimeVersionMatch.Success)
 			{
 				if (Settings.Current.Verbose)
-					Debug.LogWarning(output.Length > 0 ? output : string.Format(Resources.UI_UNITYPLUGIN_WINDOWCHECKINGMONOFAILED, this.runMonoTask.GetResult().ExitCode));
+					Debug.LogWarning(output.Length > 0 ? output : string.Format(Resources.UI_UNITYPLUGIN_WINDOW_CHECKING_MONO_FAILED, this.runMonoTask.GetResult().ExitCode));
 
-				this.UpdateRuntimeVersionLabel(Resources.UI_UNITYPLUGIN_WINDOWRUNTIMEVERSIONUNKNOWN, "Mono", isValid: false);
+				this.UpdateRuntimeVersionLabel(Resources.UI_UNITYPLUGIN_WINDOW_RUNTIME_VERSION_UNKNOWN, "Mono", isValid: false);
 			}
 			else
 			{
@@ -181,7 +181,7 @@ namespace GameDevWare.Charon.Windows
 				{
 					if (Settings.Current.Verbose)
 						Debug.LogError(e);
-					this.UpdateRuntimeVersionLabel(Resources.UI_UNITYPLUGIN_WINDOWRUNTIMEVERSIONERROR, "Mono", isValid: false);
+					this.UpdateRuntimeVersionLabel(Resources.UI_UNITYPLUGIN_WINDOW_RUNTIME_VERSION_ERROR, "Mono", isValid: false);
 				}
 			}
 		}
@@ -205,7 +205,7 @@ namespace GameDevWare.Charon.Windows
 		{
 			if (this.Cancel != null)
 			{
-				this.Cancel(this, new ErrorEventArgs(new InvalidOperationException(Resources.UI_UNITYPLUGIN_OPERATIONCANCELLED)));
+				this.Cancel(this, new ErrorEventArgs(new InvalidOperationException(Resources.UI_UNITYPLUGIN_OPERATION_CANCELLED)));
 				if (Settings.Current.Verbose)
 					Debug.Log(string.Format("'{0}' window is closed by user.", this.titleContent.text));
 			}
