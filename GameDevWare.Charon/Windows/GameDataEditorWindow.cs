@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (c) 2016 Denis Zykov
+	Copyright (c) 2017 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
@@ -124,8 +124,7 @@ namespace GameDevWare.Charon.Windows
 			charonRunTask.ContinueWith(t =>
 			{
 				if (t.HasErrors) return;
-				using (var process = t.GetResult())
-					GameDataEditorProcess.Watch(process);
+				GameDataEditorProcess.Watch(t.GetResult());
 			});
 
 			if (Settings.Current.Verbose)
@@ -150,6 +149,10 @@ namespace GameDevWare.Charon.Windows
 				else
 					throw new InvalidOperationException("Interrupted by user.");
 			}
+			else if (charonRunTask.HasErrors)
+			{
+				throw new InvalidOperationException("Failed to start editor.", charonRunTask.Error.Unwrap());
+			}
 
 			if (EditorUtility.DisplayCancelableProgressBar(title, Resources.UI_UNITYPLUGIN_WINDOW_EDITOR_LAUNCHING_EXECUTABLE, 0.80f))
 				throw new InvalidOperationException("Interrupted by user.");
@@ -168,6 +171,11 @@ namespace GameDevWare.Charon.Windows
 
 				if (startPromise.HasErrors == false && downloadStream.Length > 0)
 					break;
+
+				if (EditorUtility.DisplayCancelableProgressBar(title, Resources.UI_UNITYPLUGIN_WINDOW_EDITOR_LAUNCHING_EXECUTABLE, 0.93f))
+					throw new InvalidOperationException("Interrupted by user.");
+				if (EditorApplication.isCompiling)
+					throw new InvalidOperationException("Interrupted by script compiler.");
 
 				downloadStream.SetLength(0);
 				startPromise = HttpUtils.DownloadTo(downloadStream, new Uri(gameDataEditorUrl), timeout: TimeSpan.FromSeconds(1));
@@ -206,7 +214,7 @@ namespace GameDevWare.Charon.Windows
 					break;
 			}
 		}
-		
+
 		private static IEnumerable RunCancellableProgress(string title, string message, float fromProgress, float toProgress, TimeSpan timeInterpolationWindow, Promise cancellation)
 		{
 			var startTime = DateTime.UtcNow;

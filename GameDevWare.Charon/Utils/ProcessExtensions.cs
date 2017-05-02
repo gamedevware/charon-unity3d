@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (c) 2016 Denis Zykov
+	Copyright (c) 2017 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
@@ -45,11 +45,11 @@ namespace GameDevWare.Charon.Utils
 		{
 			if (process == null) throw new ArgumentNullException("process");
 
-			if (process.HasExited)
-				return;
-
 			try
 			{
+				if (process.HasExited)
+					return;
+
 				//Debug.Log(string.Format("Trying to kill process with id '{0}'.", process.Id));
 
 				process.CloseMainWindow();

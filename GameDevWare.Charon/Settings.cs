@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (c) 2016 Denis Zykov
+	Copyright (c) 2017 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
@@ -130,7 +130,7 @@ namespace GameDevWare.Charon
 		}
 		internal static string GetLocalUserDataPath()
 		{
-			return Path.Combine(Path.Combine(AppDataPath, Path.GetFullPath("Users")), PathUtils.SanitizeFileName(Environment.UserName ?? "Default"));
+			return Path.Combine(Path.Combine(AppDataPath, "Users"), PathUtils.SanitizeFileName(Environment.UserName ?? "Default"));
 		}
 		internal static Version GetCurrentAssetVersion()
 		{

@@ -11,7 +11,7 @@ using UnityEngine;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("GameDevWare")]
 [assembly: AssemblyProduct("GameDevWare.Charon")]
-[assembly: AssemblyCopyright("Copyright © GameDevWare 2016")]
+[assembly: AssemblyCopyright("Copyright © GameDevWare 2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -36,6 +36,6 @@ using UnityEngine;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion("1.0.0.1")]
-[assembly: AssemblyFileVersion("1.0.0.1")]
+[assembly: AssemblyVersion("1.0.0.3")]
+[assembly: AssemblyFileVersion("1.0.0.3")]
 [assembly: AssemblyIsEditorAssembly]

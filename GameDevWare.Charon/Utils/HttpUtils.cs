@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (c) 2016 Denis Zykov
+	Copyright (c) 2017 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
@@ -139,6 +139,7 @@ namespace GameDevWare.Charon.Utils
 					totalLength = contentDisposition.Size;
 			}
 			if (downloadProgressCallback != null) downloadProgressCallback(0, totalLength);
+			var lastReported = 0L;
 			var writen = 0L;
 			try
 			{
@@ -157,7 +158,9 @@ namespace GameDevWare.Charon.Utils
 
 					writen += read;
 
-					if (downloadProgressCallback != null) downloadProgressCallback(writen, totalLength);
+					if (downloadProgressCallback != null && (writen - lastReported) > (totalLength / 200.0f))
+						downloadProgressCallback(lastReported = writen, totalLength);
+
 				} while (read != 0);
 
 				downloadToStream.Flush();
