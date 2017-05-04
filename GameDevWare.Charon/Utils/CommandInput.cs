@@ -19,7 +19,6 @@
 
 using System;
 using System.IO;
-using System.Runtime.CompilerServices;
 using GameDevWare.Charon.Async;
 using GameDevWare.Charon.Json;
 using UnityEngine;

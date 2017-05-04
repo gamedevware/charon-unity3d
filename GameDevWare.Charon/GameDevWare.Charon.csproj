@@ -51,7 +51,6 @@
     <Compile Include="BrowserType.cs" />
     <Compile Include="ChangeHooks.cs" />
     <Compile Include="Utils\CodeGenerationOptions.cs" />
-    <Compile Include="GameDataEditorProcess.cs" />
     <Compile Include="GameDataSettings.cs" />
     <Compile Include="Json\JsonArray.cs" />
     <Compile Include="Json\JsonObject.cs" />

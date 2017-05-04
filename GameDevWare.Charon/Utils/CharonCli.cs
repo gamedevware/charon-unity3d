@@ -52,9 +52,17 @@ namespace GameDevWare.Charon.Utils
 			return RequirementsCheckResult.Ok;
 		}
 
-		internal static Promise<Process> Listen(string gameDataPath, int port, bool shadowCopy = true)
+		internal static string GetDefaultLockFilePath()
+		{
+			var charonDir = Path.GetDirectoryName(Settings.CharonPath);
+			var lockFileName = Path.GetFileNameWithoutExtension(Settings.CharonPath) + ".lock";
+			// ReSharper disable once AssignNullToNotNullAttribute
+			return Path.GetFullPath(Path.Combine(charonDir, lockFileName));
+		}
+		internal static Promise<Process> Listen(string gameDataPath, string lockFilePath, int port, bool shadowCopy = true)
 		{
 			if (string.IsNullOrEmpty(gameDataPath)) throw new ArgumentException("Value cannot be null or empty.", "gameDataPath");
+			if (string.IsNullOrEmpty(lockFilePath)) throw new ArgumentException("Value cannot be null or empty.", "lockFilePath");
 			if (port <= 0 || port > ushort.MaxValue) throw new ArgumentOutOfRangeException("port");
 
 			var charonPath = Path.GetFullPath(Settings.CharonPath);
@@ -108,7 +116,8 @@ namespace GameDevWare.Charon.Utils
 					RunOptions.FlattenArguments(
 						"LISTEN", Path.GetFullPath(gameDataPath),
 						"--port", port.ToString(),
-						"--parentPid", unityPid.ToString(),
+						"--watchPid", unityPid.ToString(),
+						"--lockFile", Path.GetFullPath(lockFilePath),
 						"--environment", "Unity",
 						"--extensions", Settings.SupportedExtensions,
 						"--scriptAssemblies", scriptingAssemblies,
@@ -133,6 +142,47 @@ namespace GameDevWare.Charon.Utils
 			);
 
 			return runTask.ContinueWith(t => t.GetResult().Process);
+		}
+		internal static void FindAndEndGracefully(string lockFilePath = null)
+		{
+			if (string.IsNullOrEmpty(lockFilePath))
+				lockFilePath = GetDefaultLockFilePath();
+
+			if (File.Exists(lockFilePath) == false)
+				return;
+
+			var pidStr = default(string);
+			using (var lockFileStream = new FileStream(lockFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete, 1024, FileOptions.SequentialScan))
+				pidStr = new StreamReader(lockFileStream, detectEncodingFromByteOrderMarks: true).ReadToEnd();
+
+			var pid = 0;
+			if (string.IsNullOrEmpty(pidStr) || int.TryParse(pidStr, out pid) == false)
+				return;
+
+			var stopError = default(Exception);
+			try
+			{
+				using (var process = Process.GetProcessById(pid))
+					process.EndGracefully();
+			}
+			catch (Exception endError)
+			{
+				stopError = endError;
+				if (Settings.Current.Verbose)
+					Debug.LogWarning(string.Format("Failed to get Charon process by id {0}.\r\n{1}", pidStr, endError));
+			}
+
+			try
+			{
+				if (File.Exists(lockFilePath))
+					File.Delete(lockFilePath);
+			}
+			catch (Exception lockDeleteError)
+			{
+				stopError = stopError ?? lockDeleteError;
+				Debug.LogWarning(string.Format("Failed to stop running Charon process with id {0}.\r\n{1}", pidStr, stopError));
+				throw stopError;
+			}
 		}
 
 		public static Promise UpdateCharonExecutableAsync(Action<string, float> progressCallback = null)
@@ -590,6 +640,7 @@ namespace GameDevWare.Charon.Utils
 
 			return foundScriptingAssemblies.ToArray();
 		}
+
 
 	}
 }

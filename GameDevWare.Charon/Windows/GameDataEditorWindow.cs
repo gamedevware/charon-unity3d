@@ -19,12 +19,8 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Text;
 using GameDevWare.Charon.Async;
 using GameDevWare.Charon.Utils;
 using UnityEditor;
@@ -50,7 +46,7 @@ namespace GameDevWare.Charon.Windows
 
 		protected void Awake()
 		{
-			if (GameDataEditorProcess.IsRunning == false)
+			if (File.Exists(CharonCli.GetDefaultLockFilePath()) == false && this)
 			{
 				this.titleContent = new GUIContent(Resources.UI_UNITYPLUGIN_WINDOW_EDITOR_TITLE);
 				this.Close();
@@ -103,8 +99,9 @@ namespace GameDevWare.Charon.Windows
 
 			var port = Settings.Current.EditorPort;
 			var gameDataEditorUrl = "http://localhost:" + port + "/";
+			var lockFilePath = CharonCli.GetDefaultLockFilePath();
 
-			GameDataEditorProcess.EndGracefully();
+			CharonCli.FindAndEndGracefully(lockFilePath);
 
 			if (Settings.Current.Verbose)
 				Debug.Log("Starting gamedata editor at " + gameDataEditorUrl + "...");
@@ -119,13 +116,7 @@ namespace GameDevWare.Charon.Windows
 			if (EditorApplication.isCompiling)
 				throw new InvalidOperationException("Interrupted by script compiler.");
 
-			var charonRunTask = CharonCli.Listen(gameDataPath, port, shadowCopy: true);
-
-			charonRunTask.ContinueWith(t =>
-			{
-				if (t.HasErrors) return;
-				GameDataEditorProcess.Watch(t.GetResult());
-			});
+			var charonRunTask = CharonCli.Listen(gameDataPath, lockFilePath, port, shadowCopy: true);
 
 			if (Settings.Current.Verbose)
 				Debug.Log("Launching gamedata editor process.");
@@ -233,9 +224,10 @@ namespace GameDevWare.Charon.Windows
 			yield return false;
 		}
 
-		private void KillProcess()
+		public void KillProcess()
 		{
-			GameDataEditorProcess.EndGracefully();
+			CharonCli.FindAndEndGracefully();
+			this.Close();
 		}
 	}
 }

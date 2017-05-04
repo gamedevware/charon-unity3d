@@ -59,7 +59,7 @@ namespace GameDevWare.Charon
 			return !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling;
 		}
 
-		[MenuItem(TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENU_VALIDATE_ASSETS, false, 3)]
+		[MenuItem(TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENU_VALIDATE_ASSETS, false, 5)]
 		private static void ValidateAll()
 		{
 			if (!ValidateAllCheck()) return;
@@ -72,13 +72,13 @@ namespace GameDevWare.Charon
 			validateCoroutine.ContinueWith(ProgressUtils.HideProgressBar);
 			FocusConsoleWindow();
 		}
-		[MenuItem(TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENU_VALIDATE_ASSETS, true, 3)]
+		[MenuItem(TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENU_VALIDATE_ASSETS, true, 5)]
 		private static bool ValidateAllCheck()
 		{
 			return !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling;
 		}
 
-		[MenuItem(TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENU_EXTRACT_T4_TEMPLATES, false, 5)]
+		[MenuItem(TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENU_EXTRACT_T4_TEMPLATES, false, 8)]
 		private static void ExtractT4Templates()
 		{
 			if (!ExtractT4TemplatesCheck())
@@ -94,52 +94,73 @@ namespace GameDevWare.Charon
 			);
 			FocusConsoleWindow();
 		}
-		[MenuItem(TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENU_EXTRACT_T4_TEMPLATES, true, 5)]
+		[MenuItem(TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENU_EXTRACT_T4_TEMPLATES, true, 8)]
 		private static bool ExtractT4TemplatesCheck()
 		{
 			return !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling;
 		}
 
-		[MenuItem(TROUBLESHOOTING_PREFIX + Resources.UI_UNITYPLUGIN_MENU_VERBOSE_LOGS, false, 9)]
-		private static void VerboseLogs()
-		{
-			Settings.Current.Verbose = !Settings.Current.Verbose;
-			UnityEditor.Menu.SetChecked(TROUBLESHOOTING_PREFIX + Resources.UI_UNITYPLUGIN_MENU_VERBOSE_LOGS, Settings.Current.Verbose);
-			Settings.Current.Save();
-		}
-
-		[MenuItem(TROUBLESHOOTING_PREFIX + Resources.UI_UNITYPLUGIN_MENU_REPORT_ISSUE, false, 7)]
+		[MenuItem(TROUBLESHOOTING_PREFIX + Resources.UI_UNITYPLUGIN_MENU_REPORT_ISSUE, false, 11)]
 		private static void ReportIssue()
 		{
 			EditorWindow.GetWindow<ReportIssueWindow>(utility: true);
 		}
 
-		[MenuItem(TROUBLESHOOTING_PREFIX + Resources.UI_UNITYPLUGIN_MENU_OPEN_LOGS, false, 8)]
+		[MenuItem(TROUBLESHOOTING_PREFIX + Resources.UI_UNITYPLUGIN_MENU_RESET_PREFERENCES, false, 14)]
+		private static void ResetPreferences()
+		{
+			var userDataDirectory = Settings.GetLocalUserDataPath();
+			if (Directory.Exists(userDataDirectory) == false)
+				return;
+
+			foreach (var window in UnityEngine.Resources.FindObjectsOfTypeAll<GameDataEditorWindow>())
+				window.KillProcess();
+
+			Directory.Delete(userDataDirectory, recursive: true);
+		}
+
+		[MenuItem(TROUBLESHOOTING_PREFIX + Resources.UI_UNITYPLUGIN_MENU_OPEN_LOGS, false, 17)]
 		private static void OpenLogs()
 		{
 			if (string.IsNullOrEmpty(ReportIssueWindow.CharonLogPath) == false && File.Exists(ReportIssueWindow.CharonLogPath))
 				EditorUtility.OpenWithDefaultApp(ReportIssueWindow.CharonLogPath);
 		}
 
-		[MenuItem(TROUBLESHOOTING_PREFIX + Resources.UI_UNITYPLUGIN_MENU_OPEN_LOGS, true, 8)]
+		[MenuItem(TROUBLESHOOTING_PREFIX + Resources.UI_UNITYPLUGIN_MENU_OPEN_LOGS, true, 17)]
 		private static bool OpenLogsCheck()
 		{
 			return string.IsNullOrEmpty(ReportIssueWindow.CharonLogPath) == false && File.Exists(ReportIssueWindow.CharonLogPath);
 		}
 
-		[MenuItem(TROUBLESHOOTING_PREFIX + Resources.UI_UNITYPLUGIN_MENU_CHECK_RUNTIME, false, 6)]
+
+		[MenuItem(TROUBLESHOOTING_PREFIX + Resources.UI_UNITYPLUGIN_MENU_VERBOSE_LOGS, false, 20)]
+		private static void VerboseLogs()
+		{
+			Settings.Current.Verbose = !Settings.Current.Verbose;
+			UnityEditor.Menu.SetChecked(TROUBLESHOOTING_PREFIX + Resources.UI_UNITYPLUGIN_MENU_VERBOSE_LOGS, Settings.Current.Verbose);
+			Settings.Current.Save();
+		}
+		[MenuItem(TROUBLESHOOTING_PREFIX + Resources.UI_UNITYPLUGIN_MENU_VERBOSE_LOGS, true, 20)]
+		private static bool VerboseLogsCheck()
+		{
+			UnityEditor.Menu.SetChecked(TROUBLESHOOTING_PREFIX + Resources.UI_UNITYPLUGIN_MENU_VERBOSE_LOGS, Settings.Current.Verbose);
+			return true;
+		}
+
+
+		[MenuItem(TROUBLESHOOTING_PREFIX + Resources.UI_UNITYPLUGIN_MENU_CHECK_RUNTIME, false, 22)]
 		private static void CheckRuntime()
 		{
 			UpdateRuntimeWindow.ShowAsync(autoClose: false);
 		}
 
-		[MenuItem(TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENU_DOCUMENTATION, false, 10)]
+		[MenuItem(TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENU_DOCUMENTATION, false, 25)]
 		private static void ShowDocumentation()
 		{
 			Application.OpenURL("https://gamedevware.com/docs/");
 		}
 
-		[MenuItem(TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENU_CHECK_UPDATES, false, 11)]
+		[MenuItem(TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENU_CHECK_UPDATES, false, 28)]
 		private static void CheckUpdates()
 		{
 			if (!CheckUpdatesCheck()) return;
@@ -153,13 +174,13 @@ namespace GameDevWare.Charon
 			FocusConsoleWindow();
 		}
 
-		[MenuItem(TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENU_CHECK_UPDATES, true, 11)]
+		[MenuItem(TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENU_CHECK_UPDATES, true, 28)]
 		private static bool CheckUpdatesCheck()
 		{
 			return !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling;
 		}
 
-		[MenuItem(TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENU_ABOUT, false, 12)]
+		[MenuItem(TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENU_ABOUT, false, 31)]
 		private static void About()
 		{
 			EditorWindow.GetWindow<AboutWindow>(utility: true);
@@ -597,9 +618,14 @@ namespace GameDevWare.Charon
 				progressCallback(string.Format(Resources.UI_UNITYPLUGIN_PROGRESS_DOWNLOADINGS, (float)read / 1024 / 1024, total / 1024 / 1024), 0.10f + (0.80f * Math.Min(1.0f, (float)read / total)));
 			});
 
-			var windows = UnityEngine.Resources.FindObjectsOfTypeAll<GameDataEditorWindow>();
-			foreach (var window in windows) window.Close();
-			GameDataEditorProcess.EndGracefully();
+			foreach (var window in UnityEngine.Resources.FindObjectsOfTypeAll<GameDataEditorWindow>())
+				window.KillProcess();
+			foreach (var window in UnityEngine.Resources.FindObjectsOfTypeAll<AboutWindow>())
+				window.Close();
+			foreach (var window in UnityEngine.Resources.FindObjectsOfTypeAll<ReportIssueWindow>())
+				window.Close();
+			foreach (var window in UnityEngine.Resources.FindObjectsOfTypeAll<UpdateRuntimeWindow>())
+				window.Close();
 
 			try
 			{
@@ -622,7 +648,7 @@ namespace GameDevWare.Charon
 
 			if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESS_DONE, 1.0f);
 
-			AssetDatabase.ImportAsset(PathUtils.MakeProjectRelative(assetPath), ImportAssetOptions.ForceSynchronousImport);
+			AssetDatabase.ImportAsset(PathUtils.MakeProjectRelative(assetPath), ImportAssetOptions.ForceUpdate);
 		}
 		public static IEnumerable CheckForCharonUpdatesAsync(Action<string, float> progressCallback = null)
 		{
@@ -697,9 +723,8 @@ namespace GameDevWare.Charon
 				progressCallback(string.Format(Resources.UI_UNITYPLUGIN_PROGRESS_DOWNLOADINGS, (float)read / 1024 / 1024, total / 1024 / 1024), 0.10f + (0.80f * Math.Min(1.0f, (float)read / total)));
 			});
 
-			var windows = UnityEngine.Resources.FindObjectsOfTypeAll<GameDataEditorWindow>();
-			foreach (var window in windows) window.Close();
-			GameDataEditorProcess.EndGracefully();
+			foreach (var window in UnityEngine.Resources.FindObjectsOfTypeAll<GameDataEditorWindow>())
+				window.KillProcess();
 
 			try
 			{

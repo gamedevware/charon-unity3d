@@ -49,6 +49,7 @@ namespace GameDevWare.Charon
 		public const string UI_UNITYPLUGIN_MENU_OPEN_LOGS = "Open Logs";
 		public const string UI_UNITYPLUGIN_MENU_RECOVERY_SCRIPTS = "Recovery Scripts";
 		public const string UI_UNITYPLUGIN_MENU_REPORT_ISSUE = "Report an Issue...";
+		public const string UI_UNITYPLUGIN_MENU_RESET_PREFERENCES = "Reset Preferences";
 		public const string UI_UNITYPLUGIN_MENU_TROUBLESHOOTING = "Troubleshooting";
 		public const string UI_UNITYPLUGIN_MENU_VALIDATE_ASSETS = "Validate Assets";
 		public const string UI_UNITYPLUGIN_MENU_VERBOSE_LOGS = "Verbose Logs";
