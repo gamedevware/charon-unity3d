@@ -33,7 +33,6 @@ namespace GameDevWare.Charon.Windows
 {
 	internal class UpdateRuntimeWindow : EditorWindow
 	{
-		private static readonly Version MinimalMonoVersion;
 
 		private string monoPath;
 		private string runtimeVersion;
@@ -46,12 +45,6 @@ namespace GameDevWare.Charon.Windows
 		private event EventHandler Done;
 		private event EventHandler<ErrorEventArgs> Cancel;
 
-		static UpdateRuntimeWindow()
-		{
-			MinimalMonoVersion = new Version(4, 6, 0);
-
-			
-		}
 		public UpdateRuntimeWindow()
 		{
 			this.titleContent = new GUIContent(Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_RUNTIME_TITLE);
@@ -79,11 +72,11 @@ namespace GameDevWare.Charon.Windows
 			EditorGUILayout.Space();
 
 			if (RuntimeInformation.IsWindows && GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_DOWNLOAD_DOTNET_BUTTON, GUILayout.Width(140)))
-				Application.OpenURL("https://www.microsoft.com/ru-RU/download/details.aspx?id=42643");
+				Application.OpenURL("https://www.microsoft.com/en-US/download/details.aspx?id=42643");
 			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_DOWNLOAD_MONO_BUTTON, GUILayout.Width(140)))
 				Application.OpenURL("http://www.mono-project.com/download/#download-mac");
 			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_HELP_BUTTON, GUILayout.Width(40)))
-				Application.OpenURL("https://gamedevware.com/docs");
+				Application.OpenURL("https://gamedevware.com/docs/pages/viewpage.action?pageId=1277984");
 			GUILayout.EndHorizontal();
 
 			GUILayout.Space(18);
@@ -157,7 +150,7 @@ namespace GameDevWare.Charon.Windows
 			if (this.runMonoTask.HasErrors == false)
 				output = this.runMonoTask.GetResult().GetOutputData() ?? "";
 
-			var monoRuntimeVersionMatch = new Regex(@"version (?<v>[0-9]+\.[0-9]+\.[0-9]+)", RegexOptions.Multiline | RegexOptions.IgnoreCase).Match(output);
+			var monoRuntimeVersionMatch = CharonCli.MonoVersionRegex.Match(output);
 			if (!monoRuntimeVersionMatch.Success)
 			{
 				if (Settings.Current.Verbose)
@@ -172,7 +165,7 @@ namespace GameDevWare.Charon.Windows
 					var monoRuntimeVersion = new Version(monoRuntimeVersionMatch.Groups["v"].Value);
 					this.runtimeVersion = monoRuntimeVersion + " (Mono)";
 
-					if (monoRuntimeVersion >= MinimalMonoVersion)
+					if (monoRuntimeVersion >= CharonCli.MinimalMonoVersion)
 						this.RaiseDone(monoRuntimePath);
 					else
 						this.UpdateRuntimeVersionLabel(monoRuntimeVersion.ToString(), "Mono", isValid: false);

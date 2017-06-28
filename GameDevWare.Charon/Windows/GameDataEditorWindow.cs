@@ -81,15 +81,21 @@ namespace GameDevWare.Charon.Windows
 
 			var title = Path.GetFileName(gameDataPath);
 			if (EditorUtility.DisplayCancelableProgressBar(title, Resources.UI_UNITYPLUGIN_WINDOW_EDITOR_CHECKING_RUNTIME, 0.05f))
+			{
 				throw new InvalidOperationException("Interrupted by user.");
+			}
 
-			switch (CharonCli.CheckRequirements())
+			var checkRequirements = CharonCli.CheckRequirementsAsync();
+			yield return checkRequirements;
+
+			switch (checkRequirements.GetResult())
 			{
 				case RequirementsCheckResult.MissingRuntime:
 					yield return UpdateRuntimeWindow.ShowAsync();
 					break;
+				case RequirementsCheckResult.WrongVersion:
 				case RequirementsCheckResult.MissingExecutable:
-					yield return CharonCli.UpdateCharonExecutableAsync(ProgressUtils.ReportToLog(Resources.UI_UNITYPLUGIN_MENU_CHECK_UPDATES));
+					yield return CharonCli.UpdateCharonExecutableAsync(ProgressUtils.ShowCancellableProgressBar(Resources.UI_UNITYPLUGIN_MENU_CHECK_UPDATES, 0.05f, 0.50f));
 					break;
 				case RequirementsCheckResult.Ok:
 					break;
@@ -106,17 +112,14 @@ namespace GameDevWare.Charon.Windows
 			if (Settings.Current.Verbose)
 				Debug.Log("Starting gamedata editor at " + gameDataEditorUrl + "...");
 
-			if (EditorUtility.DisplayCancelableProgressBar(title, Resources.UI_UNITYPLUGIN_WINDOW_EDITOR_COPYING_EXECUTABLE, 0.30f))
+
+			if (EditorUtility.DisplayCancelableProgressBar(title, Resources.UI_UNITYPLUGIN_WINDOW_EDITOR_LAUNCHING_EXECUTABLE, 0.50f))
 				throw new InvalidOperationException("Interrupted by user.");
 			if (EditorApplication.isCompiling)
-				throw new InvalidOperationException("Interrupted by script compiler.");
+				throw new InvalidOperationException("Interrupted by Unity's script compilation. Retry after Unity is finished script compilation.");
 
-			if (EditorUtility.DisplayCancelableProgressBar(title, Resources.UI_UNITYPLUGIN_WINDOW_EDITOR_LAUNCHING_EXECUTABLE, 0.60f))
-				throw new InvalidOperationException("Interrupted by user.");
-			if (EditorApplication.isCompiling)
-				throw new InvalidOperationException("Interrupted by script compiler.");
-
-			var charonRunTask = CharonCli.Listen(gameDataPath, lockFilePath, port, shadowCopy: true);
+			var charonRunTask = CharonCli.Listen(gameDataPath, lockFilePath, port, shadowCopy: true,
+				progressCallback: ProgressUtils.ShowCancellableProgressBar(title, 0.50f, 0.60f));
 
 			if (Settings.Current.Verbose)
 				Debug.Log("Launching gamedata editor process.");
@@ -130,13 +133,16 @@ namespace GameDevWare.Charon.Windows
 			yield return Promise.WhenAny(timeoutPromise, startPromise, cancelPromise);
 			if (timeoutPromise.IsCompleted)
 			{
+				EditorUtility.ClearProgressBar();
 				Debug.LogWarning(Resources.UI_UNITYPLUGIN_WINDOW_FAILED_TO_START_EDITOR_TIMEOUT);
 				yield break;
 			}
 			else if (cancelPromise.IsCompleted)
 			{
+				EditorUtility.ClearProgressBar();
+
 				if (EditorApplication.isCompiling)
-					throw new InvalidOperationException("Interrupted by script compiler.");
+					throw new InvalidOperationException("Interrupted by Unity's script compilation. Retry after Unity is finished script compilation.");
 				else
 					throw new InvalidOperationException("Interrupted by user.");
 			}
@@ -148,7 +154,7 @@ namespace GameDevWare.Charon.Windows
 			if (EditorUtility.DisplayCancelableProgressBar(title, Resources.UI_UNITYPLUGIN_WINDOW_EDITOR_LAUNCHING_EXECUTABLE, 0.80f))
 				throw new InvalidOperationException("Interrupted by user.");
 			if (EditorApplication.isCompiling)
-				throw new InvalidOperationException("Interrupted by script compiler.");
+				throw new InvalidOperationException("Interrupted by Unity's script compilation. Retry after Unity is finished script compilation.");
 
 			// wait untill server start to respond
 			var downloadStream = new MemoryStream();
@@ -166,13 +172,14 @@ namespace GameDevWare.Charon.Windows
 				if (EditorUtility.DisplayCancelableProgressBar(title, Resources.UI_UNITYPLUGIN_WINDOW_EDITOR_LAUNCHING_EXECUTABLE, 0.93f))
 					throw new InvalidOperationException("Interrupted by user.");
 				if (EditorApplication.isCompiling)
-					throw new InvalidOperationException("Interrupted by script compiler.");
+					throw new InvalidOperationException("Interrupted by Unity's script compilation. Retry after Unity is finished script compilation.");
 
 				downloadStream.SetLength(0);
 				startPromise = HttpUtils.DownloadTo(downloadStream, new Uri(gameDataEditorUrl), timeout: TimeSpan.FromSeconds(1));
 			}
 			if (timeoutPromise.IsCompleted && (!startPromise.IsCompleted || startPromise.HasErrors))
 			{
+				EditorUtility.ClearProgressBar();
 				startCompletePromise.TrySetCompleted();
 				Debug.LogWarning(Resources.UI_UNITYPLUGIN_WINDOW_FAILED_TO_START_EDITOR_TIMEOUT);
 				yield break;
@@ -182,7 +189,7 @@ namespace GameDevWare.Charon.Windows
 			if (EditorUtility.DisplayCancelableProgressBar(title, Resources.UI_UNITYPLUGIN_WINDOW_EDITOR_OPENING_BROWSER, 0.95f))
 				throw new InvalidOperationException("Interrupted by user.");
 			if (EditorApplication.isCompiling)
-				throw new InvalidOperationException("Interrupted by script compiler.");
+				throw new InvalidOperationException("Interrupted by Unity's script compilation. Retry after Unity is finished script compilation.");
 
 			switch ((BrowserType)Settings.Current.Browser)
 			{
@@ -205,7 +212,6 @@ namespace GameDevWare.Charon.Windows
 					break;
 			}
 		}
-
 		private static IEnumerable RunCancellableProgress(string title, string message, float fromProgress, float toProgress, TimeSpan timeInterpolationWindow, Promise cancellation)
 		{
 			var startTime = DateTime.UtcNow;
@@ -224,10 +230,16 @@ namespace GameDevWare.Charon.Windows
 			yield return false;
 		}
 
-		public void KillProcess()
+		private void KillProcess()
 		{
 			CharonCli.FindAndEndGracefully();
 			this.Close();
+		}
+
+		public static void FindAllAndClose()
+		{
+			foreach (var window in UnityEngine.Resources.FindObjectsOfTypeAll<GameDataEditorWindow>())
+				window.KillProcess();
 		}
 	}
 }

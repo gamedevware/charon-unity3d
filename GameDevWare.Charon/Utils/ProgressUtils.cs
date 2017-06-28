@@ -25,9 +25,13 @@ namespace GameDevWare.Charon.Utils
 {
 	internal static class ProgressUtils
 	{
-		public static Action<string, float> ShowProgressBar(string title)
+		public static Action<string, float> ShowProgressBar(string title, float from = 0.0f, float to = 1.0f)
 		{
-			return (t, p) => EditorUtility.DisplayProgressBar(title, t, Mathf.Clamp(p, 0.0f, 1.0f));
+			return (t, p) => EditorUtility.DisplayProgressBar(title, t, Mathf.Clamp(from + (to - from) * Mathf.Clamp(p, 0.0f, 1.0f), 0.0f, 1.0f));
+		}
+		public static Action<string, float> ShowCancellableProgressBar(string title, float from = 0.0f, float to = 1.0f)
+		{
+			return (t, p) => EditorUtility.DisplayCancelableProgressBar(title, t, Mathf.Clamp(from + (to - from) * Mathf.Clamp(p, 0.0f, 1.0f), 0.0f, 1.0f));
 		}
 		public static void HideProgressBar(object state)
 		{

@@ -89,12 +89,13 @@
     <Compile Include="Utils\RunOptions.cs" />
     <Compile Include="Utils\RunResult.cs" />
     <Compile Include="Utils\CommandLine.cs" />
+    <Compile Include="Utils\Updater.cs" />
     <Compile Include="Utils\ValidationOptions.cs" />
     <Compile Include="ValidationException.cs" />
     <Compile Include="Windows\AboutWindow.cs" />
     <Compile Include="Windows\GameDataEditorWindow.cs" />
     <Compile Include="Windows\GameDataInspector.cs" />
-    <Compile Include="Windows\ReportIssueWindow.cs" />
+    <Compile Include="Windows\FeedbackWindow.cs" />
     <Compile Include="Windows\UpdateRuntimeWindow.cs" />
     <Compile Include="Windows\WebViewEditorWindow.cs" />
   </ItemGroup>
@@ -104,6 +105,7 @@
   <ItemGroup>
     <EmbeddedResource Include="..\GameDevWare.Charon.Unity\Assets\Editor\GameDevWare.Charon\Charon.exe.config">
       <Link>Charon.exe.config</Link>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

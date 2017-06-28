@@ -32,6 +32,7 @@ namespace GameDevWare.Charon.Utils
 		SuppressDocumentClass = 0x1 << 4,
 		SuppressApiClass = 0x1 << 5,
 
+		SuppressCollectionClass = 0x1 << 6,
 		SuppressLocalizedStringClass = 0x1 << 7,
 		SuppressReferenceClass = 0x1 << 8,
 		SuppressDataContractAttributes = 0x1 << 9,

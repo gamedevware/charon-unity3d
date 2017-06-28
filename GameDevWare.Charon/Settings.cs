@@ -39,7 +39,7 @@ namespace GameDevWare.Charon
 		public static readonly string SettingsPath;
 		public static readonly string CharonPath;
 
-		public const string EXTENSION_EXPRESSIONS = "Expressions";
+		public const string EXTENSION_FORMULAS = "Formulas";
 
 		public static readonly Encoding DefaultEncoding = Encoding.UTF8;
 		public static readonly Settings Current;
@@ -67,7 +67,7 @@ namespace GameDevWare.Charon
 			Current = Load();
 
 			var expressionsAreLoaded = AppDomain.CurrentDomain.GetAssemblies().Any(a => a.GetName().Name == "GameDevWare.Dynamic.Expressions" || a.GetType("GameDevWare.Dynamic.Expressions.AotCompilation", throwOnError: false) != null);
-			SupportedExtensions = new[] { expressionsAreLoaded ? EXTENSION_EXPRESSIONS : "None" };
+			SupportedExtensions = new[] { expressionsAreLoaded ? EXTENSION_FORMULAS : "None" };
 		}
 
 		private static Settings Load()

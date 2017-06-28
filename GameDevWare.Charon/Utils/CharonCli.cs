@@ -18,38 +18,71 @@
 */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection.Emit;
+using System.Text.RegularExpressions;
 using GameDevWare.Charon.Async;
-
+using UnityEditor.VersionControl;
+using UnityEngine.Rendering;
 using Debug = UnityEngine.Debug;
+using FileMode = System.IO.FileMode;
 
 namespace GameDevWare.Charon.Utils
 {
 	public static class CharonCli
 	{
 		public static readonly string TempDirectory = Path.Combine(Settings.AppDataPath, "Temp/");
+		public static readonly Regex MonoVersionRegex = new Regex(@"version (?<v>[0-9]+\.[0-9]+\.[0-9]+)", RegexOptions.Multiline | RegexOptions.IgnoreCase);
+		public static readonly Version MinimalMonoVersion = new Version(4, 6, 0);
 
-		public static RequirementsCheckResult CheckRequirements()
+		public static Promise<RequirementsCheckResult> CheckRequirementsAsync()
 		{
 			if (string.IsNullOrEmpty(Settings.CharonPath) || !File.Exists(Settings.CharonPath))
-				return RequirementsCheckResult.MissingExecutable;
+				return Promise.FromResult(RequirementsCheckResult.MissingExecutable);
 
+			var additionalChecks = new List<Promise<RequirementsCheckResult>>();
 			if (RuntimeInformation.IsWindows)
 			{
-				if (DotNetRuntimeInformation.GetVersion() == null && (string.IsNullOrEmpty(MonoRuntimeInformation.MonoPath) || File.Exists(MonoRuntimeInformation.MonoPath) == false))
-					return RequirementsCheckResult.MissingRuntime;
+				if (DotNetRuntimeInformation.GetVersion() == null && (string.IsNullOrEmpty(MonoRuntimeInformation.MonoPath) ||
+																	File.Exists(MonoRuntimeInformation.MonoPath) == false))
+					return Promise.FromResult(RequirementsCheckResult.MissingRuntime);
 			}
 			else
 			{
 				if (string.IsNullOrEmpty(MonoRuntimeInformation.MonoPath) || File.Exists(MonoRuntimeInformation.MonoPath) == false)
-					return RequirementsCheckResult.MissingRuntime;
+					return Promise.FromResult(RequirementsCheckResult.MissingRuntime);
+
+				additionalChecks.Add(GetMonoVersionAsync().ContinueWith(getMonoVersion =>
+				{
+					if (getMonoVersion.HasErrors || getMonoVersion.GetResult() == null || getMonoVersion.GetResult() < MinimalMonoVersion)
+						return RequirementsCheckResult.MissingRuntime;
+					else
+						return RequirementsCheckResult.Ok;
+				}));
 			}
-			return RequirementsCheckResult.Ok;
+
+			if (!string.IsNullOrEmpty(Settings.Current.EditorVersion))
+			{
+				additionalChecks.Add(GetVersionAsync().ContinueWith(getCharonVersion =>
+				{
+					if (getCharonVersion.HasErrors || getCharonVersion.GetResult() == null ||
+						getCharonVersion.GetResult().ToString() != Settings.Current.EditorVersion)
+						return RequirementsCheckResult.WrongVersion;
+					else
+						return RequirementsCheckResult.Ok;
+				}));
+			}
+
+			if (additionalChecks.Count == 0)
+				return Promise.FromResult(RequirementsCheckResult.Ok);
+			else
+				return Promise.WhenAll(additionalChecks.ToArray())
+					.ContinueWith(results => results.GetResult().FirstOrDefault(r => r != RequirementsCheckResult.Ok));
 		}
 
 		internal static string GetDefaultLockFilePath()
@@ -59,7 +92,7 @@ namespace GameDevWare.Charon.Utils
 			// ReSharper disable once AssignNullToNotNullAttribute
 			return Path.GetFullPath(Path.Combine(charonDir, lockFileName));
 		}
-		internal static Promise<Process> Listen(string gameDataPath, string lockFilePath, int port, bool shadowCopy = true)
+		internal static Promise<Process> Listen(string gameDataPath, string lockFilePath, int port, bool shadowCopy = true, Action<string, float> progressCallback = null)
 		{
 			if (string.IsNullOrEmpty(gameDataPath)) throw new ArgumentException("Value cannot be null or empty.", "gameDataPath");
 			if (string.IsNullOrEmpty(lockFilePath)) throw new ArgumentException("Value cannot be null or empty.", "lockFilePath");
@@ -72,6 +105,8 @@ namespace GameDevWare.Charon.Utils
 
 			if (shadowCopy)
 			{
+				if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_WINDOW_EDITOR_COPYING_EXECUTABLE, 0.10f);
+
 				var charonMd5 = PathUtils.ComputeMd5Hash(charonPath);
 				var shadowDirectory = Path.GetFullPath(Path.Combine(TempDirectory, charonMd5));
 				if (Directory.Exists(shadowDirectory) == false)
@@ -105,7 +140,7 @@ namespace GameDevWare.Charon.Utils
 					charonPath = Path.Combine(shadowDirectory, Path.GetFileName(charonPath));
 				}
 			}
-
+			if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_WINDOW_EDITOR_LAUNCHING_EXECUTABLE, 0.30f);
 			var unityPid = Process.GetCurrentProcess().Id;
 			var scriptingAssemblies = FindAndLoadScriptingAssemblies(gameDataPath);
 			var runTask = CommandLine.Run(
@@ -140,6 +175,8 @@ namespace GameDevWare.Charon.Utils
 					}
 				}
 			);
+			if (progressCallback != null)
+				runTask.ContinueWith(_ => progressCallback(Resources.UI_UNITYPLUGIN_WINDOW_EDITOR_LAUNCHING_EXECUTABLE, 1.0f));
 
 			return runTask.ContinueWith(t => t.GetResult().Process);
 		}
@@ -187,7 +224,7 @@ namespace GameDevWare.Charon.Utils
 
 		public static Promise UpdateCharonExecutableAsync(Action<string, float> progressCallback = null)
 		{
-			return new Coroutine(Menu.CheckForCharonUpdatesAsync(progressCallback));
+			return new Coroutine(Updater.CheckForCharonUpdatesAsync(progressCallback));
 		}
 
 		public static Promise<RunResult> CreateDocumentAsync(string gameDataPath, string entity, CommandInput input, CommandOutput output)
@@ -370,7 +407,7 @@ namespace GameDevWare.Charon.Utils
 			);
 			return runTask;
 		}
-
+		
 		public static Promise<RunResult> BackupAsync(string gameDataPath, CommandOutput output)
 		{
 			if (gameDataPath == null) throw new ArgumentNullException("gameDataPath");
@@ -550,6 +587,37 @@ namespace GameDevWare.Charon.Utils
 			{
 				using (var result = r.GetResult())
 					return new Version(result.GetOutputData());
+			});
+		}
+
+		internal static Promise<Version> GetMonoVersionAsync()
+		{
+			var checkMonoRuntimeVersion = CommandLine.Run(new RunOptions(MonoRuntimeInformation.MonoPath, "--version")
+			{
+				CaptureStandardOutput = true,
+				CaptureStandardError = true,
+				ExecutionTimeout = TimeSpan.FromSeconds(5),
+				Schedule = CoroutineScheduler.CurrentId == null
+			});
+			return checkMonoRuntimeVersion.ContinueWith(runTask =>
+			{
+				var checkMonoRuntimeVersionOutput = string.Empty;
+				if (runTask.HasErrors == false)
+					checkMonoRuntimeVersionOutput = runTask.GetResult().GetOutputData() ?? "";
+				if (runTask.HasErrors || MonoVersionRegex.IsMatch(checkMonoRuntimeVersionOutput) == false)
+					return default(Version);
+
+				var monoVersionMatch = MonoVersionRegex.Match(checkMonoRuntimeVersionOutput);
+				var monoVersion = default(Version);
+				try
+				{
+					monoVersion = new Version(monoVersionMatch.Groups["v"].Value);
+				}
+				catch
+				{
+					/*ignore*/
+				}
+				return monoVersion;
 			});
 		}
 

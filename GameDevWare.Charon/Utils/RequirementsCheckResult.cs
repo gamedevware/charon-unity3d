@@ -21,8 +21,9 @@ namespace GameDevWare.Charon.Utils
 {
 	public enum RequirementsCheckResult
 	{
-		Ok,
+		Ok = 0,
 		MissingRuntime,
-		MissingExecutable
+		MissingExecutable,
+		WrongVersion
 	}
 }

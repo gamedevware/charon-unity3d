@@ -26,10 +26,8 @@ namespace GameDevWare.Charon.Utils
 {
 	internal static class GameDataTracker
 	{
-		public static readonly string[] GameDataExtensions = new[]
-		{
-			".gdjs", ".gdbs", ".gdmp", ".gdml"
-		};
+		public static readonly string[] GameDataExtensions = new[] { ".gdjs", ".gdbs", ".gdmp", ".gdml" };
+		public static readonly string[] GameDataExtensionFilters = new[] { "Json", "gdjs,json", "Bson", "gdbs,bson", "Message Pack", "msgpack,gdmp", "XML", "xml,gdml" };
 
 		private static readonly HashSet<string> TrackedFiles;
 		private static int TrackedFilesVersion;

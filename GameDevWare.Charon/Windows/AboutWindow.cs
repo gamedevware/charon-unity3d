@@ -28,16 +28,17 @@ namespace GameDevWare.Charon.Windows
 {
 	internal class AboutWindow : EditorWindow
 	{
-		private string toolsVersion = Resources.UI_UNITYPLUGIN_WINDOW_CHECKING_VERSION;
-		private string licenseHolder = Resources.UI_UNITYPLUGIN_WINDOW_CHECKING_VERSION;
-		private string licenseKey = Resources.UI_UNITYPLUGIN_WINDOW_CHECKING_VERSION;
+		private string editorVersion = Resources.UI_UNITYPLUGIN_WINDOW_CHECKING_VERSION;
+		private string assetVersion = (Settings.GetCurrentAssetVersion() ?? new Version()).ToString();
+
 		[NonSerialized]
 		private Promise<Version> checkToolsVersion;
+		private Promise<RequirementsCheckResult> checkRequirements;
 
 		public AboutWindow()
 		{
-			this.titleContent = new GUIContent(Resources.UI_UNITYPLUGIN_WINDOW_ABOUT_CHARON_TITLE);
-			this.maxSize = this.minSize = new Vector2(380, 326);
+			this.titleContent = new GUIContent(Resources.UI_UNITYPLUGIN_ABOUT_CHARON_TITLE);
+			this.maxSize = this.minSize = new Vector2(380, 290);
 			this.position = new Rect(
 				(Screen.width - this.maxSize.x) / 2,
 				(Screen.height - this.maxSize.y) / 2,
@@ -52,11 +53,12 @@ namespace GameDevWare.Charon.Windows
 			GUILayout.Box("Charon", new GUIStyle { fontSize = 72, alignment = TextAnchor.MiddleCenter });
 			GUILayout.Space(10);
 			GUILayout.Label(Resources.UI_UNITYPLUGIN_WINDOW_INFO_GROUP, EditorStyles.boldLabel);
-			EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_WINDOW_TOOLS_VERSION_LABEL, this.toolsVersion);
+			EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_ABOUT_EDITOR_VERSION_LABEL, this.editorVersion);
+			EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_WINDOW_ASSET_VERSION_LABEL, this.assetVersion);
 			GUI.enabled = true;
 			GUILayout.Space(10);
 			GUILayout.Label(Resources.UI_UNITYPLUGIN_WINDOW_SETTINGS_GROUP, EditorStyles.boldLabel);
-			Settings.Current.EditorPort = EditorGUILayout.IntField(Resources.UI_UNITYPLUGIN_WINDOW_TOOLS_PORT, Settings.Current.EditorPort);
+			Settings.Current.EditorPort = EditorGUILayout.IntField(Resources.UI_UNITYPLUGIN_ABOUT_EDITOR_PORT, Settings.Current.EditorPort);
 			Settings.Current.Browser = Convert.ToInt32(EditorGUILayout.EnumPopup(Resources.UI_UNITYPLUGIN_WINDOW_BROWSER, (BrowserType)Settings.Current.Browser));
 			if (Settings.Current.Browser == (int)BrowserType.Custom)
 			{
@@ -79,7 +81,7 @@ namespace GameDevWare.Charon.Windows
 			GUILayout.Space(18);
 			GUILayout.BeginHorizontal();
 			EditorGUILayout.Space();
-			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_OK_BUTTON, GUILayout.Width(80)))
+			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_ABOUT_CLOSE_BUTTON, GUILayout.Width(80)))
 				this.Close();
 			GUILayout.EndHorizontal();
 
@@ -89,27 +91,37 @@ namespace GameDevWare.Charon.Windows
 
 		protected void Update()
 		{
-			switch (CharonCli.CheckRequirements())
+			if (this.checkRequirements == null)
+				this.checkRequirements = CharonCli.CheckRequirementsAsync();
+			if (this.checkRequirements.IsCompleted == false)
+				return;
+
+			if (this.checkRequirements.HasErrors)
+			{
+				this.editorVersion = this.checkRequirements.Error.Unwrap().Message;
+				return;
+			}
+
+			var result = this.checkRequirements.GetResult();
+			switch (result)
 			{
 				case RequirementsCheckResult.MissingRuntime:
-					this.toolsVersion = Resources.UI_UNITYPLUGIN_WINDOW_CHECK_RESULT_MISSING_MONO_OR_DOTNET;
+					this.editorVersion = Resources.UI_UNITYPLUGIN_WINDOW_CHECK_RESULT_MISSING_MONO_OR_DOTNET;
 					break;
 				case RequirementsCheckResult.MissingExecutable:
-					this.toolsVersion = Resources.UI_UNITYPLUGIN_WINDOWCHECK_RESULT_MISSING_TOOLS;
-					this.licenseHolder = "";
-					this.licenseKey = "";
+					this.editorVersion = Resources.UI_UNITYPLUGIN_WINDOWCHECK_RESULT_MISSING_TOOLS;
 					break;
 				case RequirementsCheckResult.Ok:
 					if (this.checkToolsVersion == null)
 					{
-						this.toolsVersion = Resources.UI_UNITYPLUGIN_WINDOW_CHECKING_VERSION;
+						this.editorVersion = Resources.UI_UNITYPLUGIN_WINDOW_CHECKING_VERSION;
 						this.checkToolsVersion = CharonCli.GetVersionAsync();
 						this.checkToolsVersion.ContinueWith(r =>
 						{
 							if (r.HasErrors)
-								this.toolsVersion = r.Error.Unwrap().Message;
+								this.editorVersion = r.Error.Unwrap().Message;
 							else
-								this.toolsVersion = r.GetResult().ToString();
+								this.editorVersion = r.GetResult().ToString();
 							this.Repaint();
 						});
 						this.Repaint();

@@ -119,12 +119,10 @@ namespace GameDevWare.Charon.Utils
 			if (Settings.Current.Verbose)
 				UnityEngine.Debug.Log(string.Format("Staring new request to [{0}]'{1}'.", request.Method, request.RequestUri));
 
-			var getResponseAsync = request.BeginGetResponse(ar => request.EndGetResponse(ar), null);
+			var getResponseAsync = request.BeginGetResponse(ar => { try{ request.EndGetResponse(ar);} catch { /* ignore */ } }, null);
 			yield return getResponseAsync;
 			var response = (HttpWebResponse)request.EndGetResponse(getResponseAsync);
 			var responseStream = response.GetResponseStream();
-			Debug.Assert(responseStream != null, "responseStream != null");
-
 			if (Settings.Current.Verbose)
 				UnityEngine.Debug.Log(string.Format("Got '{2}' response for [{0}]'{1}' request.", request.Method, request.RequestUri, response.StatusCode));
 
@@ -147,13 +145,13 @@ namespace GameDevWare.Charon.Utils
 				var read = 0;
 				do
 				{
-					var readAsync = responseStream.BeginRead(buffer, 0, buffer.Length, ar => responseStream.EndRead(ar), null);
+					var readAsync = responseStream.BeginRead(buffer, 0, buffer.Length, ar => { try { responseStream.EndRead(ar); } catch { /* ignore */ } }, null);
 					yield return readAsync;
 
 					read = responseStream.EndRead(readAsync);
 					if (read <= 0) continue;
 
-					var writeAsync = downloadToStream.BeginWrite(buffer, 0, read, downloadToStream.EndWrite, null);
+					var writeAsync = downloadToStream.BeginWrite(buffer, 0, read, ar => { try { downloadToStream.EndWrite(ar); } catch { /* ignore */ } }, null);
 					yield return writeAsync;
 
 					writen += read;

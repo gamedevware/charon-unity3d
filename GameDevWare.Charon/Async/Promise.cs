@@ -221,6 +221,101 @@ namespace GameDevWare.Charon.Async
 			return new Coroutine(Coroutine.WaitTime(timeSpan), null, null);
 		}
 
+		public static Promise<T> FromResult<T>(T result)
+		{
+			var promise = new Promise<T>();
+			promise.SetResult(result);
+			return promise;
+		}
+		public static Promise<T> WhenAny<T>(Promise<T> first, Promise<T> second)
+		{
+			if (first == null) throw new ArgumentNullException("first");
+			if (second == null) throw new ArgumentNullException("second");
+
+			var result = new Promise<T>();
+
+			first.PropagateTo(result);
+			second.PropagateTo(result);
+
+			return result;
+		}
+		public static Promise<T> WhenAny<T>(params Promise<T>[] promises)
+		{
+			if (promises == null) throw new ArgumentNullException("promises");
+			if (promises.Length == 0) throw new ArgumentOutOfRangeException("promises");
+			if (promises.Length == 1) return promises[0];
+
+			var result = new Promise<T>();
+			foreach (var promise in promises)
+				promise.PropagateTo(result);
+
+			return result;
+		}
+		public static Promise<T[]> WhenAll<T>(Promise<T> first, Promise<T> second)
+		{
+			if (first == null) throw new ArgumentNullException("first");
+			if (second == null) throw new ArgumentNullException("second");
+
+			var result = new Promise<T[]>();
+			var resultsCount = 0;
+
+			var continuation = (ActionContinuation)(_ =>
+			{
+				if (Interlocked.Increment(ref resultsCount) == 2)
+				{
+					if (first.HasErrors && second.HasErrors)
+						result.SetFailed(new AggregateException(first.Error, second.Error).Flatten());
+					else if (first.HasErrors)
+						result.SetFailed(first.Error);
+					else if (second.HasErrors)
+						result.SetFailed(second.Error);
+					else
+						result.SetResult(new[] { first.GetResult(), second.GetResult() });
+				}
+			});
+
+			first.ContinueWith(continuation);
+			second.ContinueWith(continuation);
+
+			return result;
+		}
+		public static Promise<T[]> WhenAll<T>(params Promise<T>[] promises)
+		{
+			if (promises == null) throw new ArgumentNullException("promises");
+			if (promises.Length == 0) throw new ArgumentOutOfRangeException("promises");
+
+			var result = new Promise<T[]>();
+			var resultsCount = 0;
+
+			var continuation = (ActionContinuation)(_ =>
+			{
+				if (Interlocked.Increment(ref resultsCount) == promises.Length)
+				{
+					var errorList = default(List<Exception>);
+					foreach (var promise in promises)
+					{
+						if (promise.HasErrors == false)
+							continue;
+						if (errorList == null)
+							errorList = new List<Exception>();
+
+						if (errorList.Contains(promise.Error) == false)
+							errorList.Add(promise.Error);
+					}
+
+					if (errorList != null)
+						result.SetFailed(new AggregateException(errorList).Flatten());
+					else
+						result.SetResult(Array.ConvertAll(promises, pr => pr.GetResult()));
+				}
+			});
+
+			foreach (var promise in promises)
+				promise.ContinueWith(continuation);
+
+			return result;
+		}
+
 		public Promise IgnoreFault()
 		{
 			if (this is IUpdatable)
@@ -407,101 +502,6 @@ namespace GameDevWare.Charon.Async
 
 				return this.value;
 			}
-		}
-
-		public static Promise<T> FromResult(T result)
-		{
-			var promise = new Promise<T>();
-			promise.SetResult(result);
-			return promise;
-		}
-		public static Promise<T> WhenAny(Promise<T> first, Promise<T> second)
-		{
-			if (first == null) throw new ArgumentNullException("first");
-			if (second == null) throw new ArgumentNullException("second");
-
-			var result = new Promise<T>();
-
-			first.PropagateTo(result);
-			second.PropagateTo(result);
-
-			return result;
-		}
-		public static Promise<T> WhenAny(params Promise<T>[] promises)
-		{
-			if (promises == null) throw new ArgumentNullException("promises");
-			if (promises.Length == 0) throw new ArgumentOutOfRangeException("promises");
-			if (promises.Length == 1) return promises[0];
-
-			var result = new Promise<T>();
-			foreach (var promise in promises)
-				promise.PropagateTo(result);
-
-			return result;
-		}
-		public static Promise<T[]> WhenAll(Promise<T> first, Promise<T> second)
-		{
-			if (first == null) throw new ArgumentNullException("first");
-			if (second == null) throw new ArgumentNullException("second");
-
-			var result = new Promise<T[]>();
-			var resultsCount = 0;
-
-			var continuation = (ActionContinuation)(_ =>
-			{
-				if (Interlocked.Increment(ref resultsCount) == 2)
-				{
-					if (first.HasErrors && second.HasErrors)
-						result.SetFailed(new AggregateException(first.Error, second.Error).Flatten());
-					else if (first.HasErrors)
-						result.SetFailed(first.Error);
-					else if (second.HasErrors)
-						result.SetFailed(second.Error);
-					else
-						result.SetResult(new[] { first.GetResult(), second.GetResult() });
-				}
-			});
-
-			first.ContinueWith(continuation);
-			second.ContinueWith(continuation);
-
-			return result;
-		}
-		public static Promise<T[]> WhenAll(params Promise<T>[] promises)
-		{
-			if (promises == null) throw new ArgumentNullException("promises");
-			if (promises.Length == 0) throw new ArgumentOutOfRangeException("promises");
-
-			var result = new Promise<T[]>();
-			var resultsCount = 0;
-
-			var continuation = (ActionContinuation)(_ =>
-			{
-				if (Interlocked.Increment(ref resultsCount) == promises.Length)
-				{
-					var errorList = default(List<Exception>);
-					foreach (var promise in promises)
-					{
-						if (promise.HasErrors == false)
-							continue;
-						if (errorList == null)
-							errorList = new List<Exception>();
-
-						if (errorList.Contains(promise.Error) == false)
-							errorList.Add(promise.Error);
-					}
-
-					if (errorList != null)
-						result.SetFailed(new AggregateException(errorList).Flatten());
-					else
-						result.SetResult(Array.ConvertAll(promises, pr => pr.GetResult()));
-				}
-			});
-
-			foreach (var promise in promises)
-				promise.ContinueWith(continuation);
-
-			return result;
 		}
 
 		public Promise ContinueWith(ActionContinuation<T> continuation)

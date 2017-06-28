@@ -17,8 +17,10 @@
     along with this program.  If not, see http://www.gnu.org/licenses.
 */
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using GameDevWare.Charon.Async;
 using GameDevWare.Charon.Utils;
 using UnityEditor;
 using UnityEngine;
@@ -142,9 +144,10 @@ namespace GameDevWare.Charon.Windows
 			this.webView.Invoke("SetDelegateObject", this);
 			this.webView.Invoke("LoadURL", url);
 
-
 			if (Settings.Current.Verbose)
 				Debug.Log("WebView is loading '" + url + "'.");
+
+			Promise.Delayed(TimeSpan.FromSeconds(2)).ContinueWith(_ => this.Repaint());
 		}
 		protected void Reload()
 		{
