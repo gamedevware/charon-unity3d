@@ -75,7 +75,11 @@ namespace GameDevWare.Charon
 		public const string UI_UNITYPLUGIN_MENU_ADVANCED = "Advanced";
 		public const string UI_UNITYPLUGIN_MENU_CHECK_RUNTIME = "Check Runtime...";
 		public const string UI_UNITYPLUGIN_MENU_CHECK_UPDATES = "Check for Updates";
+		public const string UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA = "Game Data";
+		public const string UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA_BSON = "Game Data (BSON)";
 		public const string UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA_JSON = "Game Data (JSON)";
+		public const string UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA_MESSAGEPACK = "Game Data (Message Pack)";
+		public const string UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA_XML = "Game Data (XML)";
 		public const string UI_UNITYPLUGIN_MENU_DOCUMENTATION = "Open Documentation";
 		public const string UI_UNITYPLUGIN_MENU_EXTRACT_T4_TEMPLATES = "Extract Code Generation Templates...";
 		public const string UI_UNITYPLUGIN_MENU_GENERATE_CODE_AND_ASSETS = "Generate Code and Assets";

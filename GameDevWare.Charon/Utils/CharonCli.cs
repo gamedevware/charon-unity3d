@@ -149,7 +149,7 @@ namespace GameDevWare.Charon.Utils
 					charonPath,
 
 					RunOptions.FlattenArguments(
-						"LISTEN", Path.GetFullPath(gameDataPath),
+						"SERVE", Path.GetFullPath(gameDataPath),
 						"--port", port.ToString(),
 						"--watchPid", unityPid.ToString(),
 						"--lockFile", Path.GetFullPath(lockFilePath),

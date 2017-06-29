@@ -185,34 +185,95 @@ namespace GameDevWare.Charon
 			EditorWindow.GetWindow<AboutWindow>(utility: true);
 		}
 
-		[MenuItem("Assets/Create/" + Resources.UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA_JSON)]
-		private static void CreateGameDataAsset()
+		[MenuItem("Assets/Create/" + Resources.UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA + "/" + Resources.UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA_JSON)]
+		private static void CreateGameDataJsonAsset()
 		{
-			if (!CreateGameDataAssetCheck()) return;
+			if (!CreateGameDataAssetJsonCheck()) return;
+
+			CreateGameData("gdjs");
+		}
+		[MenuItem("Assets/Create/" + Resources.UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA + "/" + Resources.UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA_JSON, true)]
+		private static bool CreateGameDataAssetJsonCheck()
+		{
+			if (Selection.activeObject == null)
+				return false;
+
+			return !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling;
+		}
+
+		[MenuItem("Assets/Create/" + Resources.UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA + "/" + Resources.UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA_BSON)]
+		private static void CreateGameDataBsonAsset()
+		{
+			if (!CreateGameDataAssetBsonCheck()) return;
+
+			CreateGameData("gdbs");
+		}
+		[MenuItem("Assets/Create/" + Resources.UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA + "/" + Resources.UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA_BSON, true)]
+		private static bool CreateGameDataAssetBsonCheck()
+		{
+			if (Selection.activeObject == null)
+				return false;
+
+			return !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling;
+		}
+
+		[MenuItem("Assets/Create/" + Resources.UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA + "/" + Resources.UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA_XML)]
+		private static void CreateGameDataXmlAsset()
+		{
+			if (!CreateGameDataAssetXmlCheck()) return;
+
+			CreateGameData("gdml");
+		}
+		[MenuItem("Assets/Create/" + Resources.UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA + "/" + Resources.UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA_XML, true)]
+		private static bool CreateGameDataAssetXmlCheck()
+		{
+			if (Selection.activeObject == null)
+				return false;
+
+			return !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling;
+		}
+
+		[MenuItem("Assets/Create/" + Resources.UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA + "/" + Resources.UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA_MESSAGEPACK)]
+		private static void CreateGameDataMsgPackAsset()
+		{
+			if (!CreateGameDataAssetMsgPackCheck()) return;
+
+			CreateGameData("gdmp");
+		}
+		[MenuItem("Assets/Create/" + Resources.UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA + "/" + Resources.UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA_MESSAGEPACK, true)]
+		private static bool CreateGameDataAssetMsgPackCheck()
+		{
+			if (Selection.activeObject == null)
+				return false;
+
+			return !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling;
+		}
+
+		private static void CreateGameData(string extension)
+		{
+			if (extension == null) throw new ArgumentNullException("extension");
 
 			var location = Path.GetFullPath(AssetDatabase.GetAssetPath(Selection.activeObject));
 			if (File.Exists(location))
 				location = Path.GetDirectoryName(location);
-			
+
+			if (string.IsNullOrEmpty(location) || Directory.Exists(location) == false)
+			{
+				Debug.LogWarning("Unable to create GameData file because 'Selection.activeObject' is null or wrong asset. Select Folder in Project window and try again.");
+				return;
+			}
+
 			var i = 1;
-			var gameDataPath = Path.Combine(location, "GameData.gdjs");
+			var gameDataPath = Path.Combine(location, "GameData." + extension);
 
 			while (File.Exists(gameDataPath))
-				gameDataPath = Path.Combine(location, "GameData" + (i++) + ".gdjs");
+				gameDataPath = Path.Combine(location, "GameData" + (i++) + "." + extension);
 
 
 			gameDataPath = PathUtils.MakeProjectRelative(gameDataPath);
 
 			File.WriteAllText(gameDataPath, "");
 			AssetDatabase.Refresh();
-		}
-		[MenuItem("Assets/Create/" + Resources.UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA_JSON, true)]
-		private static bool CreateGameDataAssetCheck()
-		{
-			if (Selection.activeObject == null)
-				return false;
-
-			return !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling;
 		}
 
 		private static void FocusConsoleWindow()
