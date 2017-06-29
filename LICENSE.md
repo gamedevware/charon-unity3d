@@ -18,23 +18,21 @@ Copyright (c) 2015, Denis Zykov
 
 ## Components: 
 
-* Autofac - [MIT](http://opensource.org/licenses/mit-license.php)
-* C5 - [MIT](http://opensource.org/licenses/mit-license.php)
-* CEF - [Custom](https://raw.githubusercontent.com/cefsharp/CefSharp/master/LICENSE)
-* CefSharp - [Custom](https://raw.githubusercontent.com/cefsharp/CefSharp/master/LICENSE)
-* CefSharp.Common - [Custom](https://raw.githubusercontent.com/cefsharp/CefSharp/master/LICENSE)
-* CefSharp.Wpf - [Custom](https://raw.githubusercontent.com/cefsharp/CefSharp/master/LICENSE)
-* EPPlus - [LGPL](http://epplus.codeplex.com/license)
-* Microsoft.AspNet.WebApi.Client - [Custom](http://www.microsoft.com/web/webpi/eula/net_library_eula_enu.htm)
-* Microsoft.AspNet.WebApi.Core - [Custom](http://www.microsoft.com/web/webpi/eula/net_library_eula_enu.htm)
-* Microsoft.Tpl.Dataflow - [Custom](http://www.microsoft.com/net/dotnet_library_license.htm)
-* log4net - [Apache2](http://www.apache.org/licenses/LICENSE-2.0)
-* MongoDB.Bson - [Apache2](http://www.apache.org/licenses/LICENSE-2.0)
-* MongoDB.Driver - [Apache2](http://www.apache.org/licenses/LICENSE-2.0)
-* MongoDB.Driver.Core - [Apache2](http://www.apache.org/licenses/LICENSE-2.0)
-* Mono.Cecil [MIT](http://opensource.org/licenses/mit-license.php)
-* Newtonsoft.Json - [MIT](http://opensource.org/licenses/mit-license.php)
-* SharpZipLib - [Custom GPL](http://icsharpcode.github.io/SharpZipLib/)
+Autofac - MIT http://opensource.org/licenses/mit-license.php
+System.Collections.Immutable - Custom - http://www.microsoft.com/net/dotnet_library_license.htm
+EPPlus - LGPL http://epplus.codeplex.com/license
+Microsoft.AspNet.WebApi.Client - Custom - http://www.microsoft.com/web/webpi/eula/net_library_eula_enu.htm
+Microsoft.AspNet.WebApi.Core - Custom - http://www.microsoft.com/web/webpi/eula/net_library_eula_enu.htm
+Microsoft.Tpl.Dataflow - Custom - http://www.microsoft.com/net/dotnet_library_license.htm
+log4net - Apache2 - http://www.apache.org/licenses/LICENSE-2.0
+MongoDB.Bson - Apache2 - http://www.apache.org/licenses/LICENSE-2.0
+MongoDB.Driver - Apache2 - http://www.apache.org/licenses/LICENSE-2.0
+MongoDB.Driver.Core - Apache2 - http://www.apache.org/licenses/LICENSE-2.0
+MongoDB.Driver.GridFS - Apache2 - http://www.apache.org/licenses/LICENSE-2.0
+Mono.Cecil - MIT http://opensource.org/licenses/mit-license.php
+Newtonsoft.Json - MIT https://raw.githubusercontent.com/JamesNK/Newtonsoft.Json/master/LICENSE.md
+SharpZipLib - MIT http://icsharpcode.github.io/SharpZipLib/
+Newtonsoft.Json - MIT https://raw.githubusercontent.com/JamesNK/Newtonsoft.Json/master/LICENSE.md
 
 # License
                     GNU GENERAL PUBLIC LICENSE
