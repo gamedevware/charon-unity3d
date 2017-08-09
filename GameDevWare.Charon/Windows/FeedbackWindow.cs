@@ -36,7 +36,8 @@ namespace GameDevWare.Charon.Windows
 		public static readonly string EditorLogPath = string.Empty;
 		public static readonly string EditorPrevLogPath = string.Empty;
 
-		public string Reporter;
+		public string Name;
+		public string Email;
 		public string Description;
 		public IssueType Type;
 		public HashSet<string> Attachments;
@@ -100,7 +101,8 @@ namespace GameDevWare.Charon.Windows
 			if (string.IsNullOrEmpty(this.ThanksMessage))
 			{
 				GUI.enabled = this.reportCoroutine == null || this.reportCoroutine.IsCompleted;
-				this.Reporter = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_FEEDBACK_REPORTER_LABEL, this.Reporter);
+				this.Name = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_FEEDBACK_NAME_LABEL, this.Name);
+				this.Email = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_FEEDBACK_EMAIL_LABEL, this.Email);
 				this.Type = (IssueType)EditorGUILayout.EnumPopup(Resources.UI_UNITYPLUGIN_FEEDBACK_TYPE_LABEL, this.Type);
 				this.Description = EditorGUILayout.TextArea(this.Description, GUILayout.Height(120));
 
@@ -135,10 +137,20 @@ namespace GameDevWare.Charon.Windows
 				GUILayout.Space(18);
 				GUILayout.BeginHorizontal();
 				EditorGUILayout.Space();
-				GUI.enabled = !string.IsNullOrEmpty(this.Reporter) && !string.IsNullOrEmpty(this.Description) && (this.reportCoroutine == null || this.reportCoroutine.IsCompleted);
+
+				var reporter = string.Empty;
+				if (string.IsNullOrEmpty(this.Email) == false && string.IsNullOrEmpty(this.Name) == false)
+					reporter = "<" + this.Name + ">" + this.Email;
+				else if (string.IsNullOrEmpty(this.Email) == false)
+					reporter = this.Email;
+				else
+					reporter = this.Name;
+
+					GUI.enabled = !string.IsNullOrEmpty(reporter) && !string.IsNullOrEmpty(this.Description) && (this.reportCoroutine == null || this.reportCoroutine.IsCompleted);
 				if (GUILayout.Button(Resources.UI_UNITYPLUGIN_FEEDBACK_SEND_BUTTON, GUILayout.Width(80)))
 				{
-					this.reportCoroutine = this.ReportIssue(this.Reporter, this.Description, this.Type, this.Attachments).ContinueWith(p =>
+					
+					this.reportCoroutine = this.ReportIssue(reporter, this.Description, this.Type, this.Attachments).ContinueWith(p =>
 					{
 						if (p.HasErrors)
 						{

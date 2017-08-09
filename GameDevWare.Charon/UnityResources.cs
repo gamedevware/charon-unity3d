@@ -38,7 +38,8 @@ namespace GameDevWare.Charon
 		public const string UI_UNITYPLUGIN_DOWNLOAD_BUTTON = "Update (~{0:F1} MiB)";
 		public const string UI_UNITYPLUGIN_FEEDBACK_ATTACH_FILE_BUTTON = "Attach...";
 		public const string UI_UNITYPLUGIN_FEEDBACK_ATTACH_FILE_CHECKBOX = "Attach '{0}' file ({1:F2}MiB)";
-		public const string UI_UNITYPLUGIN_FEEDBACK_REPORTER_LABEL = "Your E-Mail or Name";
+		public const string UI_UNITYPLUGIN_FEEDBACK_EMAIL_LABEL = "E-Mail";
+		public const string UI_UNITYPLUGIN_FEEDBACK_NAME_LABEL = "Name";
 		public const string UI_UNITYPLUGIN_FEEDBACK_SEND_BUTTON = "Send";
 		public const string UI_UNITYPLUGIN_FEEDBACK_THANKS_MESSAGE = "Thank you for your feedback!";
 		public const string UI_UNITYPLUGIN_FEEDBACK_TYPE_LABEL = "Type";

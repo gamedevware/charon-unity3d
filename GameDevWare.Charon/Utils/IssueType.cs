@@ -22,8 +22,9 @@ namespace GameDevWare.Charon.Utils
 	public enum IssueType
 	{
 		Bug = 0,
-		NewFeature,
+		FeatureRequest,
 		Improvement,
-		Question
+		Question,
+		Other
 	}
 }
