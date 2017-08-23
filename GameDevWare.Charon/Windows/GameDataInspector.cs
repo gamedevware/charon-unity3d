@@ -56,27 +56,35 @@ namespace GameDevWare.Charon.Windows
 
 			try
 			{
-				var templateAsset = Selection.activeObject.GetType();
+				var selectedAssetType = Selection.activeObject.GetType();
 				var inspectorWindowType = typeof(PopupWindow).Assembly.GetType("UnityEditor.InspectorWindow");
 				var inspectorWindow = EditorWindow.GetWindow(inspectorWindowType);
-				var activeEditorTracker = inspectorWindow.GetFieldValue("m_Tracker");
+				var activeEditorTracker = inspectorWindow.HasProperty("tracker") ? 
+					inspectorWindow.GetPropertyValue("tracker") : 
+					inspectorWindow.GetFieldValue("m_Tracker");
 				var customEditorAttributesType = typeof(PopupWindow).Assembly.GetType("UnityEditor.CustomEditorAttributes");
 				var customEditorsList = (System.Collections.IList)customEditorAttributesType.GetFieldValue("kSCustomEditors");
+				var cachedCustomEditorsList = customEditorAttributesType.HasField("kCachedEditorForType") ?
+					(Dictionary<Type, Type>)customEditorAttributesType.GetFieldValue("kCachedEditorForType") :
+					null;
+
 				foreach (var customEditor in customEditorsList)
 				{
-					if (customEditor == null || (Type)customEditor.GetFieldValue("m_InspectedType") != templateAsset)
+					if (customEditor == null || (Type)customEditor.GetFieldValue("m_InspectedType") != selectedAssetType)
 						continue;
 
 					var originalInspectorType = (Type)customEditor.GetFieldValue("m_InspectorType");
 					// override inspector
 					customEditor.SetFieldValue("m_InspectorType", typeof(GameDataInspector));
+					if (cachedCustomEditorsList != null)
+						cachedCustomEditorsList[selectedAssetType] = typeof(GameDataInspector);
 					// force rebuild editor list
-					if (activeEditorTracker != null)
-						activeEditorTracker.Invoke("ForceRebuild");
-					if (inspectorWindow != null)
-						inspectorWindow.Invoke("Repaint");
+					activeEditorTracker.Invoke("ForceRebuild");
+					inspectorWindow.Repaint();
 					// restore original inspector
 					customEditor.SetFieldValue("m_InspectorType", originalInspectorType);
+					if (cachedCustomEditorsList != null)
+						cachedCustomEditorsList.Remove(selectedAssetType);
 				}
 
 			}

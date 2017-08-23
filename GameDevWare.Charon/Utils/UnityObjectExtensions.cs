@@ -28,105 +28,163 @@ namespace GameDevWare.Charon.Utils
 		{
 			var type = target as Type;
 			if (type != null)
+			{
 				return type.InvokeMember(
-					methodName,
-					BindingFlags.InvokeMethod | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public,
-					null,
-					null,
-					args
-				);
+					  methodName,
+					  BindingFlags.InvokeMethod | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public,
+					  null,
+					  null,
+					  args
+				  );
+			}
 			else
+			{
 				return target.GetType().InvokeMember(
-					methodName,
-					BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public,
-					null,
-					target,
-					args
-				);
+					  methodName,
+					  BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public,
+					  null,
+					  target,
+					  args
+				  );
+			}
+		}
+
+		public static bool HasField(this object target, string fieldName)
+		{
+			var type = target as Type;
+			if (type != null)
+			{
+				return type.GetField(
+					  fieldName,
+					  BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public
+				  ) != null;
+			}
+			else
+			{
+				return target.GetType().GetField(
+					  fieldName,
+					  BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public
+				  ) != null;
+			}
 		}
 
 		public static object GetFieldValue(this object target, string fieldName)
 		{
 			var type = target as Type;
 			if (type != null)
+			{
 				return type.InvokeMember(
-					fieldName,
-					BindingFlags.GetField | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public,
-					null,
-					null,
-					null
-				);
+					  fieldName,
+					  BindingFlags.GetField | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public,
+					  null,
+					  null,
+					  null
+				  );
+			}
 			else
+			{
 				return target.GetType().InvokeMember(
-					fieldName,
-					BindingFlags.GetField | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public,
-					null,
-					target,
-					null
-				);
+					  fieldName,
+					  BindingFlags.GetField | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public,
+					  null,
+					  target,
+					  null
+				  );
+			}
 		}
 
 		public static void SetFieldValue(this object target, string fieldName, object value)
 		{
 			var type = target as Type;
 			if (type != null)
+			{
 				type.InvokeMember(
-					fieldName,
-					BindingFlags.SetField | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public,
-					null,
-					null,
-					new object[] { value }
-				);
+					  fieldName,
+					  BindingFlags.SetField | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public,
+					  null,
+					  null,
+					  new object[] { value }
+				  );
+			}
 			else
+			{
 				target.GetType().InvokeMember(
+					  fieldName,
+					  BindingFlags.SetField | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public,
+					  null,
+					  target,
+					  new object[] { value }
+				  );
+			}
+		}
+
+		public static bool HasProperty(this object target, string fieldName)
+		{
+			var type = target as Type;
+			if (type != null)
+			{
+				return type.GetProperty (
 					fieldName,
-					BindingFlags.SetField | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public,
-					null,
-					target,
-					new object[] { value }
-				);
+					BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public
+				) != null;
+			}
+			else
+			{
+				return target.GetType().GetProperty (
+					fieldName,
+					BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public
+				) != null;
+			}
 		}
 
 		public static object GetPropertyValue(this object target, string propertyName)
 		{
 			var type = target as Type;
 			if (type != null)
+			{
 				return type.InvokeMember(
-					propertyName,
-					BindingFlags.GetProperty | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public,
-					null,
-					null,
-					null
-				);
+					  propertyName,
+					  BindingFlags.GetProperty | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public,
+					  null,
+					  null,
+					  null
+				  );
+			}
 			else
+			{
 				return target.GetType().InvokeMember(
-					propertyName,
-					BindingFlags.GetProperty | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public,
-					null,
-					target,
-					null
-				);
+					  propertyName,
+					  BindingFlags.GetProperty | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public,
+					  null,
+					  target,
+					  null
+				  );
+			}
 		}
 
 		public static void SetPropertyValue(this object target, string propertyName, object value)
 		{
 			var type = target as Type;
 			if (type != null)
+			{
 				type.InvokeMember(
-					propertyName,
-					BindingFlags.SetProperty | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public,
-					null,
-					null,
-					new object[] { value }
-				);
+					  propertyName,
+					  BindingFlags.SetProperty | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public,
+					  null,
+					  null,
+					  new object[] { value }
+				  );
+			}
 			else
+			{
 				target.GetType().InvokeMember(
-					propertyName,
-					BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public,
-					null,
-					target,
-					new object[] { value }
-				);
+					  propertyName,
+					  BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public,
+					  null,
+					  target,
+					  new object[] { value }
+				  );
+			}
 		}
 	}
 }
