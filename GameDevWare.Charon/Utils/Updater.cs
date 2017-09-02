@@ -96,7 +96,7 @@ namespace GameDevWare.Charon.Utils
 			{
 				if (progressCallback == null || total == 0)
 					return;
-				progressCallback(String.Format(Resources.UI_UNITYPLUGIN_PROGRESS_DOWNLOADINGS, (float)read / 1024 / 1024, total / 1024 / 1024), 0.10f + (0.80f * Math.Min(1.0f, (float)read / total)));
+				progressCallback(String.Format(Resources.UI_UNITYPLUGIN_PROGRESS_DOWNLOADINGS, (float)read / 1024 / 1024, (float)total / 1024 / 1024), 0.10f + (0.80f * Math.Min(1.0f, (float)read / total)));
 			});
 
 			GameDataEditorWindow.FindAllAndClose();
@@ -230,7 +230,7 @@ namespace GameDevWare.Charon.Utils
 			{
 				if (progressCallback == null || total == 0)
 					return;
-				progressCallback(String.Format(Resources.UI_UNITYPLUGIN_PROGRESS_DOWNLOADINGS, (float)read / 1024 / 1024, total / 1024 / 1024), 0.10f + (0.80f * Math.Min(1.0f, (float)read / total)));
+				progressCallback(String.Format(Resources.UI_UNITYPLUGIN_PROGRESS_DOWNLOADINGS, (float)read / 1024 / 1024, (float)total / 1024 / 1024), 0.10f + (0.80f * Math.Min(1.0f, (float)read / total)));
 			});
 
 			GameDataEditorWindow.FindAllAndClose();
