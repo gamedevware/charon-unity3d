@@ -91,7 +91,7 @@ namespace GameDevWare.Charon.Utils
 		private static IEnumerable<string> ScanForGameDataFiles()
 		{
 			return (from id in AssetDatabase.FindAssets("t:DefaultAsset")
-					let path = PathUtils.MakeProjectRelative(AssetDatabase.GUIDToAssetPath(id))
+					let path = FileAndPathUtils.MakeProjectRelative(AssetDatabase.GUIDToAssetPath(id))
 					where path != null && IsGameDataFile(path)
 					select path);
 		}

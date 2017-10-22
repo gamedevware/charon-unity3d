@@ -130,7 +130,7 @@ namespace GameDevWare.Charon
 		}
 		internal static string GetLocalUserDataPath()
 		{
-			return Path.Combine(Path.Combine(AppDataPath, "Users"), PathUtils.SanitizeFileName(Environment.UserName ?? "Default"));
+			return Path.Combine(Path.Combine(AppDataPath, "Users"), FileAndPathUtils.SanitizeFileName(Environment.UserName ?? "Default"));
 		}
 		internal static Version GetCurrentAssetVersion()
 		{

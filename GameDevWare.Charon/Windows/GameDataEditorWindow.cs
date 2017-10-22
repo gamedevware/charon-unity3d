@@ -95,7 +95,7 @@ namespace GameDevWare.Charon.Windows
 					break;
 				case RequirementsCheckResult.WrongVersion:
 				case RequirementsCheckResult.MissingExecutable:
-					yield return CharonCli.UpdateCharonExecutableAsync(ProgressUtils.ShowCancellableProgressBar(Resources.UI_UNITYPLUGIN_MENU_CHECK_UPDATES, 0.05f, 0.50f));
+					yield return CharonCli.DownloadCharon(ProgressUtils.ShowCancellableProgressBar(Resources.UI_UNITYPLUGIN_MENU_CHECK_UPDATES, 0.05f, 0.50f));
 					break;
 				case RequirementsCheckResult.Ok:
 					break;
@@ -126,7 +126,7 @@ namespace GameDevWare.Charon.Windows
 
 			// wait untill server process start
 			var timeoutPromise = Promise.Delayed(TimeSpan.FromSeconds(10));
-			var startPromise = charonRunTask.IgnoreFault();
+			var startPromise = (Promise)charonRunTask.IgnoreFault();
 			var startCompletePromise = Promise.WhenAny(timeoutPromise, startPromise);
 			var cancelPromise = new Coroutine<bool>(RunCancellableProgress(title, Resources.UI_UNITYPLUGIN_WINDOW_EDITOR_LAUNCHING_EXECUTABLE, 0.65f, 0.80f, TimeSpan.FromSeconds(5), startCompletePromise));
 

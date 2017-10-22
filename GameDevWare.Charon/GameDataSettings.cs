@@ -26,7 +26,7 @@ using UnityEngine;
 
 namespace GameDevWare.Charon
 {
-	internal sealed partial class GameDataSettings
+	internal sealed class GameDataSettings
 	{
 		public enum CodeGenerator
 		{
@@ -78,7 +78,7 @@ namespace GameDevWare.Charon
 			settings.CodeGenerationPath = Path.ChangeExtension(gameDataPath, "cs");
 			settings.GameDataClassName = Path.GetFileNameWithoutExtension(gameDataPath);
 			settings.Namespace = Path.GetDirectoryName(gameDataPath).Replace("\\", ".").Replace("/", ".");
-			settings.DocumentClassName = "Entry";
+			settings.DocumentClassName = "Document";
 			settings.Options = (int)(CodeGenerationOptions.HideLocalizedStrings | CodeGenerationOptions.HideReferences | CodeGenerationOptions.SuppressDataContractAttributes);
 			return settings;
 		}
@@ -103,8 +103,8 @@ namespace GameDevWare.Charon
 
 				if (gameDataSettings != null)
 				{
-					gameDataSettings.CodeGenerationPath = PathUtils.MakeProjectRelative(gameDataSettings.CodeGenerationPath);
-					gameDataSettings.AssetGenerationPath = PathUtils.MakeProjectRelative(gameDataSettings.AssetGenerationPath);
+					gameDataSettings.CodeGenerationPath = FileAndPathUtils.MakeProjectRelative(gameDataSettings.CodeGenerationPath);
+					gameDataSettings.AssetGenerationPath = FileAndPathUtils.MakeProjectRelative(gameDataSettings.AssetGenerationPath);
 					if (string.IsNullOrEmpty(gameDataSettings.CodeGenerationPath))
 						gameDataSettings.CodeGenerationPath = Path.ChangeExtension(gameDataPath, "cs");
 				}

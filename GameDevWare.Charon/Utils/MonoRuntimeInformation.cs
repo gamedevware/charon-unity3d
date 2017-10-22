@@ -36,7 +36,7 @@ namespace GameDevWare.Charon.Utils
 			if (RuntimeInformation.IsWindows)
 			{
 				MonoExecutableName = "mono.exe";
-				MonoDefaultLocation = Path.Combine(PathUtils.GetProgramFilesx86(), @"Mono\bin");
+				MonoDefaultLocation = Path.Combine(FileAndPathUtils.GetProgramFilesx86(), @"Mono\bin");
 			}
 			else if (RuntimeInformation.IsOsx)
 			{

@@ -20,7 +20,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -131,7 +130,6 @@ namespace GameDevWare.Charon
 			return string.IsNullOrEmpty(FeedbackWindow.CharonLogPath) == false && File.Exists(FeedbackWindow.CharonLogPath);
 		}
 
-
 		[MenuItem(TROUBLESHOOTING_PREFIX + Resources.UI_UNITYPLUGIN_MENU_VERBOSE_LOGS, false, 20)]
 		private static void VerboseLogs()
 		{
@@ -145,7 +143,6 @@ namespace GameDevWare.Charon
 			UnityEditor.Menu.SetChecked(TROUBLESHOOTING_PREFIX + Resources.UI_UNITYPLUGIN_MENU_VERBOSE_LOGS, Settings.Current.Verbose);
 			return true;
 		}
-
 
 		[MenuItem(TROUBLESHOOTING_PREFIX + Resources.UI_UNITYPLUGIN_MENU_CHECK_RUNTIME, false, 22)]
 		private static void CheckRuntime()
@@ -164,13 +161,15 @@ namespace GameDevWare.Charon
 		{
 			if (!CheckUpdatesCheck()) return;
 
-			var checkUpdatesCheck = CoroutineScheduler.Schedule(
-				CheckForUpdatesAsync(
-					progressCallback: ProgressUtils.ShowProgressBar(Resources.UI_UNITYPLUGIN_MENU_CHECK_UPDATES)
-				)
-			);
-			checkUpdatesCheck.ContinueWith(ProgressUtils.HideProgressBar);
-			FocusConsoleWindow();
+			EditorWindow.GetWindow<UpdateWindow>(utility: true);
+
+			//var checkUpdatesCheck = CoroutineScheduler.Schedule(
+			//	CheckForUpdatesAsync(
+			//		progressCallback: ProgressUtils.ShowProgressBar(Resources.UI_UNITYPLUGIN_MENU_CHECK_UPDATES)
+			//	)
+			//);
+			//checkUpdatesCheck.ContinueWith(ProgressUtils.HideProgressBar);
+			//FocusConsoleWindow();
 		}
 
 		[MenuItem(TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENU_CHECK_UPDATES, true, 28)]
@@ -270,13 +269,13 @@ namespace GameDevWare.Charon
 				gameDataPath = Path.Combine(location, "GameData" + (i++) + "." + extension);
 
 
-			gameDataPath = PathUtils.MakeProjectRelative(gameDataPath);
+			gameDataPath = FileAndPathUtils.MakeProjectRelative(gameDataPath);
 
 			File.WriteAllText(gameDataPath, "");
 			AssetDatabase.Refresh();
 		}
 
-		private static void FocusConsoleWindow()
+		public static void FocusConsoleWindow()
 		{
 			var consoleWindowType = typeof(SceneView).Assembly.GetType("UnityEditor.ConsoleWindow", throwOnError: false);
 			if (consoleWindowType == null)
@@ -295,7 +294,7 @@ namespace GameDevWare.Charon
 			{
 				case RequirementsCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
 				case RequirementsCheckResult.WrongVersion:
-				case RequirementsCheckResult.MissingExecutable: yield return CharonCli.UpdateCharonExecutableAsync(progressCallback); break;
+				case RequirementsCheckResult.MissingExecutable: yield return CharonCli.DownloadCharon(progressCallback); break;
 				case RequirementsCheckResult.Ok: break;
 				default: throw new InvalidOperationException("Unknown Tools check result.");
 			}
@@ -316,7 +315,7 @@ namespace GameDevWare.Charon
 					continue;
 
 				var gameDataSettings = GameDataSettings.Load(gameDataObj);
-				var codeGenerationPath = PathUtils.MakeProjectRelative(gameDataSettings.CodeGenerationPath);
+				var codeGenerationPath = FileAndPathUtils.MakeProjectRelative(gameDataSettings.CodeGenerationPath);
 				if (gameDataSettings.Generator == (int)GameDataSettings.CodeGenerator.None)
 					continue;
 
@@ -450,7 +449,7 @@ namespace GameDevWare.Charon
 					continue;
 
 				var gameDataSettings = GameDataSettings.Load(gameDataObj);
-				var assetGenerationPath = PathUtils.MakeProjectRelative(gameDataSettings.AssetGenerationPath);
+				var assetGenerationPath = FileAndPathUtils.MakeProjectRelative(gameDataSettings.AssetGenerationPath);
 				if (string.IsNullOrEmpty(assetGenerationPath))
 					continue;
 
@@ -494,7 +493,7 @@ namespace GameDevWare.Charon
 			{
 				case RequirementsCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
 				case RequirementsCheckResult.WrongVersion:
-				case RequirementsCheckResult.MissingExecutable: yield return CharonCli.UpdateCharonExecutableAsync(progressCallback); break;
+				case RequirementsCheckResult.MissingExecutable: yield return CharonCli.DownloadCharon(progressCallback); break;
 				case RequirementsCheckResult.Ok: break;
 				default: throw new InvalidOperationException("Unknown Tools check result.");
 			}
@@ -581,7 +580,7 @@ namespace GameDevWare.Charon
 			{
 				case RequirementsCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
 				case RequirementsCheckResult.WrongVersion:
-				case RequirementsCheckResult.MissingExecutable: yield return CharonCli.UpdateCharonExecutableAsync(ProgressUtils.ReportToLog(Resources.UI_UNITYPLUGIN_MENU_CHECK_UPDATES)); break;
+				case RequirementsCheckResult.MissingExecutable: yield return CharonCli.DownloadCharon(ProgressUtils.ReportToLog(Resources.UI_UNITYPLUGIN_MENU_CHECK_UPDATES)); break;
 				case RequirementsCheckResult.Ok: break;
 				default: throw new InvalidOperationException("Unknown Tools check result.");
 			}
@@ -620,13 +619,6 @@ namespace GameDevWare.Charon
 				yield return Promise.Delayed(TimeSpan.FromSeconds(1));
 			}
 			yield return gameDataFile;
-		}
-		public static IEnumerable CheckForUpdatesAsync(Action<string, float> progressCallback = null)
-		{
-			foreach (var step in Updater.CheckForCharonUpdatesAsync(progressCallback))
-				yield return step;
-			foreach (var step in Updater.CheckForUnityAssetUpdatesAsync(progressCallback))
-				yield return step;
 		}
 	}
 }

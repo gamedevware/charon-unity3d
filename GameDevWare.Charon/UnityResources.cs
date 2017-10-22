@@ -100,7 +100,7 @@ namespace GameDevWare.Charon
 		public const string UI_UNITYPLUGIN_SPECIFY_EXTRACTION_LOC_TITLE = "Specify extraction location...";
 		public const string UI_UNITYPLUGIN_T4_EXTRACTION_COMPLETE = "T4 Template extracted successfully.";
 		public const string UI_UNITYPLUGIN_T4_EXTRACTION_FAILED = "T4 Template extraction failed due to errors: {0}";
-		public const string UI_UNITYPLUGIN_UPDATE_AVAILABLE_MESSAGE = "A new version '{1}' of {2} available. Current version is '{0}'.";
+		public const string UI_UNITYPLUGIN_UPDATE_AVAILABLE_MESSAGE = "A new version '{1}' of {2} is available. Current version is '{0}'.";
 		public const string UI_UNITYPLUGIN_UPDATE_AVAILABLE_TITLE = "Update Available";
 		public const string UI_UNITYPLUGIN_VALIDATE_COMPLETE = "Validation of '{0}' is complete. Result: {1}, errors: {2}.";
 		public const string UI_UNITYPLUGIN_VALIDATE_FAILED_DUE_ERRORS = "Validation of '{0}' has failed due to errors: {1}.";
@@ -139,7 +139,22 @@ namespace GameDevWare.Charon
 		public const string UI_UNITYPLUGIN_WINDOW_RUNTIME_VERSION_ERROR = "Error";
 		public const string UI_UNITYPLUGIN_WINDOW_RUNTIME_VERSION_UNKNOWN = "Unknown";
 		public const string UI_UNITYPLUGIN_WINDOW_SETTINGS_GROUP = "Settings:";
+		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_ACTION_COLUMN_NAME = "Action";
+		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_AVAILABLE_VERSION_COLUMN_NAME = "Available";
+		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_CHARON_NAME = "Charon";
+		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_CHARON_UNITY_PLUGIN_NAME = "Charon plugin for Unity";
+		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_CHECKING_MESSAGE = "Checking...";
+		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_CURRENT_VERSION_COLUMN_NAME = "Current";
+		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_DOWNLOAD_ACTION = "Download";
+		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_ERROR_MESSAGE = "Error";
+		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_EXPRESSIONS_PLUGIN_NAME = "Expression library for Unity";
+		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_PRODUCT_COLUMN_NAME = "Product";
+		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_REPAIR_ACTION = "Repair";
 		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_RUNTIME_TITLE = ".NET Runtime Update";
+		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_SKIP_ACTION = "Skip";
+		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_TITLE = "Product Updates";
+		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_UPDATE_ACTION = "Update";
+		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_UPDATE_BUTTON = "Update";
 		public const string UI_UNITYPLUGIN_WINDOWCHECK_RESULT_MISSING_TOOLS = "Missing Tools!";
 	}
 }

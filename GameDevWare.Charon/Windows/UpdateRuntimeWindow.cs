@@ -21,7 +21,6 @@ using System;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Text.RegularExpressions;
 using GameDevWare.Charon.Async;
 using GameDevWare.Charon.Utils;
 using UnityEditor;

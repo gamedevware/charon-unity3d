@@ -27,10 +27,9 @@ using UnityEngine;
 
 namespace GameDevWare.Charon.Utils
 {
-	internal static class PathUtils
+	internal static class FileAndPathUtils
 	{
 		private static readonly char[] InvalidFileNameChars = Path.GetInvalidFileNameChars();
-
 
 		public static string MakeProjectRelative(string path)
 		{
@@ -52,7 +51,7 @@ namespace GameDevWare.Charon.Utils
 
 			return path;
 		}
-		public static string ComputeMd5Hash(string path, int tries = 5)
+		public static string ComputeHash(string path, string hashAlgorithmName = "MD5", int tries = 5)
 		{
 			if (path == null) throw new ArgumentNullException("path");
 			if (tries <= 0) throw new ArgumentOutOfRangeException("tries");
@@ -62,10 +61,10 @@ namespace GameDevWare.Charon.Utils
 				try
 				{
 					using (var fs = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read))
-					using (var md5 = new MD5CryptoServiceProvider())
+					using (var hashAlgorithm = HashAlgorithm.Create(hashAlgorithmName) ?? new MD5CryptoServiceProvider())
 					{
-						var hashBytes = md5.ComputeHash(fs);
-						return BitConverter.ToString(hashBytes).Replace("-", "");
+						var hashBytes = hashAlgorithm.ComputeHash(fs);
+						return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
 					}
 				}
 				catch (IOException exception)
@@ -81,6 +80,7 @@ namespace GameDevWare.Charon.Utils
 
 			return new string('0', 32); // never happens
 		}
+
 
 		public static string SanitizeFileName(string path)
 		{

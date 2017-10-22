@@ -50,6 +50,7 @@
     <Compile Include="AssetGenerator.cs" />
     <Compile Include="BrowserType.cs" />
     <Compile Include="ChangeHooks.cs" />
+    <Compile Include="Utils\BuildInfo.cs" />
     <Compile Include="Utils\CodeGenerationOptions.cs" />
     <Compile Include="GameDataSettings.cs" />
     <Compile Include="Json\JsonArray.cs" />
@@ -83,15 +84,16 @@
     <Compile Include="Utils\MonoRuntimeInformation.cs" />
     <Compile Include="Utils\RuntimeInformation.cs" />
     <Compile Include="Utils\UnityObjectExtensions.cs" />
-    <Compile Include="Utils\PathUtils.cs" />
+    <Compile Include="Utils\FileAndPathUtils.cs" />
     <Compile Include="Utils\ProcessExtensions.cs" />
     <Compile Include="Utils\ProgressUtils.cs" />
     <Compile Include="Utils\RunOptions.cs" />
     <Compile Include="Utils\RunResult.cs" />
     <Compile Include="Utils\CommandLine.cs" />
-    <Compile Include="Utils\Updater.cs" />
+    <Compile Include="Utils\UpdateServerCli.cs" />
     <Compile Include="Utils\ValidationOptions.cs" />
     <Compile Include="ValidationException.cs" />
+    <Compile Include="Windows\UpdateWindow.cs" />
     <Compile Include="Windows\AboutWindow.cs" />
     <Compile Include="Windows\GameDataEditorWindow.cs" />
     <Compile Include="Windows\GameDataInspector.cs" />
@@ -103,9 +105,7 @@
     <Content Include="ReleaseNotes.txt" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\GameDevWare.Charon.Unity\Assets\Editor\GameDevWare.Charon\Charon.exe.config">
-      <Link>Charon.exe.config</Link>
-      <SubType>Designer</SubType>
+    <EmbeddedResource Include="Charon.exe.config">
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

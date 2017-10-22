@@ -65,7 +65,7 @@ namespace GameDevWare.Charon
 						watcher.Changed += GameDataChanged;
 						Watchers.Add(gameDataPath, watcher);
 
-						try { GameDataHashByPath[gameDataPath] = PathUtils.ComputeMd5Hash(gameDataPath); }
+						try { GameDataHashByPath[gameDataPath] = FileAndPathUtils.ComputeHash(gameDataPath); }
 						catch
 						{
 							// ignored
@@ -117,7 +117,7 @@ namespace GameDevWare.Charon
 					var assetHash = default(string);
 					try
 					{
-						assetHash = PathUtils.ComputeMd5Hash(changedAsset);
+						assetHash = FileAndPathUtils.ComputeHash(changedAsset);
 					}
 					catch (Exception e)
 					{
@@ -167,8 +167,8 @@ namespace GameDevWare.Charon
 			}
 			for (var i = 0; i < movedAssets.Length; i++)
 			{
-				var fromPath = PathUtils.MakeProjectRelative(movedFromAssetPaths[i]);
-				var toPath = PathUtils.MakeProjectRelative(movedAssets[i]);
+				var fromPath = FileAndPathUtils.MakeProjectRelative(movedFromAssetPaths[i]);
+				var toPath = FileAndPathUtils.MakeProjectRelative(movedAssets[i]);
 				if (fromPath == null || toPath == null) continue;
 				
 				if (!GameDataTracker.IsTracked(fromPath))
@@ -187,7 +187,7 @@ namespace GameDevWare.Charon
 
 		private static void GameDataChanged(object sender, FileSystemEventArgs e)
 		{
-			var path = PathUtils.MakeProjectRelative(e.FullPath);
+			var path = FileAndPathUtils.MakeProjectRelative(e.FullPath);
 			lock (ChangedAssetPaths)
 				ChangedAssetPaths.Add(path);
 		}

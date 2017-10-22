@@ -158,10 +158,21 @@ namespace GameDevWare.Charon.Json
 
 				var prop = member as PropertyInfo;
 				var field = member as FieldInfo;
-				if (prop != null && prop.CanWrite)
-					prop.SetValue(instance, pair.Value.As(prop.PropertyType), null);
-				else if (field != null && field.IsInitOnly == false)
-					field.SetValue(instance, pair.Value.As(field.FieldType));
+				var value = pair.Value;
+				if (value != null)
+				{
+					if (prop != null && prop.CanWrite)
+						prop.SetValue(instance, value.As(prop.PropertyType), null);
+					else if (field != null && field.IsInitOnly == false)
+						field.SetValue(instance, value.As(field.FieldType));
+				}
+				else
+				{
+					if (prop != null && prop.CanWrite)
+						prop.SetValue(instance, null, null);
+					else if (field != null && field.IsInitOnly == false)
+						field.SetValue(instance, null);
+				}
 			}
 
 			return instance;
@@ -186,7 +197,7 @@ namespace GameDevWare.Charon.Json
 				pairs.Add(new JsonPair(memberKv.Key, JsonValue.From(memberValue)));
 			}
 
-			return new JsonObject(pairs); 
+			return new JsonObject(pairs);
 		}
 		private static Dictionary<string, MemberInfo> GetTypeMembers(Type type)
 		{

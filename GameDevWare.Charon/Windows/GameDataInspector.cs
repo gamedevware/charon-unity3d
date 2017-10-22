@@ -50,7 +50,7 @@ namespace GameDevWare.Charon.Windows
 		{
 			if (Selection.activeObject == null)
 				return;
-			var assetPath = PathUtils.MakeProjectRelative(AssetDatabase.GetAssetPath(Selection.activeObject));
+			var assetPath = FileAndPathUtils.MakeProjectRelative(AssetDatabase.GetAssetPath(Selection.activeObject));
 			if (GameDataTracker.IsGameDataFile(assetPath) == false)
 				return;
 
@@ -98,9 +98,9 @@ namespace GameDevWare.Charon.Windows
 		public override void OnInspectorGUI()
 		{
 			var gameDataAsset = (Object)this.target;
-			var gameDataPath = PathUtils.MakeProjectRelative(AssetDatabase.GetAssetPath(gameDataAsset));
+			var gameDataPath = FileAndPathUtils.MakeProjectRelative(AssetDatabase.GetAssetPath(gameDataAsset));
 
-			var assetPath = PathUtils.MakeProjectRelative(AssetDatabase.GetAssetPath(Selection.activeObject));
+			var assetPath = FileAndPathUtils.MakeProjectRelative(AssetDatabase.GetAssetPath(Selection.activeObject));
 			if (GameDataTracker.IsGameDataFile(assetPath) == false)
 			{
 				this.DrawDefaultInspector();

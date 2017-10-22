@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -119,10 +120,10 @@ namespace GameDevWare.Charon.Json
 						stream.Write(FalseBytes, 0, 5);
 					break;
 				case JsonType.String:
-					stream.WriteByte((byte) '\"');
+					stream.WriteByte((byte)'\"');
 					var bytes = Encoding.UTF8.GetBytes(this.EscapeString(this.Value.ToString()));
 					stream.Write(bytes, 0, bytes.Length);
-					stream.WriteByte((byte) '\"');
+					stream.WriteByte((byte)'\"');
 					break;
 				default:
 					bytes = Encoding.UTF8.GetBytes(this.GetFormattedString());
@@ -159,7 +160,23 @@ namespace GameDevWare.Charon.Json
 			if (type.IsEnum)
 				return Enum.Parse(type, Convert.ToString(this.Value, CultureInfo.InvariantCulture), true);
 
-			return Convert.ChangeType(this.Value, type, CultureInfo.InvariantCulture);
+			var converter = TypeDescriptor.GetConverter(type);
+			if (converter.CanConvertFrom(typeof(string)))
+			{
+				return converter.ConvertFromInvariantString((string)Convert.ChangeType(this.Value, typeof(string), CultureInfo.InvariantCulture));
+			}
+			else if (this.Value != null && converter.CanConvertFrom(this.Value.GetType()))
+			{
+				return converter.ConvertFrom(this.Value);
+			}
+			else if (type == typeof(Version))
+			{
+				return new Version((string)Convert.ChangeType(this.Value, typeof(string), CultureInfo.InvariantCulture));
+			}
+			else
+			{
+				return Convert.ChangeType(this.Value, type, CultureInfo.InvariantCulture);
+			}
 		}
 	}
 }

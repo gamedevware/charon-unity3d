@@ -318,6 +318,9 @@ namespace GameDevWare.Charon.Async
 
 		public Promise IgnoreFault()
 		{
+			if (this.IsCompleted)
+				return Fulfilled;
+
 			if (this is IUpdatable)
 			{
 				var result = new Coroutine(Coroutine.WaitForUpdatablePromise(this));
@@ -456,6 +459,8 @@ namespace GameDevWare.Charon.Async
 
 	public class Promise<T> : Promise
 	{
+		public static Promise<T> DefaultFulfilled = Promise.FromResult(default(T));
+
 		private T value;
 
 		public Promise()
@@ -511,6 +516,19 @@ namespace GameDevWare.Charon.Async
 		public Promise<RT> ContinueWith<RT>(FuncContinuation<T, RT> continuation)
 		{
 			return this.ContinueWithInternal<T, RT>(continuation);
+		}
+		public new Promise<T> IgnoreFault()
+		{
+			if (this.IsCompleted)
+				return this.HasErrors ? DefaultFulfilled : this;
+
+			if (this is IUpdatable)
+			{
+				var result = new Coroutine<T>(Coroutine.WaitForUpdatablePromise(this));
+				return result;
+			}
+
+			return this.ContinueWith(p => p.HasErrors ? default(T) : p.GetResult());
 		}
 
 		public void PropagateTo(Promise<T> promise)

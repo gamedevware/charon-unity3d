@@ -75,6 +75,22 @@ namespace GameDevWare.Charon.Async
 				yield return null;
 			} while (promise.IsCompleted == false);
 		}
+		internal static IEnumerable WaitForUpdatablePromise<T>(Promise<T> promise)
+		{
+			do
+			{
+				var upd = promise as IUpdatable;
+				if (upd != null)
+					upd.Update();
+
+				yield return null;
+			} while (promise.IsCompleted == false);
+
+			if (promise.HasErrors)
+				yield return default(T);
+			else
+				yield return promise.GetResult();
+		}
 		internal static IEnumerable WaitTime(TimeSpan timeToWait)
 		{
 			var startTime = DateTime.UtcNow;
