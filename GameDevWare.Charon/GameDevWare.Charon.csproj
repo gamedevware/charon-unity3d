@@ -40,10 +40,10 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="UnityEditor">
-      <HintPath>..\..\..\apps\unity5.2.2\Editor\Data\Managed\UnityEditor.dll</HintPath>
+      <HintPath>..\..\..\..\apps\unity\Editor\Data\Managed\UnityEditor.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\apps\unity5.2.2\Editor\Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\..\apps\unity\Editor\Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
