@@ -150,7 +150,7 @@ namespace GameDevWare.Charon.Windows
 			if (Event.current.type == EventType.repaint)
 				this.UpdateColumnWidths();
 
-			GUI.enabled = this.updatePromise == null;
+			GUI.enabled = this.updatePromise == null && EditorApplication.isCompiling == false;
 
 			var headerStyle = new GUIStyle(GUIStyle.none)
 			{

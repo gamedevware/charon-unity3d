@@ -27,7 +27,7 @@ namespace GameDevWare.Charon.Utils
 			var updateServerAddress = Settings.Current.GetServerAddress();
 			var getBuildsHeaders = new NameValueCollection { { "Accept", "application/json" } };
 			var getBuildsUrl = new Uri(updateServerAddress, "Build?product=" + Uri.EscapeDataString(product));
-			var getBuildsRequest = HttpUtils.GetJson<JsonValue>(getBuildsUrl, getBuildsHeaders);
+			var getBuildsRequest = HttpUtils.GetJson<JsonValue>(getBuildsUrl, getBuildsHeaders, timeout: TimeSpan.FromSeconds(10));
 			yield return getBuildsRequest.IgnoreFault();
 
 			if (getBuildsRequest.HasErrors)
@@ -64,7 +64,7 @@ namespace GameDevWare.Charon.Utils
 				if (progressCallback == null || total == 0)
 					return;
 				progressCallback(String.Format(Resources.UI_UNITYPLUGIN_PROGRESS_DOWNLOADINGS, (float)read / 1024 / 1024, (float)total / 1024 / 1024), 0.10f + (0.80f * Math.Min(1.0f, (float)read / total)));
-			});
+			}, timeout: TimeSpan.FromSeconds(30));
 		}
 	}
 }
