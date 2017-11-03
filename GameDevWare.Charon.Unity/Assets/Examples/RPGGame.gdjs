@@ -1,5 +1,5 @@
 {
-	"ToolsVersion": "2017.4.0.0",
+	"ToolsVersion": "2017.4.1.0",
 	"Collections": {
 		"Entity": [
 			{
@@ -475,6 +475,22 @@
 						"Specifications": null
 					},
 					{
+						"Id": "59f9e7dd983a364298db5e3e",
+						"Name": "DislikeHeroes",
+						"DisplayName": "Dislike Heroes",
+						"Description": "List of heroes which dislikes current hero.",
+						"DataType": 29,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 0,
+						"ReferenceType": {
+							"Id": "59f5b29330bb84165c06b55c",
+							"DisplayName": "Heroes"
+						},
+						"Size": 0,
+						"Specifications": null
+					},
+					{
 						"Id": "59f5b29330bb84165c06b561",
 						"Name": "Provisions",
 						"DisplayName": "Provisions",
@@ -491,19 +507,16 @@
 						"Specifications": null
 					},
 					{
-						"Id": "59f5b82b30bb84165c06b594",
-						"Name": "Parameters",
-						"DisplayName": "Parameters",
+						"Id": "59f9e7dd983a364298db5e3c",
+						"Name": "ProvisionsCount",
+						"DisplayName": "Provisions Count",
 						"Description": null,
-						"DataType": 23,
-						"DefaultValue": null,
+						"DataType": 13,
+						"DefaultValue": "1",
 						"Uniqueness": 0,
 						"Requirement": 2,
-						"ReferenceType": {
-							"Id": "59f5b11030bb84165c06b54e",
-							"DisplayName": "Parameter Value"
-						},
-						"Size": 8000,
+						"ReferenceType": null,
+						"Size": 4,
 						"Specifications": null
 					},
 					{
@@ -530,6 +543,168 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
+						"Specifications": null
+					},
+					{
+						"Id": "59f9e586983a364298db5e1f",
+						"Name": "Protection",
+						"DisplayName": "Protection",
+						"Description": "from 0.0 to 1.0 where 0.5 is 50%",
+						"DataType": 13,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": null
+					},
+					{
+						"Id": "59f9e7dd983a364298db5e3b",
+						"Name": "AccuracyModifier",
+						"DisplayName": "Accuracy Modifier",
+						"Description": null,
+						"DataType": 13,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 8000,
+						"Specifications": null
+					},
+					{
+						"Id": "59f9e7dd983a364298db5e3a",
+						"Name": "StunResistance",
+						"DisplayName": "Stun Resistance",
+						"Description": "from 0.0 to 1.0 where 0.5 is 50%",
+						"DataType": 12,
+						"DefaultValue": "0.00",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "displayPrecision=2"
+					},
+					{
+						"Id": "59f9e7dd983a364298db5e39",
+						"Name": "BlightResistance",
+						"DisplayName": "Blight Resistance",
+						"Description": "from 0.0 to 1.0 where 0.5 is 50%",
+						"DataType": 12,
+						"DefaultValue": "0.00",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "displayPrecision=2"
+					},
+					{
+						"Id": "59f9e7dd983a364298db5e38",
+						"Name": "DiseaseResistance",
+						"DisplayName": "Disease Resistance",
+						"Description": "from 0.0 to 1.0 where 0.5 is 50%",
+						"DataType": 12,
+						"DefaultValue": "0.00",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "displayPrecision=2"
+					},
+					{
+						"Id": "59f9e7dd983a364298db5e37",
+						"Name": "DeathBlowResistance",
+						"DisplayName": "Death Blow Resistance",
+						"Description": "from 0.0 to 1.0 where 0.5 is 50%",
+						"DataType": 12,
+						"DefaultValue": "0.67",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "displayPrecision=2"
+					},
+					{
+						"Id": "59f9e7dd983a364298db5e36",
+						"Name": "MoveResistance",
+						"DisplayName": "Move Resistance",
+						"Description": "from 0.0 to 1.0 where 0.5 is 50%",
+						"DataType": 12,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "displayPrecision=2"
+					},
+					{
+						"Id": "59f9e7dd983a364298db5e35",
+						"Name": "BleedResistance",
+						"DisplayName": "Bleed Resistance",
+						"Description": "from 0.0 to 1.0 where 0.5 is 50%",
+						"DataType": 12,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "displayPrecision=2"
+					},
+					{
+						"Id": "59f9e7dc983a364298db5e34",
+						"Name": "DebuffResistance",
+						"DisplayName": "Debuff Resistance",
+						"Description": "from 0.0 to 1.0 where 0.5 is 50%",
+						"DataType": 12,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "displayPrecision=2"
+					},
+					{
+						"Id": "59f9e7dc983a364298db5e33",
+						"Name": "TrapResistance",
+						"DisplayName": "Trap Resistance",
+						"Description": "from 0.0 to 1.0 where 0.5 is 50%",
+						"DataType": 12,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "displayPrecision=2"
+					},
+					{
+						"Id": "59f9e7dc983a364298db5e32",
+						"Name": "Armors",
+						"DisplayName": "Armors",
+						"Description": null,
+						"DataType": 23,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": {
+							"Id": "59f9e7b6983a364298db5e2c",
+							"DisplayName": "Armor"
+						},
+						"Size": 0,
+						"Specifications": null
+					},
+					{
+						"Id": "59f9e7dd983a364298db5e3d",
+						"Name": "Weapons",
+						"DisplayName": "Weapons",
+						"Description": null,
+						"DataType": 23,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": {
+							"Id": "59f9e745983a364298db5e22",
+							"DisplayName": "Weapon"
+						},
+						"Size": 0,
 						"Specifications": null
 					}
 				]
@@ -1390,6 +1565,158 @@
 				]
 			},
 			{
+				"Id": "59f9e745983a364298db5e22",
+				"Name": "Weapon",
+				"DisplayName": "Weapon",
+				"Group": "Heroes and Stuff",
+				"Description": null,
+				"IdGenerator": 0,
+				"Specifications": "type=component",
+				"Attributes": [
+					{
+						"Id": "59f9e745983a364298db5e23",
+						"Name": "Id",
+						"DisplayName": "Id",
+						"Description": null,
+						"DataType": 0,
+						"DefaultValue": null,
+						"Uniqueness": 1,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 256,
+						"Specifications": null
+					},
+					{
+						"Id": "59f9e745983a364298db5e24",
+						"Name": "Name",
+						"DisplayName": "Name",
+						"Description": null,
+						"DataType": 1,
+						"DefaultValue": "Translate Me!",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 120,
+						"Specifications": null
+					},
+					{
+						"Id": "59f9e745983a364298db5e25",
+						"Name": "DamageFrom",
+						"DisplayName": "Damage From",
+						"Description": null,
+						"DataType": 13,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": null
+					},
+					{
+						"Id": "59f9e745983a364298db5e26",
+						"Name": "DamageTo",
+						"DisplayName": "Damage To",
+						"Description": null,
+						"DataType": 13,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": null
+					},
+					{
+						"Id": "59f9e745983a364298db5e27",
+						"Name": "CriticalStrikeChance",
+						"DisplayName": "Critical Strike Chance",
+						"Description": "from 0.0 to 1.0 where 0.5 is 50%",
+						"DataType": 12,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": null
+					},
+					{
+						"Id": "59f9e745983a364298db5e28",
+						"Name": "Speed",
+						"DisplayName": "Speed",
+						"Description": null,
+						"DataType": 13,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": null
+					}
+				]
+			},
+			{
+				"Id": "59f9e7b6983a364298db5e2c",
+				"Name": "Armor",
+				"DisplayName": "Armor",
+				"Group": "Heroes and Stuff",
+				"Description": null,
+				"IdGenerator": 0,
+				"Specifications": "type=component",
+				"Attributes": [
+					{
+						"Id": "59f9e7b6983a364298db5e2d",
+						"Name": "Id",
+						"DisplayName": "Id",
+						"Description": null,
+						"DataType": 0,
+						"DefaultValue": null,
+						"Uniqueness": 1,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 256,
+						"Specifications": null
+					},
+					{
+						"Id": "59f9e7b6983a364298db5e2e",
+						"Name": "Name",
+						"DisplayName": "Name",
+						"Description": null,
+						"DataType": 1,
+						"DefaultValue": "Translate Me!",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 8000,
+						"Specifications": null
+					},
+					{
+						"Id": "59f9e7b6983a364298db5e2f",
+						"Name": "Dodge",
+						"DisplayName": "Dodge",
+						"Description": "from 0.0 to 1.0 where 0.5 is 50%",
+						"DataType": 12,
+						"DefaultValue": "0.00",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "displayPrecision=2"
+					},
+					{
+						"Id": "59f9e7b6983a364298db5e30",
+						"Name": "HitPoints",
+						"DisplayName": "Hit Points",
+						"Description": null,
+						"DataType": 13,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": null
+					}
+				]
+			},
+			{
 				"Id": "d40d8eb1a23248b69b252eea",
 				"Name": "Attribute",
 				"DisplayName": "Attribute",
@@ -1764,7 +2091,7 @@
 				"MaxValue": null,
 				"MinValueParameter": {
 					"Id": 50,
-					"DisplayName": "DamageFrom"
+					"DisplayName": "Damage From"
 				},
 				"MaxValueParameter": null,
 				"ValueKind": 1
@@ -1794,7 +2121,7 @@
 				"MaxValue": null,
 				"MinValueParameter": {
 					"Id": 53,
-					"DisplayName": "HealFrom"
+					"DisplayName": "Heal From"
 				},
 				"MaxValueParameter": null,
 				"ValueKind": 1
@@ -1832,7 +2159,7 @@
 				"MaxValue": null,
 				"MinValueParameter": {
 					"Id": 57,
-					"DisplayName": "StressHealFrom"
+					"DisplayName": "Stress Heal From"
 				},
 				"MaxValueParameter": null,
 				"ValueKind": 1
@@ -2084,141 +2411,265 @@
 					"notes": null
 				},
 				"Bio": {
-					"en-US": "Tortured and reclusive... this man is more dangerous than he seems...",
+					"en-US": "Beaten, branded and imprisoned for untold decades, this furtive vagrant hides a terrible secret. The Eldritch poison coursing through his veins has given him unspeakable power, at a terrible cost. As his form changes, so too does his role in combat! ",
 					"notes": null
 				},
 				"Religious": false,
+				"DislikeHeroes": [
+				],
 				"Provisions": null,
-				"Parameters": [
+				"ProvisionsCount": 0,
+				"MovementForward": 1,
+				"MovementBackward": 2,
+				"Protection": 0,
+				"AccuracyModifier": 0,
+				"StunResistance": 0.4,
+				"BlightResistance": 0.6,
+				"DiseaseResistance": 0.2,
+				"DeathBlowResistance": 0.67,
+				"MoveResistance": 0.4,
+				"BleedResistance": 0.3,
+				"DebuffResistance": 0.2,
+				"TrapResistance": 0.1,
+				"Armors": [
 					{
-						"Id": 84,
-						"Parameter": {
-							"Id": 2,
-							"DisplayName": "Max Hit Points"
+						"Id": "AbominationArmor1",
+						"Name": {
+							"en-US": "Rusty Chains",
+							"notes": null
 						},
-						"Value": 26,
-						"Condition": null
+						"Dodge": 0.075,
+						"HitPoints": 26
 					},
 					{
-						"Id": 85,
-						"Parameter": {
-							"Id": 8,
-							"DisplayName": "Dodge"
+						"Id": "AbominationArmor2",
+						"Name": {
+							"en-US": "Iron Chains",
+							"notes": null
 						},
-						"Value": 0.075,
-						"Condition": null
+						"Dodge": 0.125,
+						"HitPoints": 31
 					},
 					{
-						"Id": 86,
-						"Parameter": {
-							"Id": 5,
-							"DisplayName": "Accuracy"
+						"Id": "AbominationArmor3",
+						"Name": {
+							"en-US": "Steel Chains",
+							"notes": null
 						},
-						"Value": 7,
-						"Condition": null
+						"Dodge": 0.175,
+						"HitPoints": 36
 					},
 					{
-						"Id": 87,
-						"Parameter": {
-							"Id": 6,
-							"DisplayName": "Crtitical Strike Chance"
+						"Id": "AbominationArmor4",
+						"Name": {
+							"en-US": "Hellforged Chains ",
+							"notes": null
 						},
-						"Value": 0.025,
-						"Condition": null
+						"Dodge": 0.225,
+						"HitPoints": 41
 					},
 					{
-						"Id": 88,
-						"Parameter": {
-							"Id": 50,
-							"DisplayName": "Damage From"
+						"Id": "AbominationArmor5",
+						"Name": {
+							"en-US": "Inhuman Bondage",
+							"notes": null
 						},
-						"Value": 6,
-						"Condition": null
-					},
-					{
-						"Id": 89,
-						"Parameter": {
-							"Id": 51,
-							"DisplayName": "Damage To"
-						},
-						"Value": 11,
-						"Condition": null
-					},
-					{
-						"Id": 90,
-						"Parameter": {
-							"Id": 21,
-							"DisplayName": "Stun Resistance"
-						},
-						"Value": 0.4,
-						"Condition": null
-					},
-					{
-						"Id": 91,
-						"Parameter": {
-							"Id": 22,
-							"DisplayName": "Blight Resistance"
-						},
-						"Value": 0.6,
-						"Condition": null
-					},
-					{
-						"Id": 92,
-						"Parameter": {
-							"Id": 23,
-							"DisplayName": "Disease Resistance"
-						},
-						"Value": 0.2,
-						"Condition": null
-					},
-					{
-						"Id": 93,
-						"Parameter": {
-							"Id": 24,
-							"DisplayName": "Death Blow Resistance"
-						},
-						"Value": 0.67,
-						"Condition": null
-					},
-					{
-						"Id": 94,
-						"Parameter": {
-							"Id": 27,
-							"DisplayName": "Debuff Resistance"
-						},
-						"Value": 0.2,
-						"Condition": null
-					},
-					{
-						"Id": 95,
-						"Parameter": {
-							"Id": 25,
-							"DisplayName": "Move Resistance"
-						},
-						"Value": 0.3,
-						"Condition": null
-					},
-					{
-						"Id": 96,
-						"Parameter": {
-							"Id": 26,
-							"DisplayName": "Bleed Resistance"
-						},
-						"Value": 0.3,
-						"Condition": null
-					},
-					{
-						"Id": 97,
-						"Parameter": {
-							"Id": 28,
-							"DisplayName": "Trap Resistance"
-						},
-						"Value": 0.1,
-						"Condition": null
+						"Dodge": 0.275,
+						"HitPoints": 46
 					}
 				],
-				"MovementForward": 1,
-				"MovementBackward": 2
+				"Weapons": [
+					{
+						"Id": "AbominationWeapon1",
+						"Name": {
+							"en-US": "Incubating Mutation ",
+							"notes": null
+						},
+						"DamageFrom": 6,
+						"DamageTo": 11,
+						"CriticalStrikeChance": 0.025,
+						"Speed": 7
+					},
+					{
+						"Id": "AbominationWeapon2",
+						"Name": {
+							"en-US": "Progressive Mutation",
+							"notes": null
+						},
+						"DamageFrom": 7,
+						"DamageTo": 13,
+						"CriticalStrikeChance": 0.03,
+						"Speed": 7
+					},
+					{
+						"Id": "AbominationWeapon3",
+						"Name": {
+							"en-US": "Aggressive Mutation ",
+							"notes": null
+						},
+						"DamageFrom": 8,
+						"DamageTo": 15,
+						"CriticalStrikeChance": 0.035,
+						"Speed": 8
+					},
+					{
+						"Id": "AbominationWeapon4",
+						"Name": {
+							"en-US": "Malignant Mutation ",
+							"notes": null
+						},
+						"DamageFrom": 10,
+						"DamageTo": 18,
+						"CriticalStrikeChance": 0.04,
+						"Speed": 8
+					},
+					{
+						"Id": "AbominationWeapon5",
+						"Name": {
+							"en-US": "Damnation's Gift",
+							"notes": null
+						},
+						"DamageFrom": 11,
+						"DamageTo": 20,
+						"CriticalStrikeChance": 0.045,
+						"Speed": 9
+					}
+				]
+			},
+			{
+				"Id": "Arbalest",
+				"Name": {
+					"en-US": "Arbalest",
+					"notes": null
+				},
+				"Bio": {
+					"en-US": "Clad in heavy armor and able to vanquish foes with her massive crossbow, she is like a living embodiment of a cannon. Her life of war has given her many skills for the battlefield such as marking down targets, raining arrows upon her foes and even firing bolas to disrupt the enemy's formation. She also learned how to dress and treat wounds, and can apply makeshift healing upon the battlefield.\u000A\u000AGiven enough time at camp, she can treat the wounds of all her allies, or even instruct them in how to be quicker than their adversaries. Or she may spend her night tending to her crossbow, her one companion since childhood. As long as she is given ample distance between herself and her quarry,",
+					"notes": null
+				},
+				"Religious": false,
+				"DislikeHeroes": [
+				],
+				"Provisions": {
+					"Id": "Bandage",
+					"DisplayName": "Bandage"
+				},
+				"ProvisionsCount": 1,
+				"MovementForward": 0,
+				"MovementBackward": 2,
+				"Protection": 0,
+				"AccuracyModifier": 0,
+				"StunResistance": 0.4,
+				"BlightResistance": 0.3,
+				"DiseaseResistance": 0.3,
+				"DeathBlowResistance": 0.67,
+				"MoveResistance": 0.4,
+				"BleedResistance": 0.3,
+				"DebuffResistance": 0.3,
+				"TrapResistance": 0.1,
+				"Armors": [
+					{
+						"Id": "ArbalestArmor1",
+						"Name": {
+							"en-US": "Second-Hand Plate",
+							"notes": null
+						},
+						"Dodge": 0,
+						"HitPoints": 27
+					},
+					{
+						"Id": "ArbalestArmor2",
+						"Name": {
+							"en-US": "Pawned Plate ",
+							"notes": null
+						},
+						"Dodge": 5,
+						"HitPoints": 32
+					},
+					{
+						"Id": "ArbalestArmor3",
+						"Name": {
+							"en-US": "Reliable Plate ",
+							"notes": null
+						},
+						"Dodge": 10,
+						"HitPoints": 37
+					},
+					{
+						"Id": "ArbalestArmor4",
+						"Name": {
+							"en-US": "Refined Plate",
+							"notes": null
+						},
+						"Dodge": 15,
+						"HitPoints": 42
+					},
+					{
+						"Id": "ArbalestArmor5",
+						"Name": {
+							"en-US": "Survivor",
+							"notes": null
+						},
+						"Dodge": 20,
+						"HitPoints": 47
+					}
+				],
+				"Weapons": [
+					{
+						"Id": "ArbalestWeapon1",
+						"Name": {
+							"en-US": "Crude Crossbow",
+							"notes": null
+						},
+						"DamageFrom": 4,
+						"DamageTo": 9,
+						"CriticalStrikeChance": 0.075,
+						"Speed": 3
+					},
+					{
+						"Id": "ArbalestWeapon2",
+						"Name": {
+							"en-US": "Reinforced Crossbow ",
+							"notes": null
+						},
+						"DamageFrom": 5,
+						"DamageTo": 11,
+						"CriticalStrikeChance": 0.8,
+						"Speed": 3
+					},
+					{
+						"Id": "ArbalestWeapon3",
+						"Name": {
+							"en-US": "Heavy Crossbow ",
+							"notes": null
+						},
+						"DamageFrom": 6,
+						"DamageTo": 13,
+						"CriticalStrikeChance": 0.85,
+						"Speed": 4
+					},
+					{
+						"Id": "ArbalestWeapon4",
+						"Name": {
+							"en-US": "Veteran's Crossbow ",
+							"notes": null
+						},
+						"DamageFrom": 6,
+						"DamageTo": 14,
+						"CriticalStrikeChance": 0.9,
+						"Speed": 4
+					},
+					{
+						"Id": "ArbalestWeapon5",
+						"Name": {
+							"en-US": "Millicent",
+							"notes": null
+						},
+						"DamageFrom": 7,
+						"DamageTo": 16,
+						"CriticalStrikeChance": 0.95,
+						"Speed": 5
+					}
+				]
 			},
 			{
 				"Id": "Crusader",
@@ -2227,433 +2678,137 @@
 					"notes": null
 				},
 				"Bio": {
-					"en-US": "A mighty sword-hand anchored by a holy purpose. A zealous warrior.",
+					"en-US": "Every cause needs a champion, a hero to rally otherwise common men to a righteous cause and lead them to victory. The Crusader is that champion. With holy blade in hand he smites the wicked and sends them back to the darkness from whence they crept. While his armor restricts his movement it affords him great protection, allowing him to stand in the frontlines to take the blows that his weaker comrades cannot.\u000A\u000ANo matter the pressures he faces he will remain strong, finding strength within himself to keep fighting on while inspiring others to do the same. Even in the midst of battle he can galvanize his allies, giving them the strength to fight off madness for a little longer. When the Crusader is leading the charge, all of hell will know to fear the flame.",
 					"notes": null
 				},
 				"Religious": true,
+				"DislikeHeroes": [
+					{
+						"Id": "Abomination",
+						"DisplayName": "Abomination"
+					}
+				],
 				"Provisions": {
 					"Id": "HolyWater",
 					"DisplayName": "HolyWater"
 				},
-				"Parameters": [
-					{
-						"Id": 98,
-						"Parameter": {
-							"Id": 2,
-							"DisplayName": "Max Hit Points"
-						},
-						"Value": 33,
-						"Condition": null
-					},
-					{
-						"Id": 99,
-						"Parameter": {
-							"Id": 8,
-							"DisplayName": "Dodge"
-						},
-						"Value": 0.05,
-						"Condition": null
-					},
-					{
-						"Id": 100,
-						"Parameter": {
-							"Id": 4,
-							"DisplayName": "Speed"
-						},
-						"Value": 1,
-						"Condition": null
-					},
-					{
-						"Id": 101,
-						"Parameter": {
-							"Id": 6,
-							"DisplayName": "Crtitical Strike Chance"
-						},
-						"Value": 3.05,
-						"Condition": null
-					},
-					{
-						"Id": 102,
-						"Parameter": {
-							"Id": 50,
-							"DisplayName": "Damage From"
-						},
-						"Value": 6,
-						"Condition": null
-					},
-					{
-						"Id": 103,
-						"Parameter": {
-							"Id": 51,
-							"DisplayName": "Damage To"
-						},
-						"Value": 12,
-						"Condition": null
-					},
-					{
-						"Id": 104,
-						"Parameter": {
-							"Id": 21,
-							"DisplayName": "Stun Resistance"
-						},
-						"Value": 0.4,
-						"Condition": null
-					},
-					{
-						"Id": 105,
-						"Parameter": {
-							"Id": 22,
-							"DisplayName": "Blight Resistance"
-						},
-						"Value": 0.3,
-						"Condition": null
-					},
-					{
-						"Id": 106,
-						"Parameter": {
-							"Id": 23,
-							"DisplayName": "Disease Resistance"
-						},
-						"Value": 0.3,
-						"Condition": null
-					},
-					{
-						"Id": 107,
-						"Parameter": {
-							"Id": 24,
-							"DisplayName": "Death Blow Resistance"
-						},
-						"Value": 0.67,
-						"Condition": null
-					},
-					{
-						"Id": 108,
-						"Parameter": {
-							"Id": 27,
-							"DisplayName": "Debuff Resistance"
-						},
-						"Value": 0.4,
-						"Condition": null
-					},
-					{
-						"Id": 109,
-						"Parameter": {
-							"Id": 25,
-							"DisplayName": "Move Resistance"
-						},
-						"Value": 0.3,
-						"Condition": null
-					},
-					{
-						"Id": 110,
-						"Parameter": {
-							"Id": 26,
-							"DisplayName": "Bleed Resistance"
-						},
-						"Value": 0.3,
-						"Condition": null
-					},
-					{
-						"Id": 111,
-						"Parameter": {
-							"Id": 28,
-							"DisplayName": "Trap Resistance"
-						},
-						"Value": 0.1,
-						"Condition": null
-					}
-				],
+				"ProvisionsCount": 1,
 				"MovementForward": 1,
-				"MovementBackward": 1
-			},
-			{
-				"Id": "Houndmaster",
-				"Name": {
-					"en-US": "Houndmaster",
-					"notes": null
-				},
-				"Bio": {
-					"en-US": "A lawman and his faithful beast. A bond forged by battle and bloodshed.",
-					"notes": null
-				},
-				"Religious": false,
-				"Provisions": {
-					"Id": "DogTreats",
-					"DisplayName": "DogTreats"
-				},
-				"Parameters": [
+				"MovementBackward": 1,
+				"Protection": 0,
+				"AccuracyModifier": 0,
+				"StunResistance": 0.4,
+				"BlightResistance": 0.3,
+				"DiseaseResistance": 0.3,
+				"DeathBlowResistance": 0.67,
+				"MoveResistance": 0.4,
+				"BleedResistance": 0.3,
+				"DebuffResistance": 0.3,
+				"TrapResistance": 0.1,
+				"Armors": [
 					{
-						"Id": 112,
-						"Parameter": {
-							"Id": 2,
-							"DisplayName": "Max Hit Points"
+						"Id": "CrusaderArmor1",
+						"Name": {
+							"en-US": "Rusty Hauberk ",
+							"notes": null
 						},
-						"Value": 21,
-						"Condition": null
+						"Dodge": 0.05,
+						"HitPoints": 33
 					},
 					{
-						"Id": 113,
-						"Parameter": {
-							"Id": 8,
-							"DisplayName": "Dodge"
+						"Id": "CrusaderArmor2",
+						"Name": {
+							"en-US": "Chainmail ",
+							"notes": null
 						},
-						"Value": 0.01,
-						"Condition": null
+						"Dodge": 0.1,
+						"HitPoints": 40
 					},
 					{
-						"Id": 114,
-						"Parameter": {
-							"Id": 4,
-							"DisplayName": "Speed"
+						"Id": "CrusaderArmor3",
+						"Name": {
+							"en-US": "Chain and Plate ",
+							"notes": null
 						},
-						"Value": 6,
-						"Condition": null
+						"Dodge": 0.15,
+						"HitPoints": 47
 					},
 					{
-						"Id": 115,
-						"Parameter": {
-							"Id": 6,
-							"DisplayName": "Crtitical Strike Chance"
+						"Id": "CrusaderArmor4",
+						"Name": {
+							"en-US": "Plate ",
+							"notes": null
 						},
-						"Value": 0.05,
-						"Condition": null
+						"Dodge": 0.2,
+						"HitPoints": 54
 					},
 					{
-						"Id": 116,
-						"Parameter": {
-							"Id": 50,
-							"DisplayName": "Damage From"
+						"Id": "CrusaderArmor5",
+						"Name": {
+							"en-US": "Zealous Conviction",
+							"notes": null
 						},
-						"Value": 4,
-						"Condition": null
-					},
-					{
-						"Id": 117,
-						"Parameter": {
-							"Id": 51,
-							"DisplayName": "Damage To"
-						},
-						"Value": 7,
-						"Condition": null
-					},
-					{
-						"Id": 118,
-						"Parameter": {
-							"Id": 21,
-							"DisplayName": "Stun Resistance"
-						},
-						"Value": 0.4,
-						"Condition": null
-					},
-					{
-						"Id": 119,
-						"Parameter": {
-							"Id": 22,
-							"DisplayName": "Blight Resistance"
-						},
-						"Value": 0.4,
-						"Condition": null
-					},
-					{
-						"Id": 120,
-						"Parameter": {
-							"Id": 23,
-							"DisplayName": "Disease Resistance"
-						},
-						"Value": 0.3,
-						"Condition": null
-					},
-					{
-						"Id": 121,
-						"Parameter": {
-							"Id": 24,
-							"DisplayName": "Death Blow Resistance"
-						},
-						"Value": 0.67,
-						"Condition": null
-					},
-					{
-						"Id": 122,
-						"Parameter": {
-							"Id": 27,
-							"DisplayName": "Debuff Resistance"
-						},
-						"Value": 0.4,
-						"Condition": null
-					},
-					{
-						"Id": 123,
-						"Parameter": {
-							"Id": 25,
-							"DisplayName": "Move Resistance"
-						},
-						"Value": 0.4,
-						"Condition": null
-					},
-					{
-						"Id": 124,
-						"Parameter": {
-							"Id": 26,
-							"DisplayName": "Bleed Resistance"
-						},
-						"Value": 0.2,
-						"Condition": null
-					},
-					{
-						"Id": 125,
-						"Parameter": {
-							"Id": 28,
-							"DisplayName": "Trap Resistance"
-						},
-						"Value": 0.4,
-						"Condition": null
+						"Dodge": 0.25,
+						"HitPoints": 61
 					}
 				],
-				"MovementForward": 2,
-				"MovementBackward": 2
-			},
-			{
-				"Id": "Vestal",
-				"Name": {
-					"en-US": "Vestal",
-					"notes": null
-				},
-				"Bio": {
-					"en-US": "A sister of battle. Pious and unrelenting",
-					"notes": null
-				},
-				"Religious": true,
-				"Provisions": null,
-				"Parameters": [
+				"Weapons": [
 					{
-						"Id": 29,
-						"Parameter": {
-							"Id": 2,
-							"DisplayName": "Max Hit Points"
+						"Id": "CrusaderWeapon1",
+						"Name": {
+							"en-US": "Battered Longsword ",
+							"notes": null
 						},
-						"Value": 24,
-						"Condition": null
+						"DamageFrom": 6,
+						"DamageTo": 12,
+						"CriticalStrikeChance": 0.05,
+						"Speed": 1
 					},
 					{
-						"Id": 32,
-						"Parameter": {
-							"Id": 8,
-							"DisplayName": "Dodge"
+						"Id": "CrusaderWeapon2",
+						"Name": {
+							"en-US": "Longsword ",
+							"notes": null
 						},
-						"Value": 0,
-						"Condition": null
+						"DamageFrom": 7,
+						"DamageTo": 14,
+						"CriticalStrikeChance": 0.055,
+						"Speed": 1
 					},
 					{
-						"Id": 33,
-						"Parameter": {
-							"Id": 4,
-							"DisplayName": "Speed"
+						"Id": "CrusaderWeapon3",
+						"Name": {
+							"en-US": "Questing Longsword",
+							"notes": null
 						},
-						"Value": 4,
-						"Condition": null
+						"DamageFrom": 8,
+						"DamageTo": 16,
+						"CriticalStrikeChance": 0.06,
+						"Speed": 2
 					},
 					{
-						"Id": 34,
-						"Parameter": {
-							"Id": 6,
-							"DisplayName": "Crtitical Strike Chance"
+						"Id": "CrusaderWeapon4",
+						"Name": {
+							"en-US": "Greatsword ",
+							"notes": null
 						},
-						"Value": 0.025,
-						"Condition": null
+						"DamageFrom": 9,
+						"DamageTo": 17,
+						"CriticalStrikeChance": 0.065,
+						"Speed": 2
 					},
 					{
-						"Id": 35,
-						"Parameter": {
-							"Id": 50,
-							"DisplayName": "Damage From"
+						"Id": "CrusaderWeapon5",
+						"Name": {
+							"en-US": "The Long Crusade",
+							"notes": null
 						},
-						"Value": 4,
-						"Condition": null
-					},
-					{
-						"Id": 36,
-						"Parameter": {
-							"Id": 51,
-							"DisplayName": "Damage To"
-						},
-						"Value": 9,
-						"Condition": null
-					},
-					{
-						"Id": 37,
-						"Parameter": {
-							"Id": 21,
-							"DisplayName": "Stun Resistance"
-						},
-						"Value": 0.3,
-						"Condition": null
-					},
-					{
-						"Id": 38,
-						"Parameter": {
-							"Id": 22,
-							"DisplayName": "Blight Resistance"
-						},
-						"Value": 0.3,
-						"Condition": null
-					},
-					{
-						"Id": 39,
-						"Parameter": {
-							"Id": 23,
-							"DisplayName": "Disease Resistance"
-						},
-						"Value": 0.3,
-						"Condition": null
-					},
-					{
-						"Id": 40,
-						"Parameter": {
-							"Id": 24,
-							"DisplayName": "Death Blow Resistance"
-						},
-						"Value": 0.67,
-						"Condition": null
-					},
-					{
-						"Id": 41,
-						"Parameter": {
-							"Id": 27,
-							"DisplayName": "Debuff Resistance"
-						},
-						"Value": 0.3,
-						"Condition": null
-					},
-					{
-						"Id": 42,
-						"Parameter": {
-							"Id": 25,
-							"DisplayName": "Move Resistance"
-						},
-						"Value": 0.3,
-						"Condition": null
-					},
-					{
-						"Id": 83,
-						"Parameter": {
-							"Id": 26,
-							"DisplayName": "Bleed Resistance"
-						},
-						"Value": 0.3,
-						"Condition": null
-					},
-					{
-						"Id": 43,
-						"Parameter": {
-							"Id": 28,
-							"DisplayName": "Trap Resistance"
-						},
-						"Value": 0.1,
-						"Condition": null
+						"DamageFrom": 10,
+						"DamageTo": 19,
+						"CriticalStrikeChance": 0.07,
+						"Speed": 3
 					}
-				],
-				"MovementForward": 1,
-				"MovementBackward": 1
+				]
 			}
 		],
 		"Item": [
@@ -3282,10 +3437,7 @@
 				"Id": "ProtectivePadlock",
 				"Rarity": 2,
 				"OriginDungeon": null,
-				"HeroRestriction": {
-					"Id": "Abomination",
-					"DisplayName": "Abomination"
-				},
+				"HeroRestriction": null,
 				"Item": {
 					"Id": "ProtectivePadlock",
 					"Name": {
