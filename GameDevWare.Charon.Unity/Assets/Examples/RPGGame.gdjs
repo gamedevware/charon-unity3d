@@ -1,5 +1,5 @@
 {
-	"ToolsVersion": "2017.4.1.0",
+	"ToolsVersion": "2017.4.2.0",
 	"Collections": {
 		"Entity": [
 			{
@@ -568,7 +568,7 @@
 						"Uniqueness": 0,
 						"Requirement": 2,
 						"ReferenceType": null,
-						"Size": 8000,
+						"Size": 4,
 						"Specifications": null
 					},
 					{
