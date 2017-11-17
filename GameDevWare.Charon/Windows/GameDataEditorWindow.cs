@@ -76,6 +76,10 @@ namespace GameDevWare.Charon.Windows
 		}
 		private static IEnumerable LoadEditor(string gameDataPath, string reference, Promise waitTask)
 		{
+			// un-select gamedata file in Project window
+			if (Selection.activeObject != null && AssetDatabase.GetAssetPath(Selection.activeObject) == gameDataPath)
+				Selection.activeObject = null;
+
 			if (waitTask != null)
 				yield return waitTask.IgnoreFault();
 
