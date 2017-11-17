@@ -102,9 +102,6 @@
     <Compile Include="Windows\WebViewEditorWindow.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ReleaseNotes.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Charon.exe.config">
     </EmbeddedResource>
   </ItemGroup>
