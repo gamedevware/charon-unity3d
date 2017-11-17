@@ -15,6 +15,9 @@ namespace GameDevWare.Charon.Utils
 		public const string PRODUCT_CHARON_UNITY_ASSEMBLY = "GameDevWare.Charon";
 		public const string PRODUCT_EXPRESSIONS = "Expressions";
 		public const string PRODUCT_EXPRESSIONS_ASSEMBLY = "GameDevWare.Dynamic.Expressions";
+		public const string PRODUCT_TEXT_TEMPLATES = "TextTransform";
+		public const string PRODUCT_TEXT_TEMPLATES_ASSEMBLY = "GameDevWare.TextTransform";
+
 
 		public static Promise<BuildInfo[]> GetBuilds(string product)
 		{

@@ -117,6 +117,11 @@ namespace GameDevWare.Charon.Windows
 					CurrentVersion = Promise.FromResult(GetAssemblyVersion(UpdateServerCli.PRODUCT_EXPRESSIONS_ASSEMBLY)),
 					AllBuilds = UpdateServerCli.GetBuilds(UpdateServerCli.PRODUCT_EXPRESSIONS),
 					Location = GetAssemblyLocation(UpdateServerCli.PRODUCT_EXPRESSIONS_ASSEMBLY)
+				},
+				new ProductRow(UpdateServerCli.PRODUCT_TEXT_TEMPLATES, Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_TEXT_TRANSFORM_PLUGIN_NAME, disabled: !IsAssemblyLoaded(UpdateServerCli.PRODUCT_TEXT_TEMPLATES_ASSEMBLY)) {
+					CurrentVersion = Promise.FromResult(GetAssemblyVersion(UpdateServerCli.PRODUCT_TEXT_TEMPLATES_ASSEMBLY)),
+					AllBuilds = UpdateServerCli.GetBuilds(UpdateServerCli.PRODUCT_TEXT_TEMPLATES),
+					Location = GetAssemblyLocation(UpdateServerCli.PRODUCT_TEXT_TEMPLATES_ASSEMBLY)
 				}
 			};
 			this.columns = new[] {
@@ -369,7 +374,7 @@ namespace GameDevWare.Charon.Windows
 			row.AllVersions = versions;
 			var lastVersion = versions.FirstOrDefault();
 
-			if (string.IsNullOrEmpty(row.Location))
+			if (string.IsNullOrEmpty(row.Location) || lastVersion == null)
 			{
 				// no local artifacts
 				row.SelectedVersion = null;
@@ -380,17 +385,24 @@ namespace GameDevWare.Charon.Windows
 
 			var expectedBuild = builds.FirstOrDefault(b => b.Version == row.ExpectedVersion);
 			var currentBuild = builds.FirstOrDefault(b => b.Version == currentVersion);
-			if (currentBuild == null && currentVersion != null)
+			if (expectedBuild == null && currentVersion != null && currentVersion > lastVersion)
 			{
-				// current installed build is not found
-				row.SelectedVersion = lastVersion;
+				// current installed build is the last one
+				row.SelectedVersion = currentVersion;
+				row.Action = ACTION_SKIP;
+				row.ActionMask = (1 << Array.IndexOf(Actions, ACTION_SKIP));
+			}
+			else if (File.Exists(row.Location) == false || (expectedBuild != null && currentBuild != expectedBuild))
+			{
+				// missing file or invalid version is installed
+				row.SelectedVersion = expectedBuild != null ? expectedBuild.Version : currentVersion ?? lastVersion;
 				row.Action = ACTION_DOWNLOAD;
 				row.ActionMask = (1 << Array.IndexOf(Actions, ACTION_DOWNLOAD)) | (1 << Array.IndexOf(Actions, ACTION_SKIP));
 			}
-			else if (File.Exists(row.Location) == false)
+			else if (currentBuild == null && currentVersion != null)
 			{
-				// missing file
-				row.SelectedVersion = expectedBuild != null ? expectedBuild.Version : currentVersion ?? lastVersion;
+				// current installed build is not found
+				row.SelectedVersion = lastVersion;
 				row.Action = ACTION_DOWNLOAD;
 				row.ActionMask = (1 << Array.IndexOf(Actions, ACTION_DOWNLOAD)) | (1 << Array.IndexOf(Actions, ACTION_SKIP));
 			}

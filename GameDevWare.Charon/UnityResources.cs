@@ -120,10 +120,10 @@ namespace GameDevWare.Charon
 		public const string UI_UNITYPLUGIN_WINDOW_DOWNLOAD_DOTNET_BUTTON = "Download .NET 4.5";
 		public const string UI_UNITYPLUGIN_WINDOW_DOWNLOAD_MONO = "b) If it doesn't exist, click 'Download Mono' below and try again.";
 		public const string UI_UNITYPLUGIN_WINDOW_DOWNLOAD_MONO_BUTTON = "Download Mono";
-		public const string UI_UNITYPLUGIN_WINDOW_EDITOR_CHECKING_RUNTIME = "Checking runtime and executable...";
+		public const string UI_UNITYPLUGIN_WINDOW_EDITOR_CHECKING_RUNTIME = "Checking runtime and application version...";
 		public const string UI_UNITYPLUGIN_WINDOW_EDITOR_COPYING_EXECUTABLE = "Making shadow copy of tools";
-		public const string UI_UNITYPLUGIN_WINDOW_EDITOR_LAUNCHING_EXECUTABLE = "Launching editor's executable...";
-		public const string UI_UNITYPLUGIN_WINDOW_EDITOR_OPENING_BROWSER = "Opening web browser...";
+		public const string UI_UNITYPLUGIN_WINDOW_EDITOR_LAUNCHING_EXECUTABLE = "Launching editor's application...";
+		public const string UI_UNITYPLUGIN_WINDOW_EDITOR_OPENING_BROWSER = "Opening web browser window...";
 		public const string UI_UNITYPLUGIN_WINDOW_EDITOR_TITLE = "Editor";
 		public const string UI_UNITYPLUGIN_WINDOW_FAILED_TO_START_EDITOR_TIMEOUT = "Failed to start Game Data editor due errors: Aborted by timeout.";
 		public const string UI_UNITYPLUGIN_WINDOW_FIND_MONO_MANUALLY = "a) You can manually locate Mono Runtime by clicking 'Browse...'.";
@@ -131,7 +131,7 @@ namespace GameDevWare.Charon
 		public const string UI_UNITYPLUGIN_WINDOW_INFO_GROUP = "Info:";
 		public const string UI_UNITYPLUGIN_WINDOW_KILL_PROCESS_BUTTON = "Kill Process";
 		public const string UI_UNITYPLUGIN_WINDOW_PATH_TO_MONO = "Path to Mono (bin)";
-		public const string UI_UNITYPLUGIN_WINDOW_PRESS_HELP = "If you need a help with .NET Runtime installation click 'Help'.";
+		public const string UI_UNITYPLUGIN_WINDOW_PRESS_HELP = "If you require a help with .NET Runtime installation click 'Help'.";
 		public const string UI_UNITYPLUGIN_WINDOW_RE_CHECK_BUTTON = "Recheck";
 		public const string UI_UNITYPLUGIN_WINDOW_RELOAD_BUTTON = "Reload";
 		public const string UI_UNITYPLUGIN_WINDOW_RUNTIME_REQUIRED = "You need to have either .NET Runtime or Mono Runtime installed on your system to use Game Data Editor and its related tools.";
@@ -147,11 +147,12 @@ namespace GameDevWare.Charon
 		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_CURRENT_VERSION_COLUMN_NAME = "Current";
 		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_DOWNLOAD_ACTION = "Download";
 		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_ERROR_MESSAGE = "Error";
-		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_EXPRESSIONS_PLUGIN_NAME = "Expression library for Unity";
+		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_EXPRESSIONS_PLUGIN_NAME = "Expression parsing library";
 		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_PRODUCT_COLUMN_NAME = "Product";
 		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_REPAIR_ACTION = "Repair";
 		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_RUNTIME_TITLE = ".NET Runtime Update";
 		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_SKIP_ACTION = "Skip";
+		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_TEXT_TRANSFORM_PLUGIN_NAME = "Text Transform plugin for Unity";
 		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_TITLE = "Product Updates";
 		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_UPDATE_ACTION = "Update";
 		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_UPDATE_BUTTON = "Update";
