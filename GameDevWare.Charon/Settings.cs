@@ -61,7 +61,7 @@ namespace GameDevWare.Charon
 				BasePath = Path.GetFullPath("Assets/Editor/GameDevWare.Charon");
 
 			AppDataPath = Path.GetFullPath("./Library/Charon/");
-			SettingsPath = Path.Combine(BasePath, "Settings.json");
+			SettingsPath = Path.Combine(BasePath, "GameDevWare.Charon.Settings.json");
 			CharonPath = Path.Combine(AppDataPath, "Charon.exe");
 
 			Current = Load();
