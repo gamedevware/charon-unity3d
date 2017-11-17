@@ -207,7 +207,7 @@ namespace GameDevWare.Charon.Windows
 			GUILayout.Label(this.updateStatus ?? string.Empty);
 			EditorGUILayout.Space();
 			var wasEnabled = GUI.enabled;
-			GUI.enabled = wasEnabled && this.rows.All(r => r.CurrentVersion.IsCompleted && r.AllBuilds.IsCompleted);
+			GUI.enabled = wasEnabled && this.rows.All(r => r.CurrentVersion.IsCompleted && r.AllBuilds.IsCompleted) && !EditorApplication.isCompiling;
 			var actionText = this.rows.Any(r => r.Action != ACTION_SKIP) ? Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_UPDATE_BUTTON : Resources.UI_UNITYPLUGIN_ABOUT_CLOSE_BUTTON;
 			if (this.updatePromise == null && GUILayout.Button(actionText, GUILayout.Width(80)))
 			{
