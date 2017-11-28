@@ -31,3 +31,13 @@ GameDevWare.Charon.Unity/ProjectSettings/
 GameDevWare.Charon.Unity/Assets/Editor/Unity.Charon/Settings
 GameDevWare.Charon.Unity/Assets/Editor/AssetStoreTools
 GameDevWare.Charon.Unity/Assets/Plugins
+
+Examples/RpgGameExample/Assembly*
+Examples/RpgGameExample/Library/
+Examples/RpgGameExample/Temp/
+Examples/RpgGameExample/Assets/StreamingAssets/
+Examples/RpgGameExample/Assets/Bundles/
+Examples/RpgGameExample/ProjectSettings/
+Examples/RpgGameExample/Assets/Editor/Unity.Charon/Settings
+Examples/RpgGameExample/Assets/Editor/AssetStoreTools
+Examples/RpgGameExample/Assets/Plugins
