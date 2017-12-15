@@ -19,6 +19,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Reflection;
 using GameDevWare.Charon.Async;
 using GameDevWare.Charon.Utils;
@@ -69,7 +70,7 @@ namespace GameDevWare.Charon.Windows
 
 			if (Event.current.type == EventType.Layout)
 			{
-				var engineAsm = typeof(ScriptableObject).Assembly;
+				var engineAsm = typeof(UnityEngine.GUI).Assembly;
 				var webViewRect = (Rect)engineAsm.GetType("UnityEngine.GUIClip", throwOnError: true).InvokeMember("Unclip", BindingFlags.InvokeMethod | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public, null, null, new object[] { new Rect(0, 0, this.position.width, this.position.height) });
 				this.webView.Invoke("SetSizeAndPosition", (int)(webViewRect.x + this.Padding.x), (int)(webViewRect.y + this.Padding.y), (int)(webViewRect.width - (this.Padding.width + this.Padding.x)), (int)(webViewRect.height - (this.Padding.height + this.Padding.y)));
 			}
@@ -133,13 +134,14 @@ namespace GameDevWare.Charon.Windows
 		{
 			if (!this.webView)
 			{
-				var editorAsm = typeof(SceneView).Assembly;
-				var engineAsm = typeof(ScriptableObject).Assembly;
+				var editorAsm = typeof(UnityEditor.SceneView).Assembly;
+				var engineAsm = typeof(UnityEngine.GUI).Assembly;
 				var webViewRect = (Rect)engineAsm.GetType("UnityEngine.GUIClip", throwOnError: true).InvokeMember("Unclip", BindingFlags.InvokeMethod | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public, null, null, new object[] { new Rect(0, 0, this.position.width, this.position.height) });
 				this.webView = CreateInstance(editorAsm.GetType("UnityEditor.WebView", throwOnError: true));
 				var hostView = this.GetFieldValue("m_Parent");
 				this.webView.Invoke("InitWebView", hostView, (int)(webViewRect.x + this.Padding.x), (int)(webViewRect.y + this.Padding.y), (int)(webViewRect.width - (this.Padding.width + this.Padding.x)), (int)(webViewRect.height - (this.Padding.height + this.Padding.y)), false);
 				this.webView.SetPropertyValue("hideFlags", HideFlags.HideAndDontSave);
+
 			}
 			this.webView.Invoke("SetDelegateObject", this);
 			this.webView.Invoke("LoadURL", url);
