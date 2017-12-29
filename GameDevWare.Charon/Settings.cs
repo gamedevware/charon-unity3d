@@ -81,7 +81,7 @@ namespace GameDevWare.Charon
 			{
 				settings = new Settings
 				{
-					EditorPort = UnityEngine.Random.Range(10000, 50000),
+					EditorPort = new System.Random().Next(10000, 50000),
 					ServerAddress = null,
 					Verbose = false
 				};
