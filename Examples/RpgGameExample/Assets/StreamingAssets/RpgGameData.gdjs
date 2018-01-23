@@ -1,0 +1,5695 @@
+{
+	"ToolsVersion": "2017.4.3.0",
+	"Collections": {
+		"Entity": [
+			{
+				"Id": "18d4bf318f3c49688087dbed",
+				"Name": "Entity",
+				"DisplayName": "Entity",
+				"Group": "Design",
+				"Description": null,
+				"IdGenerator": 1,
+				"Specifications": "classgen=skip&icon=blueprint",
+				"Attributes": [
+					{
+						"Id": "53bd34a376a21229219cb156",
+						"Name": "Id",
+						"DisplayName": "Id",
+						"Description": null,
+						"DataType": 0,
+						"DefaultValue": null,
+						"Uniqueness": 1,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 12,
+						"Specifications": null
+					},
+					{
+						"Id": "3ad672c130f6192149605540",
+						"Name": "Name",
+						"DisplayName": "Name",
+						"Description": null,
+						"DataType": 0,
+						"DefaultValue": null,
+						"Uniqueness": 2,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 8000,
+						"Specifications": null
+					},
+					{
+						"Id": "16e2300bf6a23c488629e69d",
+						"Name": "DisplayName",
+						"DisplayName": "Display Name",
+						"Description": null,
+						"DataType": 0,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 8000,
+						"Specifications": null
+					},
+					{
+						"Id": "59088257983a362690093cf2",
+						"Name": "Group",
+						"DisplayName": "Group",
+						"Description": null,
+						"DataType": 0,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 0,
+						"ReferenceType": null,
+						"Size": 128,
+						"Specifications": "editor=combobox"
+					},
+					{
+						"Id": "59088257983a362690093cf4",
+						"Name": "Description",
+						"DisplayName": "Description",
+						"Description": null,
+						"DataType": 0,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 0,
+						"ReferenceType": null,
+						"Size": 8000,
+						"Specifications": "editor=textareafield&editor.grow=true"
+					},
+					{
+						"Id": "41a0a2dd9519fbb5e32c5932",
+						"Name": "IdGenerator",
+						"DisplayName": "Id Generator",
+						"Description": null,
+						"DataType": 18,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "pick.None=0&pick.ObjectId=1&pick.Guid=2&pick.Sequence=3&pick.GlobalSequence=4"
+					},
+					{
+						"Id": "356560097834457153bb7b64",
+						"Name": "Specifications",
+						"DisplayName": "Specifications",
+						"Description": null,
+						"DataType": 0,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 0,
+						"ReferenceType": null,
+						"Size": 8000,
+						"Specifications": null
+					},
+					{
+						"Id": "cec3d153d20fdb588c1161c9",
+						"Name": "Attributes",
+						"DisplayName": "Attributes",
+						"Description": null,
+						"DataType": 23,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": {
+							"Id": "d40d8eb1a23248b69b252eea",
+							"DisplayName": "Attribute"
+						},
+						"Size": 0,
+						"Specifications": null
+					}
+				]
+			},
+			{
+				"Id": "55a4f32faca22e191098f3d9",
+				"Name": "ProjectSettings",
+				"DisplayName": "Project Settings",
+				"Group": "Settings",
+				"Description": null,
+				"IdGenerator": 1,
+				"Specifications": "classgen=skip&icon=gear&type=settings",
+				"Attributes": [
+					{
+						"Id": "59088258983a362690093d00",
+						"Name": "Id",
+						"DisplayName": "Id",
+						"Description": null,
+						"DataType": 0,
+						"DefaultValue": null,
+						"Uniqueness": 1,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 24,
+						"Specifications": null
+					},
+					{
+						"Id": "59088258983a362690093d01",
+						"Name": "Name",
+						"DisplayName": "Project Name",
+						"Description": null,
+						"DataType": 0,
+						"DefaultValue": "Untitled Project",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 128,
+						"Specifications": null
+					},
+					{
+						"Id": "59088259983a362690093d0f",
+						"Name": "PrimaryLanguage",
+						"DisplayName": "Primary Language",
+						"Description": null,
+						"DataType": 0,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 0,
+						"ReferenceType": null,
+						"Size": 32,
+						"Specifications": "editor=languagefield"
+					},
+					{
+						"Id": "59088259983a362690093d0d",
+						"Name": "Languages",
+						"DisplayName": "Languages",
+						"Description": null,
+						"DataType": 0,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 0,
+						"ReferenceType": null,
+						"Size": 8000,
+						"Specifications": "editor=languagelistfield"
+					},
+					{
+						"Id": "59088259983a362690093d0b",
+						"Name": "Copyright",
+						"DisplayName": "Copyright",
+						"Description": null,
+						"DataType": 0,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 0,
+						"ReferenceType": null,
+						"Size": 512,
+						"Specifications": null
+					}
+				]
+			},
+			{
+				"Id": "59f5b0a730bb84165c06b547",
+				"Name": "Parameter",
+				"DisplayName": "Parameter",
+				"Group": "Settings",
+				"Description": null,
+				"IdGenerator": 0,
+				"Specifications": "icon=tag-hash",
+				"Attributes": [
+					{
+						"Id": "59f5b0a730bb84165c06b548",
+						"Name": "Id",
+						"DisplayName": "Id",
+						"Description": null,
+						"DataType": 18,
+						"DefaultValue": "0",
+						"Uniqueness": 1,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "pick.Position=80&pick.VirtueChance=74&pick.KnockbackChance=73&pick.MarkChance=71&pick.StunChance=70&pick.BleedHealChance=60&pick.StressHealPercent=59&pick.StressHealTo=58&pick.StressHealFrom=57&pick.HealPercent=56&pick.HealMultiplier=55&pick.HealTo=54&pick.HealFrom=53&pick.DamagePercent=52&pick.DamageTo=51&pick.DamageFrom=50&pick.StressHealAplification=31&pick.HealAmplification=30&pick.StressResistance=29&pick.TrapResistance=28&pick.DebuffResistance=27&pick.BleedResistance=26&pick.MoveResistance=25&pick.DeathBlowResistance=24&pick.DiseaseResistance=23&pick.BlightResistance=22&pick.StunResistance=21&pick.HealResistance=20&pick.FoodConsumationMultiplier=11&pick.ScoutingChance=10&pick.Protection=9&pick.Dodge=8&pick.Stress=7&pick.CrtiticalStrikeChance=6&pick.Accuracy=5&pick.Speed=4&pick.MaxHitPointsPercent=3&pick.MaxHitPoints=2&pick.HitPoints=1"
+					},
+					{
+						"Id": "59f5b0a730bb84165c06b549",
+						"Name": "MinValue",
+						"DisplayName": "Min Value",
+						"Description": "Maximal value for this attribute",
+						"DataType": 12,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 0,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "displayPrecision=2"
+					},
+					{
+						"Id": "59f5b0a730bb84165c06b54a",
+						"Name": "MaxValue",
+						"DisplayName": "Max Value",
+						"Description": "Maximal value for this attribute",
+						"DataType": 12,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 0,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "displayPrecision=2"
+					},
+					{
+						"Id": "59f5be2030bb84165c06b5da",
+						"Name": "MinValueParameter",
+						"DisplayName": "Min Value Parameter",
+						"Description": null,
+						"DataType": 28,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 0,
+						"ReferenceType": {
+							"Id": "59f5b0a730bb84165c06b547",
+							"DisplayName": "Parameter"
+						},
+						"Size": 8000,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5bcec30bb84165c06b5bb",
+						"Name": "MaxValueParameter",
+						"DisplayName": "Max Value Parameter",
+						"Description": null,
+						"DataType": 28,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 0,
+						"ReferenceType": {
+							"Id": "59f5b0a730bb84165c06b547",
+							"DisplayName": "Parameter"
+						},
+						"Size": 8000,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5beb730bb84165c06b5e2",
+						"Name": "ValueKind",
+						"DisplayName": "Value Kind",
+						"Description": null,
+						"DataType": 18,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "pick.Integer=1&pick.Number=2&pick.Percent=3"
+					}
+				]
+			},
+			{
+				"Id": "59f5b11030bb84165c06b54e",
+				"Name": "ParameterValue",
+				"DisplayName": "Parameter Value",
+				"Group": null,
+				"Description": null,
+				"IdGenerator": 3,
+				"Specifications": "icon=edit-symbol&type=component",
+				"Attributes": [
+					{
+						"Id": "59f5b11030bb84165c06b54f",
+						"Name": "Id",
+						"DisplayName": "Id",
+						"Description": null,
+						"DataType": 13,
+						"DefaultValue": null,
+						"Uniqueness": 1,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5b11030bb84165c06b550",
+						"Name": "Parameter",
+						"DisplayName": "Parameter",
+						"Description": null,
+						"DataType": 28,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": {
+							"Id": "59f5b0a730bb84165c06b547",
+							"DisplayName": "Parameter"
+						},
+						"Size": 8000,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5b11030bb84165c06b551",
+						"Name": "Value",
+						"DisplayName": "Value",
+						"Description": null,
+						"DataType": 12,
+						"DefaultValue": "0.00",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "displayPrecision=2"
+					},
+					{
+						"Id": "59f5dfea983a36197000369d",
+						"Name": "Condition",
+						"DisplayName": "Condition",
+						"Description": null,
+						"DataType": 28,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 0,
+						"ReferenceType": {
+							"Id": "59f5dedf983a361970003697",
+							"DisplayName": "Conditions"
+						},
+						"Size": 0,
+						"Specifications": null
+					}
+				]
+			},
+			{
+				"Id": "59f5b1c830bb84165c06b556",
+				"Name": "Provision",
+				"DisplayName": "Provisions",
+				"Group": "Dungeons",
+				"Description": null,
+				"IdGenerator": 0,
+				"Specifications": "icon=box",
+				"Attributes": [
+					{
+						"Id": "59f5b1c830bb84165c06b557",
+						"Name": "Id",
+						"DisplayName": "Id",
+						"Description": null,
+						"DataType": 0,
+						"DefaultValue": null,
+						"Uniqueness": 1,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 256,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5b1c830bb84165c06b559",
+						"Name": "Cost",
+						"DisplayName": "Cost",
+						"Description": "Cost of provision in gold",
+						"DataType": 13,
+						"DefaultValue": "0.00",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "displayPrecision=2"
+					},
+					{
+						"Id": "59f5b40530bb84165c06b571",
+						"Name": "Item",
+						"DisplayName": "Item",
+						"Description": null,
+						"DataType": 22,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": {
+							"Id": "59f5b3f130bb84165c06b56b",
+							"DisplayName": "Item"
+						},
+						"Size": 8000,
+						"Specifications": null
+					}
+				]
+			},
+			{
+				"Id": "59f5b29330bb84165c06b55c",
+				"Name": "Hero",
+				"DisplayName": "Heroes",
+				"Group": "Heroes and Stuff",
+				"Description": null,
+				"IdGenerator": 0,
+				"Specifications": "icon=user-gray",
+				"Attributes": [
+					{
+						"Id": "59f5b29330bb84165c06b55d",
+						"Name": "Id",
+						"DisplayName": "Id",
+						"Description": null,
+						"DataType": 0,
+						"DefaultValue": null,
+						"Uniqueness": 1,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 256,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5b29330bb84165c06b55e",
+						"Name": "Name",
+						"DisplayName": "Name",
+						"Description": null,
+						"DataType": 1,
+						"DefaultValue": "Translate Me!",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 120,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5b29330bb84165c06b55f",
+						"Name": "Bio",
+						"DisplayName": "Bio",
+						"Description": null,
+						"DataType": 1,
+						"DefaultValue": "Translate Me!",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 1000,
+						"Specifications": "editor=localizedtextareafield"
+					},
+					{
+						"Id": "59f5b29330bb84165c06b560",
+						"Name": "Religious",
+						"DisplayName": "Religious",
+						"Description": null,
+						"DataType": 5,
+						"DefaultValue": "false",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 8000,
+						"Specifications": null
+					},
+					{
+						"Id": "59f9e7dd983a364298db5e3e",
+						"Name": "DislikeHeroes",
+						"DisplayName": "Dislike Heroes",
+						"Description": "List of heroes which dislikes current hero.",
+						"DataType": 29,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 0,
+						"ReferenceType": {
+							"Id": "59f5b29330bb84165c06b55c",
+							"DisplayName": "Heroes"
+						},
+						"Size": 0,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5b29330bb84165c06b561",
+						"Name": "Provisions",
+						"DisplayName": "Provisions",
+						"Description": null,
+						"DataType": 28,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 0,
+						"ReferenceType": {
+							"Id": "59f5b1c830bb84165c06b556",
+							"DisplayName": "Provisions"
+						},
+						"Size": 8000,
+						"Specifications": null
+					},
+					{
+						"Id": "59f9e7dd983a364298db5e3c",
+						"Name": "ProvisionsCount",
+						"DisplayName": "Provisions Count",
+						"Description": null,
+						"DataType": 13,
+						"DefaultValue": "1",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5b29330bb84165c06b562",
+						"Name": "MovementForward",
+						"DisplayName": "Movement Forward",
+						"Description": "Maximum possible change in the position of the hero. Direction - forward.",
+						"DataType": 13,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5b29330bb84165c06b563",
+						"Name": "MovementBackward",
+						"DisplayName": "Movement Backward",
+						"Description": "Maximum possible change in the position of the hero. Direction - backward.",
+						"DataType": 13,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": null
+					},
+					{
+						"Id": "59f9e586983a364298db5e1f",
+						"Name": "Protection",
+						"DisplayName": "Protection",
+						"Description": "from 0.0 to 1.0 where 0.5 is 50%",
+						"DataType": 13,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": null
+					},
+					{
+						"Id": "59f9e7dd983a364298db5e3b",
+						"Name": "AccuracyModifier",
+						"DisplayName": "Accuracy Modifier",
+						"Description": null,
+						"DataType": 13,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": null
+					},
+					{
+						"Id": "59f9e7dd983a364298db5e3a",
+						"Name": "StunResistance",
+						"DisplayName": "Stun Resistance",
+						"Description": "from 0.0 to 1.0 where 0.5 is 50%",
+						"DataType": 12,
+						"DefaultValue": "0.00",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "displayPrecision=2"
+					},
+					{
+						"Id": "59f9e7dd983a364298db5e39",
+						"Name": "BlightResistance",
+						"DisplayName": "Blight Resistance",
+						"Description": "from 0.0 to 1.0 where 0.5 is 50%",
+						"DataType": 12,
+						"DefaultValue": "0.00",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "displayPrecision=2"
+					},
+					{
+						"Id": "59f9e7dd983a364298db5e38",
+						"Name": "DiseaseResistance",
+						"DisplayName": "Disease Resistance",
+						"Description": "from 0.0 to 1.0 where 0.5 is 50%",
+						"DataType": 12,
+						"DefaultValue": "0.00",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "displayPrecision=2"
+					},
+					{
+						"Id": "59f9e7dd983a364298db5e37",
+						"Name": "DeathBlowResistance",
+						"DisplayName": "Death Blow Resistance",
+						"Description": "from 0.0 to 1.0 where 0.5 is 50%",
+						"DataType": 12,
+						"DefaultValue": "0.67",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "displayPrecision=2"
+					},
+					{
+						"Id": "59f9e7dd983a364298db5e36",
+						"Name": "MoveResistance",
+						"DisplayName": "Move Resistance",
+						"Description": "from 0.0 to 1.0 where 0.5 is 50%",
+						"DataType": 12,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "displayPrecision=2"
+					},
+					{
+						"Id": "59f9e7dd983a364298db5e35",
+						"Name": "BleedResistance",
+						"DisplayName": "Bleed Resistance",
+						"Description": "from 0.0 to 1.0 where 0.5 is 50%",
+						"DataType": 12,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "displayPrecision=2"
+					},
+					{
+						"Id": "59f9e7dc983a364298db5e34",
+						"Name": "DebuffResistance",
+						"DisplayName": "Debuff Resistance",
+						"Description": "from 0.0 to 1.0 where 0.5 is 50%",
+						"DataType": 12,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "displayPrecision=2"
+					},
+					{
+						"Id": "59f9e7dc983a364298db5e33",
+						"Name": "TrapResistance",
+						"DisplayName": "Trap Resistance",
+						"Description": "from 0.0 to 1.0 where 0.5 is 50%",
+						"DataType": 12,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "displayPrecision=2"
+					},
+					{
+						"Id": "59f9e7dc983a364298db5e32",
+						"Name": "Armors",
+						"DisplayName": "Armors",
+						"Description": null,
+						"DataType": 23,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": {
+							"Id": "59f9e7b6983a364298db5e2c",
+							"DisplayName": "Armor"
+						},
+						"Size": 0,
+						"Specifications": null
+					},
+					{
+						"Id": "59f9e7dd983a364298db5e3d",
+						"Name": "Weapons",
+						"DisplayName": "Weapons",
+						"Description": null,
+						"DataType": 23,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": {
+							"Id": "59f9e745983a364298db5e22",
+							"DisplayName": "Weapon"
+						},
+						"Size": 0,
+						"Specifications": null
+					}
+				]
+			},
+			{
+				"Id": "59f5b3f130bb84165c06b56b",
+				"Name": "Item",
+				"DisplayName": "Item",
+				"Group": "Dungeons",
+				"Description": null,
+				"IdGenerator": 0,
+				"Specifications": "icon=medal-bronze",
+				"Attributes": [
+					{
+						"Id": "59f5b3f130bb84165c06b56c",
+						"Name": "Id",
+						"DisplayName": "Id",
+						"Description": null,
+						"DataType": 0,
+						"DefaultValue": null,
+						"Uniqueness": 1,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 256,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5b48d30bb84165c06b575",
+						"Name": "Name",
+						"DisplayName": "Name",
+						"Description": null,
+						"DataType": 1,
+						"DefaultValue": "Translate Me!",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 120,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5c37c30bb84165c06b638",
+						"Name": "Description",
+						"DisplayName": "Description",
+						"Description": null,
+						"DataType": 1,
+						"DefaultValue": "Translate Me!",
+						"Uniqueness": 0,
+						"Requirement": 0,
+						"ReferenceType": null,
+						"Size": 8000,
+						"Specifications": "editor=localizedtextareafield&editor.grow=true"
+					},
+					{
+						"Id": "59f5b3f130bb84165c06b56d",
+						"Name": "StackSize",
+						"DisplayName": "Stack Size",
+						"Description": "Zero and one mean - non stackable",
+						"DataType": 13,
+						"DefaultValue": "1",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5b3f130bb84165c06b56f",
+						"Name": "GoldValue",
+						"DisplayName": "Gold Value",
+						"Description": "Gold value of treasure. Rewared upon completion of mission.",
+						"DataType": 13,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5f573983a361970003701",
+						"Name": "ActivationEffects",
+						"DisplayName": "Activation Effects",
+						"Description": null,
+						"DataType": 23,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 0,
+						"ReferenceType": {
+							"Id": "59f5b11030bb84165c06b54e",
+							"DisplayName": "Parameter Value"
+						},
+						"Size": 0,
+						"Specifications": null
+					}
+				]
+			},
+			{
+				"Id": "59f5b57530bb84165c06b579",
+				"Name": "Location",
+				"DisplayName": "Locations",
+				"Group": "Dungeons",
+				"Description": null,
+				"IdGenerator": 0,
+				"Specifications": "icon=ui-slider-vertical",
+				"Attributes": [
+					{
+						"Id": "59f5b57530bb84165c06b57a",
+						"Name": "Id",
+						"DisplayName": "Id",
+						"Description": null,
+						"DataType": 0,
+						"DefaultValue": null,
+						"Uniqueness": 1,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 256,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5b57530bb84165c06b57b",
+						"Name": "Name",
+						"DisplayName": "Name",
+						"Description": null,
+						"DataType": 1,
+						"DefaultValue": "Translate Me!",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 120,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5d286983a361970003657",
+						"Name": "Flags",
+						"DisplayName": "Flags",
+						"Description": null,
+						"DataType": 19,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 0,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "pick.None=0&pick.Home=1&pick.Tutorial=2"
+					}
+				]
+			},
+			{
+				"Id": "59f5b61630bb84165c06b57f",
+				"Name": "Trinket",
+				"DisplayName": "Trinkets",
+				"Group": "Heroes and Stuff",
+				"Description": null,
+				"IdGenerator": 0,
+				"Specifications": "icon=lollipop",
+				"Attributes": [
+					{
+						"Id": "59f5b61630bb84165c06b580",
+						"Name": "Id",
+						"DisplayName": "Id",
+						"Description": null,
+						"DataType": 0,
+						"DefaultValue": null,
+						"Uniqueness": 1,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 256,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5b61630bb84165c06b581",
+						"Name": "Rarity",
+						"DisplayName": "Rarity",
+						"Description": null,
+						"DataType": 18,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "pick.Common=1&pick.Uncommon=2&pick.Rare=3&pick.VeryRare=4&pick.Shrieker=5&pick.Ancestral=6&pick.CrimsonCourt=7&pick.DarkestDungeon=8&pick.Trophy=9&pick.Backer=10"
+					},
+					{
+						"Id": "59f5b61630bb84165c06b582",
+						"Name": "OriginDungeon",
+						"DisplayName": "Origin Dungeon",
+						"Description": null,
+						"DataType": 28,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 0,
+						"ReferenceType": {
+							"Id": "59f5b57530bb84165c06b579",
+							"DisplayName": "Locations"
+						},
+						"Size": 8000,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5b61630bb84165c06b583",
+						"Name": "HeroRestriction",
+						"DisplayName": "Hero Restriction",
+						"Description": null,
+						"DataType": 28,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 0,
+						"ReferenceType": {
+							"Id": "59f5b29330bb84165c06b55c",
+							"DisplayName": "Heroes"
+						},
+						"Size": 8000,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5b65c30bb84165c06b586",
+						"Name": "Item",
+						"DisplayName": "Item",
+						"Description": null,
+						"DataType": 22,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": {
+							"Id": "59f5b3f130bb84165c06b56b",
+							"DisplayName": "Item"
+						},
+						"Size": 8000,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5ea78983a3619700036cf",
+						"Name": "Effects",
+						"DisplayName": "Effects",
+						"Description": null,
+						"DataType": 23,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": {
+							"Id": "59f5b11030bb84165c06b54e",
+							"DisplayName": "Parameter Value"
+						},
+						"Size": 0,
+						"Specifications": null
+					}
+				]
+			},
+			{
+				"Id": "59f5b7f330bb84165c06b58a",
+				"Name": "Monster",
+				"DisplayName": "Monsters",
+				"Group": "Dungeons",
+				"Description": null,
+				"IdGenerator": 0,
+				"Specifications": "icon=skull-mad",
+				"Attributes": [
+					{
+						"Id": "59f5b7f330bb84165c06b58b",
+						"Name": "Id",
+						"DisplayName": "Id",
+						"Description": null,
+						"DataType": 0,
+						"DefaultValue": null,
+						"Uniqueness": 1,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 256,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5b7f330bb84165c06b58c",
+						"Name": "Name",
+						"DisplayName": "Name",
+						"Description": null,
+						"DataType": 1,
+						"DefaultValue": "Translate Me!",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 120,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5b7f330bb84165c06b58d",
+						"Name": "Type",
+						"DisplayName": "Type",
+						"Description": null,
+						"DataType": 18,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "typeName=MonsterType&pick.Cosmic=10&pick.Thatchery=9&pick.Ironwork=8&pick.Crockery=7&pick.Carpentry=6&pick.Corpse=5&pick.Eldritch=4&pick.Unholy=3&pick.Beast=2&pick.Human=1"
+					},
+					{
+						"Id": "59f60de7983a3609c836dfcb",
+						"Name": "SecondType",
+						"DisplayName": "Second Type",
+						"Description": null,
+						"DataType": 18,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 0,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "typeName=MonsterType&pick.Human=1&pick.Beast=2&pick.Unholy=3&pick.Eldritch=4&pick.Corpse=5&pick.Carpentry=6&pick.Crockery=7&pick.Ironwork=8&pick.Thatchery=9&pick.Cosmic=10"
+					},
+					{
+						"Id": "59f5b81230bb84165c06b592",
+						"Name": "Parameters",
+						"DisplayName": "Parameters",
+						"Description": null,
+						"DataType": 23,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": {
+							"Id": "59f5b11030bb84165c06b54e",
+							"DisplayName": "Parameter Value"
+						},
+						"Size": 8000,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5c19930bb84165c06b629",
+						"Name": "Locations",
+						"DisplayName": "Locations",
+						"Description": null,
+						"DataType": 29,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": {
+							"Id": "59f5b57530bb84165c06b579",
+							"DisplayName": "Locations"
+						},
+						"Size": 8000,
+						"Specifications": null
+					}
+				]
+			},
+			{
+				"Id": "59f5b9dd30bb84165c06b59a",
+				"Name": "Loot",
+				"DisplayName": "Loot",
+				"Group": null,
+				"Description": null,
+				"IdGenerator": 3,
+				"Specifications": "icon=box-share&type=component",
+				"Attributes": [
+					{
+						"Id": "59f5b9dd30bb84165c06b59b",
+						"Name": "Id",
+						"DisplayName": "Id",
+						"Description": null,
+						"DataType": 13,
+						"DefaultValue": null,
+						"Uniqueness": 1,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5f304983a3619700036f2",
+						"Name": "Type",
+						"DisplayName": "Type",
+						"Description": null,
+						"DataType": 18,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "pick.Gold=6&pick.Torch=5&pick.Supplies=4&pick.Trinket=3&pick.Heirloom=2&pick.Any=1&pick.Food=7"
+					},
+					{
+						"Id": "59f5f304983a3619700036f3",
+						"Name": "Amount",
+						"DisplayName": "Amount",
+						"Description": null,
+						"DataType": 13,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 0,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": null
+					}
+				]
+			},
+			{
+				"Id": "59f5baaa30bb84165c06b5a0",
+				"Name": "CombatEffect",
+				"DisplayName": "Combat Effect",
+				"Group": null,
+				"Description": null,
+				"IdGenerator": 3,
+				"Specifications": "icon=table-draw&type=component",
+				"Attributes": [
+					{
+						"Id": "59f5baaa30bb84165c06b5a1",
+						"Name": "Id",
+						"DisplayName": "Id",
+						"Description": null,
+						"DataType": 13,
+						"DefaultValue": "0",
+						"Uniqueness": 1,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5d5cc983a361970003673",
+						"Name": "Changes",
+						"DisplayName": "Changes",
+						"Description": null,
+						"DataType": 23,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 0,
+						"ReferenceType": {
+							"Id": "59f5b11030bb84165c06b54e",
+							"DisplayName": "Parameter Value"
+						},
+						"Size": 0,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5e09e983a36197000369f",
+						"Name": "Duration",
+						"DisplayName": "Duration",
+						"Description": "zero or empty - effect is permanent.",
+						"DataType": 13,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 0,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5e09e983a3619700036a0",
+						"Name": "DurationUnit",
+						"DisplayName": "Duration Unit",
+						"Description": null,
+						"DataType": 18,
+						"DefaultValue": "1",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "typeName=DurationUnit&pick.Rounds=1&pick.Camps=2&pick.Missions=3"
+					}
+				]
+			},
+			{
+				"Id": "59f5bac130bb84165c06b5a4",
+				"Name": "CurioCleansingOption",
+				"DisplayName": "Curio Cleansing Option",
+				"Group": null,
+				"Description": null,
+				"IdGenerator": 3,
+				"Specifications": "icon=shovel&type=component",
+				"Attributes": [
+					{
+						"Id": "59f5bac130bb84165c06b5a5",
+						"Name": "Id",
+						"DisplayName": "Id",
+						"Description": null,
+						"DataType": 13,
+						"DefaultValue": null,
+						"Uniqueness": 1,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5bb6130bb84165c06b5ab",
+						"Name": "Chance",
+						"DisplayName": "Chance",
+						"Description": "Chance of happening of this cleansing option relative to other options.",
+						"DataType": 12,
+						"DefaultValue": "0.00",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "displayPrecision=2"
+					},
+					{
+						"Id": "59f5bac130bb84165c06b5a6",
+						"Name": "Item",
+						"DisplayName": "Item",
+						"Description": "Cleansing item",
+						"DataType": 28,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 0,
+						"ReferenceType": {
+							"Id": "59f5b3f130bb84165c06b56b",
+							"DisplayName": "Item"
+						},
+						"Size": 8000,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5bac130bb84165c06b5a7",
+						"Name": "Loot",
+						"DisplayName": "Loot",
+						"Description": null,
+						"DataType": 23,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 0,
+						"ReferenceType": {
+							"Id": "59f5b9dd30bb84165c06b59a",
+							"DisplayName": "Loot"
+						},
+						"Size": 8000,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5f121983a3619700036e8",
+						"Name": "QuirkChance",
+						"DisplayName": "Quirk Chance",
+						"Description": "from 0.0 to 1.0 where 0.5 is 50%. Positive value is for positive quirks and negative for negative quirks.",
+						"DataType": 12,
+						"DefaultValue": "0.00",
+						"Uniqueness": 0,
+						"Requirement": 0,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "displayPrecision=2"
+					},
+					{
+						"Id": "59f5f121983a3619700036e9",
+						"Name": "DiseaseChance",
+						"DisplayName": "Disease Chance",
+						"Description": "from 0.0 to 1.0 where 0.5 is 50%",
+						"DataType": 12,
+						"DefaultValue": "0.00",
+						"Uniqueness": 0,
+						"Requirement": 0,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "displayPrecision=2"
+					},
+					{
+						"Id": "59f5f121983a3619700036ea",
+						"Name": "Effects",
+						"DisplayName": "Effects",
+						"Description": null,
+						"DataType": 23,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 0,
+						"ReferenceType": {
+							"Id": "59f5b11030bb84165c06b54e",
+							"DisplayName": "Parameter Value"
+						},
+						"Size": 0,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5bac130bb84165c06b5a9",
+						"Name": "ItemIsConsumed",
+						"DisplayName": "Item Is Consumed",
+						"Description": null,
+						"DataType": 5,
+						"DefaultValue": "true",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 8000,
+						"Specifications": null
+					}
+				]
+			},
+			{
+				"Id": "59f5bbc230bb84165c06b5ae",
+				"Name": "Curio",
+				"DisplayName": "Curios",
+				"Group": "Dungeons",
+				"Description": null,
+				"IdGenerator": 0,
+				"Specifications": "icon=spectacle",
+				"Attributes": [
+					{
+						"Id": "59f5bbc230bb84165c06b5af",
+						"Name": "Id",
+						"DisplayName": "Id",
+						"Description": null,
+						"DataType": 0,
+						"DefaultValue": null,
+						"Uniqueness": 1,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 256,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5bbc230bb84165c06b5b0",
+						"Name": "Type",
+						"DisplayName": "Type",
+						"Description": null,
+						"DataType": 19,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "pick.None=0&pick.Reflective=1&pick.Worship=2&pick.Knowledge=4&pick.Haunted=8&pick.Scrounging=16&pick.Fountain=32&pick.Torture=64&pick.Treasure=128&pick.Body=256&pick.Unholy=512&pick.Drink=1024&pick.Food=2048"
+					},
+					{
+						"Id": "59f5bbc230bb84165c06b5b1",
+						"Name": "Name",
+						"DisplayName": "Name",
+						"Description": null,
+						"DataType": 1,
+						"DefaultValue": "Translate Me!",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 8000,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5f25f983a3619700036ee",
+						"Name": "Description",
+						"DisplayName": "Description",
+						"Description": null,
+						"DataType": 1,
+						"DefaultValue": "Translate Me!",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 512,
+						"Specifications": "editor=localizedtextareafield&editor.grow=true"
+					},
+					{
+						"Id": "59f5bbc230bb84165c06b5b2",
+						"Name": "CleansingOptions",
+						"DisplayName": "Cleansing Options",
+						"Description": "None mean - can't cleanse.",
+						"DataType": 23,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 0,
+						"ReferenceType": {
+							"Id": "59f5bac130bb84165c06b5a4",
+							"DisplayName": "Curio Cleansing Option"
+						},
+						"Size": 8000,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5bbc230bb84165c06b5b3",
+						"Name": "PlacementRestictions",
+						"DisplayName": "Placement Restictions",
+						"Description": null,
+						"DataType": 19,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "pick.None=0&pick.Room=1&pick.Corridor=2"
+					},
+					{
+						"Id": "59f5c18430bb84165c06b627",
+						"Name": "Locations",
+						"DisplayName": "Locations",
+						"Description": null,
+						"DataType": 29,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": {
+							"Id": "59f5b57530bb84165c06b579",
+							"DisplayName": "Locations"
+						},
+						"Size": 8000,
+						"Specifications": null
+					}
+				]
+			},
+			{
+				"Id": "59f5d3a7983a361970003662",
+				"Name": "Disease",
+				"DisplayName": "Diseases",
+				"Group": "Heroes and Stuff",
+				"Description": null,
+				"IdGenerator": 0,
+				"Specifications": "icon=microformats",
+				"Attributes": [
+					{
+						"Id": "59f5d3a7983a361970003663",
+						"Name": "Id",
+						"DisplayName": "Id",
+						"Description": null,
+						"DataType": 0,
+						"DefaultValue": null,
+						"Uniqueness": 1,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 256,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5d3a7983a361970003664",
+						"Name": "Name",
+						"DisplayName": "Name",
+						"Description": null,
+						"DataType": 1,
+						"DefaultValue": "Translate Me!",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 120,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5e825983a3619700036bc",
+						"Name": "Effects",
+						"DisplayName": "Effects",
+						"Description": null,
+						"DataType": 23,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": {
+							"Id": "59f5b11030bb84165c06b54e",
+							"DisplayName": "Parameter Value"
+						},
+						"Size": 0,
+						"Specifications": null
+					}
+				]
+			},
+			{
+				"Id": "59f5d728983a361970003684",
+				"Name": "Quirk",
+				"DisplayName": "Quirks",
+				"Group": "Heroes and Stuff",
+				"Description": null,
+				"IdGenerator": 0,
+				"Specifications": "icon=spectacle-3d",
+				"Attributes": [
+					{
+						"Id": "59f5d728983a361970003685",
+						"Name": "Id",
+						"DisplayName": "Id",
+						"Description": null,
+						"DataType": 0,
+						"DefaultValue": null,
+						"Uniqueness": 1,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 256,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5d728983a361970003686",
+						"Name": "Name",
+						"DisplayName": "Name",
+						"Description": null,
+						"DataType": 1,
+						"DefaultValue": "Translate Me!",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 120,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5d728983a361970003687",
+						"Name": "IsPositive",
+						"DisplayName": "Is Positive",
+						"Description": null,
+						"DataType": 5,
+						"DefaultValue": "false",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 8000,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5e48f983a3619700036b2",
+						"Name": "Effects",
+						"DisplayName": "Effects",
+						"Description": null,
+						"DataType": 23,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": {
+							"Id": "59f5b11030bb84165c06b54e",
+							"DisplayName": "Parameter Value"
+						},
+						"Size": 0,
+						"Specifications": null
+					}
+				]
+			},
+			{
+				"Id": "59f5dedf983a361970003697",
+				"Name": "Conditions",
+				"DisplayName": "Conditions",
+				"Group": "Settings",
+				"Description": null,
+				"IdGenerator": 0,
+				"Specifications": "icon=quill",
+				"Attributes": [
+					{
+						"Id": "59f5dedf983a361970003698",
+						"Name": "Id",
+						"DisplayName": "Id",
+						"Description": null,
+						"DataType": 0,
+						"DefaultValue": null,
+						"Uniqueness": 1,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 256,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5dedf983a361970003699",
+						"Name": "Description",
+						"DisplayName": "Description",
+						"Description": null,
+						"DataType": 1,
+						"DefaultValue": "Translate Me!",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 120,
+						"Specifications": null
+					},
+					{
+						"Id": "59f5dedf983a36197000369a",
+						"Name": "Check",
+						"DisplayName": "Check",
+						"Description": null,
+						"DataType": 35,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 8000,
+						"Specifications": "result=System.Boolean&knownType=Assets.Scripts.AttackType&param.context=Assets.Scripts.CheckContext"
+					}
+				]
+			},
+			{
+				"Id": "59f9e745983a364298db5e22",
+				"Name": "Weapon",
+				"DisplayName": "Weapon",
+				"Group": "Heroes and Stuff",
+				"Description": null,
+				"IdGenerator": 0,
+				"Specifications": "type=component",
+				"Attributes": [
+					{
+						"Id": "59f9e745983a364298db5e23",
+						"Name": "Id",
+						"DisplayName": "Id",
+						"Description": null,
+						"DataType": 0,
+						"DefaultValue": null,
+						"Uniqueness": 1,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 256,
+						"Specifications": null
+					},
+					{
+						"Id": "59f9e745983a364298db5e24",
+						"Name": "Name",
+						"DisplayName": "Name",
+						"Description": null,
+						"DataType": 1,
+						"DefaultValue": "Translate Me!",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 120,
+						"Specifications": null
+					},
+					{
+						"Id": "59f9e745983a364298db5e25",
+						"Name": "DamageFrom",
+						"DisplayName": "Damage From",
+						"Description": null,
+						"DataType": 13,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": null
+					},
+					{
+						"Id": "59f9e745983a364298db5e26",
+						"Name": "DamageTo",
+						"DisplayName": "Damage To",
+						"Description": null,
+						"DataType": 13,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": null
+					},
+					{
+						"Id": "59f9e745983a364298db5e27",
+						"Name": "CriticalStrikeChance",
+						"DisplayName": "Critical Strike Chance",
+						"Description": "from 0.0 to 1.0 where 0.5 is 50%",
+						"DataType": 12,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": null
+					},
+					{
+						"Id": "59f9e745983a364298db5e28",
+						"Name": "Speed",
+						"DisplayName": "Speed",
+						"Description": null,
+						"DataType": 13,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": null
+					}
+				]
+			},
+			{
+				"Id": "59f9e7b6983a364298db5e2c",
+				"Name": "Armor",
+				"DisplayName": "Armor",
+				"Group": "Heroes and Stuff",
+				"Description": null,
+				"IdGenerator": 0,
+				"Specifications": "type=component",
+				"Attributes": [
+					{
+						"Id": "59f9e7b6983a364298db5e2d",
+						"Name": "Id",
+						"DisplayName": "Id",
+						"Description": null,
+						"DataType": 0,
+						"DefaultValue": null,
+						"Uniqueness": 1,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 256,
+						"Specifications": null
+					},
+					{
+						"Id": "59f9e7b6983a364298db5e2e",
+						"Name": "Name",
+						"DisplayName": "Name",
+						"Description": null,
+						"DataType": 1,
+						"DefaultValue": "Translate Me!",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 8000,
+						"Specifications": null
+					},
+					{
+						"Id": "59f9e7b6983a364298db5e2f",
+						"Name": "Dodge",
+						"DisplayName": "Dodge",
+						"Description": "from 0.0 to 1.0 where 0.5 is 50%",
+						"DataType": 12,
+						"DefaultValue": "0.00",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "displayPrecision=2"
+					},
+					{
+						"Id": "59f9e7b6983a364298db5e30",
+						"Name": "HitPoints",
+						"DisplayName": "Hit Points",
+						"Description": null,
+						"DataType": 13,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": null
+					}
+				]
+			},
+			{
+				"Id": "5a1d78d107ff9a7b889cba7d",
+				"Name": "ItemWithCount",
+				"DisplayName": "Item With Count",
+				"Group": "Dungeons",
+				"Description": null,
+				"IdGenerator": 3,
+				"Specifications": "icon=blue-document-sub&type=component",
+				"Attributes": [
+					{
+						"Id": "5a1d78d107ff9a7b889cba7e",
+						"Name": "Id",
+						"DisplayName": "Id",
+						"Description": null,
+						"DataType": 13,
+						"DefaultValue": null,
+						"Uniqueness": 1,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": null
+					},
+					{
+						"Id": "5a1d78d107ff9a7b889cba7f",
+						"Name": "Item",
+						"DisplayName": "Item",
+						"Description": null,
+						"DataType": 28,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": {
+							"Id": "59f5b3f130bb84165c06b56b",
+							"DisplayName": "Item"
+						},
+						"Size": 8000,
+						"Specifications": null
+					},
+					{
+						"Id": "5a1d78d107ff9a7b889cba80",
+						"Name": "Count",
+						"DisplayName": "Count",
+						"Description": null,
+						"DataType": 13,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": null
+					}
+				]
+			},
+			{
+				"Id": "5a1d78de07ff9a7b889cba83",
+				"Name": "StartingSet",
+				"DisplayName": "Starting Set",
+				"Group": "Settings",
+				"Description": null,
+				"IdGenerator": 3,
+				"Specifications": "icon=asterisk&type=settings",
+				"Attributes": [
+					{
+						"Id": "5a1d78de07ff9a7b889cba84",
+						"Name": "Id",
+						"DisplayName": "Id",
+						"Description": null,
+						"DataType": 13,
+						"DefaultValue": null,
+						"Uniqueness": 1,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": null
+					},
+					{
+						"Id": "5a1d78de07ff9a7b889cba85",
+						"Name": "Items",
+						"DisplayName": "Items",
+						"Description": null,
+						"DataType": 23,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": {
+							"Id": "5a1d78d107ff9a7b889cba7d",
+							"DisplayName": "Item With Count"
+						},
+						"Size": 8000,
+						"Specifications": null
+					},
+					{
+						"Id": "5a1d794107ff9a7b889cba88",
+						"Name": "Heroes",
+						"DisplayName": "Heroes",
+						"Description": null,
+						"DataType": 29,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": {
+							"Id": "59f5b29330bb84165c06b55c",
+							"DisplayName": "Heroes"
+						},
+						"Size": 0,
+						"Specifications": null
+					},
+					{
+						"Id": "5a1d797407ff9a7b889cba8b",
+						"Name": "Location",
+						"DisplayName": "Location",
+						"Description": null,
+						"DataType": 28,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": {
+							"Id": "59f5b57530bb84165c06b579",
+							"DisplayName": "Locations"
+						},
+						"Size": 0,
+						"Specifications": null
+					}
+				]
+			},
+			{
+				"Id": "d40d8eb1a23248b69b252eea",
+				"Name": "Attribute",
+				"DisplayName": "Attribute",
+				"Group": "Design",
+				"Description": null,
+				"IdGenerator": 1,
+				"Specifications": "classgen=skip&type=component",
+				"Attributes": [
+					{
+						"Id": "dfd84fc9957e94f02f9f60cc",
+						"Name": "Id",
+						"DisplayName": "Id",
+						"Description": null,
+						"DataType": 0,
+						"DefaultValue": null,
+						"Uniqueness": 1,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 12,
+						"Specifications": null
+					},
+					{
+						"Id": "bd453e1e7f1543a7133d7fb1",
+						"Name": "Name",
+						"DisplayName": "Name",
+						"Description": null,
+						"DataType": 0,
+						"DefaultValue": null,
+						"Uniqueness": 2,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 8000,
+						"Specifications": null
+					},
+					{
+						"Id": "993520ecbe361cf06d060f2a",
+						"Name": "DisplayName",
+						"DisplayName": "Display Name",
+						"Description": null,
+						"DataType": 0,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 8000,
+						"Specifications": null
+					},
+					{
+						"Id": "59088257983a362690093cf6",
+						"Name": "Description",
+						"DisplayName": "Description",
+						"Description": null,
+						"DataType": 0,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 0,
+						"ReferenceType": null,
+						"Size": 8000,
+						"Specifications": "editor=textareafield&editor.grow=true"
+					},
+					{
+						"Id": "7286478a63f200a094a1cdc8",
+						"Name": "DataType",
+						"DisplayName": "Data Type",
+						"Description": null,
+						"DataType": 18,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "pick.Text=0&pick.LocalizedText=1&pick.Logical=5&pick.Time=8&pick.Date=9&pick.Number=12&pick.Document=22&pick.DocumentList=23&pick.Integer=13&pick.PickList=18&pick.Formula=35&pick.Flags=19&pick.Reference=28&pick.ReferenceList=29"
+					},
+					{
+						"Id": "a15529ef753f70deed4af17e",
+						"Name": "DefaultValue",
+						"DisplayName": "Default Value",
+						"Description": null,
+						"DataType": 0,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 0,
+						"ReferenceType": null,
+						"Size": 8000,
+						"Specifications": null
+					},
+					{
+						"Id": "caaa34c8708b5550c95004d9",
+						"Name": "Uniqueness",
+						"DisplayName": "Uniqueness",
+						"Description": null,
+						"DataType": 18,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "pick.None=0&pick.Unique=1&pick.UniqueInContainer=2"
+					},
+					{
+						"Id": "d3e46e75b8a33b2b202f1a45",
+						"Name": "Requirement",
+						"DisplayName": "Requirement",
+						"Description": null,
+						"DataType": 18,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": "pick.None=0&pick.NotDefault=1&pick.NotEmpty=2"
+					},
+					{
+						"Id": "e3664a130c8c9f45220f08a7",
+						"Name": "ReferenceType",
+						"DisplayName": "Reference Type",
+						"Description": null,
+						"DataType": 28,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 0,
+						"ReferenceType": {
+							"Id": "18d4bf318f3c49688087dbed",
+							"DisplayName": "Entity"
+						},
+						"Size": 0,
+						"Specifications": null
+					},
+					{
+						"Id": "8ddc9671536310356d553f7b",
+						"Name": "Size",
+						"DisplayName": "Size",
+						"Description": null,
+						"DataType": 13,
+						"DefaultValue": "8000",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specifications": null
+					},
+					{
+						"Id": "f1c2a71b2da0b365a852ae7a",
+						"Name": "Specifications",
+						"DisplayName": "Specifications",
+						"Description": null,
+						"DataType": 0,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 0,
+						"ReferenceType": null,
+						"Size": 8000,
+						"Specifications": null
+					}
+				]
+			}
+		],
+		"ProjectSettings": [
+			{
+				"Id": "59552913983a3636e0d79b53",
+				"Name": "Quite Dark Dungeon",
+				"PrimaryLanguage": "en-US",
+				"Languages": null,
+				"Copyright": null
+			}
+		],
+		"Parameter": [
+			{
+				"Id": 1,
+				"MinValue": 0,
+				"MaxValue": null,
+				"MinValueParameter": null,
+				"MaxValueParameter": {
+					"Id": 2,
+					"DisplayName": "Max Hit Points"
+				},
+				"ValueKind": 1
+			},
+			{
+				"Id": 2,
+				"MinValue": 0,
+				"MaxValue": null,
+				"MinValueParameter": null,
+				"MaxValueParameter": null,
+				"ValueKind": 1
+			},
+			{
+				"Id": 3,
+				"MinValue": 0,
+				"MaxValue": 1,
+				"MinValueParameter": null,
+				"MaxValueParameter": null,
+				"ValueKind": 3
+			},
+			{
+				"Id": 4,
+				"MinValue": 0,
+				"MaxValue": null,
+				"MinValueParameter": null,
+				"MaxValueParameter": null,
+				"ValueKind": 1
+			},
+			{
+				"Id": 5,
+				"MinValue": 0,
+				"MaxValue": 1,
+				"MinValueParameter": null,
+				"MaxValueParameter": null,
+				"ValueKind": 3
+			},
+			{
+				"Id": 6,
+				"MinValue": 0,
+				"MaxValue": 1,
+				"MinValueParameter": null,
+				"MaxValueParameter": null,
+				"ValueKind": 3
+			},
+			{
+				"Id": 7,
+				"MinValue": 0,
+				"MaxValue": 1,
+				"MinValueParameter": null,
+				"MaxValueParameter": {
+					"Id": 1,
+					"DisplayName": "Hit Points"
+				},
+				"ValueKind": 1
+			},
+			{
+				"Id": 8,
+				"MinValue": 0,
+				"MaxValue": 1,
+				"MinValueParameter": null,
+				"MaxValueParameter": null,
+				"ValueKind": 3
+			},
+			{
+				"Id": 9,
+				"MinValue": 0,
+				"MaxValue": 1,
+				"MinValueParameter": null,
+				"MaxValueParameter": null,
+				"ValueKind": 3
+			},
+			{
+				"Id": 10,
+				"MinValue": 0,
+				"MaxValue": 1,
+				"MinValueParameter": null,
+				"MaxValueParameter": null,
+				"ValueKind": 3
+			},
+			{
+				"Id": 11,
+				"MinValue": 0,
+				"MaxValue": null,
+				"MinValueParameter": null,
+				"MaxValueParameter": null,
+				"ValueKind": 3
+			},
+			{
+				"Id": 20,
+				"MinValue": null,
+				"MaxValue": 1,
+				"MinValueParameter": null,
+				"MaxValueParameter": null,
+				"ValueKind": 3
+			},
+			{
+				"Id": 21,
+				"MinValue": null,
+				"MaxValue": 1,
+				"MinValueParameter": null,
+				"MaxValueParameter": null,
+				"ValueKind": 3
+			},
+			{
+				"Id": 22,
+				"MinValue": null,
+				"MaxValue": 1,
+				"MinValueParameter": null,
+				"MaxValueParameter": null,
+				"ValueKind": 3
+			},
+			{
+				"Id": 23,
+				"MinValue": null,
+				"MaxValue": 1,
+				"MinValueParameter": null,
+				"MaxValueParameter": null,
+				"ValueKind": 3
+			},
+			{
+				"Id": 24,
+				"MinValue": null,
+				"MaxValue": 1,
+				"MinValueParameter": null,
+				"MaxValueParameter": null,
+				"ValueKind": 3
+			},
+			{
+				"Id": 25,
+				"MinValue": null,
+				"MaxValue": 1,
+				"MinValueParameter": null,
+				"MaxValueParameter": null,
+				"ValueKind": 3
+			},
+			{
+				"Id": 26,
+				"MinValue": null,
+				"MaxValue": 1,
+				"MinValueParameter": null,
+				"MaxValueParameter": null,
+				"ValueKind": 3
+			},
+			{
+				"Id": 27,
+				"MinValue": null,
+				"MaxValue": 1,
+				"MinValueParameter": null,
+				"MaxValueParameter": null,
+				"ValueKind": 3
+			},
+			{
+				"Id": 28,
+				"MinValue": null,
+				"MaxValue": 1,
+				"MinValueParameter": null,
+				"MaxValueParameter": null,
+				"ValueKind": 3
+			},
+			{
+				"Id": 29,
+				"MinValue": null,
+				"MaxValue": 1,
+				"MinValueParameter": null,
+				"MaxValueParameter": null,
+				"ValueKind": 3
+			},
+			{
+				"Id": 30,
+				"MinValue": null,
+				"MaxValue": null,
+				"MinValueParameter": null,
+				"MaxValueParameter": null,
+				"ValueKind": 3
+			},
+			{
+				"Id": 31,
+				"MinValue": null,
+				"MaxValue": null,
+				"MinValueParameter": null,
+				"MaxValueParameter": null,
+				"ValueKind": 3
+			},
+			{
+				"Id": 50,
+				"MinValue": 0,
+				"MaxValue": null,
+				"MinValueParameter": null,
+				"MaxValueParameter": {
+					"Id": 51,
+					"DisplayName": "Damage To"
+				},
+				"ValueKind": 1
+			},
+			{
+				"Id": 51,
+				"MinValue": null,
+				"MaxValue": null,
+				"MinValueParameter": {
+					"Id": 50,
+					"DisplayName": "Damage From"
+				},
+				"MaxValueParameter": null,
+				"ValueKind": 1
+			},
+			{
+				"Id": 52,
+				"MinValue": null,
+				"MaxValue": null,
+				"MinValueParameter": null,
+				"MaxValueParameter": null,
+				"ValueKind": 3
+			},
+			{
+				"Id": 53,
+				"MinValue": 0,
+				"MaxValue": null,
+				"MinValueParameter": null,
+				"MaxValueParameter": {
+					"Id": 54,
+					"DisplayName": "Heal To"
+				},
+				"ValueKind": 1
+			},
+			{
+				"Id": 54,
+				"MinValue": null,
+				"MaxValue": null,
+				"MinValueParameter": {
+					"Id": 53,
+					"DisplayName": "Heal From"
+				},
+				"MaxValueParameter": null,
+				"ValueKind": 1
+			},
+			{
+				"Id": 55,
+				"MinValue": 0,
+				"MaxValue": null,
+				"MinValueParameter": null,
+				"MaxValueParameter": null,
+				"ValueKind": 3
+			},
+			{
+				"Id": 56,
+				"MinValue": 0,
+				"MaxValue": 1,
+				"MinValueParameter": null,
+				"MaxValueParameter": null,
+				"ValueKind": 3
+			},
+			{
+				"Id": 57,
+				"MinValue": 0,
+				"MaxValue": null,
+				"MinValueParameter": null,
+				"MaxValueParameter": {
+					"Id": 58,
+					"DisplayName": "Stress Heal To"
+				},
+				"ValueKind": 1
+			},
+			{
+				"Id": 58,
+				"MinValue": null,
+				"MaxValue": null,
+				"MinValueParameter": {
+					"Id": 57,
+					"DisplayName": "Stress Heal From"
+				},
+				"MaxValueParameter": null,
+				"ValueKind": 1
+			},
+			{
+				"Id": 59,
+				"MinValue": 0,
+				"MaxValue": 1,
+				"MinValueParameter": null,
+				"MaxValueParameter": null,
+				"ValueKind": 3
+			},
+			{
+				"Id": 60,
+				"MinValue": 0,
+				"MaxValue": 1,
+				"MinValueParameter": null,
+				"MaxValueParameter": null,
+				"ValueKind": 3
+			},
+			{
+				"Id": 70,
+				"MinValue": 0,
+				"MaxValue": 1,
+				"MinValueParameter": null,
+				"MaxValueParameter": null,
+				"ValueKind": 3
+			},
+			{
+				"Id": 71,
+				"MinValue": 0,
+				"MaxValue": 1,
+				"MinValueParameter": null,
+				"MaxValueParameter": null,
+				"ValueKind": 3
+			},
+			{
+				"Id": 73,
+				"MinValue": 0,
+				"MaxValue": 1,
+				"MinValueParameter": null,
+				"MaxValueParameter": null,
+				"ValueKind": 3
+			},
+			{
+				"Id": 74,
+				"MinValue": 0,
+				"MaxValue": 1,
+				"MinValueParameter": null,
+				"MaxValueParameter": null,
+				"ValueKind": 3
+			},
+			{
+				"Id": 80,
+				"MinValue": 0,
+				"MaxValue": 6,
+				"MinValueParameter": null,
+				"MaxValueParameter": null,
+				"ValueKind": 1
+			}
+		],
+		"Provision": [
+			{
+				"Id": "Antivenom",
+				"Cost": 150,
+				"Item": {
+					"Id": "Antivenom",
+					"Name": {
+						"en-US": "Antivenom",
+						"notes": null
+					},
+					"Description": {
+						"en-US": "Use to counter Blights, Poisons, and Toxins.",
+						"notes": null
+					},
+					"StackSize": 6,
+					"GoldValue": 5,
+					"ActivationEffects": null
+				}
+			},
+			{
+				"Id": "Bandage",
+				"Cost": 150,
+				"Item": {
+					"Id": "Bandage",
+					"Name": {
+						"en-US": "Bandage",
+						"notes": null
+					},
+					"Description": {
+						"en-US": "Use to staunch the flow of Bleeding.",
+						"notes": null
+					},
+					"StackSize": 6,
+					"GoldValue": 5,
+					"ActivationEffects": null
+				}
+			},
+			{
+				"Id": "DogTreats",
+				"Cost": 0,
+				"Item": {
+					"Id": "DogTreats",
+					"Name": {
+						"en-US": "Dog Treats",
+						"notes": null
+					},
+					"Description": {
+						"en-US": "Can be consumed in battle for:\u000A\u000A    +50% DMG\u000A    +15 ACC \u000A\u000AThe buff lasts for 3 rounds.\u000AOnly usable by a Hound Master.",
+						"notes": null
+					},
+					"StackSize": 1,
+					"GoldValue": 0,
+					"ActivationEffects": null
+				}
+			},
+			{
+				"Id": "Firewood",
+				"Cost": 0,
+				"Item": {
+					"Id": "Firewood",
+					"Name": {
+						"en-US": "Firewood",
+						"notes": null
+					},
+					"Description": {
+						"en-US": "Use to Camp.",
+						"notes": null
+					},
+					"StackSize": 1,
+					"GoldValue": 0,
+					"ActivationEffects": null
+				}
+			},
+			{
+				"Id": "Food",
+				"Cost": 75,
+				"Item": {
+					"Id": "Food",
+					"Name": {
+						"en-US": "Food",
+						"notes": null
+					},
+					"Description": {
+						"en-US": "Eat to restore health and stave off Hunger.",
+						"notes": null
+					},
+					"StackSize": 12,
+					"GoldValue": 5,
+					"ActivationEffects": null
+				}
+			},
+			{
+				"Id": "HolyWater",
+				"Cost": 150,
+				"Item": {
+					"Id": "HolyWater",
+					"Name": {
+						"en-US": "Holy Water",
+						"notes": null
+					},
+					"Description": {
+						"en-US": "Use to purge evil and restore purity.",
+						"notes": null
+					},
+					"StackSize": 6,
+					"GoldValue": 5,
+					"ActivationEffects": null
+				}
+			},
+			{
+				"Id": "MedicinalHerbs",
+				"Cost": 200,
+				"Item": {
+					"Id": "MedicinalHerbs",
+					"Name": {
+						"en-US": "Medicinal Herbs",
+						"notes": null
+					},
+					"Description": {
+						"en-US": "Use to cure Diseases and Maladies.",
+						"notes": null
+					},
+					"StackSize": 6,
+					"GoldValue": 5,
+					"ActivationEffects": null
+				}
+			},
+			{
+				"Id": "Shovel",
+				"Cost": 250,
+				"Item": {
+					"Id": "Shovel",
+					"Name": {
+						"en-US": "Shovel",
+						"notes": null
+					},
+					"Description": {
+						"en-US": "Removes any obstacle out of the way.",
+						"notes": null
+					},
+					"StackSize": 4,
+					"GoldValue": 10,
+					"ActivationEffects": null
+				}
+			},
+			{
+				"Id": "SkeletonKey",
+				"Cost": 200,
+				"Item": {
+					"Id": "SkeletonKey",
+					"Name": {
+						"en-US": "Skeleton Key",
+						"notes": null
+					},
+					"Description": {
+						"en-US": "Use to unlock Strongboxes and Doors.",
+						"notes": null
+					},
+					"StackSize": 6,
+					"GoldValue": 5,
+					"ActivationEffects": null
+				}
+			},
+			{
+				"Id": "Torch",
+				"Cost": 75,
+				"Item": {
+					"Id": "Torch",
+					"Name": {
+						"en-US": "Torch",
+						"notes": null
+					},
+					"Description": {
+						"en-US": "Increases the Light level.",
+						"notes": null
+					},
+					"StackSize": 8,
+					"GoldValue": 5,
+					"ActivationEffects": null
+				}
+			}
+		],
+		"Hero": [
+			{
+				"Id": "Abomination",
+				"Name": {
+					"en-US": "Abomination",
+					"notes": null
+				},
+				"Bio": {
+					"en-US": "Beaten, branded and imprisoned for untold decades, this furtive vagrant hides a terrible secret. The Eldritch poison coursing through his veins has given him unspeakable power, at a terrible cost. As his form changes, so too does his role in combat! ",
+					"notes": null
+				},
+				"Religious": false,
+				"DislikeHeroes": [
+				],
+				"Provisions": null,
+				"ProvisionsCount": 0,
+				"MovementForward": 1,
+				"MovementBackward": 2,
+				"Protection": 0,
+				"AccuracyModifier": 0,
+				"StunResistance": 0.4,
+				"BlightResistance": 0.6,
+				"DiseaseResistance": 0.2,
+				"DeathBlowResistance": 0.67,
+				"MoveResistance": 0.4,
+				"BleedResistance": 0.3,
+				"DebuffResistance": 0.2,
+				"TrapResistance": 0.1,
+				"Armors": [
+					{
+						"Id": "AbominationArmor1",
+						"Name": {
+							"en-US": "Rusty Chains",
+							"notes": null
+						},
+						"Dodge": 0.075,
+						"HitPoints": 26
+					},
+					{
+						"Id": "AbominationArmor2",
+						"Name": {
+							"en-US": "Iron Chains",
+							"notes": null
+						},
+						"Dodge": 0.125,
+						"HitPoints": 31
+					},
+					{
+						"Id": "AbominationArmor3",
+						"Name": {
+							"en-US": "Steel Chains",
+							"notes": null
+						},
+						"Dodge": 0.175,
+						"HitPoints": 36
+					},
+					{
+						"Id": "AbominationArmor4",
+						"Name": {
+							"en-US": "Hellforged Chains ",
+							"notes": null
+						},
+						"Dodge": 0.225,
+						"HitPoints": 41
+					},
+					{
+						"Id": "AbominationArmor5",
+						"Name": {
+							"en-US": "Inhuman Bondage",
+							"notes": null
+						},
+						"Dodge": 0.275,
+						"HitPoints": 46
+					}
+				],
+				"Weapons": [
+					{
+						"Id": "AbominationWeapon1",
+						"Name": {
+							"en-US": "Incubating Mutation ",
+							"notes": null
+						},
+						"DamageFrom": 6,
+						"DamageTo": 11,
+						"CriticalStrikeChance": 0.025,
+						"Speed": 7
+					},
+					{
+						"Id": "AbominationWeapon2",
+						"Name": {
+							"en-US": "Progressive Mutation",
+							"notes": null
+						},
+						"DamageFrom": 7,
+						"DamageTo": 13,
+						"CriticalStrikeChance": 0.03,
+						"Speed": 7
+					},
+					{
+						"Id": "AbominationWeapon3",
+						"Name": {
+							"en-US": "Aggressive Mutation ",
+							"notes": null
+						},
+						"DamageFrom": 8,
+						"DamageTo": 15,
+						"CriticalStrikeChance": 0.035,
+						"Speed": 8
+					},
+					{
+						"Id": "AbominationWeapon4",
+						"Name": {
+							"en-US": "Malignant Mutation ",
+							"notes": null
+						},
+						"DamageFrom": 10,
+						"DamageTo": 18,
+						"CriticalStrikeChance": 0.04,
+						"Speed": 8
+					},
+					{
+						"Id": "AbominationWeapon5",
+						"Name": {
+							"en-US": "Damnation's Gift",
+							"notes": null
+						},
+						"DamageFrom": 11,
+						"DamageTo": 20,
+						"CriticalStrikeChance": 0.045,
+						"Speed": 9
+					}
+				]
+			},
+			{
+				"Id": "Arbalest",
+				"Name": {
+					"en-US": "Arbalest",
+					"notes": null
+				},
+				"Bio": {
+					"en-US": "Clad in heavy armor and able to vanquish foes with her massive crossbow, she is like a living embodiment of a cannon. Her life of war has given her many skills for the battlefield such as marking down targets, raining arrows upon her foes and even firing bolas to disrupt the enemy's formation. She also learned how to dress and treat wounds, and can apply makeshift healing upon the battlefield.\u000A\u000AGiven enough time at camp, she can treat the wounds of all her allies, or even instruct them in how to be quicker than their adversaries. Or she may spend her night tending to her crossbow, her one companion since childhood. As long as she is given ample distance between herself and her quarry,",
+					"notes": null
+				},
+				"Religious": false,
+				"DislikeHeroes": [
+				],
+				"Provisions": {
+					"Id": "Bandage",
+					"DisplayName": "Bandage"
+				},
+				"ProvisionsCount": 1,
+				"MovementForward": 0,
+				"MovementBackward": 2,
+				"Protection": 0,
+				"AccuracyModifier": 0,
+				"StunResistance": 0.4,
+				"BlightResistance": 0.3,
+				"DiseaseResistance": 0.3,
+				"DeathBlowResistance": 0.67,
+				"MoveResistance": 0.4,
+				"BleedResistance": 0.3,
+				"DebuffResistance": 0.3,
+				"TrapResistance": 0.1,
+				"Armors": [
+					{
+						"Id": "ArbalestArmor1",
+						"Name": {
+							"en-US": "Second-Hand Plate",
+							"notes": null
+						},
+						"Dodge": 0,
+						"HitPoints": 27
+					},
+					{
+						"Id": "ArbalestArmor2",
+						"Name": {
+							"en-US": "Pawned Plate ",
+							"notes": null
+						},
+						"Dodge": 5,
+						"HitPoints": 32
+					},
+					{
+						"Id": "ArbalestArmor3",
+						"Name": {
+							"en-US": "Reliable Plate ",
+							"notes": null
+						},
+						"Dodge": 10,
+						"HitPoints": 37
+					},
+					{
+						"Id": "ArbalestArmor4",
+						"Name": {
+							"en-US": "Refined Plate",
+							"notes": null
+						},
+						"Dodge": 15,
+						"HitPoints": 42
+					},
+					{
+						"Id": "ArbalestArmor5",
+						"Name": {
+							"en-US": "Survivor",
+							"notes": null
+						},
+						"Dodge": 20,
+						"HitPoints": 47
+					}
+				],
+				"Weapons": [
+					{
+						"Id": "ArbalestWeapon1",
+						"Name": {
+							"en-US": "Crude Crossbow",
+							"notes": null
+						},
+						"DamageFrom": 4,
+						"DamageTo": 9,
+						"CriticalStrikeChance": 0.075,
+						"Speed": 3
+					},
+					{
+						"Id": "ArbalestWeapon2",
+						"Name": {
+							"en-US": "Reinforced Crossbow ",
+							"notes": null
+						},
+						"DamageFrom": 5,
+						"DamageTo": 11,
+						"CriticalStrikeChance": 0.8,
+						"Speed": 3
+					},
+					{
+						"Id": "ArbalestWeapon3",
+						"Name": {
+							"en-US": "Heavy Crossbow ",
+							"notes": null
+						},
+						"DamageFrom": 6,
+						"DamageTo": 13,
+						"CriticalStrikeChance": 0.85,
+						"Speed": 4
+					},
+					{
+						"Id": "ArbalestWeapon4",
+						"Name": {
+							"en-US": "Veteran's Crossbow ",
+							"notes": null
+						},
+						"DamageFrom": 6,
+						"DamageTo": 14,
+						"CriticalStrikeChance": 0.9,
+						"Speed": 4
+					},
+					{
+						"Id": "ArbalestWeapon5",
+						"Name": {
+							"en-US": "Millicent",
+							"notes": null
+						},
+						"DamageFrom": 7,
+						"DamageTo": 16,
+						"CriticalStrikeChance": 0.95,
+						"Speed": 5
+					}
+				]
+			},
+			{
+				"Id": "Crusader",
+				"Name": {
+					"en-US": "Crusader",
+					"notes": null
+				},
+				"Bio": {
+					"en-US": "Every cause needs a champion, a hero to rally otherwise common men to a righteous cause and lead them to victory. The Crusader is that champion. With holy blade in hand he smites the wicked and sends them back to the darkness from whence they crept. While his armor restricts his movement it affords him great protection, allowing him to stand in the frontlines to take the blows that his weaker comrades cannot.\u000A\u000ANo matter the pressures he faces he will remain strong, finding strength within himself to keep fighting on while inspiring others to do the same. Even in the midst of battle he can galvanize his allies, giving them the strength to fight off madness for a little longer. When the Crusader is leading the charge, all of hell will know to fear the flame.",
+					"notes": null
+				},
+				"Religious": true,
+				"DislikeHeroes": [
+					{
+						"Id": "Abomination",
+						"DisplayName": "Abomination"
+					}
+				],
+				"Provisions": {
+					"Id": "HolyWater",
+					"DisplayName": "HolyWater"
+				},
+				"ProvisionsCount": 1,
+				"MovementForward": 1,
+				"MovementBackward": 1,
+				"Protection": 0,
+				"AccuracyModifier": 0,
+				"StunResistance": 0.4,
+				"BlightResistance": 0.3,
+				"DiseaseResistance": 0.3,
+				"DeathBlowResistance": 0.67,
+				"MoveResistance": 0.4,
+				"BleedResistance": 0.3,
+				"DebuffResistance": 0.3,
+				"TrapResistance": 0.1,
+				"Armors": [
+					{
+						"Id": "CrusaderArmor1",
+						"Name": {
+							"en-US": "Rusty Hauberk ",
+							"notes": null
+						},
+						"Dodge": 0.05,
+						"HitPoints": 33
+					},
+					{
+						"Id": "CrusaderArmor2",
+						"Name": {
+							"en-US": "Chainmail ",
+							"notes": null
+						},
+						"Dodge": 0.1,
+						"HitPoints": 40
+					},
+					{
+						"Id": "CrusaderArmor3",
+						"Name": {
+							"en-US": "Chain and Plate ",
+							"notes": null
+						},
+						"Dodge": 0.15,
+						"HitPoints": 47
+					},
+					{
+						"Id": "CrusaderArmor4",
+						"Name": {
+							"en-US": "Plate ",
+							"notes": null
+						},
+						"Dodge": 0.2,
+						"HitPoints": 54
+					},
+					{
+						"Id": "CrusaderArmor5",
+						"Name": {
+							"en-US": "Zealous Conviction",
+							"notes": null
+						},
+						"Dodge": 0.25,
+						"HitPoints": 61
+					}
+				],
+				"Weapons": [
+					{
+						"Id": "CrusaderWeapon1",
+						"Name": {
+							"en-US": "Battered Longsword ",
+							"notes": null
+						},
+						"DamageFrom": 6,
+						"DamageTo": 12,
+						"CriticalStrikeChance": 0.05,
+						"Speed": 1
+					},
+					{
+						"Id": "CrusaderWeapon2",
+						"Name": {
+							"en-US": "Longsword ",
+							"notes": null
+						},
+						"DamageFrom": 7,
+						"DamageTo": 14,
+						"CriticalStrikeChance": 0.055,
+						"Speed": 1
+					},
+					{
+						"Id": "CrusaderWeapon3",
+						"Name": {
+							"en-US": "Questing Longsword",
+							"notes": null
+						},
+						"DamageFrom": 8,
+						"DamageTo": 16,
+						"CriticalStrikeChance": 0.06,
+						"Speed": 2
+					},
+					{
+						"Id": "CrusaderWeapon4",
+						"Name": {
+							"en-US": "Greatsword ",
+							"notes": null
+						},
+						"DamageFrom": 9,
+						"DamageTo": 17,
+						"CriticalStrikeChance": 0.065,
+						"Speed": 2
+					},
+					{
+						"Id": "CrusaderWeapon5",
+						"Name": {
+							"en-US": "The Long Crusade",
+							"notes": null
+						},
+						"DamageFrom": 10,
+						"DamageTo": 19,
+						"CriticalStrikeChance": 0.07,
+						"Speed": 3
+					}
+				]
+			}
+		],
+		"Item": [
+			{
+				"Id": "AncestorsRelic",
+				"Name": {
+					"en-US": "Ancestor's Relic",
+					"notes": null
+				},
+				"Description": {
+					"en-US": "Some things are better left unopened.",
+					"notes": null
+				},
+				"StackSize": 1,
+				"GoldValue": 0,
+				"ActivationEffects": null
+			},
+			{
+				"Id": "Bust",
+				"Name": {
+					"en-US": "Bust",
+					"notes": null
+				},
+				"Description": {
+					"en-US": "A sculpted bust of a once prominent local figure.",
+					"notes": null
+				},
+				"StackSize": 6,
+				"GoldValue": 0,
+				"ActivationEffects": null
+			},
+			{
+				"Id": "Citrine",
+				"Name": {
+					"en-US": "Citrine",
+					"notes": null
+				},
+				"Description": {
+					"en-US": "Yellow like fading hope.",
+					"notes": null
+				},
+				"StackSize": 5,
+				"GoldValue": 250,
+				"ActivationEffects": null
+			},
+			{
+				"Id": "ConsecratedEssence",
+				"Name": {
+					"en-US": "Consecrated Essence",
+					"notes": null
+				},
+				"Description": {
+					"en-US": "Used to purify the corrupted altars.",
+					"notes": null
+				},
+				"StackSize": 1,
+				"GoldValue": 0,
+				"ActivationEffects": null
+			},
+			{
+				"Id": "ConsecratedPew",
+				"Name": {
+					"en-US": "Consecrated Pew",
+					"notes": null
+				},
+				"Description": {
+					"en-US": "The shard of a wooden bench said to once hold ",
+					"notes": null
+				},
+				"StackSize": 1,
+				"GoldValue": 2500,
+				"ActivationEffects": null
+			},
+			{
+				"Id": "Crest",
+				"Name": {
+					"en-US": "Crest",
+					"notes": null
+				},
+				"Description": {
+					"en-US": "A sigil of honor earned by family actions long since past.",
+					"notes": null
+				},
+				"StackSize": 12,
+				"GoldValue": 0,
+				"ActivationEffects": null
+			},
+			{
+				"Id": "Deed",
+				"Name": {
+					"en-US": "Deed",
+					"notes": null
+				},
+				"Description": {
+					"en-US": "Scriven records of land grants in generations past.",
+					"notes": null
+				},
+				"StackSize": 6,
+				"GoldValue": 0,
+				"ActivationEffects": null
+			},
+			{
+				"Id": "Emerald",
+				"Name": {
+					"en-US": "Emerald",
+					"notes": null
+				},
+				"Description": {
+					"en-US": "Green like molten envy.",
+					"notes": null
+				},
+				"StackSize": 5,
+				"GoldValue": 750,
+				"ActivationEffects": null
+			},
+			{
+				"Id": "Gold",
+				"Name": {
+					"en-US": "Gold",
+					"notes": null
+				},
+				"Description": {
+					"en-US": "Gold greases palms, builds empires and instigates murder.",
+					"notes": null
+				},
+				"StackSize": 1750,
+				"GoldValue": 1,
+				"ActivationEffects": null
+			},
+			{
+				"Id": "GrainSack",
+				"Name": {
+					"en-US": "Grain Sack",
+					"notes": null
+				},
+				"Description": {
+					"en-US": "A bag of precious unspoiled grain.",
+					"notes": null
+				},
+				"StackSize": 1,
+				"GoldValue": 0,
+				"ActivationEffects": null
+			},
+			{
+				"Id": "HandofGlory",
+				"Name": {
+					"en-US": "Hand of Glory",
+					"notes": null
+				},
+				"Description": {
+					"en-US": "The left hand of some malefactor who died on the gallows, made into a candle with the man's own fat.",
+					"notes": null
+				},
+				"StackSize": 1,
+				"GoldValue": 0,
+				"ActivationEffects": null
+			},
+			{
+				"Id": "HolyRelic",
+				"Name": {
+					"en-US": "Holy Relic",
+					"notes": null
+				},
+				"Description": {
+					"en-US": "A surviving trophy from a past holy war.",
+					"notes": null
+				},
+				"StackSize": 1,
+				"GoldValue": 0,
+				"ActivationEffects": null
+			},
+			{
+				"Id": "Jade",
+				"Name": {
+					"en-US": "Jade",
+					"notes": null
+				},
+				"Description": {
+					"en-US": "Dull green like rotting flesh.",
+					"notes": null
+				},
+				"StackSize": 5,
+				"GoldValue": 375,
+				"ActivationEffects": null
+			},
+			{
+				"Id": "JuteTapestry",
+				"Name": {
+					"en-US": "Jute Tapestry",
+					"notes": null
+				},
+				"Description": {
+					"en-US": "A coarse, time-worn weaving bearing invocations of unutterable alienage.",
+					"notes": null
+				},
+				"StackSize": 1,
+				"GoldValue": 4500,
+				"ActivationEffects": null
+			},
+			{
+				"Id": "Medicine",
+				"Name": {
+					"en-US": "Medicine",
+					"notes": null
+				},
+				"Description": {
+					"en-US": "Powerful medicines... worth more than gold to a beleaguered Hamlet.",
+					"notes": null
+				},
+				"StackSize": 1,
+				"GoldValue": 0,
+				"ActivationEffects": null
+			},
+			{
+				"Id": "MinorAntique",
+				"Name": {
+					"en-US": "Minor Antique",
+					"notes": null
+				},
+				"Description": {
+					"en-US": "A minor collectible, worth money in bunches.",
+					"notes": null
+				},
+				"StackSize": 20,
+				"GoldValue": 500,
+				"ActivationEffects": null
+			},
+			{
+				"Id": "Onyx",
+				"Name": {
+					"en-US": "Onyx",
+					"notes": null
+				},
+				"Description": {
+					"en-US": "Black like endless night.",
+					"notes": null
+				},
+				"StackSize": 5,
+				"GoldValue": 500,
+				"ActivationEffects": null
+			},
+			{
+				"Id": "PickAxe",
+				"Name": {
+					"en-US": "Pick-Axe",
+					"notes": null
+				},
+				"Description": {
+					"en-US": "An implement for hard labor and occasional destruction.",
+					"notes": null
+				},
+				"StackSize": 1,
+				"GoldValue": 0,
+				"ActivationEffects": null
+			},
+			{
+				"Id": "PinealGland",
+				"Name": {
+					"en-US": "Pineal Gland",
+					"notes": null
+				},
+				"Description": {
+					"en-US": "It emits an otherworldly luminescence, used to light Protective Wards.",
+					"notes": null
+				},
+				"StackSize": 1,
+				"GoldValue": 0,
+				"ActivationEffects": null
+			},
+			{
+				"Id": "Portrait",
+				"Name": {
+					"en-US": "Portrait",
+					"notes": null
+				},
+				"Description": {
+					"en-US": "Though painted a hundred years ago, the resemblance to you is uncanny.",
+					"notes": null
+				},
+				"StackSize": 3,
+				"GoldValue": 0,
+				"ActivationEffects": null
+			},
+			{
+				"Id": "PotentSalve",
+				"Name": {
+					"en-US": "Potent Salve",
+					"notes": null
+				},
+				"Description": {
+					"en-US": "A terribly strong concoction to counter the effects of disease and infection.",
+					"notes": null
+				},
+				"StackSize": 1,
+				"GoldValue": 0,
+				"ActivationEffects": null
+			},
+			{
+				"Id": "PuzzlingTrapezohedron",
+				"Name": {
+					"en-US": "Puzzling Trapezohedron",
+					"notes": null
+				},
+				"Description": {
+					"en-US": "The colors shift and change with the light...",
+					"notes": null
+				},
+				"StackSize": 1,
+				"GoldValue": 3500,
+				"ActivationEffects": null
+			},
+			{
+				"Id": "RareAntique",
+				"Name": {
+					"en-US": "Rare Antique",
+					"notes": null
+				},
+				"Description": {
+					"en-US": "A valuable find!",
+					"notes": null
+				},
+				"StackSize": 5,
+				"GoldValue": 1250,
+				"ActivationEffects": null
+			},
+			{
+				"Id": "Ruby",
+				"Name": {
+					"en-US": "Ruby",
+					"notes": null
+				},
+				"Description": {
+					"en-US": "Red like blazing lust.",
+					"notes": null
+				},
+				"StackSize": 5,
+				"GoldValue": 1250,
+				"ActivationEffects": null
+			},
+			{
+				"Id": "Sapphire",
+				"Name": {
+					"en-US": "Sapphire",
+					"notes": null
+				},
+				"Description": {
+					"en-US": "Blue like strangled dreams",
+					"notes": null
+				},
+				"StackSize": 5,
+				"GoldValue": 1000,
+				"ActivationEffects": null
+			}
+		],
+		"Location": [
+			{
+				"Id": "Cove",
+				"Name": {
+					"en-US": "Cove",
+					"notes": null
+				},
+				"Flags": 0
+			},
+			{
+				"Id": "Ruins",
+				"Name": {
+					"en-US": "Ruins",
+					"notes": null
+				},
+				"Flags": 0
+			},
+			{
+				"Id": "TheDarkestDungeon",
+				"Name": {
+					"en-US": "The Darkest Dungeon",
+					"notes": null
+				},
+				"Flags": 0
+			},
+			{
+				"Id": "TheHamlet",
+				"Name": {
+					"en-US": "The Hamlet",
+					"notes": null
+				},
+				"Flags": 1
+			},
+			{
+				"Id": "TheOldRoad",
+				"Name": {
+					"en-US": "The Old Road",
+					"notes": null
+				},
+				"Flags": 2
+			},
+			{
+				"Id": "Warrens",
+				"Name": {
+					"en-US": "Warrens",
+					"notes": null
+				},
+				"Flags": 0
+			},
+			{
+				"Id": "Weald",
+				"Name": {
+					"en-US": "Weald",
+					"notes": null
+				},
+				"Flags": 0
+			}
+		],
+		"Trinket": [
+			{
+				"Id": "AccuracyStone",
+				"Rarity": 1,
+				"OriginDungeon": {
+					"Id": "Warrens",
+					"DisplayName": "Warrens"
+				},
+				"HeroRestriction": null,
+				"Item": {
+					"Id": "AccuracyStone",
+					"Name": {
+						"en-US": "Accuracy Stone",
+						"notes": null
+					},
+					"Description": null,
+					"StackSize": 1,
+					"GoldValue": 0,
+					"ActivationEffects": [
+					]
+				},
+				"Effects": [
+					{
+						"Id": 19,
+						"Parameter": {
+							"Id": 5,
+							"DisplayName": "Accuracy"
+						},
+						"Value": 0.04,
+						"Condition": null
+					},
+					{
+						"Id": 20,
+						"Parameter": {
+							"Id": 4,
+							"DisplayName": "Speed"
+						},
+						"Value": -1,
+						"Condition": null
+					}
+				]
+			},
+			{
+				"Id": "BeastSlayersRing",
+				"Rarity": 3,
+				"OriginDungeon": null,
+				"HeroRestriction": null,
+				"Item": {
+					"Id": "BeastSlayersRing",
+					"Name": {
+						"en-US": "Beast Slayer's Ring ",
+						"notes": null
+					},
+					"Description": null,
+					"StackSize": 1,
+					"GoldValue": 0,
+					"ActivationEffects": [
+					]
+				},
+				"Effects": [
+					{
+						"Id": 26,
+						"Parameter": {
+							"Id": 52,
+							"DisplayName": "Damage Percent"
+						},
+						"Value": 0.25,
+						"Condition": {
+							"Id": "MonsterTypeBeast",
+							"DisplayName": "MonsterTypeBeast"
+						}
+					},
+					{
+						"Id": 27,
+						"Parameter": {
+							"Id": 8,
+							"DisplayName": "Dodge"
+						},
+						"Value": -0.08,
+						"Condition": null
+					}
+				]
+			},
+			{
+				"Id": "CautionCloak",
+				"Rarity": 2,
+				"OriginDungeon": {
+					"Id": "Weald",
+					"DisplayName": "Weald"
+				},
+				"HeroRestriction": null,
+				"Item": {
+					"Id": "CautionCloak",
+					"Name": {
+						"en-US": "Caution Cloak",
+						"notes": null
+					},
+					"Description": null,
+					"StackSize": 1,
+					"GoldValue": 0,
+					"ActivationEffects": [
+					]
+				},
+				"Effects": [
+					{
+						"Id": 21,
+						"Parameter": {
+							"Id": 10,
+							"DisplayName": "Scouting Chance"
+						},
+						"Value": 0.1,
+						"Condition": null
+					},
+					{
+						"Id": 22,
+						"Parameter": {
+							"Id": 4,
+							"DisplayName": "Speed"
+						},
+						"Value": -10,
+						"Condition": {
+							"Id": "FirstRound",
+							"DisplayName": "FirstRound"
+						}
+					}
+				]
+			},
+			{
+				"Id": "DarkBracer",
+				"Rarity": 2,
+				"OriginDungeon": null,
+				"HeroRestriction": null,
+				"Item": {
+					"Id": "DarkBracer",
+					"Name": {
+						"en-US": "Dark Bracer",
+						"notes": null
+					},
+					"Description": null,
+					"StackSize": 1,
+					"GoldValue": 0,
+					"ActivationEffects": [
+					]
+				},
+				"Effects": [
+					{
+						"Id": 23,
+						"Parameter": {
+							"Id": 6,
+							"DisplayName": "Crtitical Strike Chance"
+						},
+						"Value": 0.05,
+						"Condition": {
+							"Id": "Dark",
+							"DisplayName": "Dark"
+						}
+					},
+					{
+						"Id": 24,
+						"Parameter": {
+							"Id": 8,
+							"DisplayName": "Dodge"
+						},
+						"Value": 0.05,
+						"Condition": {
+							"Id": "Shadowy",
+							"DisplayName": "Shadowy"
+						}
+					},
+					{
+						"Id": 25,
+						"Parameter": {
+							"Id": 52,
+							"DisplayName": "Damage Percent"
+						},
+						"Value": 0.1,
+						"Condition": {
+							"Id": "AboveDimLight",
+							"DisplayName": "AboveDimLight"
+						}
+					}
+				]
+			},
+			{
+				"Id": "HerosRing",
+				"Rarity": 4,
+				"OriginDungeon": null,
+				"HeroRestriction": null,
+				"Item": {
+					"Id": "HerosRing",
+					"Name": {
+						"en-US": "Hero's Ring",
+						"notes": null
+					},
+					"Description": null,
+					"StackSize": 1,
+					"GoldValue": 0,
+					"ActivationEffects": [
+					]
+				},
+				"Effects": [
+					{
+						"Id": 28,
+						"Parameter": {
+							"Id": 74,
+							"DisplayName": "Virtue Chance"
+						},
+						"Value": 0.25,
+						"Condition": null
+					}
+				]
+			},
+			{
+				"Id": "ProtectivePadlock",
+				"Rarity": 2,
+				"OriginDungeon": null,
+				"HeroRestriction": null,
+				"Item": {
+					"Id": "ProtectivePadlock",
+					"Name": {
+						"en-US": "Protective Padlock",
+						"notes": null
+					},
+					"Description": null,
+					"StackSize": 1,
+					"GoldValue": 0,
+					"ActivationEffects": null
+				},
+				"Effects": [
+					{
+						"Id": 30,
+						"Parameter": {
+							"Id": 4,
+							"DisplayName": "Speed"
+						},
+						"Value": -1,
+						"Condition": null
+					},
+					{
+						"Id": 31,
+						"Parameter": {
+							"Id": 9,
+							"DisplayName": "Protection"
+						},
+						"Value": 0.15,
+						"Condition": null
+					}
+				]
+			}
+		],
+		"Monster": [
+			{
+				"Id": "BoneCourtier",
+				"Name": {
+					"en-US": "Bone Courtier",
+					"notes": null
+				},
+				"Type": 3,
+				"SecondType": null,
+				"Parameters": [
+					{
+						"Id": 135,
+						"Parameter": {
+							"Id": 2,
+							"DisplayName": "Max Hit Points"
+						},
+						"Value": 10,
+						"Condition": null
+					},
+					{
+						"Id": 136,
+						"Parameter": {
+							"Id": 8,
+							"DisplayName": "Dodge"
+						},
+						"Value": 0.125,
+						"Condition": null
+					},
+					{
+						"Id": 137,
+						"Parameter": {
+							"Id": 4,
+							"DisplayName": "Speed"
+						},
+						"Value": 8,
+						"Condition": null
+					},
+					{
+						"Id": 138,
+						"Parameter": {
+							"Id": 21,
+							"DisplayName": "Stun Resistance"
+						},
+						"Value": 0.1,
+						"Condition": null
+					},
+					{
+						"Id": 139,
+						"Parameter": {
+							"Id": 22,
+							"DisplayName": "Blight Resistance"
+						},
+						"Value": 0.1,
+						"Condition": null
+					},
+					{
+						"Id": 140,
+						"Parameter": {
+							"Id": 26,
+							"DisplayName": "Bleed Resistance"
+						},
+						"Value": 2,
+						"Condition": null
+					},
+					{
+						"Id": 141,
+						"Parameter": {
+							"Id": 27,
+							"DisplayName": "Debuff Resistance"
+						},
+						"Value": 0.15,
+						"Condition": null
+					},
+					{
+						"Id": 142,
+						"Parameter": {
+							"Id": 25,
+							"DisplayName": "Move Resistance"
+						},
+						"Value": 0.1,
+						"Condition": null
+					}
+				],
+				"Locations": [
+					{
+						"Id": "Ruins",
+						"DisplayName": "Ruins"
+					}
+				]
+			},
+			{
+				"Id": "BoneSoldier",
+				"Name": {
+					"en-US": "Bone Soldier",
+					"notes": null
+				},
+				"Type": 3,
+				"SecondType": null,
+				"Parameters": [
+					{
+						"Id": 127,
+						"Parameter": {
+							"Id": 2,
+							"DisplayName": "Max Hit Points"
+						},
+						"Value": 10,
+						"Condition": null
+					},
+					{
+						"Id": 128,
+						"Parameter": {
+							"Id": 9,
+							"DisplayName": "Protection"
+						},
+						"Value": 0.15,
+						"Condition": null
+					},
+					{
+						"Id": 129,
+						"Parameter": {
+							"Id": 4,
+							"DisplayName": "Speed"
+						},
+						"Value": 2,
+						"Condition": null
+					},
+					{
+						"Id": 130,
+						"Parameter": {
+							"Id": 21,
+							"DisplayName": "Stun Resistance"
+						},
+						"Value": 0.2,
+						"Condition": null
+					},
+					{
+						"Id": 131,
+						"Parameter": {
+							"Id": 22,
+							"DisplayName": "Blight Resistance"
+						},
+						"Value": 0.1,
+						"Condition": null
+					},
+					{
+						"Id": 132,
+						"Parameter": {
+							"Id": 26,
+							"DisplayName": "Bleed Resistance"
+						},
+						"Value": 2,
+						"Condition": null
+					},
+					{
+						"Id": 133,
+						"Parameter": {
+							"Id": 27,
+							"DisplayName": "Debuff Resistance"
+						},
+						"Value": 0.15,
+						"Condition": null
+					},
+					{
+						"Id": 134,
+						"Parameter": {
+							"Id": 25,
+							"DisplayName": "Move Resistance"
+						},
+						"Value": 0.2,
+						"Condition": null
+					}
+				],
+				"Locations": [
+					{
+						"Id": "Ruins",
+						"DisplayName": "Ruins"
+					}
+				]
+			},
+			{
+				"Id": "CultistAcolyte",
+				"Name": {
+					"en-US": "Cultist Acolyte",
+					"notes": null
+				},
+				"Type": 1,
+				"SecondType": null,
+				"Parameters": [
+					{
+						"Id": 150,
+						"Parameter": {
+							"Id": 2,
+							"DisplayName": "Max Hit Points"
+						},
+						"Value": 13,
+						"Condition": null
+					},
+					{
+						"Id": 151,
+						"Parameter": {
+							"Id": 8,
+							"DisplayName": "Dodge"
+						},
+						"Value": 0.125,
+						"Condition": null
+					},
+					{
+						"Id": 152,
+						"Parameter": {
+							"Id": 4,
+							"DisplayName": "Speed"
+						},
+						"Value": 7,
+						"Condition": null
+					},
+					{
+						"Id": 153,
+						"Parameter": {
+							"Id": 21,
+							"DisplayName": "Stun Resistance"
+						},
+						"Value": 0.25,
+						"Condition": null
+					},
+					{
+						"Id": 154,
+						"Parameter": {
+							"Id": 22,
+							"DisplayName": "Blight Resistance"
+						},
+						"Value": 0.2,
+						"Condition": null
+					},
+					{
+						"Id": 155,
+						"Parameter": {
+							"Id": 26,
+							"DisplayName": "Bleed Resistance"
+						},
+						"Value": 0.2,
+						"Condition": null
+					},
+					{
+						"Id": 156,
+						"Parameter": {
+							"Id": 27,
+							"DisplayName": "Debuff Resistance"
+						},
+						"Value": 0.4,
+						"Condition": null
+					},
+					{
+						"Id": 157,
+						"Parameter": {
+							"Id": 25,
+							"DisplayName": "Move Resistance"
+						},
+						"Value": 0.25,
+						"Condition": null
+					}
+				],
+				"Locations": [
+					{
+						"Id": "Ruins",
+						"DisplayName": "Ruins"
+					},
+					{
+						"Id": "TheDarkestDungeon",
+						"DisplayName": "The Darkest Dungeon"
+					},
+					{
+						"Id": "Warrens",
+						"DisplayName": "Warrens"
+					},
+					{
+						"Id": "Weald",
+						"DisplayName": "Weald"
+					},
+					{
+						"Id": "Cove",
+						"DisplayName": "Cove"
+					}
+				]
+			},
+			{
+				"Id": "CultistBrawler",
+				"Name": {
+					"en-US": "Cultist Brawler",
+					"notes": null
+				},
+				"Type": 1,
+				"SecondType": null,
+				"Parameters": [
+					{
+						"Id": 143,
+						"Parameter": {
+							"Id": 2,
+							"DisplayName": "Max Hit Points"
+						},
+						"Value": 15,
+						"Condition": null
+					},
+					{
+						"Id": 144,
+						"Parameter": {
+							"Id": 4,
+							"DisplayName": "Speed"
+						},
+						"Value": 5,
+						"Condition": null
+					},
+					{
+						"Id": 145,
+						"Parameter": {
+							"Id": 21,
+							"DisplayName": "Stun Resistance"
+						},
+						"Value": 0.25,
+						"Condition": null
+					},
+					{
+						"Id": 146,
+						"Parameter": {
+							"Id": 22,
+							"DisplayName": "Blight Resistance"
+						},
+						"Value": 0.2,
+						"Condition": null
+					},
+					{
+						"Id": 147,
+						"Parameter": {
+							"Id": 26,
+							"DisplayName": "Bleed Resistance"
+						},
+						"Value": 0.2,
+						"Condition": null
+					},
+					{
+						"Id": 148,
+						"Parameter": {
+							"Id": 27,
+							"DisplayName": "Debuff Resistance"
+						},
+						"Value": 0.15,
+						"Condition": null
+					},
+					{
+						"Id": 149,
+						"Parameter": {
+							"Id": 25,
+							"DisplayName": "Move Resistance"
+						},
+						"Value": 0.25,
+						"Condition": null
+					}
+				],
+				"Locations": [
+					{
+						"Id": "Ruins",
+						"DisplayName": "Ruins"
+					},
+					{
+						"Id": "TheDarkestDungeon",
+						"DisplayName": "The Darkest Dungeon"
+					},
+					{
+						"Id": "Warrens",
+						"DisplayName": "Warrens"
+					},
+					{
+						"Id": "Weald",
+						"DisplayName": "Weald"
+					},
+					{
+						"Id": "Cove",
+						"DisplayName": "Cove"
+					}
+				]
+			},
+			{
+				"Id": "SwineChopper",
+				"Name": {
+					"en-US": "Swine Chopper",
+					"notes": null
+				},
+				"Type": 2,
+				"SecondType": null,
+				"Parameters": [
+					{
+						"Id": 158,
+						"Parameter": {
+							"Id": 2,
+							"DisplayName": "Max Hit Points"
+						},
+						"Value": 21,
+						"Condition": null
+					},
+					{
+						"Id": 159,
+						"Parameter": {
+							"Id": 9,
+							"DisplayName": "Protection"
+						},
+						"Value": 0.15,
+						"Condition": null
+					},
+					{
+						"Id": 160,
+						"Parameter": {
+							"Id": 4,
+							"DisplayName": "Speed"
+						},
+						"Value": 3,
+						"Condition": null
+					},
+					{
+						"Id": 161,
+						"Parameter": {
+							"Id": 21,
+							"DisplayName": "Stun Resistance"
+						},
+						"Value": 0.25,
+						"Condition": null
+					},
+					{
+						"Id": 162,
+						"Parameter": {
+							"Id": 22,
+							"DisplayName": "Blight Resistance"
+						},
+						"Value": 0.6,
+						"Condition": null
+					},
+					{
+						"Id": 163,
+						"Parameter": {
+							"Id": 26,
+							"DisplayName": "Bleed Resistance"
+						},
+						"Value": 0.2,
+						"Condition": null
+					},
+					{
+						"Id": 164,
+						"Parameter": {
+							"Id": 27,
+							"DisplayName": "Debuff Resistance"
+						},
+						"Value": 0.15,
+						"Condition": null
+					},
+					{
+						"Id": 165,
+						"Parameter": {
+							"Id": 25,
+							"DisplayName": "Move Resistance"
+						},
+						"Value": 0.5,
+						"Condition": null
+					}
+				],
+				"Locations": [
+					{
+						"Id": "Warrens",
+						"DisplayName": "Warrens"
+					}
+				]
+			},
+			{
+				"Id": "SwineWretch",
+				"Name": {
+					"en-US": "Swine Wretch",
+					"notes": null
+				},
+				"Type": 2,
+				"SecondType": 1,
+				"Parameters": [
+					{
+						"Id": 166,
+						"Parameter": {
+							"Id": 2,
+							"DisplayName": "Max Hit Points"
+						},
+						"Value": 12,
+						"Condition": null
+					},
+					{
+						"Id": 167,
+						"Parameter": {
+							"Id": 8,
+							"DisplayName": "Dodge"
+						},
+						"Value": 0.125,
+						"Condition": null
+					},
+					{
+						"Id": 168,
+						"Parameter": {
+							"Id": 4,
+							"DisplayName": "Speed"
+						},
+						"Value": 8,
+						"Condition": null
+					},
+					{
+						"Id": 169,
+						"Parameter": {
+							"Id": 21,
+							"DisplayName": "Stun Resistance"
+						},
+						"Value": 0.1,
+						"Condition": null
+					},
+					{
+						"Id": 170,
+						"Parameter": {
+							"Id": 22,
+							"DisplayName": "Blight Resistance"
+						},
+						"Value": 0.4,
+						"Condition": null
+					},
+					{
+						"Id": 171,
+						"Parameter": {
+							"Id": 26,
+							"DisplayName": "Bleed Resistance"
+						},
+						"Value": 0.1,
+						"Condition": null
+					},
+					{
+						"Id": 172,
+						"Parameter": {
+							"Id": 27,
+							"DisplayName": "Debuff Resistance"
+						},
+						"Value": 0.15,
+						"Condition": null
+					}
+				],
+				"Locations": [
+					{
+						"Id": "Warrens",
+						"DisplayName": "Warrens"
+					}
+				]
+			}
+		],
+		"Curio": [
+			{
+				"Id": "Crate",
+				"Type": 128,
+				"Name": {
+					"en-US": "Crate",
+					"notes": null
+				},
+				"Description": {
+					"en-US": "No description.",
+					"notes": null
+				},
+				"CleansingOptions": [
+					{
+						"Id": 5,
+						"Chance": 0.75,
+						"Item": null,
+						"Loot": [
+							{
+								"Id": 1,
+								"Type": 2,
+								"Amount": null
+							}
+						],
+						"QuirkChance": null,
+						"DiseaseChance": null,
+						"Effects": [
+						],
+						"ItemIsConsumed": false
+					},
+					{
+						"Id": 6,
+						"Chance": 0.25,
+						"Item": null,
+						"Loot": [
+						],
+						"QuirkChance": null,
+						"DiseaseChance": null,
+						"Effects": [
+						],
+						"ItemIsConsumed": false
+					}
+				],
+				"PlacementRestictions": 2,
+				"Locations": [
+					{
+						"Id": "Cove",
+						"DisplayName": "Cove"
+					},
+					{
+						"Id": "Ruins",
+						"DisplayName": "Ruins"
+					},
+					{
+						"Id": "TheDarkestDungeon",
+						"DisplayName": "The Darkest Dungeon"
+					},
+					{
+						"Id": "TheOldRoad",
+						"DisplayName": "The Old Road"
+					},
+					{
+						"Id": "Weald",
+						"DisplayName": "Weald"
+					},
+					{
+						"Id": "Warrens",
+						"DisplayName": "Warrens"
+					}
+				]
+			},
+			{
+				"Id": "DinnerCart",
+				"Type": 3328,
+				"Name": {
+					"en-US": "Dinner Cart",
+					"notes": null
+				},
+				"Description": {
+					"en-US": "A cart of human remains. It looks much like a feeding trough. Disgusting.",
+					"notes": null
+				},
+				"CleansingOptions": [
+					{
+						"Id": 14,
+						"Chance": 1,
+						"Item": {
+							"Id": "MedicinalHerbs",
+							"DisplayName": "Medicinal Herbs"
+						},
+						"Loot": [
+							{
+								"Id": 9,
+								"Type": 3,
+								"Amount": 1
+							},
+							{
+								"Id": 10,
+								"Type": 6,
+								"Amount": null
+							},
+							{
+								"Id": 11,
+								"Type": 7,
+								"Amount": 2
+							}
+						],
+						"QuirkChance": null,
+						"DiseaseChance": null,
+						"Effects": [
+						],
+						"ItemIsConsumed": true
+					}
+				],
+				"PlacementRestictions": 2,
+				"Locations": [
+					{
+						"Id": "Warrens",
+						"DisplayName": "Warrens"
+					}
+				]
+			},
+			{
+				"Id": "EldritchAltar",
+				"Type": 520,
+				"Name": {
+					"en-US": "Eldritch Altar",
+					"notes": null
+				},
+				"Description": {
+					"en-US": "An altar dedicated to unholy abominations. Perhaps a great power lies within. ",
+					"notes": null
+				},
+				"CleansingOptions": [
+					{
+						"Id": 1,
+						"Chance": 1,
+						"Item": {
+							"Id": "HolyWater",
+							"DisplayName": "Holy Water"
+						},
+						"Loot": [
+						],
+						"QuirkChance": null,
+						"DiseaseChance": null,
+						"Effects": [
+						],
+						"ItemIsConsumed": true
+					},
+					{
+						"Id": 2,
+						"Chance": 0.4,
+						"Item": null,
+						"Loot": [
+						],
+						"QuirkChance": null,
+						"DiseaseChance": null,
+						"Effects": [
+							{
+								"Id": 82,
+								"Parameter": {
+									"Id": 7,
+									"DisplayName": "Stress"
+								},
+								"Value": 0.4,
+								"Condition": null
+							}
+						],
+						"ItemIsConsumed": false
+					},
+					{
+						"Id": 3,
+						"Chance": 0.1,
+						"Item": null,
+						"Loot": [
+						],
+						"QuirkChance": -0.1,
+						"DiseaseChance": 0,
+						"Effects": [
+						],
+						"ItemIsConsumed": false
+					},
+					{
+						"Id": 4,
+						"Chance": 0.5,
+						"Item": null,
+						"Loot": [
+						],
+						"QuirkChance": null,
+						"DiseaseChance": null,
+						"Effects": [
+						],
+						"ItemIsConsumed": false
+					}
+				],
+				"PlacementRestictions": 1,
+				"Locations": [
+					{
+						"Id": "Cove",
+						"DisplayName": "Cove"
+					},
+					{
+						"Id": "TheDarkestDungeon",
+						"DisplayName": "The Darkest Dungeon"
+					},
+					{
+						"Id": "Ruins",
+						"DisplayName": "Ruins"
+					},
+					{
+						"Id": "Warrens",
+						"DisplayName": "Warrens"
+					},
+					{
+						"Id": "Weald",
+						"DisplayName": "Weald"
+					}
+				]
+			},
+			{
+				"Id": "LockedSarcophagus",
+				"Type": 9,
+				"Name": {
+					"en-US": "Locked Sarcophagus",
+					"notes": null
+				},
+				"Description": {
+					"en-US": "An ornate sarcophagus. It's locked. ",
+					"notes": null
+				},
+				"CleansingOptions": [
+					{
+						"Id": 9,
+						"Chance": 0.33,
+						"Item": {
+							"Id": "SkeletonKey",
+							"DisplayName": "Skeleton Key"
+						},
+						"Loot": [
+							{
+								"Id": 4,
+								"Type": 2,
+								"Amount": 2
+							}
+						],
+						"QuirkChance": null,
+						"DiseaseChance": null,
+						"Effects": [
+						],
+						"ItemIsConsumed": true
+					},
+					{
+						"Id": 10,
+						"Chance": 0.33,
+						"Item": {
+							"Id": "SkeletonKey",
+							"DisplayName": "Skeleton Key"
+						},
+						"Loot": [
+							{
+								"Id": 5,
+								"Type": 3,
+								"Amount": 2
+							}
+						],
+						"QuirkChance": null,
+						"DiseaseChance": null,
+						"Effects": [
+						],
+						"ItemIsConsumed": true
+					},
+					{
+						"Id": 11,
+						"Chance": 0.33,
+						"Item": {
+							"Id": "SkeletonKey",
+							"DisplayName": "Skeleton Key"
+						},
+						"Loot": [
+							{
+								"Id": 6,
+								"Type": 6,
+								"Amount": null
+							}
+						],
+						"QuirkChance": null,
+						"DiseaseChance": null,
+						"Effects": [
+						],
+						"ItemIsConsumed": true
+					},
+					{
+						"Id": 12,
+						"Chance": 0.5,
+						"Item": {
+							"Id": "Shovel",
+							"DisplayName": "Shovel"
+						},
+						"Loot": [
+							{
+								"Id": 7,
+								"Type": 2,
+								"Amount": 1
+							}
+						],
+						"QuirkChance": null,
+						"DiseaseChance": null,
+						"Effects": [
+						],
+						"ItemIsConsumed": true
+					},
+					{
+						"Id": 13,
+						"Chance": 0.5,
+						"Item": {
+							"Id": "Shovel",
+							"DisplayName": "Shovel"
+						},
+						"Loot": [
+							{
+								"Id": 8,
+								"Type": 6,
+								"Amount": null
+							}
+						],
+						"QuirkChance": null,
+						"DiseaseChance": null,
+						"Effects": [
+						],
+						"ItemIsConsumed": true
+					}
+				],
+				"PlacementRestictions": 1,
+				"Locations": [
+					{
+						"Id": "Ruins",
+						"DisplayName": "Ruins"
+					}
+				]
+			},
+			{
+				"Id": "Sconce",
+				"Type": 16,
+				"Name": {
+					"en-US": "Sconce",
+					"notes": null
+				},
+				"Description": {
+					"en-US": "No description. ",
+					"notes": null
+				},
+				"CleansingOptions": [
+					{
+						"Id": 7,
+						"Chance": 0.5,
+						"Item": null,
+						"Loot": [
+							{
+								"Id": 2,
+								"Type": 5,
+								"Amount": 1
+							}
+						],
+						"QuirkChance": null,
+						"DiseaseChance": null,
+						"Effects": [
+						],
+						"ItemIsConsumed": false
+					},
+					{
+						"Id": 8,
+						"Chance": 0.5,
+						"Item": null,
+						"Loot": [
+							{
+								"Id": 3,
+								"Type": 6,
+								"Amount": 100
+							}
+						],
+						"QuirkChance": null,
+						"DiseaseChance": null,
+						"Effects": [
+						],
+						"ItemIsConsumed": false
+					}
+				],
+				"PlacementRestictions": 2,
+				"Locations": [
+					{
+						"Id": "Cove",
+						"DisplayName": "Cove"
+					},
+					{
+						"Id": "Ruins",
+						"DisplayName": "Ruins"
+					},
+					{
+						"Id": "TheDarkestDungeon",
+						"DisplayName": "The Darkest Dungeon"
+					},
+					{
+						"Id": "Warrens",
+						"DisplayName": "Warrens"
+					},
+					{
+						"Id": "Weald",
+						"DisplayName": "Weald"
+					}
+				]
+			}
+		],
+		"Disease": [
+			{
+				"Id": "BadHumors",
+				"Name": {
+					"en-US": "Bad Humors",
+					"notes": null
+				},
+				"Effects": [
+					{
+						"Id": 11,
+						"Parameter": {
+							"Id": 3,
+							"DisplayName": "Max Hit Points Percent"
+						},
+						"Value": -0.2,
+						"Condition": null
+					}
+				]
+			},
+			{
+				"Id": "CreepingCough",
+				"Name": {
+					"en-US": "Creeping Cough",
+					"notes": null
+				},
+				"Effects": [
+					{
+						"Id": 12,
+						"Parameter": {
+							"Id": 52,
+							"DisplayName": "Damage Percent"
+						},
+						"Value": -0.2,
+						"Condition": null
+					}
+				]
+			},
+			{
+				"Id": "Ennui",
+				"Name": {
+					"en-US": "Ennui",
+					"notes": null
+				},
+				"Effects": [
+					{
+						"Id": 16,
+						"Parameter": {
+							"Id": 74,
+							"DisplayName": "Virtue Chance"
+						},
+						"Value": -0.15,
+						"Condition": null
+					}
+				]
+			},
+			{
+				"Id": "Hemophilia",
+				"Name": {
+					"en-US": "Hemophilia",
+					"notes": null
+				},
+				"Effects": [
+					{
+						"Id": 15,
+						"Parameter": {
+							"Id": 26,
+							"DisplayName": "Bleed Resistance"
+						},
+						"Value": -0.5,
+						"Condition": null
+					}
+				]
+			},
+			{
+				"Id": "Rabies",
+				"Name": {
+					"en-US": "Rabies",
+					"notes": null
+				},
+				"Effects": [
+					{
+						"Id": 13,
+						"Parameter": {
+							"Id": 5,
+							"DisplayName": "Accuracy"
+						},
+						"Value": -0.1,
+						"Condition": null
+					},
+					{
+						"Id": 14,
+						"Parameter": {
+							"Id": 52,
+							"DisplayName": "Damage Percent"
+						},
+						"Value": 0.15,
+						"Condition": null
+					}
+				]
+			},
+			{
+				"Id": "TheRuns",
+				"Name": {
+					"en-US": "The Runs",
+					"notes": null
+				},
+				"Effects": [
+					{
+						"Id": 17,
+						"Parameter": {
+							"Id": 3,
+							"DisplayName": "Max Hit Points Percent"
+						},
+						"Value": -0.1,
+						"Condition": null
+					},
+					{
+						"Id": 18,
+						"Parameter": {
+							"Id": 8,
+							"DisplayName": "Dodge"
+						},
+						"Value": -0.2,
+						"Condition": null
+					}
+				]
+			}
+		],
+		"Quirk": [
+			{
+				"Id": "Anemic",
+				"Name": {
+					"en-US": "Anemic",
+					"notes": null
+				},
+				"IsPositive": false,
+				"Effects": [
+					{
+						"Id": 6,
+						"Parameter": {
+							"Id": 26,
+							"DisplayName": "Bleed Resistance"
+						},
+						"Value": -0.1,
+						"Condition": null
+					}
+				]
+			},
+			{
+				"Id": "BeastHater",
+				"Name": {
+					"en-US": "Beast Hater",
+					"notes": null
+				},
+				"IsPositive": true,
+				"Effects": [
+					{
+						"Id": 1,
+						"Parameter": {
+							"Id": 29,
+							"DisplayName": "Stress Resistance"
+						},
+						"Value": 0.15,
+						"Condition": {
+							"Id": "MonsterTypeBeast",
+							"DisplayName": "MonsterTypeBeast"
+						}
+					},
+					{
+						"Id": 2,
+						"Parameter": {
+							"Id": 52,
+							"DisplayName": "Damage Percent"
+						},
+						"Value": 0.15,
+						"Condition": {
+							"Id": "MonsterTypeBeast",
+							"DisplayName": "MonsterTypeBeast"
+						}
+					}
+				]
+			},
+			{
+				"Id": "Clotter",
+				"Name": {
+					"en-US": "Clotter",
+					"notes": null
+				},
+				"IsPositive": true,
+				"Effects": [
+					{
+						"Id": 5,
+						"Parameter": {
+							"Id": 26,
+							"DisplayName": "Bleed Resistance"
+						},
+						"Value": 0.15,
+						"Condition": null
+					}
+				]
+			},
+			{
+				"Id": "Clumsy",
+				"Name": {
+					"en-US": "Clumsy",
+					"notes": null
+				},
+				"IsPositive": false,
+				"Effects": [
+					{
+						"Id": 10,
+						"Parameter": {
+							"Id": 8,
+							"DisplayName": "Dodge"
+						},
+						"Value": -0.05,
+						"Condition": null
+					}
+				]
+			},
+			{
+				"Id": "CoveAdventurer",
+				"Name": {
+					"en-US": "Cove Adventurer",
+					"notes": null
+				},
+				"IsPositive": true,
+				"Effects": [
+					{
+						"Id": 7,
+						"Parameter": {
+							"Id": 29,
+							"DisplayName": "Stress Resistance"
+						},
+						"Value": 0.2,
+						"Condition": {
+							"Id": "LocationCove",
+							"DisplayName": "LocationCove"
+						}
+					}
+				]
+			},
+			{
+				"Id": "CovePhobe",
+				"Name": {
+					"en-US": "Cove Phobe ",
+					"notes": null
+				},
+				"IsPositive": false,
+				"Effects": [
+					{
+						"Id": 126,
+						"Parameter": {
+							"Id": 29,
+							"DisplayName": "Stress Resistance"
+						},
+						"Value": -0.2,
+						"Condition": {
+							"Id": "LocationCove",
+							"DisplayName": "LocationCove"
+						}
+					}
+				]
+			},
+			{
+				"Id": "Evasive",
+				"Name": {
+					"en-US": "Evasive",
+					"notes": null
+				},
+				"IsPositive": true,
+				"Effects": [
+					{
+						"Id": 9,
+						"Parameter": {
+							"Id": 8,
+							"DisplayName": "Dodge"
+						},
+						"Value": 0.05,
+						"Condition": null
+					}
+				]
+			},
+			{
+				"Id": "FearOfBeasts",
+				"Name": {
+					"en-US": "Fear of Beasts",
+					"notes": null
+				},
+				"IsPositive": false,
+				"Effects": [
+					{
+						"Id": 3,
+						"Parameter": {
+							"Id": 5,
+							"DisplayName": "Accuracy"
+						},
+						"Value": -0.1,
+						"Condition": {
+							"Id": "MonsterTypeBeast",
+							"DisplayName": "MonsterTypeBeast"
+						}
+					},
+					{
+						"Id": 4,
+						"Parameter": {
+							"Id": 29,
+							"DisplayName": "Stress Resistance"
+						},
+						"Value": -0.15,
+						"Condition": {
+							"Id": "MonsterTypeBeast",
+							"DisplayName": "MonsterTypeBeast"
+						}
+					}
+				]
+			}
+		],
+		"Conditions": [
+			{
+				"Id": "AboveDimLight",
+				"Description": {
+					"en-US": "if Torch above 51",
+					"notes": null
+				},
+				"Check": {
+					"expressionType": "GreaterThanOrEqual",
+					"left": {
+						"expressionType": "PropertyOrField",
+						"propertyOrFieldName": "LightLevel",
+						"expression": {
+							"expressionType": "PropertyOrField",
+							"propertyOrFieldName": "Dungeon",
+							"expression": {
+								"expressionType": "PropertyOrField",
+								"propertyOrFieldName": "context",
+								"expression": null,
+								"useNullPropagation": false,
+								"_pos": "1:1+7"
+							},
+							"useNullPropagation": false,
+							"_pos": "1:8+1"
+						},
+						"useNullPropagation": false,
+						"_pos": "1:16+1"
+					},
+					"right": {
+						"expressionType": "Constant",
+						"type": "Int32",
+						"value": "51",
+						"_pos": "1:31+2"
+					},
+					"_src": "context.Dungeon.LightLevel >= 51",
+					"_pos": "1:28+2"
+				}
+			},
+			{
+				"Id": "Dark",
+				"Description": {
+					"en-US": "if Torch below 26",
+					"notes": null
+				},
+				"Check": {
+					"expressionType": "LessThanOrEqual",
+					"left": {
+						"expressionType": "PropertyOrField",
+						"propertyOrFieldName": "LightLevel",
+						"expression": {
+							"expressionType": "PropertyOrField",
+							"propertyOrFieldName": "Dungeon",
+							"expression": {
+								"expressionType": "PropertyOrField",
+								"propertyOrFieldName": "context",
+								"expression": null,
+								"useNullPropagation": false,
+								"_pos": "1:1+7"
+							},
+							"useNullPropagation": false,
+							"_pos": "1:8+1"
+						},
+						"useNullPropagation": false,
+						"_pos": "1:16+1"
+					},
+					"right": {
+						"expressionType": "Constant",
+						"type": "Int32",
+						"value": "26",
+						"_pos": "1:31+2"
+					},
+					"_src": "context.Dungeon.LightLevel <= 26",
+					"_pos": "1:28+2"
+				}
+			},
+			{
+				"Id": "FirstRound",
+				"Description": {
+					"en-US": "on the first round of Combat",
+					"notes": null
+				},
+				"Check": {
+					"expressionType": "Equal",
+					"left": {
+						"expressionType": "PropertyOrField",
+						"propertyOrFieldName": "Round",
+						"expression": {
+							"expressionType": "PropertyOrField",
+							"propertyOrFieldName": "Combat",
+							"expression": {
+								"expressionType": "PropertyOrField",
+								"propertyOrFieldName": "context",
+								"expression": null,
+								"useNullPropagation": false,
+								"_pos": "1:1+7"
+							},
+							"useNullPropagation": false,
+							"_pos": "1:8+1"
+						},
+						"useNullPropagation": true,
+						"_pos": "1:15+2"
+					},
+					"right": {
+						"expressionType": "Constant",
+						"type": "Int32",
+						"value": "1",
+						"_pos": "1:26+1"
+					},
+					"_src": "context.Combat?.Round == 1",
+					"_pos": "1:23+2"
+				}
+			},
+			{
+				"Id": "LocationCove",
+				"Description": {
+					"en-US": "in the Cove",
+					"notes": null
+				},
+				"Check": {
+					"expressionType": "Equal",
+					"left": {
+						"expressionType": "PropertyOrField",
+						"propertyOrFieldName": "Id",
+						"expression": {
+							"expressionType": "PropertyOrField",
+							"propertyOrFieldName": "Dungeon",
+							"expression": {
+								"expressionType": "PropertyOrField",
+								"propertyOrFieldName": "context",
+								"expression": null,
+								"useNullPropagation": false,
+								"_pos": "1:1+7"
+							},
+							"useNullPropagation": false,
+							"_pos": "1:8+1"
+						},
+						"useNullPropagation": false,
+						"_pos": "1:16+1"
+					},
+					"right": {
+						"expressionType": "Constant",
+						"type": "String",
+						"value": "Cove",
+						"_pos": "1:23+6"
+					},
+					"_src": "context.Dungeon.Id == \u0022Cove\u0022",
+					"_pos": "1:20+2"
+				}
+			},
+			{
+				"Id": "LocationRuins",
+				"Description": {
+					"en-US": "in the Ruins",
+					"notes": null
+				},
+				"Check": {
+					"expressionType": "Equal",
+					"left": {
+						"expressionType": "PropertyOrField",
+						"propertyOrFieldName": "Id",
+						"expression": {
+							"expressionType": "PropertyOrField",
+							"propertyOrFieldName": "Dungeon",
+							"expression": {
+								"expressionType": "PropertyOrField",
+								"propertyOrFieldName": "context",
+								"expression": null,
+								"useNullPropagation": false,
+								"_pos": "1:1+7"
+							},
+							"useNullPropagation": false,
+							"_pos": "1:8+1"
+						},
+						"useNullPropagation": false,
+						"_pos": "1:16+1"
+					},
+					"right": {
+						"expressionType": "Constant",
+						"type": "String",
+						"value": "Ruins",
+						"_pos": "1:23+7"
+					},
+					"_src": "context.Dungeon.Id == \u0022Ruins\u0022",
+					"_pos": "1:20+2"
+				}
+			},
+			{
+				"Id": "LocationWarrens",
+				"Description": {
+					"en-US": "in the Warrens",
+					"notes": null
+				},
+				"Check": {
+					"expressionType": "Equal",
+					"left": {
+						"expressionType": "PropertyOrField",
+						"propertyOrFieldName": "Id",
+						"expression": {
+							"expressionType": "PropertyOrField",
+							"propertyOrFieldName": "Dungeon",
+							"expression": {
+								"expressionType": "PropertyOrField",
+								"propertyOrFieldName": "context",
+								"expression": null,
+								"useNullPropagation": false,
+								"_pos": "1:1+7"
+							},
+							"useNullPropagation": false,
+							"_pos": "1:8+1"
+						},
+						"useNullPropagation": false,
+						"_pos": "1:16+1"
+					},
+					"right": {
+						"expressionType": "Constant",
+						"type": "String",
+						"value": "Warrens",
+						"_pos": "1:23+9"
+					},
+					"_src": "context.Dungeon.Id == \u0022Warrens\u0022",
+					"_pos": "1:20+2"
+				}
+			},
+			{
+				"Id": "LocationWeald",
+				"Description": {
+					"en-US": "in the Weald",
+					"notes": null
+				},
+				"Check": {
+					"expressionType": "Equal",
+					"left": {
+						"expressionType": "PropertyOrField",
+						"propertyOrFieldName": "Id",
+						"expression": {
+							"expressionType": "PropertyOrField",
+							"propertyOrFieldName": "Dungeon",
+							"expression": {
+								"expressionType": "PropertyOrField",
+								"propertyOrFieldName": "context",
+								"expression": null,
+								"useNullPropagation": false,
+								"_pos": "1:1+7"
+							},
+							"useNullPropagation": false,
+							"_pos": "1:8+1"
+						},
+						"useNullPropagation": false,
+						"_pos": "1:16+1"
+					},
+					"right": {
+						"expressionType": "Constant",
+						"type": "String",
+						"value": "Weald",
+						"_pos": "1:23+7"
+					},
+					"_src": "context.Dungeon.Id == \u0022Weald\u0022",
+					"_pos": "1:20+2"
+				}
+			},
+			{
+				"Id": "LowHealth",
+				"Description": {
+					"en-US": "if health below 50%",
+					"notes": null
+				},
+				"Check": {
+					"expressionType": "LessThan",
+					"left": {
+						"expressionType": "PropertyOrField",
+						"propertyOrFieldName": "HitPoints",
+						"expression": {
+							"expressionType": "PropertyOrField",
+							"propertyOrFieldName": "Source",
+							"expression": {
+								"expressionType": "PropertyOrField",
+								"propertyOrFieldName": "context",
+								"expression": null,
+								"useNullPropagation": false,
+								"_pos": "1:1+7"
+							},
+							"useNullPropagation": false,
+							"_pos": "1:8+1"
+						},
+						"useNullPropagation": false,
+						"_pos": "1:15+1"
+					},
+					"right": {
+						"expressionType": "Group",
+						"expression": {
+							"expressionType": "Divide",
+							"left": {
+								"expressionType": "PropertyOrField",
+								"propertyOrFieldName": "MaxHitPoints",
+								"expression": {
+									"expressionType": "PropertyOrField",
+									"propertyOrFieldName": "Source",
+									"expression": {
+										"expressionType": "PropertyOrField",
+										"propertyOrFieldName": "context",
+										"expression": null,
+										"useNullPropagation": false,
+										"_pos": "1:29+7"
+									},
+									"useNullPropagation": false,
+									"_pos": "1:36+1"
+								},
+								"useNullPropagation": false,
+								"_pos": "1:43+1"
+							},
+							"right": {
+								"expressionType": "Constant",
+								"type": "Int32",
+								"value": "2",
+								"_pos": "1:59+1"
+							},
+							"_pos": "1:57+1"
+						},
+						"_pos": "1:28+1"
+					},
+					"_src": "context.Source.HitPoints < (context.Source.MaxHitPoints / 2)",
+					"_pos": "1:26+1"
+				}
+			},
+			{
+				"Id": "MeleeAttack",
+				"Description": {
+					"en-US": "for Melee attacks",
+					"notes": null
+				},
+				"Check": {
+					"expressionType": "Equal",
+					"left": {
+						"expressionType": "PropertyOrField",
+						"propertyOrFieldName": "Type",
+						"expression": {
+							"expressionType": "PropertyOrField",
+							"propertyOrFieldName": "Attack",
+							"expression": {
+								"expressionType": "PropertyOrField",
+								"propertyOrFieldName": "context",
+								"expression": null,
+								"useNullPropagation": false,
+								"_pos": "1:1+7"
+							},
+							"useNullPropagation": false,
+							"_pos": "1:8+1"
+						},
+						"useNullPropagation": true,
+						"_pos": "1:15+2"
+					},
+					"right": {
+						"expressionType": "PropertyOrField",
+						"propertyOrFieldName": "Melee",
+						"expression": {
+							"expressionType": "PropertyOrField",
+							"propertyOrFieldName": "AttackType",
+							"expression": null,
+							"useNullPropagation": false,
+							"_pos": "1:25+10"
+						},
+						"useNullPropagation": false,
+						"_pos": "1:35+1"
+					},
+					"_src": "context.Attack?.Type == AttackType.Melee",
+					"_pos": "1:22+2"
+				}
+			},
+			{
+				"Id": "MonsterTypeBeast",
+				"Description": {
+					"en-US": "vs Beast",
+					"notes": null
+				},
+				"Check": {
+					"expressionType": "Invoke",
+					"expression": {
+						"expressionType": "PropertyOrField",
+						"propertyOrFieldName": "Is",
+						"expression": {
+							"expressionType": "PropertyOrField",
+							"propertyOrFieldName": "Target",
+							"expression": {
+								"expressionType": "PropertyOrField",
+								"propertyOrFieldName": "context",
+								"expression": null,
+								"useNullPropagation": false,
+								"_pos": "1:1+7"
+							},
+							"useNullPropagation": false,
+							"_pos": "1:8+1"
+						},
+						"useNullPropagation": false,
+						"_pos": "1:15+1"
+					},
+					"arguments": {
+						"0": {
+							"expressionType": "PropertyOrField",
+							"propertyOrFieldName": "Beast",
+							"expression": {
+								"expressionType": "PropertyOrField",
+								"propertyOrFieldName": "MonsterType",
+								"expression": null,
+								"useNullPropagation": false,
+								"_pos": "1:19+11"
+							},
+							"useNullPropagation": false,
+							"_pos": "1:30+1"
+						}
+					},
+					"_src": "context.Target.Is(MonsterType.Beast)",
+					"_pos": "1:18+1"
+				}
+			},
+			{
+				"Id": "MonsterTypeCorpse",
+				"Description": {
+					"en-US": "vs Corpse",
+					"notes": null
+				},
+				"Check": {
+					"expressionType": "Invoke",
+					"expression": {
+						"expressionType": "PropertyOrField",
+						"propertyOrFieldName": "Is",
+						"expression": {
+							"expressionType": "PropertyOrField",
+							"propertyOrFieldName": "Target",
+							"expression": {
+								"expressionType": "PropertyOrField",
+								"propertyOrFieldName": "context",
+								"expression": null,
+								"useNullPropagation": false,
+								"_pos": "1:1+7"
+							},
+							"useNullPropagation": false,
+							"_pos": "1:8+1"
+						},
+						"useNullPropagation": false,
+						"_pos": "1:15+1"
+					},
+					"arguments": {
+						"0": {
+							"expressionType": "PropertyOrField",
+							"propertyOrFieldName": "Corpse",
+							"expression": {
+								"expressionType": "PropertyOrField",
+								"propertyOrFieldName": "MonsterType",
+								"expression": null,
+								"useNullPropagation": false,
+								"_pos": "1:19+11"
+							},
+							"useNullPropagation": false,
+							"_pos": "1:30+1"
+						}
+					},
+					"_src": "context.Target.Is(MonsterType.Corpse)",
+					"_pos": "1:18+1"
+				}
+			},
+			{
+				"Id": "MonsterTypeEldritch",
+				"Description": {
+					"en-US": "vs Eldritch",
+					"notes": null
+				},
+				"Check": {
+					"expressionType": "Invoke",
+					"expression": {
+						"expressionType": "PropertyOrField",
+						"propertyOrFieldName": "Is",
+						"expression": {
+							"expressionType": "PropertyOrField",
+							"propertyOrFieldName": "Target",
+							"expression": {
+								"expressionType": "PropertyOrField",
+								"propertyOrFieldName": "context",
+								"expression": null,
+								"useNullPropagation": false,
+								"_pos": "1:1+7"
+							},
+							"useNullPropagation": false,
+							"_pos": "1:8+1"
+						},
+						"useNullPropagation": false,
+						"_pos": "1:15+1"
+					},
+					"arguments": {
+						"0": {
+							"expressionType": "PropertyOrField",
+							"propertyOrFieldName": "Eldritch",
+							"expression": {
+								"expressionType": "PropertyOrField",
+								"propertyOrFieldName": "MonsterType",
+								"expression": null,
+								"useNullPropagation": false,
+								"_pos": "1:19+11"
+							},
+							"useNullPropagation": false,
+							"_pos": "1:30+1"
+						}
+					},
+					"_src": "context.Target.Is(MonsterType.Eldritch)",
+					"_pos": "1:18+1"
+				}
+			},
+			{
+				"Id": "MonsterTypeHuman",
+				"Description": {
+					"en-US": "vs Human",
+					"notes": null
+				},
+				"Check": {
+					"expressionType": "Invoke",
+					"expression": {
+						"expressionType": "PropertyOrField",
+						"propertyOrFieldName": "Is",
+						"expression": {
+							"expressionType": "PropertyOrField",
+							"propertyOrFieldName": "Target",
+							"expression": {
+								"expressionType": "PropertyOrField",
+								"propertyOrFieldName": "context",
+								"expression": null,
+								"useNullPropagation": false,
+								"_pos": "1:1+7"
+							},
+							"useNullPropagation": false,
+							"_pos": "1:8+1"
+						},
+						"useNullPropagation": false,
+						"_pos": "1:15+1"
+					},
+					"arguments": {
+						"0": {
+							"expressionType": "PropertyOrField",
+							"propertyOrFieldName": "Human",
+							"expression": {
+								"expressionType": "PropertyOrField",
+								"propertyOrFieldName": "MonsterType",
+								"expression": null,
+								"useNullPropagation": false,
+								"_pos": "1:19+11"
+							},
+							"useNullPropagation": false,
+							"_pos": "1:30+1"
+						}
+					},
+					"_src": "context.Target.Is(MonsterType.Human)",
+					"_pos": "1:18+1"
+				}
+			},
+			{
+				"Id": "MonsterTypeUnholy",
+				"Description": {
+					"en-US": "vs Unholy",
+					"notes": null
+				},
+				"Check": {
+					"expressionType": "Invoke",
+					"expression": {
+						"expressionType": "PropertyOrField",
+						"propertyOrFieldName": "Is",
+						"expression": {
+							"expressionType": "PropertyOrField",
+							"propertyOrFieldName": "Target",
+							"expression": {
+								"expressionType": "PropertyOrField",
+								"propertyOrFieldName": "context",
+								"expression": null,
+								"useNullPropagation": false,
+								"_pos": "1:1+7"
+							},
+							"useNullPropagation": false,
+							"_pos": "1:8+1"
+						},
+						"useNullPropagation": false,
+						"_pos": "1:15+1"
+					},
+					"arguments": {
+						"0": {
+							"expressionType": "PropertyOrField",
+							"propertyOrFieldName": "Unholy",
+							"expression": {
+								"expressionType": "PropertyOrField",
+								"propertyOrFieldName": "MonsterType",
+								"expression": null,
+								"useNullPropagation": false,
+								"_pos": "1:19+11"
+							},
+							"useNullPropagation": false,
+							"_pos": "1:30+1"
+						}
+					},
+					"_src": "context.Target.Is(MonsterType.Unholy)",
+					"_pos": "1:18+1"
+				}
+			},
+			{
+				"Id": "RadiantLight",
+				"Description": {
+					"en-US": "when the Torch is above 75 ",
+					"notes": null
+				},
+				"Check": {
+					"expressionType": "GreaterThanOrEqual",
+					"left": {
+						"expressionType": "PropertyOrField",
+						"propertyOrFieldName": "LightLevel",
+						"expression": {
+							"expressionType": "PropertyOrField",
+							"propertyOrFieldName": "Dungeon",
+							"expression": {
+								"expressionType": "PropertyOrField",
+								"propertyOrFieldName": "context",
+								"expression": null,
+								"useNullPropagation": false,
+								"_pos": "1:1+7"
+							},
+							"useNullPropagation": false,
+							"_pos": "1:8+1"
+						},
+						"useNullPropagation": false,
+						"_pos": "1:16+1"
+					},
+					"right": {
+						"expressionType": "Constant",
+						"type": "Int32",
+						"value": "75",
+						"_pos": "1:31+2"
+					},
+					"_src": "context.Dungeon.LightLevel >= 75",
+					"_pos": "1:28+2"
+				}
+			},
+			{
+				"Id": "RangedAttack",
+				"Description": {
+					"en-US": "for Ranged attacks ",
+					"notes": null
+				},
+				"Check": {
+					"expressionType": "Equal",
+					"left": {
+						"expressionType": "PropertyOrField",
+						"propertyOrFieldName": "Type",
+						"expression": {
+							"expressionType": "PropertyOrField",
+							"propertyOrFieldName": "Attack",
+							"expression": {
+								"expressionType": "PropertyOrField",
+								"propertyOrFieldName": "context",
+								"expression": null,
+								"useNullPropagation": false,
+								"_pos": "1:1+7"
+							},
+							"useNullPropagation": false,
+							"_pos": "1:8+1"
+						},
+						"useNullPropagation": true,
+						"_pos": "1:15+2"
+					},
+					"right": {
+						"expressionType": "PropertyOrField",
+						"propertyOrFieldName": "Ranged",
+						"expression": {
+							"expressionType": "PropertyOrField",
+							"propertyOrFieldName": "AttackType",
+							"expression": null,
+							"useNullPropagation": false,
+							"_pos": "1:25+10"
+						},
+						"useNullPropagation": false,
+						"_pos": "1:35+1"
+					},
+					"_src": "context.Attack?.Type == AttackType.Ranged",
+					"_pos": "1:22+2"
+				}
+			},
+			{
+				"Id": "Shadowy",
+				"Description": {
+					"en-US": "if Torch below 51",
+					"notes": null
+				},
+				"Check": {
+					"expressionType": "LessThanOrEqual",
+					"left": {
+						"expressionType": "PropertyOrField",
+						"propertyOrFieldName": "LightLevel",
+						"expression": {
+							"expressionType": "PropertyOrField",
+							"propertyOrFieldName": "Dungeon",
+							"expression": {
+								"expressionType": "PropertyOrField",
+								"propertyOrFieldName": "context",
+								"expression": null,
+								"useNullPropagation": false,
+								"_pos": "1:1+7"
+							},
+							"useNullPropagation": false,
+							"_pos": "1:8+1"
+						},
+						"useNullPropagation": false,
+						"_pos": "1:16+1"
+					},
+					"right": {
+						"expressionType": "Constant",
+						"type": "Int32",
+						"value": "51",
+						"_pos": "1:31+2"
+					},
+					"_src": "context.Dungeon.LightLevel <= 51",
+					"_pos": "1:28+2"
+				}
+			},
+			{
+				"Id": "Stressed",
+				"Description": {
+					"en-US": "when stress is 50 or greater",
+					"notes": null
+				},
+				"Check": {
+					"expressionType": "GreaterThanOrEqual",
+					"left": {
+						"expressionType": "PropertyOrField",
+						"propertyOrFieldName": "Stress",
+						"expression": {
+							"expressionType": "PropertyOrField",
+							"propertyOrFieldName": "Source",
+							"expression": {
+								"expressionType": "PropertyOrField",
+								"propertyOrFieldName": "context",
+								"expression": null,
+								"useNullPropagation": false,
+								"_pos": "1:1+7"
+							},
+							"useNullPropagation": false,
+							"_pos": "1:8+1"
+						},
+						"useNullPropagation": false,
+						"_pos": "1:15+1"
+					},
+					"right": {
+						"expressionType": "Constant",
+						"type": "Int32",
+						"value": "50",
+						"_pos": "1:26+2"
+					},
+					"_src": "context.Source.Stress >= 50",
+					"_pos": "1:23+2"
+				}
+			}
+		],
+		"StartingSet": [
+			{
+				"Id": 1,
+				"Items": [
+					{
+						"Id": 1,
+						"Item": {
+							"Id": "Gold",
+							"DisplayName": "Gold"
+						},
+						"Count": 1000
+					},
+					{
+						"Id": 2,
+						"Item": {
+							"Id": "AccuracyStone",
+							"DisplayName": "Accuracy Stone"
+						},
+						"Count": 1
+					},
+					{
+						"Id": 3,
+						"Item": {
+							"Id": "Crest",
+							"DisplayName": "Crest"
+						},
+						"Count": 5
+					},
+					{
+						"Id": 4,
+						"Item": {
+							"Id": "Portrait",
+							"DisplayName": "Portrait"
+						},
+						"Count": 5
+					},
+					{
+						"Id": 5,
+						"Item": {
+							"Id": "Bust",
+							"DisplayName": "Bust"
+						},
+						"Count": 5
+					}
+				],
+				"Heroes": [
+					{
+						"Id": "Arbalest",
+						"DisplayName": "Arbalest"
+					},
+					{
+						"Id": "Crusader",
+						"DisplayName": "Crusader"
+					}
+				],
+				"Location": {
+					"Id": "TheOldRoad",
+					"DisplayName": "The Old Road"
+				}
+			}
+		]
+	}
+}
