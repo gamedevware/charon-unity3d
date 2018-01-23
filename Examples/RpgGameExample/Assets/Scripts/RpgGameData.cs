@@ -20,15 +20,14 @@ using System.CodeDom.Compiler;
 using System.Runtime.InteropServices;
 using System.Linq.Expressions;
 using System.Xml;
-using GameDevWare.Dynamic.Expressions;
 
-namespace Assets
+namespace Assets.Scripts
 {
 	/// <summary>
 	/// No description is provided.
 	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.3.0")]
+	[GeneratedCode("Charon", "2017.4.4.0")]
 	public sealed partial class Parameter : RpgGameData.Document, IEquatable<Parameter>, IComparable, IComparable<Parameter>
 	{
 		private int hashCode;
@@ -269,7 +268,7 @@ namespace Assets
 	/// No description is provided.
 	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.3.0")]
+	[GeneratedCode("Charon", "2017.4.4.0")]
 	public sealed partial class ParameterValue : RpgGameData.Document, IEquatable<ParameterValue>, IComparable, IComparable<ParameterValue>
 	{
 		private int hashCode;
@@ -482,7 +481,7 @@ namespace Assets
 	/// No description is provided.
 	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.3.0")]
+	[GeneratedCode("Charon", "2017.4.4.0")]
 	public sealed partial class Provision : RpgGameData.Document, IEquatable<Provision>, IComparable, IComparable<Provision>
 	{
 		private int hashCode;
@@ -623,7 +622,7 @@ namespace Assets
 	/// No description is provided.
 	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.3.0")]
+	[GeneratedCode("Charon", "2017.4.4.0")]
 	public sealed partial class Hero : RpgGameData.Document, IEquatable<Hero>, IComparable, IComparable<Hero>
 	{
 		private int hashCode;
@@ -1117,7 +1116,7 @@ namespace Assets
 	/// No description is provided.
 	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.3.0")]
+	[GeneratedCode("Charon", "2017.4.4.0")]
 	public sealed partial class Item : RpgGameData.Document, IEquatable<Item>, IComparable, IComparable<Item>
 	{
 		private int hashCode;
@@ -1337,7 +1336,7 @@ namespace Assets
 	/// No description is provided.
 	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.3.0")]
+	[GeneratedCode("Charon", "2017.4.4.0")]
 	public sealed partial class Location : RpgGameData.Document, IEquatable<Location>, IComparable, IComparable<Location>
 	{
 		private int hashCode;
@@ -1495,7 +1494,7 @@ namespace Assets
 	/// No description is provided.
 	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.3.0")]
+	[GeneratedCode("Charon", "2017.4.4.0")]
 	public sealed partial class Trinket : RpgGameData.Document, IEquatable<Trinket>, IComparable, IComparable<Trinket>
 	{
 		private int hashCode;
@@ -1739,7 +1738,7 @@ namespace Assets
 	/// No description is provided.
 	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.3.0")]
+	[GeneratedCode("Charon", "2017.4.4.0")]
 	public sealed partial class Monster : RpgGameData.Document, IEquatable<Monster>, IComparable, IComparable<Monster>
 	{
 		private int hashCode;
@@ -1974,7 +1973,7 @@ namespace Assets
 	/// No description is provided.
 	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.3.0")]
+	[GeneratedCode("Charon", "2017.4.4.0")]
 	public sealed partial class Loot : RpgGameData.Document, IEquatable<Loot>, IComparable, IComparable<Loot>
 	{
 		private int hashCode;
@@ -2115,7 +2114,7 @@ namespace Assets
 	/// No description is provided.
 	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.3.0")]
+	[GeneratedCode("Charon", "2017.4.4.0")]
 	public sealed partial class CombatEffect : RpgGameData.Document, IEquatable<CombatEffect>, IComparable, IComparable<CombatEffect>
 	{
 		private int hashCode;
@@ -2273,7 +2272,7 @@ namespace Assets
 	/// No description is provided.
 	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.3.0")]
+	[GeneratedCode("Charon", "2017.4.4.0")]
 	public sealed partial class CurioCleansingOption : RpgGameData.Document, IEquatable<CurioCleansingOption>, IComparable, IComparable<CurioCleansingOption>
 	{
 		private int hashCode;
@@ -2519,7 +2518,7 @@ namespace Assets
 	/// No description is provided.
 	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.3.0")]
+	[GeneratedCode("Charon", "2017.4.4.0")]
 	public sealed partial class Curio : RpgGameData.Document, IEquatable<Curio>, IComparable, IComparable<Curio>
 	{
 		private int hashCode;
@@ -2785,7 +2784,7 @@ namespace Assets
 	/// No description is provided.
 	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.3.0")]
+	[GeneratedCode("Charon", "2017.4.4.0")]
 	public sealed partial class Disease : RpgGameData.Document, IEquatable<Disease>, IComparable, IComparable<Disease>
 	{
 		private int hashCode;
@@ -2946,7 +2945,7 @@ namespace Assets
 	/// No description is provided.
 	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.3.0")]
+	[GeneratedCode("Charon", "2017.4.4.0")]
 	public sealed partial class Quirk : RpgGameData.Document, IEquatable<Quirk>, IComparable, IComparable<Quirk>
 	{
 		private int hashCode;
@@ -3121,7 +3120,7 @@ namespace Assets
 	/// No description is provided.
 	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.3.0")]
+	[GeneratedCode("Charon", "2017.4.4.0")]
 	public sealed partial class Conditions : RpgGameData.Document, IEquatable<Conditions>, IComparable, IComparable<Conditions>
 	{
 		private int hashCode;
@@ -3161,12 +3160,12 @@ namespace Assets
 			}
 		}
 
-		private ConditionsCheckExpression _Check;
+		private ReadOnlyDictionary<string, object> _Check;
 		/// <summary>
 		/// No description is provided. Not null.
 		/// </summary>
 		
-		public ConditionsCheckExpression Check
+		public ReadOnlyDictionary<string, object> Check
 		{
 			get { return this._Check; }
 			set { this.ThrowIfReadOnly(); this._Check = value; }
@@ -3279,7 +3278,7 @@ namespace Assets
 	/// No description is provided.
 	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.3.0")]
+	[GeneratedCode("Charon", "2017.4.4.0")]
 	public sealed partial class Weapon : RpgGameData.Document, IEquatable<Weapon>, IComparable, IComparable<Weapon>
 	{
 		private int hashCode;
@@ -3479,7 +3478,7 @@ namespace Assets
 	/// No description is provided.
 	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.3.0")]
+	[GeneratedCode("Charon", "2017.4.4.0")]
 	public sealed partial class Armor : RpgGameData.Document, IEquatable<Armor>, IComparable, IComparable<Armor>
 	{
 		private int hashCode;
@@ -3647,397 +3646,8 @@ namespace Assets
 		}
 	}
 
-	/// <summary>
-	/// No description is provided.
-	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.3.0")]
-	public sealed partial class ItemWithCount : RpgGameData.Document, IEquatable<ItemWithCount>, IComparable, IComparable<ItemWithCount>
-	{
-		private int hashCode;
-
-		private Int32 _Id;
-		/// <summary>
-		/// No description is provided. Not null.
-		/// </summary>
-		
-		public Int32 Id
-		{
-			get { return this._Id; }
-			set { this.ThrowIfReadOnly(); this._Id = value; }
-		}
-
-		private RpgGameData.Reference<Item> _Item;
-		/// <summary>
-		/// No description is provided. Not null.
-		/// </summary>
-		
-		public RpgGameData.Reference<Item> Item_Reference
-		{
-			get { return this._Item; }
-			set { this.ThrowIfReadOnly(); this._Item = value; }
-		}
-		private Item _Item_Dereferenced;
-		private bool _Item_Dereferenced_IsSet;
-		/// <summary>
-		/// No description is provided. Not null.
-		/// </summary>
-		public Item Item
-		{
-			get
-			{
-				var referenceValue = default(Item);
-				if (this.isReadOnly && this._Item_Dereferenced_IsSet)
-				{
-					referenceValue = this._Item_Dereferenced;
-				}
-				else if (this.isReadOnly)
-				{
-					referenceValue = this._Item_Dereferenced = this._Item.Dereference();
-					this._Item_Dereferenced_IsSet = true;
-				}
-				else
-				{
-					referenceValue = this._Item.Dereference();
-				}
-				return referenceValue;
-			}
-		}
-
-		private Int32 _Count;
-		/// <summary>
-		/// No description is provided. Not null.
-		/// </summary>
-		
-		public Int32 Count
-		{
-			get { return this._Count; }
-			set { this.ThrowIfReadOnly(); this._Count = value; }
-		}
-
-		internal void _DoInitialize(Func<string, object, RpgGameData.Document> refResolver)
-		{
-			if (refResolver == null) throw new ArgumentNullException("refResolver");
-
-			this.ThrowIfReadOnly();
-
-			this.OnBeforeInitialize();
-
-			if (this._Item != null)
-				this._Item.Resolve(refResolver);
-
-			this.OnInitialize();
-		}
-
-		partial void OnBeforeInitialize();
-		partial void OnInitialize();
-
-		internal void SetLanguage(string language)
-		{
-			this.OnSetLanguage(language);
-		}
-
-		partial void OnSetLanguage(string language);
-
-		protected internal override void SetReadOnly()
-		{
-			base.SetReadOnly();
-			this.hashCode = this.ComputeHashCode();
-
-			this.OnSetReadOnly();
-		}
-
-		partial void OnSetReadOnly();
-
-		public bool Equals(ItemWithCount other)
-		{
-			return this.Equals((object)other);
-		}
-
-		public override bool Equals(object value)
-		{
-			if(value is ItemWithCount == false)
-				return false;
-
-			var other = (ItemWithCount)value;
-			return this.GetHashCode() == other.GetHashCode()
-				&& AreEquals(this._Id, other._Id)
-				&& AreEquals(this._Item, other._Item)
-				&& AreEquals(this._Count, other._Count)
-			;
-		}
-
-		public override int GetHashCode()
-		{
-			if (this.isReadOnly)
-				return this.hashCode;
-			return this.ComputeHashCode();
-		}
-
-		int IComparable.CompareTo(object obj)
-		{
-			return this.CompareTo(obj as ItemWithCount);
-		}
-
-		public int CompareTo(ItemWithCount other)
-		{
-			if (other == null)
-				return 1;
-			return this.Id.CompareTo(other.Id);
-		}
-
-		public static bool operator ==(ItemWithCount value1, ItemWithCount value2)
-		{
-			return Object.Equals(value1, value2);
-		}
-		public static bool operator !=(ItemWithCount value1, ItemWithCount value2)
-		{
-			return Object.Equals(value1, value2) == false;
-		}
-
-		private int ComputeHashCode()
-		{
-			return unchecked(this.GetType().Name.GetHashCode()
-				+ GetHashCodeFor(this._Id)
-				+ GetHashCodeFor(this._Item)
-				+ GetHashCodeFor(this._Count)
-			);
-		}
-
-		public override string ToString()
-		{
-			var sb = new System.Text.StringBuilder();
-				sb.Append("Id: ").Append(this.Id).Append(", ");
-				sb.Append("Item: ").Append(this.Item).Append(", ");
-				sb.Append("Count: ").Append(this.Count).Append(", ");
-			if (sb.Length > 2)
-				sb.Length -= 2;
-
-			return sb.ToString();
-		}
-	}
-
-	/// <summary>
-	/// No description is provided.
-	/// </summary>
-	
-	[GeneratedCode("Charon", "2017.4.3.0")]
-	public sealed partial class StartingSet : RpgGameData.Document, IEquatable<StartingSet>, IComparable, IComparable<StartingSet>
-	{
-		private int hashCode;
-
-		private Int32 _Id;
-		/// <summary>
-		/// No description is provided. Not null.
-		/// </summary>
-		
-		public Int32 Id
-		{
-			get { return this._Id; }
-			set { this.ThrowIfReadOnly(); this._Id = value; }
-		}
-
-		private ReadOnlyList<ItemWithCount> _Items;
-		/// <summary>
-		/// No description is provided. Not null.
-		/// </summary>
-		
-		public ReadOnlyList<ItemWithCount> Items
-		{
-			get { return this._Items; }
-			set { this.ThrowIfReadOnly(); this._Items = value; }
-		}
-
-		private ReadOnlyList<RpgGameData.Reference<Hero>> _Heroes;
-		/// <summary>
-		/// No description is provided. Not null.
-		/// </summary>
-		
-		public ReadOnlyList<RpgGameData.Reference<Hero>> Heroes_Reference
-		{
-			get { return this._Heroes; }
-			set { this.ThrowIfReadOnly(); this._Heroes = value; }
-		}
-		private ReadOnlyList<Hero> _Heroes_Dereferenced;
-		private bool _Heroes_Dereferenced_IsSet;
-		/// <summary>
-		/// No description is provided. Not null.
-		/// </summary>
-		public ReadOnlyList<Hero> Heroes
-		{
-			get
-			{
-				var referenceValue = default(ReadOnlyList<Hero>);
-				if (this.isReadOnly && this._Heroes_Dereferenced_IsSet)
-				{
-					referenceValue = this._Heroes_Dereferenced;
-				}
-				else if (this.isReadOnly)
-				{
-					referenceValue = this._Heroes_Dereferenced = this._Heroes.Dereference();
-					this._Heroes_Dereferenced_IsSet = true;
-				}
-				else
-				{
-					referenceValue = this._Heroes.Dereference();
-				}
-				return referenceValue;
-			}
-		}
-
-		private RpgGameData.Reference<Location> _Location;
-		/// <summary>
-		/// No description is provided. Not null.
-		/// </summary>
-		
-		public RpgGameData.Reference<Location> Location_Reference
-		{
-			get { return this._Location; }
-			set { this.ThrowIfReadOnly(); this._Location = value; }
-		}
-		private Location _Location_Dereferenced;
-		private bool _Location_Dereferenced_IsSet;
-		/// <summary>
-		/// No description is provided. Not null.
-		/// </summary>
-		public Location Location
-		{
-			get
-			{
-				var referenceValue = default(Location);
-				if (this.isReadOnly && this._Location_Dereferenced_IsSet)
-				{
-					referenceValue = this._Location_Dereferenced;
-				}
-				else if (this.isReadOnly)
-				{
-					referenceValue = this._Location_Dereferenced = this._Location.Dereference();
-					this._Location_Dereferenced_IsSet = true;
-				}
-				else
-				{
-					referenceValue = this._Location.Dereference();
-				}
-				return referenceValue;
-			}
-		}
-
-		internal void _DoInitialize(Func<string, object, RpgGameData.Document> refResolver)
-		{
-			if (refResolver == null) throw new ArgumentNullException("refResolver");
-
-			this.ThrowIfReadOnly();
-
-			this.OnBeforeInitialize();
-
-			if (this._Items == null)
-				this._Items = this._Items.EmptyIfNull();
-
-			if (this._Heroes == null)
-				this._Heroes = this._Heroes.EmptyIfNull();
-
-			foreach(var reference in this._Heroes)
-				reference.Resolve(refResolver);
-
-			if (this._Location != null)
-				this._Location.Resolve(refResolver);
-
-			this.OnInitialize();
-		}
-
-		partial void OnBeforeInitialize();
-		partial void OnInitialize();
-
-		internal void SetLanguage(string language)
-		{
-			this.OnSetLanguage(language);
-		}
-
-		partial void OnSetLanguage(string language);
-
-		protected internal override void SetReadOnly()
-		{
-			base.SetReadOnly();
-			this.hashCode = this.ComputeHashCode();
-
-			this.OnSetReadOnly();
-		}
-
-		partial void OnSetReadOnly();
-
-		public bool Equals(StartingSet other)
-		{
-			return this.Equals((object)other);
-		}
-
-		public override bool Equals(object value)
-		{
-			if(value is StartingSet == false)
-				return false;
-
-			var other = (StartingSet)value;
-			return this.GetHashCode() == other.GetHashCode()
-				&& AreEquals(this._Id, other._Id)
-				&& AreEquals(this._Items, other._Items)
-				&& AreEquals(this._Heroes, other._Heroes)
-				&& AreEquals(this._Location, other._Location)
-			;
-		}
-
-		public override int GetHashCode()
-		{
-			if (this.isReadOnly)
-				return this.hashCode;
-			return this.ComputeHashCode();
-		}
-
-		int IComparable.CompareTo(object obj)
-		{
-			return this.CompareTo(obj as StartingSet);
-		}
-
-		public int CompareTo(StartingSet other)
-		{
-			if (other == null)
-				return 1;
-			return this.Id.CompareTo(other.Id);
-		}
-
-		public static bool operator ==(StartingSet value1, StartingSet value2)
-		{
-			return Object.Equals(value1, value2);
-		}
-		public static bool operator !=(StartingSet value1, StartingSet value2)
-		{
-			return Object.Equals(value1, value2) == false;
-		}
-
-		private int ComputeHashCode()
-		{
-			return unchecked(this.GetType().Name.GetHashCode()
-				+ GetHashCodeFor(this._Id)
-				+ GetHashCodeFor(this._Items)
-				+ GetHashCodeFor(this._Heroes)
-				+ GetHashCodeFor(this._Location)
-			);
-		}
-
-		public override string ToString()
-		{
-			var sb = new System.Text.StringBuilder();
-				sb.Append("Id: ").Append(this.Id).Append(", ");
-				sb.Append("Items: ").Append(this.Items).Append(", ");
-				sb.Append("Heroes: ").Append(this.Heroes).Append(", ");
-				sb.Append("Location: ").Append(this.Location).Append(", ");
-			if (sb.Length > 2)
-				sb.Length -= 2;
-
-			return sb.ToString();
-		}
-	}
-
-	
-	[GeneratedCode("Charon", "2017.4.3.0")]
+	[GeneratedCode("Charon", "2017.4.4.0")]
 	public enum ParameterId: int
 	{
 		HitPoints = 1,
@@ -4082,7 +3692,7 @@ namespace Assets
 	}
 
 	
-	[GeneratedCode("Charon", "2017.4.3.0")]
+	[GeneratedCode("Charon", "2017.4.4.0")]
 	public enum ParameterValueKind: int
 	{
 		Integer = 1,
@@ -4091,7 +3701,7 @@ namespace Assets
 	}
 
 	[Flags]
-	[GeneratedCode("Charon", "2017.4.3.0")]
+	[GeneratedCode("Charon", "2017.4.4.0")]
 	public enum LocationFlags: int
 	{
 		None = 0,
@@ -4100,7 +3710,7 @@ namespace Assets
 	}
 
 	
-	[GeneratedCode("Charon", "2017.4.3.0")]
+	[GeneratedCode("Charon", "2017.4.4.0")]
 	public enum TrinketRarity: int
 	{
 		Common = 1,
@@ -4116,7 +3726,7 @@ namespace Assets
 	}
 
 	
-	[GeneratedCode("Charon", "2017.4.3.0")]
+	[GeneratedCode("Charon", "2017.4.4.0")]
 	public enum MonsterType: int
 	{
 		Human = 1,
@@ -4132,7 +3742,7 @@ namespace Assets
 	}
 
 	
-	[GeneratedCode("Charon", "2017.4.3.0")]
+	[GeneratedCode("Charon", "2017.4.4.0")]
 	public enum LootType: int
 	{
 		Any = 1,
@@ -4145,7 +3755,7 @@ namespace Assets
 	}
 
 	
-	[GeneratedCode("Charon", "2017.4.3.0")]
+	[GeneratedCode("Charon", "2017.4.4.0")]
 	public enum DurationUnit: int
 	{
 		Rounds = 1,
@@ -4154,7 +3764,7 @@ namespace Assets
 	}
 
 	[Flags]
-	[GeneratedCode("Charon", "2017.4.3.0")]
+	[GeneratedCode("Charon", "2017.4.4.0")]
 	public enum CurioType: int
 	{
 		None = 0,
@@ -4173,7 +3783,7 @@ namespace Assets
 	}
 
 	[Flags]
-	[GeneratedCode("Charon", "2017.4.3.0")]
+	[GeneratedCode("Charon", "2017.4.4.0")]
 	public enum CurioPlacementRestictions: int
 	{
 		None = 0,
@@ -4182,139 +3792,9 @@ namespace Assets
 	}
 
 
-	[GeneratedCode("Charon", "2017.4.3.0")]
-	public partial class ConditionsCheckExpression
-	{
-		private static readonly ITypeResolver TypeResolver;
-		private static readonly Binder ExpressionBinder;
-
-		public partial class ConditionsScope
-		{
-			public Conditions @this;
-		}
-
-		private readonly SyntaxTreeNode syntaxTree;
-		private readonly Expression<Func<Assets.Scripts.CheckContext, System.Boolean>> expression;
-		private Func<Assets.Scripts.CheckContext, System.Boolean> compiledExpression;
-
-		static ConditionsCheckExpression()
-		{
-			// AOT
-			if (typeof(object).Name == string.Empty)
-			{
-				new System.Runtime.CompilerServices.StrongBox<ConditionsScope>(default(ConditionsScope));
-				
-				new System.Runtime.CompilerServices.StrongBox<Assets.Scripts.AttackType>(default(Assets.Scripts.AttackType));
-			}
-
-			var parameters = new ParameterExpression[]
-			{
-				Expression.Parameter(typeof(Assets.Scripts.CheckContext), "context"),
-			};
-
-			TypeResolver = new KnownTypeResolver(new Type[]
-			{
-				typeof(Assets.Scripts.CheckContext),
-				typeof(Assets.Scripts.AttackType),
-				typeof(System.Boolean),
-				typeof(ConditionsScope)
-			}, RpgGameData.TypeResolver);
-
-			ExpressionBinder = new Binder(parameters, typeof(System.Boolean), TypeResolver);
-
-			AotCompilation.RegisterFunc<Assets.Scripts.CheckContext, System.Boolean>();
-		}
-		public ConditionsCheckExpression(SyntaxTreeNode syntaxTree, Conditions thisObject)
-		{
-			if (syntaxTree == null) throw new ArgumentNullException("syntaxTree");
-			if (thisObject == null) throw new ArgumentNullException("thisObject");
-
-			this.syntaxTree = syntaxTree;
-			var globalObject = new ConditionsScope { @this = thisObject };
-			this.expression = (Expression<Func<Assets.Scripts.CheckContext, System.Boolean>>)ExpressionBinder.Bind(syntaxTree, Expression.Constant(globalObject));
-		}
-
-		public System.Boolean Invoke(Assets.Scripts.CheckContext context)
-		{
-			var fn = this.CompileAot();
-			return fn.Invoke(context);
-		}
-
-		public Func<Assets.Scripts.CheckContext, System.Boolean> CompileAot()
-		{
-			try
-			{
-				if (this.compiledExpression == null)
-					this.compiledExpression = this.expression.CompileAot();
-				return this.compiledExpression;
-			}
-			catch (Exception compilationError)
-			{
-				throw new InvalidOperationException(string.Format("Failed to compile expression '{0}' due errors: {1}{2}", this.syntaxTree.ToString(), Environment.NewLine, compilationError.Message), compilationError);
-			}
-		}
-		public Func<Assets.Scripts.CheckContext, System.Boolean> Compile()
-		{
-			try
-			{
-				if (this.compiledExpression == null)
-					this.compiledExpression = this.expression.Compile();
-				return this.compiledExpression;
-			}
-			catch (Exception compilationError)
-			{
-				throw new InvalidOperationException(string.Format("Failed to compile expression '{0}' due errors: {1}{2}", this.syntaxTree.ToString(), Environment.NewLine, compilationError.Message), compilationError);
-			}
-		}
-
-		public Expression<Func<Assets.Scripts.CheckContext, System.Boolean>> GetExpression()
-		{
-			return this.expression;
-		}
-
-		public override string ToString()
-		{
-			return this.expression.ToString();
-		}
-	}
-
-
-	[GeneratedCode("Charon", "2017.4.3.0")]
+	[GeneratedCode("Charon", "2017.4.4.0")]
 	public partial class RpgGameData
 	{
-		public static readonly ITypeResolver TypeResolver = new KnownTypeResolver(new Type[]
-		{
-				typeof(RpgGameData),
-				typeof(Parameter),
-				typeof(ParameterValue),
-				typeof(Provision),
-				typeof(Hero),
-				typeof(Item),
-				typeof(Location),
-				typeof(Trinket),
-				typeof(Monster),
-				typeof(Loot),
-				typeof(CombatEffect),
-				typeof(CurioCleansingOption),
-				typeof(Curio),
-				typeof(Disease),
-				typeof(Quirk),
-				typeof(Conditions),
-				typeof(Weapon),
-				typeof(Armor),
-				typeof(ItemWithCount),
-				typeof(StartingSet),
-				typeof(ConditionsCheckExpression),
-				typeof(ParameterId),
-				typeof(ParameterValueKind),
-				typeof(LocationFlags),
-				typeof(TrinketRarity),
-				typeof(MonsterType),
-				typeof(LootType),
-				typeof(DurationUnit),
-				typeof(CurioType),
-				typeof(CurioPlacementRestictions),
-		});
 
 		#region Storage fields
 		private ReadOnlyList<Parameter> rootParameter;
@@ -4368,12 +3848,6 @@ namespace Assets
 		private ReadOnlyList<Armor> rootArmor;
 		private ReadOnlyList<Armor> allArmor;
 		private ReadOnlyDictionary<String, Armor> allArmorById;
-		private ReadOnlyList<ItemWithCount> rootItemWithCount;
-		private ReadOnlyList<ItemWithCount> allItemWithCount;
-		private ReadOnlyDictionary<Int32, ItemWithCount> allItemWithCountById;
-		private ReadOnlyList<StartingSet> rootStartingSet;
-		private ReadOnlyList<StartingSet> allStartingSet;
-		private ReadOnlyDictionary<Int32, StartingSet> allStartingSetById;
 		#endregion
 
 		private readonly ReadOnlyCollection<string> languages = new ReadOnlyCollection<string>(new string[] { "en-US" });
@@ -4440,10 +3914,6 @@ namespace Assets
 			if (this.allWeapon == null) this.allWeapon = ReadOnlyList<Weapon>.Empty;
 			if (this.rootArmor == null) this.rootArmor = ReadOnlyList<Armor>.Empty;
 			if (this.allArmor == null) this.allArmor = ReadOnlyList<Armor>.Empty;
-			if (this.rootItemWithCount == null) this.rootItemWithCount = ReadOnlyList<ItemWithCount>.Empty;
-			if (this.allItemWithCount == null) this.allItemWithCount = ReadOnlyList<ItemWithCount>.Empty;
-			if (this.rootStartingSet == null) this.rootStartingSet = ReadOnlyList<StartingSet>.Empty;
-			if (this.allStartingSet == null) this.allStartingSet = ReadOnlyList<StartingSet>.Empty;
 
 			this.FlattenStructure();
 
@@ -4464,8 +3934,6 @@ namespace Assets
 			this.allConditionsById = this.allConditions.ToDictionarySkippingNullKeys(entry => entry.Id);
 			this.allWeaponById = this.allWeapon.ToDictionarySkippingNullKeys(entry => entry.Id);
 			this.allArmorById = this.allArmor.ToDictionarySkippingNullKeys(entry => entry.Id);
-			this.allItemWithCountById = this.allItemWithCount.ToDictionarySkippingNullKeys(entry => entry.Id);
-			this.allStartingSetById = this.allStartingSet.ToDictionarySkippingNullKeys(entry => entry.Id);
 
 			this.BeforeInitialize();
 
@@ -4566,18 +4034,6 @@ namespace Assets
 				entry.SetReadOnly();
 			}
 			foreach(var entry in this.allArmor)
-			{
-				entry._DoInitialize(resolver);
-				entry.SetLanguage("en-US");
-				entry.SetReadOnly();
-			}
-			foreach(var entry in this.allItemWithCount)
-			{
-				entry._DoInitialize(resolver);
-				entry.SetLanguage("en-US");
-				entry.SetReadOnly();
-			}
-			foreach(var entry in this.allStartingSet)
 			{
 				entry._DoInitialize(resolver);
 				entry.SetLanguage("en-US");
@@ -5219,97 +4675,6 @@ namespace Assets
 			else
 				return this.allArmor;
 		}
-		// ItemWithCount -> Id
-		public ItemWithCount GetItemWithCount(Int32 id)
-		{
-			ThrowIfNull(id, "id");
-
-			var value = default(ItemWithCount);
-			if (this.allItemWithCountById.TryGetValue(id, out value) == false)
-				throw new System.ArgumentException(string.Format("Unable find ItemWithCount with Id '{0}'.", id) ,"id");
-			return value;
-		}
-		public bool HasItemWithCount(Int32 id)
-		{
-			ThrowIfNull(id, "id");
-
-			return this.allItemWithCountById.ContainsKey(id);
-		}
-		public ItemWithCount FindItemWithCount(Int32 id)
-		{
-			ThrowIfNull(id, "id");
-
-			var value = default(ItemWithCount);
-			this.allItemWithCountById.TryGetValue(id, out value);
-			return value;
-		}
-		public bool TryGetItemWithCount(Int32 id, out ItemWithCount value)
-		{
-			ThrowIfNull(id, "id");
-
-			return this.allItemWithCountById.TryGetValue(id, out value);
-		}
-		public ReadOnlyList<ItemWithCount> GetItemWithCounts(bool onlyRoot = false)
-		{
-			if(onlyRoot)
-				return this.rootItemWithCount;
-			else
-				return this.allItemWithCount;
-		}
-		// StartingSet -> Id
-		public StartingSet GetStartingSet(Int32 id)
-		{
-			ThrowIfNull(id, "id");
-
-			var value = default(StartingSet);
-			if (this.allStartingSetById.TryGetValue(id, out value) == false)
-				throw new System.ArgumentException(string.Format("Unable find StartingSet with Id '{0}'.", id) ,"id");
-			return value;
-		}
-		public bool HasStartingSet(Int32 id)
-		{
-			ThrowIfNull(id, "id");
-
-			return this.allStartingSetById.ContainsKey(id);
-		}
-		public StartingSet FindStartingSet(Int32 id)
-		{
-			ThrowIfNull(id, "id");
-
-			var value = default(StartingSet);
-			this.allStartingSetById.TryGetValue(id, out value);
-			return value;
-		}
-		public bool TryGetStartingSet(Int32 id, out StartingSet value)
-		{
-			ThrowIfNull(id, "id");
-
-			return this.allStartingSetById.TryGetValue(id, out value);
-		}
-		public ReadOnlyList<StartingSet> GetStartingSets(bool onlyRoot = false)
-		{
-			if(onlyRoot)
-				return this.rootStartingSet;
-			else
-				return this.allStartingSet;
-		}
-		// StartingSet -> Instance
-		private StartingSet theStartingSet;
-		public StartingSet StartingSet 
-		{ 
-			get 
-			{ 
-				if (this.theStartingSet != null)
-					return this.theStartingSet;
-
-				switch(this.rootStartingSet.Count)
-				{
-					case 0: throw new InvalidOperationException("Unable to find StartingSet document. Please create StartingSet document before using this property.");
-					case 1: return this.theStartingSet = this.rootStartingSet[0];
-					default: throw new InvalidOperationException("There is a multiple variants of StartingSet document. Please remove the excess before using this property.");
-				}
-			}
-		}
 		#endregion
 
 		public IEnumerable<Document> GetAllDocuments()
@@ -5331,8 +4696,6 @@ namespace Assets
 			foreach (var entry in this.allConditions) yield return entry;
 			foreach (var entry in this.allWeapon) yield return entry;
 			foreach (var entry in this.allArmor) yield return entry;
-			foreach (var entry in this.allItemWithCount) yield return entry;
-			foreach (var entry in this.allStartingSet) yield return entry;
 
 			yield break;
 		}
@@ -5374,10 +4737,6 @@ namespace Assets
 			foreach(var entry in this.allWeapon)
 				entry.SetLanguage(language);
 			foreach(var entry in this.allArmor)
-				entry.SetLanguage(language);
-			foreach(var entry in this.allItemWithCount)
-				entry.SetLanguage(language);
-			foreach(var entry in this.allStartingSet)
 				entry.SetLanguage(language);
 		}
 
@@ -5422,10 +4781,6 @@ namespace Assets
 				case "59f9e745983a364298db5e22": return this.GetWeapon((String)(id is String ? id : ChangeType(id, typeof(String), System.Globalization.CultureInfo.InvariantCulture)));
 				case "Armor":
 				case "59f9e7b6983a364298db5e2c": return this.GetArmor((String)(id is String ? id : ChangeType(id, typeof(String), System.Globalization.CultureInfo.InvariantCulture)));
-				case "ItemWithCount":
-				case "5a1d78d107ff9a7b889cba7d": return this.GetItemWithCount((Int32)(id is Int32 ? id : ChangeType(id, typeof(Int32), System.Globalization.CultureInfo.InvariantCulture)));
-				case "StartingSet":
-				case "5a1d78de07ff9a7b889cba83": return this.GetStartingSet((Int32)(id is Int32 ? id : ChangeType(id, typeof(Int32), System.Globalization.CultureInfo.InvariantCulture)));
 			}
 #pragma warning restore 1522
 			throw new System.ArgumentException(string.Format("Unable find Entity with id '{0}'.", entityId) ,"entityId");
@@ -5482,10 +4837,6 @@ namespace Assets
 			foreach(var document in this.rootWeapon)
 				visitor.Visit(document);
 			foreach(var document in this.rootArmor)
-				visitor.Visit(document);
-			foreach(var document in this.rootItemWithCount)
-				visitor.Visit(document);
-			foreach(var document in this.rootStartingSet)
 				visitor.Visit(document);
 		}
 
@@ -5595,18 +4946,6 @@ namespace Assets
 				var list = flatteningStructureVisitor.AllArmor;
 				list.Sort();
 				this.allArmor = new ReadOnlyList<Armor>(list);
-			}
-			if (flatteningStructureVisitor.AllItemWithCount != null)
-			{
-				var list = flatteningStructureVisitor.AllItemWithCount;
-				list.Sort();
-				this.allItemWithCount = new ReadOnlyList<ItemWithCount>(list);
-			}
-			if (flatteningStructureVisitor.AllStartingSet != null)
-			{
-				var list = flatteningStructureVisitor.AllStartingSet;
-				list.Sort();
-				this.allStartingSet = new ReadOnlyList<StartingSet>(list);
 			}
 		}
 
@@ -5833,29 +5172,6 @@ namespace Assets
 				}
 
 			}
-			public virtual void Visit(ItemWithCount value)
-			{
-				if (value == null) 
-				{
-					return;
-				}
-
-			}
-			public virtual void Visit(StartingSet value)
-			{
-				if (value == null) 
-				{
-					return;
-				}
-
-				if (value.Items != null && value.Items.Count > 0)
-				{
-					foreach(var item in value.Items)
-					{
-						this.Visit(item);
-					}
-				}
-			}
 		}
 
 		private class FlatteningStructureVisitor : Visitor
@@ -5877,8 +5193,6 @@ namespace Assets
 			public List<Conditions> AllConditions;
 			public List<Weapon> AllWeapon;
 			public List<Armor> AllArmor;
-			public List<ItemWithCount> AllItemWithCount;
-			public List<StartingSet> AllStartingSet;
 		
 			public override void Visit(Parameter value) 
 			{ 
@@ -6016,22 +5330,6 @@ namespace Assets
 				this.AllArmor.Add(value); 
 				base.Visit(value); 
 			}
-			public override void Visit(ItemWithCount value) 
-			{ 
-				if (this.AllItemWithCount == null)
-					this.AllItemWithCount = new List<ItemWithCount>();
-
-				this.AllItemWithCount.Add(value); 
-				base.Visit(value); 
-			}
-			public override void Visit(StartingSet value) 
-			{ 
-				if (this.AllStartingSet == null)
-					this.AllStartingSet = new List<StartingSet>();
-
-				this.AllStartingSet.Add(value); 
-				base.Visit(value); 
-			}
 		}
 		#endregion
 
@@ -6076,8 +5374,6 @@ namespace Assets
 				var rootConditions = default(List<Conditions>);
 				var rootWeapon = default(List<Weapon>);
 				var rootArmor = default(List<Armor>);
-				var rootItemWithCount = default(List<ItemWithCount>);
-				var rootStartingSet = default(List<StartingSet>);
 
 				this.ReadObjectBegin();
 				while(this.Node.Token != ReaderToken.EndOfObject)
@@ -6498,39 +5794,6 @@ namespace Assets
 												break;
 										}
 										break;
-									case 11:
-										switch(collectionName)
-										{
-											case "StartingSet":
-											{
-												if (this.Node.Token == ReaderToken.Null)
-												{
-													this.NextToken();
-													break;
-												}
-												this.ReadArrayBegin();
-												while(this.Node.Token != ReaderToken.EndOfArray)
-												{
-													var entry = this.ReadStartingSet();
-
-													if (rootStartingSet == null)
-														rootStartingSet = new List<StartingSet>();
-
-													rootStartingSet.Add(entry);
-												}
-												if (rootStartingSet != null)
-													gameData.rootStartingSet = new ReadOnlyList<StartingSet>(rootStartingSet);
-												else
-													gameData.rootStartingSet = ReadOnlyList<StartingSet>.Empty;
-
-												this.ReadArrayEnd();
-												break;
-											}
-											default:
-												this.ReadAny();
-												break;
-										}
-										break;
 									case 12:
 										switch(collectionName)
 										{
@@ -6555,39 +5818,6 @@ namespace Assets
 													gameData.rootCombatEffect = new ReadOnlyList<CombatEffect>(rootCombatEffect);
 												else
 													gameData.rootCombatEffect = ReadOnlyList<CombatEffect>.Empty;
-
-												this.ReadArrayEnd();
-												break;
-											}
-											default:
-												this.ReadAny();
-												break;
-										}
-										break;
-									case 13:
-										switch(collectionName)
-										{
-											case "ItemWithCount":
-											{
-												if (this.Node.Token == ReaderToken.Null)
-												{
-													this.NextToken();
-													break;
-												}
-												this.ReadArrayBegin();
-												while(this.Node.Token != ReaderToken.EndOfArray)
-												{
-													var entry = this.ReadItemWithCount();
-
-													if (rootItemWithCount == null)
-														rootItemWithCount = new List<ItemWithCount>();
-
-													rootItemWithCount.Add(entry);
-												}
-												if (rootItemWithCount != null)
-													gameData.rootItemWithCount = new ReadOnlyList<ItemWithCount>(rootItemWithCount);
-												else
-													gameData.rootItemWithCount = ReadOnlyList<ItemWithCount>.Empty;
 
 												this.ReadArrayEnd();
 												break;
@@ -9199,35 +8429,7 @@ namespace Assets
 									{
 										throw new InvalidOperationException("A null value is deserialized instead of 'Formula' for required attribute 'Check' in entity 'Conditions'.");
 									}
-									var syntaxTree = default(SyntaxTreeNode);
-									try
-									{
-										syntaxTree = new SyntaxTreeNode(this.ReadObject());
-										entry.Check = new ConditionsCheckExpression(syntaxTree, entry);
-									}
-									catch (Exception e)
-									{
-										var expressionError = e;
-										while (expressionError is System.Reflection.TargetInvocationException)
-										{
-											expressionError = e.InnerException;
-										}
-
-										var expressionText = "<none>";
-										try
-										{
-											if(syntaxTree != null)
-											{
-												expressionText = syntaxTree.ToString();
-											}
-										}
-										catch
-										{
-											expressionText = "<error>";
-										}
-
-										throw new InvalidOperationException(string.Format("An error occured while trying to create {0} Expression '{1}' for {2} with id '{3}':\r\n{4}", "Check", expressionText, "Conditions", id, expressionError.Message), expressionError);
-									}
+									entry.Check = new ReadOnlyDictionary<string, object>(this.ReadObject());
 
 									break;
 								}
@@ -9564,250 +8766,6 @@ namespace Assets
 
 									entry.HitPoints = (Int32) this.Node.AsInt32;
 									this.NextToken();
-
-									break;
-								}
-								default:
-								{
-									this.ReadAny();
-									break;
-								}
-							}
-							break;
-						}
-						default:
-						{
-							this.ReadAny();
-							break;
-						}
-					}
-				}
-				this.ReadObjectEnd();
-				return entry;
-			}
-			private ItemWithCount ReadItemWithCount()
-			{
-				var entry = new ItemWithCount();
-#pragma warning disable 0168 // The variable `id' is declared but never used
-				var id = (object)"<unknown>";
-#pragma warning restore 0168
-				this.ReadObjectBegin();
-				while (this.Node.Token != ReaderToken.EndOfObject)
-				{
-					var attributeName = this.ReadMember();
-					switch (attributeName.Length)
-					{
-						case 2:
-						{
-							switch (attributeName)
-							{
-								case "Id":
-								{
-									if (this.Node.Token == ReaderToken.Null)
-									{
-										throw new InvalidOperationException("A null value is deserialized instead of 'Integer' for required attribute 'Id' in entity 'ItemWithCount'.");
-									}
-									if(this.Node.Token != ReaderToken.Value)
-									{
-										throw ReaderException.UnexpectedToken(this, ReaderToken.Value);
-									}
-
-									entry.Id = (Int32) this.Node.AsInt32;
-									this.NextToken();
-
-									id = entry.Id;
-									break;
-								}
-								default:
-								{
-									this.ReadAny();
-									break;
-								}
-							}
-							break;
-						}
-						case 4:
-						{
-							switch (attributeName)
-							{
-								case "Item":
-								{
-									if (this.Node.Token == ReaderToken.Null)
-									{
-										throw new InvalidOperationException("A null value is deserialized instead of 'Reference' for required attribute 'Item' in entity 'ItemWithCount'.");
-									}
-									entry.Item_Reference = this.ReadReference<Item>();
-
-									break;
-								}
-								default:
-								{
-									this.ReadAny();
-									break;
-								}
-							}
-							break;
-						}
-						case 5:
-						{
-							switch (attributeName)
-							{
-								case "Count":
-								{
-									if (this.Node.Token == ReaderToken.Null)
-									{
-										throw new InvalidOperationException("A null value is deserialized instead of 'Integer' for required attribute 'Count' in entity 'ItemWithCount'.");
-									}
-									if(this.Node.Token != ReaderToken.Value)
-									{
-										throw ReaderException.UnexpectedToken(this, ReaderToken.Value);
-									}
-
-									entry.Count = (Int32) this.Node.AsInt32;
-									this.NextToken();
-
-									break;
-								}
-								default:
-								{
-									this.ReadAny();
-									break;
-								}
-							}
-							break;
-						}
-						default:
-						{
-							this.ReadAny();
-							break;
-						}
-					}
-				}
-				this.ReadObjectEnd();
-				return entry;
-			}
-			private StartingSet ReadStartingSet()
-			{
-				var entry = new StartingSet();
-#pragma warning disable 0168 // The variable `id' is declared but never used
-				var id = (object)"<unknown>";
-#pragma warning restore 0168
-				this.ReadObjectBegin();
-				while (this.Node.Token != ReaderToken.EndOfObject)
-				{
-					var attributeName = this.ReadMember();
-					switch (attributeName.Length)
-					{
-						case 2:
-						{
-							switch (attributeName)
-							{
-								case "Id":
-								{
-									if (this.Node.Token == ReaderToken.Null)
-									{
-										throw new InvalidOperationException("A null value is deserialized instead of 'Integer' for required attribute 'Id' in entity 'StartingSet'.");
-									}
-									if(this.Node.Token != ReaderToken.Value)
-									{
-										throw ReaderException.UnexpectedToken(this, ReaderToken.Value);
-									}
-
-									entry.Id = (Int32) this.Node.AsInt32;
-									this.NextToken();
-
-									id = entry.Id;
-									break;
-								}
-								default:
-								{
-									this.ReadAny();
-									break;
-								}
-							}
-							break;
-						}
-						case 5:
-						{
-							switch (attributeName)
-							{
-								case "Items":
-								{
-									if (this.Node.Token == ReaderToken.Null)
-									{
-										throw new InvalidOperationException("A null value is deserialized instead of 'DocumentList' for required attribute 'Items' in entity 'StartingSet'.");
-									}
-									var list = new List<ItemWithCount>();
-									this.ReadArrayBegin();
-									while(this.Node.Token != ReaderToken.EndOfArray)
-									{
-										if (this.Node.Token == ReaderToken.Null)
-										{
-											throw new InvalidOperationException("A null value is deserialized instead of instance of 'ItemWithCount' in 'Items' attribute in entity 'StartingSet'.");
-										}
-
-										var value = this.ReadItemWithCount();
-										list.Add(value);
-									}
-									entry.Items = new ReadOnlyList<ItemWithCount>(list);
-									this.ReadArrayEnd();
-
-									break;
-								}
-								default:
-								{
-									this.ReadAny();
-									break;
-								}
-							}
-							break;
-						}
-						case 6:
-						{
-							switch (attributeName)
-							{
-								case "Heroes":
-								{
-									if (this.Node.Token == ReaderToken.Null)
-									{
-										throw new InvalidOperationException("A null value is deserialized instead of 'ReferenceList' for required attribute 'Heroes' in entity 'StartingSet'.");
-									}
-									var list = new List<Reference<Hero>>();
-									this.ReadArrayBegin();
-									while(this.Node.Token != ReaderToken.EndOfArray)
-									{
-										if (this.Node.Token == ReaderToken.Null)
-										{
-											throw new InvalidOperationException("A null value is deserialized instead of reference to 'Reference<Hero>' in 'Heroes' attribute in entity 'StartingSet'.");
-										}
-
-										var value = this.ReadReference<Hero>();
-										list.Add(value);
-									}
-									entry.Heroes_Reference = new ReadOnlyList<Reference<Hero>>(list);
-									this.ReadArrayEnd();
-
-									break;
-								}
-								default:
-								{
-									this.ReadAny();
-									break;
-								}
-							}
-							break;
-						}
-						case 8:
-						{
-							switch (attributeName)
-							{
-								case "Location":
-								{
-									if (this.Node.Token == ReaderToken.Null)
-									{
-										throw new InvalidOperationException("A null value is deserialized instead of 'Reference' for required attribute 'Location' in entity 'StartingSet'.");
-									}
-									entry.Location_Reference = this.ReadReference<Location>();
 
 									break;
 								}
@@ -13117,7 +12075,7 @@ namespace Assets
 		#endregion
 
 #pragma warning disable 0660, 0661
-		[GeneratedCode("Charon", "2017.4.3.0")]
+		[GeneratedCode("Charon", "2017.4.4.0")]
 		public abstract partial class Document
 		{
 #pragma warning restore 0660, 0661
@@ -13190,7 +12148,7 @@ namespace Assets
 		}
 
 		
-		[GeneratedCode("Charon", "2017.4.3.0")]
+		[GeneratedCode("Charon", "2017.4.4.0")]
 		public sealed partial class Reference<T> where T : Document
 		{
 			// Uncomment it to delay reference resolution
@@ -13257,7 +12215,7 @@ namespace Assets
 			}
 		}
 
-		[GeneratedCode("Charon", "2017.4.3.0")]
+		[GeneratedCode("Charon", "2017.4.4.0")]
 		public sealed partial class LocalizedString : IDictionary<string, string>
 		{
 			private const string NOTES_KEY = "notes";
@@ -13409,7 +12367,7 @@ namespace Assets
 
 	}
 
-	[GeneratedCode("Charon", "2017.4.3.0")]
+	[GeneratedCode("Charon", "2017.4.4.0")]
 	internal static class RpgGameDataExtensions
 	{
 		public static ReadOnlyDictionary<KeyT, ValueT> ToDictionarySkippingNullKeys<KeyT, ValueT>(this ReadOnlyList<ValueT> list, Func<ValueT, KeyT> keySelector)
@@ -13490,7 +12448,7 @@ namespace Assets
 		}
 	}
 
-	[GeneratedCode("Charon", "2017.4.3.0")]
+	[GeneratedCode("Charon", "2017.4.4.0")]
 	public class ReadOnlyList<T> : IEnumerable<T>
 	{
 		public static readonly ReadOnlyList<T> Empty = new ReadOnlyList<T>();
@@ -13586,7 +12544,7 @@ namespace Assets
 		}
 	}
 
-	[GeneratedCode("Charon", "2017.4.3.0")]
+	[GeneratedCode("Charon", "2017.4.4.0")]
 	public class ReadOnlyDictionary<KeyT, ValueT> : IEnumerable<KeyValuePair<KeyT, ValueT>>
 	{
 		public static readonly ReadOnlyDictionary<KeyT, ValueT> Empty = new ReadOnlyDictionary<KeyT, ValueT>();

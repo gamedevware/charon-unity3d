@@ -456,6 +456,9 @@ namespace GameDevWare.Charon.Windows
 						continue;
 					}
 					artifacts[i] = downloadAsync.GetResult();
+
+					if (Settings.Current.Verbose)
+						Debug.Log(string.Format("Downloading '{0}' to '{1}'.", row.Name, artifacts[i]));
 				}
 
 				// cleanup
@@ -475,6 +478,9 @@ namespace GameDevWare.Charon.Windows
 					var row = this.rows[i];
 					if (row.Disabled || row.Action == ACTION_SKIP || artifacts[i] == null)
 						continue;
+
+					if (Settings.Current.Verbose)
+						Debug.Log(string.Format("Deploying '{0}' from '{1}' to '{2}'.", row.Name, artifacts[i], row.Location));
 
 					try
 					{
