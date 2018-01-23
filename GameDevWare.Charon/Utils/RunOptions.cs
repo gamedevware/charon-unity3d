@@ -47,7 +47,7 @@ namespace GameDevWare.Charon.Utils
 				WorkingDirectory = Path.GetFullPath("./"),
 				EnvironmentVariables =
 				{
-					{ "UNITY_PROJECT_PATH", Path.GetFullPath("./").TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) }
+					{ "UNITY_PROJECT_PATH", Path.GetFullPath("./").TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) + Path.DirectorySeparatorChar }
 				},
 				CreateNoWindow = true
 			};
