@@ -37,7 +37,7 @@ namespace GameDevWare.Charon.Utils
 	{
 		public static readonly string TempDirectory = Path.Combine(Settings.AppDataPath, "Temp/");
 		public static readonly Regex MonoVersionRegex = new Regex(@"version (?<v>[0-9]+\.[0-9]+\.[0-9]+)", RegexOptions.Multiline | RegexOptions.IgnoreCase);
-		public static readonly Version MinimalMonoVersion = new Version(4, 6, 0);
+		public static readonly Version MinimalMonoVersion = new Version(5, 2, 0);
 
 		public static Promise<RequirementsCheckResult> CheckRequirementsAsync()
 		{

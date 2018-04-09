@@ -16,7 +16,7 @@ _ReSharper*
 *.csproj
 *.sln
 *.userprefs
-
+media/
 .vs
 bin/
 obj/
