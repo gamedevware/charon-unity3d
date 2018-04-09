@@ -25,15 +25,11 @@ packages/
 GameDevWare.Charon.Unity/Assembly*
 GameDevWare.Charon.Unity/Library/
 GameDevWare.Charon.Unity/Temp/
-GameDevWare.Charon.Unity/Assets/StreamingAssets/
-GameDevWare.Charon.Unity/Assets/Bundles/
 GameDevWare.Charon.Unity/ProjectSettings/
-GameDevWare.Charon.Unity/Assets/Editor/Unity.Charon/Settings
-GameDevWare.Charon.Unity/Assets/Editor/AssetStoreTools
+AssetStoreTools/
 GameDevWare.Charon.Unity/Assets/Plugins
 
 Examples/RpgGameExample/Assembly*
 Examples/RpgGameExample/Library/
 Examples/RpgGameExample/Temp/
-Examples/RpgGameExample/Assets/Bundles/
 Examples/RpgGameExample/ProjectSettings/
