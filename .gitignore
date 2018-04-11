@@ -21,14 +21,14 @@ media/
 bin/
 obj/
 packages/
+AssetStoreTools*
+GameDevWare.Charon.Settings*
 
 GameDevWare.Charon.Unity/Assembly*
 GameDevWare.Charon.Unity/Library/
 GameDevWare.Charon.Unity/Temp/
 GameDevWare.Charon.Unity/ProjectSettings/
-AssetStoreTools/
-GameDevWare.Charon.Unity/Assets/Plugins
-
+GameDevWare.Charon.Unity/Assets/Plugins*
 Examples/RpgGameExample/Assembly*
 Examples/RpgGameExample/Library/
 Examples/RpgGameExample/Temp/
