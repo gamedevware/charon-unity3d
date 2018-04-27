@@ -22,7 +22,6 @@ bin/
 obj/
 packages/
 AssetStoreTools*
-GameDevWare.Charon.Settings*
 
 GameDevWare.Charon.Unity/Assembly*
 GameDevWare.Charon.Unity/Library/
