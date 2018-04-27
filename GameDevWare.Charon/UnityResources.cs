@@ -27,8 +27,7 @@
 
 // ReSharper disable All
 
-namespace GameDevWare.Charon
-{
+namespace GameDevWare.Charon {
 	public static class Resources
 	{
 		public const string UI_UNITYPLUGIN_ABOUT_CHARON_TITLE = "Charon: Game Data Editor";
@@ -45,9 +44,9 @@ namespace GameDevWare.Charon
 		public const string UI_UNITYPLUGIN_FEEDBACK_TYPE_LABEL = "Type";
 		public const string UI_UNITYPLUGIN_FEEDBACK_WINDOW_TITLE = "Send feedback";
 		public const string UI_UNITYPLUGIN_GENERATE_ASSET_CANT_FIND_GAMEDATA_CLASS = "Asset generation failed: unable to find GameData's type in CSharp assemblies. Make sure there are no compilation errors.";
-		public const string UI_UNITYPLUGIN_GENERATE_CODE_FOR = "Running generation tools for {0}";
-		public const string UI_UNITYPLUGIN_GENERATE_FAILED_DUE_ERRORS = "Code generation for '{0}' failed due to errors: {1}.";
-		public const string UI_UNITYPLUGIN_GENERATE_REFORMAT_CODE = "Reformatting generated code for {0}";
+		public const string UI_UNITYPLUGIN_GENERATE_CODE_FOR = "Running source code generator for {0}";
+		public const string UI_UNITYPLUGIN_GENERATE_FAILED_DUE_ERRORS = "Source code generation for '{0}' failed due to errors: {1}.";
+		public const string UI_UNITYPLUGIN_GENERATE_REFORMAT_CODE = "Re-formatting generated source code for {0}";
 		public const string UI_UNITYPLUGIN_GENERATE_REFRESHING_ASSETS = "Refreshing assets";
 		public const string UI_UNITYPLUGIN_GENERATING_CODE_AND_ASSETS = "Generating Code and Assets...";
 		public const string UI_UNITYPLUGIN_INSPECTOR_ACTIONS_GROUP = "Actions";
@@ -68,7 +67,7 @@ namespace GameDevWare.Charon
 		public const string UI_UNITYPLUGIN_INSPECTOR_EDIT_BUTTON = "Edit";
 		public const string UI_UNITYPLUGIN_INSPECTOR_GENERATION_PREFIX = "Generation:";
 		public const string UI_UNITYPLUGIN_INSPECTOR_RESTORE_BUTTON = "Restore";
-		public const string UI_UNITYPLUGIN_INSPECTOR_RUN_GENERATOR_BUTTON = "Run Generator";
+		public const string UI_UNITYPLUGIN_INSPECTOR_RUN_GENERATOR_BUTTON = "Generate Source Code";
 		public const string UI_UNITYPLUGIN_INSPECTOR_SCRIPTING_ASSEMBLIES_LABEL = "Scripting Assemblies";
 		public const string UI_UNITYPLUGIN_INSPECTOR_VALIDATE_BUTTON = "Validate";
 		public const string UI_UNITYPLUGIN_INSPECTOR_VALIDATION_PREFIX = "Validation:";
@@ -86,7 +85,7 @@ namespace GameDevWare.Charon
 		public const string UI_UNITYPLUGIN_MENU_GENERATE_CODE_AND_ASSETS = "Generate Code and Assets";
 		public const string UI_UNITYPLUGIN_MENU_OPEN_LOGS = "Open Logs...";
 		public const string UI_UNITYPLUGIN_MENU_RESET_PREFERENCES = "Reset Preferences";
-		public const string UI_UNITYPLUGIN_MENU_SEND_FEEDBACK = "Send Feedback...";
+		public const string UI_UNITYPLUGIN_MENU_SEND_FEEDBACK = "Report Issue...";
 		public const string UI_UNITYPLUGIN_MENU_TROUBLESHOOTING = "Troubleshooting";
 		public const string UI_UNITYPLUGIN_MENU_VALIDATE_ASSETS = "Validate Assets";
 		public const string UI_UNITYPLUGIN_MENU_VERBOSE_LOGS = "Verbose Logs";
@@ -114,7 +113,7 @@ namespace GameDevWare.Charon
 		public const string UI_UNITYPLUGIN_WINDOW_CANCEL_BUTTON = "Cancel";
 		public const string UI_UNITYPLUGIN_WINDOW_CHECK_RESULT_MISSING_MONO_OR_DOTNET = "Missing .NET Runtime!";
 		public const string UI_UNITYPLUGIN_WINDOW_CHECKING_MONO = "Checking Mono...";
-		public const string UI_UNITYPLUGIN_WINDOW_CHECKING_MONO_FAILED = "No version information returned from Mono. Reformatting generated code for {0}";
+		public const string UI_UNITYPLUGIN_WINDOW_CHECKING_MONO_FAILED = "No version information returned from Mono.";
 		public const string UI_UNITYPLUGIN_WINDOW_CHECKING_VERSION = "Checking...";
 		public const string UI_UNITYPLUGIN_WINDOW_DOWNLOAD_DOTNET = "c) Alternatively you can download .NET 4.5 by clicking 'Download .NET 4.5'.";
 		public const string UI_UNITYPLUGIN_WINDOW_DOWNLOAD_DOTNET_BUTTON = "Download .NET 4.5";
