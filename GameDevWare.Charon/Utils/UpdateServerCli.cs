@@ -62,11 +62,14 @@ namespace GameDevWare.Charon.Utils
 			var updateServerAddress = Settings.Current.GetServerAddress();
 			var downloadHeaders = new NameValueCollection { { "Accept", "application/octet-stream" } };
 			var downloadUrl = new Uri(updateServerAddress, "Build?product=" + Uri.EscapeDataString(product) + "&id=" + Uri.EscapeDataString(version.ToString()));
+			
 			return HttpUtils.DownloadToFile(downloadUrl, destinationFilePath, downloadHeaders, (read, total) =>
 			{
 				if (progressCallback == null || total == 0)
 					return;
+
 				progressCallback(String.Format(Resources.UI_UNITYPLUGIN_PROGRESS_DOWNLOADINGS, (float)read / 1024 / 1024, (float)total / 1024 / 1024), 0.10f + (0.80f * Math.Min(1.0f, (float)read / total)));
+
 			}, timeout: TimeSpan.FromSeconds(30));
 		}
 	}

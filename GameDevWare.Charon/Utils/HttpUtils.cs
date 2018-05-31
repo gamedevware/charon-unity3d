@@ -118,7 +118,7 @@ namespace GameDevWare.Charon.Utils
 			if (Settings.Current.Verbose)
 				UnityEngine.Debug.Log(string.Format("Staring new request to [{0}]'{1}'.", request.Method, request.RequestUri));
 
-			var getResponseAsync = request.BeginGetResponse(ar => { try{ request.EndGetResponse(ar);} catch { /* ignore */ } }, null);
+			var getResponseAsync = request.BeginGetResponse(ar => { try { request.EndGetResponse(ar); } catch { /* ignore */ } }, null);
 			yield return getResponseAsync;
 			var response = (HttpWebResponse)request.EndGetResponse(getResponseAsync);
 			var responseStream = response.GetResponseStream();
@@ -144,8 +144,14 @@ namespace GameDevWare.Charon.Utils
 				var read = 0;
 				do
 				{
+					if (UnityEditor.EditorApplication.isCompiling)
+						throw new InvalidOperationException("Download has been canceled due pending compilation.");
+
 					var readAsync = responseStream.BeginRead(buffer, 0, buffer.Length, ar => { try { responseStream.EndRead(ar); } catch { /* ignore */ } }, null);
 					yield return readAsync;
+
+					if (UnityEditor.EditorApplication.isCompiling)
+						throw new InvalidOperationException("Download has been canceled due pending compilation.");
 
 					read = responseStream.EndRead(readAsync);
 					if (read <= 0) continue;
@@ -157,7 +163,6 @@ namespace GameDevWare.Charon.Utils
 
 					if (downloadProgressCallback != null && (writen - lastReported) > (totalLength / 200.0f))
 						downloadProgressCallback(lastReported = writen, totalLength);
-
 				} while (read != 0);
 
 				downloadToStream.Flush();
