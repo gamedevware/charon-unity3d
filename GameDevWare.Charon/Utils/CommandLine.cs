@@ -26,7 +26,7 @@ using GameDevWare.Charon.Async;
 
 namespace GameDevWare.Charon.Utils
 {
-	public static class CommandLine
+	internal static class CommandLine
 	{
 		public static Promise<RunResult> Run(string executablePath, params string[] arguments)
 		{

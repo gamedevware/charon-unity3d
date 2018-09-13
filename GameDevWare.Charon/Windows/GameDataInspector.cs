@@ -18,9 +18,11 @@
 */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using GameDevWare.Charon.Async;
 using GameDevWare.Charon.Utils;
 using UnityEditor;
@@ -59,34 +61,108 @@ namespace GameDevWare.Charon.Windows
 				var selectedAssetType = Selection.activeObject.GetType();
 				var inspectorWindowType = typeof(PopupWindow).Assembly.GetType("UnityEditor.InspectorWindow");
 				var inspectorWindow = EditorWindow.GetWindow(inspectorWindowType);
-				var activeEditorTracker = inspectorWindow.HasProperty("tracker") ? 
-					inspectorWindow.GetPropertyValue("tracker") : 
+				var activeEditorTracker = inspectorWindow.HasProperty("tracker") ?
+					inspectorWindow.GetPropertyValue("tracker") :
 					inspectorWindow.GetFieldValue("m_Tracker");
 				var customEditorAttributesType = typeof(PopupWindow).Assembly.GetType("UnityEditor.CustomEditorAttributes");
-				var customEditorsList = (System.Collections.IList)customEditorAttributesType.GetFieldValue("kSCustomEditors");
-				var cachedCustomEditorsList = customEditorAttributesType.HasField("kCachedEditorForType") ?
-					(Dictionary<Type, Type>)customEditorAttributesType.GetFieldValue("kCachedEditorForType") :
-					null;
+				var customEditorsList = customEditorAttributesType.GetFieldValue("kSCustomEditors") as IList;
+				var customEditorsDictionary = customEditorAttributesType.GetFieldValue("kSCustomEditors") as IDictionary;
+				var monoEditorType = customEditorAttributesType.GetNestedType("MonoEditorType", BindingFlags.NonPublic);
 
-				foreach (var customEditor in customEditorsList)
+				// after unity 2018.*
+				if (customEditorsDictionary != null)
 				{
-					if (customEditor == null || (Type)customEditor.GetFieldValue("m_InspectedType") != selectedAssetType)
-						continue;
+					foreach (IEnumerable customEditors in customEditorsDictionary.Values)
+					{
+						foreach (var customEditor in customEditors)
+						{
+							if (customEditor == null || (Type)customEditor.GetFieldValue("m_InspectedType") != selectedAssetType)
+								continue;
 
-					var originalInspectorType = (Type)customEditor.GetFieldValue("m_InspectorType");
+							var originalInspectorType = (Type)customEditor.GetFieldValue("m_InspectorType");
+
+							// override inspector
+							customEditor.SetFieldValue("m_InspectorType", typeof(GameDataInspector));
+
+							// force rebuild editor list
+							activeEditorTracker.Invoke("ForceRebuild");
+							inspectorWindow.Repaint();
+
+							// restore original inspector
+							customEditor.SetFieldValue("m_InspectorType", originalInspectorType);
+							break;
+						}
+					}
+
+					var newMonoEditorType = Activator.CreateInstance(monoEditorType);
+					newMonoEditorType.SetFieldValue("m_InspectedType", selectedAssetType);
+					newMonoEditorType.SetFieldValue("m_InspectorType", typeof(GameDataInspector));
+					newMonoEditorType.SetFieldValue("m_EditorForChildClasses", false);
+					if (monoEditorType.HasField("m_IsFallback"))
+						newMonoEditorType.SetFieldValue("m_IsFallback", false);
+					var newMonoEditorTypeList = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(monoEditorType));
+					newMonoEditorTypeList.Add(newMonoEditorType);
+
 					// override inspector
-					customEditor.SetFieldValue("m_InspectorType", typeof(GameDataInspector));
-					if (cachedCustomEditorsList != null)
-						cachedCustomEditorsList[selectedAssetType] = typeof(GameDataInspector);
+					customEditorsDictionary[selectedAssetType] =  newMonoEditorTypeList;
+
 					// force rebuild editor list
 					activeEditorTracker.Invoke("ForceRebuild");
 					inspectorWindow.Repaint();
-					// restore original inspector
-					customEditor.SetFieldValue("m_InspectorType", originalInspectorType);
-					if (cachedCustomEditorsList != null)
-						cachedCustomEditorsList.Remove(selectedAssetType);
-				}
 
+					// restore original inspector
+					customEditorsDictionary.Remove(selectedAssetType);
+				}
+				// prior to unity 2018.*
+				else if (customEditorsList != null)
+				{
+					var cachedCustomEditorsByType = customEditorAttributesType.HasField("kCachedEditorForType") ?
+						(IDictionary<Type, Type>)customEditorAttributesType.GetFieldValue("kCachedEditorForType") :
+						null;
+
+					foreach (var customEditor in customEditorsList)
+					{
+						if (customEditor == null || (Type)customEditor.GetFieldValue("m_InspectedType") != selectedAssetType)
+							continue;
+
+						var originalInspectorType = (Type)customEditor.GetFieldValue("m_InspectorType");
+
+						// override inspector
+						customEditor.SetFieldValue("m_InspectorType", typeof(GameDataInspector));
+						if (cachedCustomEditorsByType != null)
+							cachedCustomEditorsByType[selectedAssetType] = typeof(GameDataInspector);
+
+						// force rebuild editor list
+						activeEditorTracker.Invoke("ForceRebuild");
+						inspectorWindow.Repaint();
+
+						// restore original inspector
+						customEditor.SetFieldValue("m_InspectorType", originalInspectorType);
+						if (cachedCustomEditorsByType != null)
+							cachedCustomEditorsByType.Remove(selectedAssetType);
+						break;
+					}
+
+					var newMonoEditorType = Activator.CreateInstance(monoEditorType);
+					newMonoEditorType.SetFieldValue("m_InspectedType", selectedAssetType);
+					newMonoEditorType.SetFieldValue("m_InspectorType", typeof(GameDataInspector));
+					newMonoEditorType.SetFieldValue("m_EditorForChildClasses", false);
+					if (monoEditorType.HasField("m_IsFallback"))
+						newMonoEditorType.SetFieldValue("m_IsFallback", false);
+
+					// override inspector
+					customEditorsList.Insert(0, newMonoEditorType);
+					if (cachedCustomEditorsByType != null)
+						cachedCustomEditorsByType[selectedAssetType] = typeof(GameDataInspector);
+					// force rebuild editor list
+					activeEditorTracker.Invoke("ForceRebuild");
+					inspectorWindow.Repaint();
+
+					// restore original inspector
+					customEditorsList.Remove(newMonoEditorType);
+					if (cachedCustomEditorsByType != null)
+						cachedCustomEditorsByType.Remove(selectedAssetType);
+				}
 			}
 			catch (Exception updateEditorError)
 			{

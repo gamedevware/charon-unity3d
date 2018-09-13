@@ -45,10 +45,11 @@ namespace GameDevWare.Charon
 
 		private static void Initialize()
 		{
+			if (EditorApplication.isCompiling)
+				return;
+
 			EditorApplication.update -= InitializeCallback;
-
-			System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(GameDataInspector).TypeHandle);
-
+			
 			var listStr = EditorPrefs.GetString(PREFS_KEY);
 			if (string.IsNullOrEmpty(listStr))
 				AssetGenerationList = new HashSet<string>();

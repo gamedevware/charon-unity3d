@@ -24,6 +24,7 @@ namespace GameDevWare.Charon.Utils
 		None = 0,
 		Default = 0,
 		Publication = 1,
-		Localization = 2
+		Localization = 2,
+		Extraction = 3
 	}
 }

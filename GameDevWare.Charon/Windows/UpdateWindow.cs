@@ -102,26 +102,26 @@ namespace GameDevWare.Charon.Windows
 			this.padding = new Rect(10, 10, 10, 10);
 
 			this.rows = new[] {
-				new ProductRow(UpdateServerCli.PRODUCT_CHARON, Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_CHARON_NAME, disabled: false) {
+				new ProductRow(Updater.PRODUCT_CHARON, Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_CHARON_NAME, disabled: false) {
 					CurrentVersion = CharonCli.GetVersionAsync().IgnoreFault(),
-					AllBuilds = UpdateServerCli.GetBuilds(UpdateServerCli.PRODUCT_CHARON),
+					AllBuilds = Updater.GetBuilds(Updater.PRODUCT_CHARON),
 					Location = Path.GetFullPath(Settings.CharonPath),
 					ExpectedVersion = string.IsNullOrEmpty(Settings.Current.EditorVersion) ? default(Version) : new Version(Settings.Current.EditorVersion)
 				},
-				new ProductRow(UpdateServerCli.PRODUCT_CHARON_UNITY, Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_CHARON_UNITY_PLUGIN_NAME, disabled: !IsAssemblyLoaded(UpdateServerCli.PRODUCT_CHARON_UNITY_ASSEMBLY)) {
-					CurrentVersion = Promise.FromResult(GetAssemblyVersion(UpdateServerCli.PRODUCT_CHARON_UNITY_ASSEMBLY)),
-					AllBuilds = UpdateServerCli.GetBuilds(UpdateServerCli.PRODUCT_CHARON_UNITY),
-					Location = GetAssemblyLocation(UpdateServerCli.PRODUCT_CHARON_UNITY_ASSEMBLY)
+				new ProductRow(Updater.PRODUCT_CHARON_UNITY, Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_CHARON_UNITY_PLUGIN_NAME, disabled: !IsAssemblyLoaded(Updater.PRODUCT_CHARON_UNITY_ASSEMBLY)) {
+					CurrentVersion = Promise.FromResult(GetAssemblyVersion(Updater.PRODUCT_CHARON_UNITY_ASSEMBLY)),
+					AllBuilds = Updater.GetBuilds(Updater.PRODUCT_CHARON_UNITY),
+					Location = GetAssemblyLocation(Updater.PRODUCT_CHARON_UNITY_ASSEMBLY)
 				},
-				new ProductRow(UpdateServerCli.PRODUCT_EXPRESSIONS, Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_EXPRESSIONS_PLUGIN_NAME, disabled: !IsAssemblyLoaded(UpdateServerCli.PRODUCT_EXPRESSIONS_ASSEMBLY)) {
-					CurrentVersion = Promise.FromResult(GetAssemblyVersion(UpdateServerCli.PRODUCT_EXPRESSIONS_ASSEMBLY)),
-					AllBuilds = UpdateServerCli.GetBuilds(UpdateServerCli.PRODUCT_EXPRESSIONS),
-					Location = GetAssemblyLocation(UpdateServerCli.PRODUCT_EXPRESSIONS_ASSEMBLY)
+				new ProductRow(Updater.PRODUCT_EXPRESSIONS, Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_EXPRESSIONS_PLUGIN_NAME, disabled: !IsAssemblyLoaded(Updater.PRODUCT_EXPRESSIONS_ASSEMBLY)) {
+					CurrentVersion = Promise.FromResult(GetAssemblyVersion(Updater.PRODUCT_EXPRESSIONS_ASSEMBLY)),
+					AllBuilds = Updater.GetBuilds(Updater.PRODUCT_EXPRESSIONS),
+					Location = GetAssemblyLocation(Updater.PRODUCT_EXPRESSIONS_ASSEMBLY)
 				},
-				new ProductRow(UpdateServerCli.PRODUCT_TEXT_TEMPLATES, Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_TEXT_TRANSFORM_PLUGIN_NAME, disabled: !IsAssemblyLoaded(UpdateServerCli.PRODUCT_TEXT_TEMPLATES_ASSEMBLY)) {
-					CurrentVersion = Promise.FromResult(GetAssemblyVersion(UpdateServerCli.PRODUCT_TEXT_TEMPLATES_ASSEMBLY)),
-					AllBuilds = UpdateServerCli.GetBuilds(UpdateServerCli.PRODUCT_TEXT_TEMPLATES),
-					Location = GetAssemblyLocation(UpdateServerCli.PRODUCT_TEXT_TEMPLATES_ASSEMBLY)
+				new ProductRow(Updater.PRODUCT_TEXT_TEMPLATES, Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_TEXT_TRANSFORM_PLUGIN_NAME, disabled: !IsAssemblyLoaded(Updater.PRODUCT_TEXT_TEMPLATES_ASSEMBLY)) {
+					CurrentVersion = Promise.FromResult(GetAssemblyVersion(Updater.PRODUCT_TEXT_TEMPLATES_ASSEMBLY)),
+					AllBuilds = Updater.GetBuilds(Updater.PRODUCT_TEXT_TEMPLATES),
+					Location = GetAssemblyLocation(Updater.PRODUCT_TEXT_TEMPLATES_ASSEMBLY)
 				}
 			};
 			this.columns = new[] {
@@ -468,7 +468,7 @@ namespace GameDevWare.Charon.Windows
 					if (row.Disabled || row.Action == ACTION_SKIP || artifacts[i] == null)
 						continue;
 
-					if (row.Id == UpdateServerCli.PRODUCT_CHARON)
+					if (row.Id == Updater.PRODUCT_CHARON)
 						PreCharonDeploy(row.Location);
 				}
 
@@ -494,7 +494,7 @@ namespace GameDevWare.Charon.Windows
 					}
 
 					var deployProgress = this.GetProgressReportFor(row, i + 1, this.rows.Length);
-					if (row.Id == UpdateServerCli.PRODUCT_CHARON && artifacts[i] != null)
+					if (row.Id == Updater.PRODUCT_CHARON && artifacts[i] != null)
 						yield return new Coroutine<object>(PostCharonDeployAsync(row.Location, deployProgress)).IgnoreFault();
 				}
 
@@ -602,7 +602,7 @@ namespace GameDevWare.Charon.Windows
 			var downloadSuccess = false;
 			try
 			{
-				var downloadAsync = UpdateServerCli.DownloadBuild(row.Id, downloadVersion, downloadPath, progressCallback);
+				var downloadAsync = Updater.DownloadBuild(row.Id, downloadVersion, downloadPath, progressCallback);
 				yield return downloadAsync;
 				downloadSuccess = true;
 				yield return downloadPath;

@@ -32,7 +32,6 @@ namespace GameDevWare.Charon.Windows
 {
 	internal class FeedbackWindow : EditorWindow
 	{
-		public static readonly string CharonLogPath = string.Empty;
 		public static readonly string EditorLogPath = string.Empty;
 		public static readonly string EditorPrevLogPath = string.Empty;
 
@@ -50,8 +49,6 @@ namespace GameDevWare.Charon.Windows
 
 		static FeedbackWindow()
 		{
-			CharonLogPath = Path.Combine(Path.Combine(Settings.AppDataPath, "Logs"), "Charon.log");
-
 			if (RuntimeInformation.IsWindows)
 			{
 				EditorLogPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Unity\Editor\Editor.log");
@@ -90,8 +87,11 @@ namespace GameDevWare.Charon.Windows
 			if (!string.IsNullOrEmpty(EditorPrevLogPath) && File.Exists(EditorPrevLogPath))
 				this.attachmentsToAdd.Add(EditorPrevLogPath);
 
-			if (!string.IsNullOrEmpty(CharonLogPath) && File.Exists(CharonLogPath))
-				this.attachmentsToAdd.Add(CharonLogPath);
+			var charonLogs = GetCharonLogFilesSortedByCreationTime();
+			for (var i = 0; i < charonLogs.Length && i < 3; i++)
+			{
+				this.attachmentsToAdd.Add(charonLogs[i]);
+			}
 		}
 
 		[SuppressMessage("ReSharper", "InconsistentNaming")]
@@ -146,10 +146,10 @@ namespace GameDevWare.Charon.Windows
 				else
 					reporter = this.Name;
 
-					GUI.enabled = !string.IsNullOrEmpty(reporter) && !string.IsNullOrEmpty(this.Description) && (this.reportCoroutine == null || this.reportCoroutine.IsCompleted);
+				GUI.enabled = !string.IsNullOrEmpty(reporter) && !string.IsNullOrEmpty(this.Description) && (this.reportCoroutine == null || this.reportCoroutine.IsCompleted);
 				if (GUILayout.Button(Resources.UI_UNITYPLUGIN_FEEDBACK_SEND_BUTTON, GUILayout.Width(80)))
 				{
-					
+
 					this.reportCoroutine = this.ReportIssue(reporter, this.Description, this.Type, this.Attachments).ContinueWith(p =>
 					{
 						if (p.HasErrors)
@@ -222,6 +222,18 @@ namespace GameDevWare.Charon.Windows
 					this.Attachments.Add(toAdd);
 				this.attachmentsToAdd.Clear();
 			}
+		}
+
+		public static string[] GetCharonLogFilesSortedByCreationTime()
+		{
+			if (string.IsNullOrEmpty(CharonCli.CharonLogsDirectory) || !Directory.Exists(CharonCli.CharonLogsDirectory))
+			{
+				return new string[0];
+			}
+
+			var logFiles = Directory.GetFiles(CharonCli.CharonLogsDirectory);
+			Array.Sort(logFiles, (x, y) => File.GetLastWriteTimeUtc(y).CompareTo(File.GetLastWriteTimeUtc(x)));
+			return logFiles;
 		}
 	}
 }

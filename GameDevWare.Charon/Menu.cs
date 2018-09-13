@@ -120,14 +120,17 @@ namespace GameDevWare.Charon
 		[MenuItem(TROUBLESHOOTING_PREFIX + Resources.UI_UNITYPLUGIN_MENU_OPEN_LOGS, false, 17)]
 		private static void OpenLogs()
 		{
-			if (string.IsNullOrEmpty(FeedbackWindow.CharonLogPath) == false && File.Exists(FeedbackWindow.CharonLogPath))
-				EditorUtility.OpenWithDefaultApp(FeedbackWindow.CharonLogPath);
+			var logFile = FeedbackWindow.GetCharonLogFilesSortedByCreationTime().FirstOrDefault();
+			if (string.IsNullOrEmpty(logFile) == false)
+			{
+				EditorUtility.OpenWithDefaultApp(logFile);
+			}
 		}
 
 		[MenuItem(TROUBLESHOOTING_PREFIX + Resources.UI_UNITYPLUGIN_MENU_OPEN_LOGS, true, 17)]
 		private static bool OpenLogsCheck()
 		{
-			return string.IsNullOrEmpty(FeedbackWindow.CharonLogPath) == false && File.Exists(FeedbackWindow.CharonLogPath);
+			return string.IsNullOrEmpty(CharonCli.CharonLogsDirectory) == false && Directory.Exists(CharonCli.CharonLogsDirectory) && Directory.GetFiles(CharonCli.CharonLogsDirectory).Length > 0;
 		}
 
 		[MenuItem(TROUBLESHOOTING_PREFIX + Resources.UI_UNITYPLUGIN_MENU_VERBOSE_LOGS, false, 20)]
@@ -326,6 +329,8 @@ namespace GameDevWare.Charon
 				// trying to touch gamedata file
 				var touchGamedata = new Coroutine<FileStream>(TouchGameDataFile(gameDataPath));
 				yield return touchGamedata;
+				if (touchGamedata.GetResult().Length == 0)
+					continue;
 				touchGamedata.GetResult().Dispose(); // release touched file
 
 				var generator = (GameDataSettings.CodeGenerator)gameDataSettings.Generator;
@@ -456,6 +461,8 @@ namespace GameDevWare.Charon
 				// trying to touch gamedata file
 				var touchGamedata = new Coroutine<FileStream>(TouchGameDataFile(gameDataPath));
 				yield return touchGamedata;
+				if (touchGamedata.GetResult().Length == 0)
+					continue;
 
 				using (var file = touchGamedata.GetResult())
 				{

@@ -27,8 +27,10 @@
 
 // ReSharper disable All
 
+#pragma warning disable 1591
+
 namespace GameDevWare.Charon {
-	public static class Resources
+	internal static class Resources
 	{
 		public const string UI_UNITYPLUGIN_ABOUT_CHARON_TITLE = "Charon: Game Data Editor";
 		public const string UI_UNITYPLUGIN_ABOUT_CLOSE_BUTTON = "Close";

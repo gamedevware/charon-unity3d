@@ -38,8 +38,8 @@ namespace GameDevWare.Charon.Async
 
 		public bool IsDisposed { get; private set; }
 		public bool HasErrors { get { return this.error != null; } }
-		public AggregateException Error { get {
-			this.IsErrorObserved = true; return this.error; } protected set { this.error = value; } }
+		public Exception Error { get {
+			this.IsErrorObserved = true; return this.error; } }
 		public object PromiseState { get { return this.promiseState; } }
 		public bool IsCompleted { get; private set; }
 		WaitHandle IAsyncResult.AsyncWaitHandle { get { this.EnsureCompletionEvent(); return this.completionEvent; } }
@@ -121,9 +121,24 @@ namespace GameDevWare.Charon.Async
 				if (this.IsCompleted || this.IsDisposed)
 					return false;
 
-				this.Error = (AggregateException)fault;
+				this.error = (AggregateException)fault;
 
 				return this.TrySetCompleted();
+			}
+		}
+		public void GetResult()
+		{
+			lock (this)
+			{
+				if (this.IsCompleted == false)
+					throw new InvalidOperationException("Promise is not yet fulfilled.");
+
+				if (this.HasErrors)
+				{
+					if (this.error.InnerExceptions.Count == 1 && this.Error.InnerException != null)
+						throw this.Error.InnerException;
+					throw this.Error;
+				}				
 			}
 		}
 
@@ -495,15 +510,7 @@ namespace GameDevWare.Charon.Async
 		{
 			lock (this)
 			{
-				if (this.IsCompleted == false)
-					throw new InvalidOperationException("Promise is not yet fulfilled.");
-
-				if (this.HasErrors)
-				{
-					if (this.Error.InnerExceptions.Count == 1 && this.Error.InnerException != null)
-						throw this.Error.InnerException;
-					throw this.Error;
-				}
+				((Promise)this).GetResult();
 
 				return this.value;
 			}

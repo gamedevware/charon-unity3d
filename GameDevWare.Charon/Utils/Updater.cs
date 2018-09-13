@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace GameDevWare.Charon.Utils
 {
-	public static class UpdateServerCli
+	internal static class Updater
 	{
 		public const string PRODUCT_CHARON = "Charon";
 		public const string PRODUCT_CHARON_UNITY = "Charon_Unity";
@@ -27,7 +27,7 @@ namespace GameDevWare.Charon.Utils
 		}
 		private static IEnumerable GetBuildsAsync(string product)
 		{
-			var updateServerAddress = Settings.Current.GetServerAddress();
+			var updateServerAddress = Settings.Current.GetServerApiAddress();
 			var getBuildsHeaders = new NameValueCollection { { "Accept", "application/json" } };
 			var getBuildsUrl = new Uri(updateServerAddress, "Build?product=" + Uri.EscapeDataString(product));
 			var getBuildsRequest = HttpUtils.GetJson<JsonValue>(getBuildsUrl, getBuildsHeaders, timeout: TimeSpan.FromSeconds(10));
@@ -59,7 +59,7 @@ namespace GameDevWare.Charon.Utils
 
 		public static Promise DownloadBuild(string product, Version version, string destinationFilePath, Action<string, float> progressCallback = null)
 		{
-			var updateServerAddress = Settings.Current.GetServerAddress();
+			var updateServerAddress = Settings.Current.GetServerApiAddress();
 			var downloadHeaders = new NameValueCollection { { "Accept", "application/octet-stream" } };
 			var downloadUrl = new Uri(updateServerAddress, "Build?product=" + Uri.EscapeDataString(product) + "&id=" + Uri.EscapeDataString(version.ToString()));
 			

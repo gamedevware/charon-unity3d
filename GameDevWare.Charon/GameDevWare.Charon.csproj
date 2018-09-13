@@ -9,12 +9,12 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>GameDevWare.Charon</RootNamespace>
-        <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <BaseDirectory>Assets</BaseDirectory>
     <EditorDirectory>E:/apps/unity/Editor</EditorDirectory>
-	<AssemblyName>GameDevWare.Charon</AssemblyName>
-	<DocumentationFile>bin\$(Configuration)\$(AssemblyName).xml</DocumentationFile>
+    <AssemblyName>GameDevWare.Charon</AssemblyName>
+    <DocumentationFile>bin\$(Configuration)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -51,6 +51,7 @@
     <Compile Include="AssetGenerator.cs" />
     <Compile Include="BrowserType.cs" />
     <Compile Include="ChangeHooks.cs" />
+    <Compile Include="PluginInitializer.cs" />
     <Compile Include="Utils\BuildInfo.cs" />
     <Compile Include="Utils\CodeGenerationOptions.cs" />
     <Compile Include="GameDataSettings.cs" />
@@ -91,7 +92,7 @@
     <Compile Include="Utils\RunOptions.cs" />
     <Compile Include="Utils\RunResult.cs" />
     <Compile Include="Utils\CommandLine.cs" />
-    <Compile Include="Utils\UpdateServerCli.cs" />
+    <Compile Include="Utils\Updater.cs" />
     <Compile Include="Utils\ValidationOptions.cs" />
     <Compile Include="ValidationException.cs" />
     <Compile Include="Windows\UpdateWindow.cs" />

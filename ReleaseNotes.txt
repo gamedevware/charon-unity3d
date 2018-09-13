@@ -1,1 +1,2 @@
-﻿This is initial release of Charon plugin for Unity.
+﻿hidded some classes from public view
+added new export option for Charon 2018.4 - extraction

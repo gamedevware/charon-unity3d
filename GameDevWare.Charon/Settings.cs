@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -28,7 +29,7 @@ using UnityEngine;
 namespace GameDevWare.Charon
 {
 	[Serializable]
-	public class Settings
+	internal class Settings
 	{
 		public const string PREF_PREFIX = "Charon_";
 
@@ -122,11 +123,33 @@ namespace GameDevWare.Charon
 				this.EditorPort = 65535;
 		}
 
-		internal Uri GetServerAddress()
+		internal Uri GetServerApiAddress()
 		{
+			var serverAddress = default(Uri);
 			if (string.IsNullOrEmpty(this.ServerAddress) || this.ServerAddress.All(char.IsWhiteSpace))
-				return new Uri(DEFAULT_SERVER_ADDRESS);
-			return new Uri(this.ServerAddress);
+			{
+				serverAddress = new Uri(DEFAULT_SERVER_ADDRESS);
+			}
+			else
+			{
+				serverAddress = new Uri(this.ServerAddress);
+			}
+
+			if (serverAddress.IsAbsoluteUri == false) throw new InvalidOperationException("Server address should be absolute URL.");
+			if (serverAddress.LocalPath.EndsWith("service/api/", StringComparison.OrdinalIgnoreCase) == false)
+			{
+				if (serverAddress.LocalPath.EndsWith("service/api", StringComparison.OrdinalIgnoreCase) ||
+					serverAddress.LocalPath.EndsWith("service/", StringComparison.OrdinalIgnoreCase))
+				{
+					serverAddress = new Uri(serverAddress, "./api/");
+				}
+				else
+				{
+					serverAddress = new Uri(serverAddress, "./service/api/");
+				}
+			}
+
+			return serverAddress;
 		}
 		internal static string GetLocalUserDataPath()
 		{

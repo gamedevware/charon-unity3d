@@ -28,7 +28,7 @@ using GameDevWare.Charon.Utils;
 namespace GameDevWare.Charon.Async
 {
 	[Serializable, DebuggerDisplay("Count = {InnerExceptions.Count}")]
-	public class AggregateException : Exception
+	internal class AggregateException : Exception
 	{
 		private const string DEFAULT_MESSAGE = "One or more error occured";
 		public AggregateException()

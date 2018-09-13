@@ -2,7 +2,7 @@
 
 namespace GameDevWare.Charon.Utils
 {
-	public class BuildInfo
+	internal class BuildInfo
 	{
 		public string FileId { get; set; }
 		public Version Version { get; set; }

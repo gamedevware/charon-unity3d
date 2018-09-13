@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>GameDevWare.Charon</name>
+    </assembly>
+    <members>
+        <member name="M:GameDevWare.Charon.Utils.CommandInput.Finalize">
+            <inheritdoc />
+        </member>
+        <member name="M:GameDevWare.Charon.Utils.CommandInput.ReleaseUnmanagedResources">
+            <inheritdoc />
+        </member>
+        <member name="M:GameDevWare.Charon.Utils.CommandInput.Dispose">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>
