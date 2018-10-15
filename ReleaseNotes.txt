@@ -1,12 +1,6 @@
-﻿# 2018.4.1
-added Unity 2018 support
-added new export mode 'Extraction' for exporting valid sub-graph, while default mode is exporting fragment of data.
-added --credentials parameter to most CLI method. It is used for authentication on remote server.
-added support for de-duplicating 'Custom' ids
-added additional data stripping in 'Publication' export mode
-added few optimizations in generated C# code
-fixed few bugs with data CLI and it's parameters
-fixed errors with i18n import/export and Arabic language
-fixed errors with i18n import/export CLI parameters
-fixed error with BSON Object Id generator
-fixed search box in UI, now it's properly searching inside all attributes of documents
+﻿# 2018.4.3
+added warning message about 'pending routine' or 'compilation' in game data's inspector
+added list of supported extensions in About window
+fixed hung routines (some times)
+fixed wrong code generation flags
+updated RPG example project

@@ -104,7 +104,7 @@ namespace GameDevWare.Charon.Windows
 					newMonoEditorTypeList.Add(newMonoEditorType);
 
 					// override inspector
-					customEditorsDictionary[selectedAssetType] =  newMonoEditorTypeList;
+					customEditorsDictionary[selectedAssetType] = newMonoEditorTypeList;
 
 					// force rebuild editor list
 					activeEditorTracker.Invoke("ForceRebuild");
@@ -283,14 +283,20 @@ namespace GameDevWare.Charon.Windows
 
 			EditorGUILayout.Space();
 			GUILayout.Label(Resources.UI_UNITYPLUGIN_INSPECTOR_ACTIONS_GROUP, EditorStyles.boldLabel);
+
+			if (EditorApplication.isCompiling)
+				EditorGUILayout.HelpBox(Resources.UI_UNITYPLUGIN_COMPILING_WARNING, MessageType.Warning);
+			else if (CoroutineScheduler.IsRunning)
+				EditorGUILayout.HelpBox(Resources.UI_UNITYPLUGIN_COROUTINE_IS_RUNNIG_WARNING, MessageType.Warning);
+
 			EditorGUILayout.BeginHorizontal();
-			GUI.enabled = !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling && string.IsNullOrEmpty(this.gameDataSettings.CodeGenerationPath) == false;
+			GUI.enabled = !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling;
 			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_INSPECTOR_EDIT_BUTTON))
 			{
 				AssetDatabase.OpenAsset(gameDataAsset);
 				this.Repaint();
 			}
-			if (this.gameDataSettings.Generator != (int)GameDataSettings.CodeGenerator.None)
+			if (this.gameDataSettings.Generator != (int)GameDataSettings.CodeGenerator.None && string.IsNullOrEmpty(this.gameDataSettings.CodeGenerationPath) == false)
 			{
 				if (GUILayout.Button(Resources.UI_UNITYPLUGIN_INSPECTOR_RUN_GENERATOR_BUTTON))
 				{

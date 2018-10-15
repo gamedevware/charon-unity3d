@@ -27,8 +27,6 @@
 
 // ReSharper disable All
 
-#pragma warning disable 1591
-
 namespace GameDevWare.Charon {
 	internal static class Resources
 	{
@@ -36,6 +34,8 @@ namespace GameDevWare.Charon {
 		public const string UI_UNITYPLUGIN_ABOUT_CLOSE_BUTTON = "Close";
 		public const string UI_UNITYPLUGIN_ABOUT_EDITOR_PORT = "Editor TCP Port";
 		public const string UI_UNITYPLUGIN_ABOUT_EDITOR_VERSION_LABEL = "Editor Version";
+		public const string UI_UNITYPLUGIN_COMPILING_WARNING = "No action could be made while Unity Editor is compiling scripts.";
+		public const string UI_UNITYPLUGIN_COROUTINE_IS_RUNNIG_WARNING = "No action could be made while another routine is running.";
 		public const string UI_UNITYPLUGIN_DOWNLOAD_BUTTON = "Update (~{0:F1} MiB)";
 		public const string UI_UNITYPLUGIN_FEEDBACK_ATTACH_FILE_BUTTON = "Attach...";
 		public const string UI_UNITYPLUGIN_FEEDBACK_ATTACH_FILE_CHECKBOX = "Attach '{0}' file ({1:F2}MiB)";
@@ -126,6 +126,7 @@ namespace GameDevWare.Charon {
 		public const string UI_UNITYPLUGIN_WINDOW_EDITOR_LAUNCHING_EXECUTABLE = "Launching editor's application...";
 		public const string UI_UNITYPLUGIN_WINDOW_EDITOR_OPENING_BROWSER = "Opening web browser window...";
 		public const string UI_UNITYPLUGIN_WINDOW_EDITOR_TITLE = "Editor";
+		public const string UI_UNITYPLUGIN_WINDOW_EXTENSIONS_LABEL = "Extensions";
 		public const string UI_UNITYPLUGIN_WINDOW_FAILED_TO_START_EDITOR_TIMEOUT = "Failed to start Game Data editor due errors: Aborted by timeout.";
 		public const string UI_UNITYPLUGIN_WINDOW_FIND_MONO_MANUALLY = "a) You can manually locate Mono Runtime by clicking 'Browse...'.";
 		public const string UI_UNITYPLUGIN_WINDOW_HELP_BUTTON = "Help";

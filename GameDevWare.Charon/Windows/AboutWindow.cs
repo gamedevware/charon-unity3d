@@ -55,6 +55,7 @@ namespace GameDevWare.Charon.Windows
 			GUILayout.Label(Resources.UI_UNITYPLUGIN_WINDOW_INFO_GROUP, EditorStyles.boldLabel);
 			EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_ABOUT_EDITOR_VERSION_LABEL, this.editorVersion);
 			EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_WINDOW_ASSET_VERSION_LABEL, this.assetVersion);
+			EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_WINDOW_EXTENSIONS_LABEL, string.Join(", ", Settings.SupportedExtensions));
 			GUI.enabled = true;
 			GUILayout.Space(10);
 			GUILayout.Label(Resources.UI_UNITYPLUGIN_WINDOW_SETTINGS_GROUP, EditorStyles.boldLabel);

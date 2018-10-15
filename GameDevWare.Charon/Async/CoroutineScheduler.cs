@@ -34,7 +34,6 @@ namespace GameDevWare.Charon.Async
 
 		public static bool IsRunning { get { return Current != null && Current.IsCompleted == false; } }
 
-		[ThreadStatic]
 		public static string CurrentId;
 
 		static CoroutineScheduler()
@@ -100,17 +99,17 @@ namespace GameDevWare.Charon.Async
 			var result = default(T);
 			var enumerator = coroutine.GetEnumerator();
 			var hasNext = default(bool);
+			var originalId = CurrentId;
+			CurrentId = id;
 			do
 			{
 				try
 				{
-					CurrentId = id;
 					hasNext = enumerator.MoveNext();
-					CurrentId = null;
 				}
 				catch (Exception executionError)
 				{
-					CurrentId = null;
+					CurrentId = originalId;
 					CoroutineById.Remove(id);
 					resultPromise.TrySetFailed(executionError);
 					throw;
@@ -126,7 +125,7 @@ namespace GameDevWare.Charon.Async
 
 			} while (hasNext);
 
-			CurrentId = null;
+			CurrentId = originalId;
 			CoroutineById.Remove(id);
 			resultPromise.TrySetResult(result);
 		}

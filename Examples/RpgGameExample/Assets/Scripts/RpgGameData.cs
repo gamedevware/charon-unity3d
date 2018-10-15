@@ -19,7 +19,7 @@ using System.Runtime.Serialization;
 using System.CodeDom.Compiler;
 using System.Runtime.InteropServices;
 using System.Linq.Expressions;
-using System.Xml;
+using GameDevWare.Dynamic.Expressions;
 
 namespace Assets.Scripts
 {
@@ -27,7 +27,180 @@ namespace Assets.Scripts
 	/// No description is provided.
 	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.4.0")]
+	[GeneratedCode("Charon", "2018.4.2.0")]
+	public sealed partial class ProjectSettings : RpgGameData.Document, IEquatable<ProjectSettings>, IComparable, IComparable<ProjectSettings>
+	{
+		private int hashCode;
+
+		private String _Id;
+		/// <summary>
+		/// No description is provided. Not null.
+		/// </summary>
+		
+		public String Id
+		{
+			get { return this._Id; }
+			set { this.ThrowIfReadOnly(); this._Id = value; }
+		}
+
+		private String _Name;
+		/// <summary>
+		/// No description is provided. Not null.
+		/// </summary>
+		
+		public String Name
+		{
+			get { return this._Name; }
+			set { this.ThrowIfReadOnly(); this._Name = value; }
+		}
+
+		private String _PrimaryLanguage;
+		/// <summary>
+		/// No description is provided. 
+		/// </summary>
+		
+		public String PrimaryLanguage
+		{
+			get { return this._PrimaryLanguage; }
+			set { this.ThrowIfReadOnly(); this._PrimaryLanguage = value; }
+		}
+
+		private String _Languages;
+		/// <summary>
+		/// No description is provided. 
+		/// </summary>
+		
+		public String Languages
+		{
+			get { return this._Languages; }
+			set { this.ThrowIfReadOnly(); this._Languages = value; }
+		}
+
+		private String _Copyright;
+		/// <summary>
+		/// No description is provided. 
+		/// </summary>
+		
+		public String Copyright
+		{
+			get { return this._Copyright; }
+			set { this.ThrowIfReadOnly(); this._Copyright = value; }
+		}
+
+		internal void _DoInitialize(Func<string, object, RpgGameData.Document> refResolver)
+		{
+			if (refResolver == null) throw new ArgumentNullException("refResolver");
+
+			this.ThrowIfReadOnly();
+
+			this.OnBeforeInitialize();
+
+			this.OnInitialize();
+		}
+
+		partial void OnBeforeInitialize();
+		partial void OnInitialize();
+
+		internal void SetLanguage(string language)
+		{
+			this.OnSetLanguage(language);
+		}
+
+		partial void OnSetLanguage(string language);
+
+		protected internal override void SetReadOnly()
+		{
+			base.SetReadOnly();
+			this.hashCode = this.ComputeHashCode();
+
+			this.OnSetReadOnly();
+		}
+
+		partial void OnSetReadOnly();
+
+		public bool Equals(ProjectSettings other)
+		{
+			return this.Equals((object)other);
+		}
+
+		public override bool Equals(object value)
+		{
+			if (value is ProjectSettings == false)
+				return false;
+			else if (Object.ReferenceEquals(this, value))
+				return true;
+			else if (Object.ReferenceEquals(value, null))
+				return false;
+				
+			var other = (ProjectSettings)value;
+			return this.GetHashCode() == other.GetHashCode()
+				&& AreEquals(this._Id, other._Id)
+				&& AreEquals(this._Name, other._Name)
+				&& AreEquals(this._PrimaryLanguage, other._PrimaryLanguage)
+				&& AreEquals(this._Languages, other._Languages)
+				&& AreEquals(this._Copyright, other._Copyright)
+			;
+		}
+
+		public override int GetHashCode()
+		{
+			if (this.isReadOnly)
+				return this.hashCode;
+			return this.ComputeHashCode();
+		}
+
+		int IComparable.CompareTo(object obj)
+		{
+			return this.CompareTo(obj as ProjectSettings);
+		}
+
+		public int CompareTo(ProjectSettings other)
+		{
+			if (other == null)
+				return 1;
+			return string.Compare(this.Id, other.Id, StringComparison.Ordinal);
+		}
+
+		public static bool operator ==(ProjectSettings value1, ProjectSettings value2)
+		{
+			return Object.Equals(value1, value2);
+		}
+		public static bool operator !=(ProjectSettings value1, ProjectSettings value2)
+		{
+			return Object.Equals(value1, value2) == false;
+		}
+
+		private int ComputeHashCode()
+		{
+			return unchecked(this.GetType().Name.GetHashCode()
+				+ GetHashCodeFor(this._Id)
+				+ GetHashCodeFor(this._Name)
+				+ GetHashCodeFor(this._PrimaryLanguage)
+				+ GetHashCodeFor(this._Languages)
+				+ GetHashCodeFor(this._Copyright)
+			);
+		}
+
+		public override string ToString()
+		{
+			var sb = new System.Text.StringBuilder();
+				sb.Append("Id: ").Append(this.Id).Append(", ");
+				sb.Append("Name: ").Append(this.Name).Append(", ");
+				sb.Append("PrimaryLanguage: ").Append(this.PrimaryLanguage).Append(", ");
+				sb.Append("Languages: ").Append(this.Languages).Append(", ");
+				sb.Append("Copyright: ").Append(this.Copyright).Append(", ");
+			if (sb.Length > 2)
+				sb.Length -= 2;
+
+			return sb.ToString();
+		}
+	}
+
+	/// <summary>
+	/// No description is provided.
+	/// </summary>
+	
+	[GeneratedCode("Charon", "2018.4.2.0")]
 	public sealed partial class Parameter : RpgGameData.Document, IEquatable<Parameter>, IComparable, IComparable<Parameter>
 	{
 		private int hashCode;
@@ -194,9 +367,13 @@ namespace Assets.Scripts
 
 		public override bool Equals(object value)
 		{
-			if(value is Parameter == false)
+			if (value is Parameter == false)
 				return false;
-
+			else if (Object.ReferenceEquals(this, value))
+				return true;
+			else if (Object.ReferenceEquals(value, null))
+				return false;
+				
 			var other = (Parameter)value;
 			return this.GetHashCode() == other.GetHashCode()
 				&& AreEquals(this._Id, other._Id)
@@ -268,7 +445,7 @@ namespace Assets.Scripts
 	/// No description is provided.
 	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.4.0")]
+	[GeneratedCode("Charon", "2018.4.2.0")]
 	public sealed partial class ParameterValue : RpgGameData.Document, IEquatable<ParameterValue>, IComparable, IComparable<ParameterValue>
 	{
 		private int hashCode;
@@ -413,9 +590,13 @@ namespace Assets.Scripts
 
 		public override bool Equals(object value)
 		{
-			if(value is ParameterValue == false)
+			if (value is ParameterValue == false)
 				return false;
-
+			else if (Object.ReferenceEquals(this, value))
+				return true;
+			else if (Object.ReferenceEquals(value, null))
+				return false;
+				
 			var other = (ParameterValue)value;
 			return this.GetHashCode() == other.GetHashCode()
 				&& AreEquals(this._Id, other._Id)
@@ -481,7 +662,7 @@ namespace Assets.Scripts
 	/// No description is provided.
 	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.4.0")]
+	[GeneratedCode("Charon", "2018.4.2.0")]
 	public sealed partial class Provision : RpgGameData.Document, IEquatable<Provision>, IComparable, IComparable<Provision>
 	{
 		private int hashCode;
@@ -557,9 +738,13 @@ namespace Assets.Scripts
 
 		public override bool Equals(object value)
 		{
-			if(value is Provision == false)
+			if (value is Provision == false)
 				return false;
-
+			else if (Object.ReferenceEquals(this, value))
+				return true;
+			else if (Object.ReferenceEquals(value, null))
+				return false;
+				
 			var other = (Provision)value;
 			return this.GetHashCode() == other.GetHashCode()
 				&& AreEquals(this._Id, other._Id)
@@ -622,7 +807,7 @@ namespace Assets.Scripts
 	/// No description is provided.
 	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.4.0")]
+	[GeneratedCode("Charon", "2018.4.2.0")]
 	public sealed partial class Hero : RpgGameData.Document, IEquatable<Hero>, IComparable, IComparable<Hero>
 	{
 		private int hashCode;
@@ -997,9 +1182,13 @@ namespace Assets.Scripts
 
 		public override bool Equals(object value)
 		{
-			if(value is Hero == false)
+			if (value is Hero == false)
 				return false;
-
+			else if (Object.ReferenceEquals(this, value))
+				return true;
+			else if (Object.ReferenceEquals(value, null))
+				return false;
+				
 			var other = (Hero)value;
 			return this.GetHashCode() == other.GetHashCode()
 				&& AreEquals(this._Id, other._Id)
@@ -1116,7 +1305,7 @@ namespace Assets.Scripts
 	/// No description is provided.
 	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.4.0")]
+	[GeneratedCode("Charon", "2018.4.2.0")]
 	public sealed partial class Item : RpgGameData.Document, IEquatable<Item>, IComparable, IComparable<Item>
 	{
 		private int hashCode;
@@ -1262,9 +1451,13 @@ namespace Assets.Scripts
 
 		public override bool Equals(object value)
 		{
-			if(value is Item == false)
+			if (value is Item == false)
 				return false;
-
+			else if (Object.ReferenceEquals(this, value))
+				return true;
+			else if (Object.ReferenceEquals(value, null))
+				return false;
+				
 			var other = (Item)value;
 			return this.GetHashCode() == other.GetHashCode()
 				&& AreEquals(this._Id, other._Id)
@@ -1336,7 +1529,7 @@ namespace Assets.Scripts
 	/// No description is provided.
 	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.4.0")]
+	[GeneratedCode("Charon", "2018.4.2.0")]
 	public sealed partial class Location : RpgGameData.Document, IEquatable<Location>, IComparable, IComparable<Location>
 	{
 		private int hashCode;
@@ -1429,9 +1622,13 @@ namespace Assets.Scripts
 
 		public override bool Equals(object value)
 		{
-			if(value is Location == false)
+			if (value is Location == false)
 				return false;
-
+			else if (Object.ReferenceEquals(this, value))
+				return true;
+			else if (Object.ReferenceEquals(value, null))
+				return false;
+				
 			var other = (Location)value;
 			return this.GetHashCode() == other.GetHashCode()
 				&& AreEquals(this._Id, other._Id)
@@ -1494,7 +1691,7 @@ namespace Assets.Scripts
 	/// No description is provided.
 	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.4.0")]
+	[GeneratedCode("Charon", "2018.4.2.0")]
 	public sealed partial class Trinket : RpgGameData.Document, IEquatable<Trinket>, IComparable, IComparable<Trinket>
 	{
 		private int hashCode;
@@ -1664,9 +1861,13 @@ namespace Assets.Scripts
 
 		public override bool Equals(object value)
 		{
-			if(value is Trinket == false)
+			if (value is Trinket == false)
 				return false;
-
+			else if (Object.ReferenceEquals(this, value))
+				return true;
+			else if (Object.ReferenceEquals(value, null))
+				return false;
+				
 			var other = (Trinket)value;
 			return this.GetHashCode() == other.GetHashCode()
 				&& AreEquals(this._Id, other._Id)
@@ -1738,7 +1939,7 @@ namespace Assets.Scripts
 	/// No description is provided.
 	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.4.0")]
+	[GeneratedCode("Charon", "2018.4.2.0")]
 	public sealed partial class Monster : RpgGameData.Document, IEquatable<Monster>, IComparable, IComparable<Monster>
 	{
 		private int hashCode;
@@ -1899,9 +2100,13 @@ namespace Assets.Scripts
 
 		public override bool Equals(object value)
 		{
-			if(value is Monster == false)
+			if (value is Monster == false)
 				return false;
-
+			else if (Object.ReferenceEquals(this, value))
+				return true;
+			else if (Object.ReferenceEquals(value, null))
+				return false;
+				
 			var other = (Monster)value;
 			return this.GetHashCode() == other.GetHashCode()
 				&& AreEquals(this._Id, other._Id)
@@ -1973,7 +2178,7 @@ namespace Assets.Scripts
 	/// No description is provided.
 	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.4.0")]
+	[GeneratedCode("Charon", "2018.4.2.0")]
 	public sealed partial class Loot : RpgGameData.Document, IEquatable<Loot>, IComparable, IComparable<Loot>
 	{
 		private int hashCode;
@@ -2049,9 +2254,13 @@ namespace Assets.Scripts
 
 		public override bool Equals(object value)
 		{
-			if(value is Loot == false)
+			if (value is Loot == false)
 				return false;
-
+			else if (Object.ReferenceEquals(this, value))
+				return true;
+			else if (Object.ReferenceEquals(value, null))
+				return false;
+				
 			var other = (Loot)value;
 			return this.GetHashCode() == other.GetHashCode()
 				&& AreEquals(this._Id, other._Id)
@@ -2114,7 +2323,7 @@ namespace Assets.Scripts
 	/// No description is provided.
 	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.4.0")]
+	[GeneratedCode("Charon", "2018.4.2.0")]
 	public sealed partial class CombatEffect : RpgGameData.Document, IEquatable<CombatEffect>, IComparable, IComparable<CombatEffect>
 	{
 		private int hashCode;
@@ -2204,9 +2413,13 @@ namespace Assets.Scripts
 
 		public override bool Equals(object value)
 		{
-			if(value is CombatEffect == false)
+			if (value is CombatEffect == false)
 				return false;
-
+			else if (Object.ReferenceEquals(this, value))
+				return true;
+			else if (Object.ReferenceEquals(value, null))
+				return false;
+				
 			var other = (CombatEffect)value;
 			return this.GetHashCode() == other.GetHashCode()
 				&& AreEquals(this._Id, other._Id)
@@ -2272,7 +2485,7 @@ namespace Assets.Scripts
 	/// No description is provided.
 	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.4.0")]
+	[GeneratedCode("Charon", "2018.4.2.0")]
 	public sealed partial class CurioCleansingOption : RpgGameData.Document, IEquatable<CurioCleansingOption>, IComparable, IComparable<CurioCleansingOption>
 	{
 		private int hashCode;
@@ -2438,9 +2651,13 @@ namespace Assets.Scripts
 
 		public override bool Equals(object value)
 		{
-			if(value is CurioCleansingOption == false)
+			if (value is CurioCleansingOption == false)
 				return false;
-
+			else if (Object.ReferenceEquals(this, value))
+				return true;
+			else if (Object.ReferenceEquals(value, null))
+				return false;
+				
 			var other = (CurioCleansingOption)value;
 			return this.GetHashCode() == other.GetHashCode()
 				&& AreEquals(this._Id, other._Id)
@@ -2518,7 +2735,7 @@ namespace Assets.Scripts
 	/// No description is provided.
 	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.4.0")]
+	[GeneratedCode("Charon", "2018.4.2.0")]
 	public sealed partial class Curio : RpgGameData.Document, IEquatable<Curio>, IComparable, IComparable<Curio>
 	{
 		private int hashCode;
@@ -2707,9 +2924,13 @@ namespace Assets.Scripts
 
 		public override bool Equals(object value)
 		{
-			if(value is Curio == false)
+			if (value is Curio == false)
 				return false;
-
+			else if (Object.ReferenceEquals(this, value))
+				return true;
+			else if (Object.ReferenceEquals(value, null))
+				return false;
+				
 			var other = (Curio)value;
 			return this.GetHashCode() == other.GetHashCode()
 				&& AreEquals(this._Id, other._Id)
@@ -2784,7 +3005,7 @@ namespace Assets.Scripts
 	/// No description is provided.
 	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.4.0")]
+	[GeneratedCode("Charon", "2018.4.2.0")]
 	public sealed partial class Disease : RpgGameData.Document, IEquatable<Disease>, IComparable, IComparable<Disease>
 	{
 		private int hashCode;
@@ -2880,9 +3101,13 @@ namespace Assets.Scripts
 
 		public override bool Equals(object value)
 		{
-			if(value is Disease == false)
+			if (value is Disease == false)
 				return false;
-
+			else if (Object.ReferenceEquals(this, value))
+				return true;
+			else if (Object.ReferenceEquals(value, null))
+				return false;
+				
 			var other = (Disease)value;
 			return this.GetHashCode() == other.GetHashCode()
 				&& AreEquals(this._Id, other._Id)
@@ -2945,7 +3170,7 @@ namespace Assets.Scripts
 	/// No description is provided.
 	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.4.0")]
+	[GeneratedCode("Charon", "2018.4.2.0")]
 	public sealed partial class Quirk : RpgGameData.Document, IEquatable<Quirk>, IComparable, IComparable<Quirk>
 	{
 		private int hashCode;
@@ -3052,9 +3277,13 @@ namespace Assets.Scripts
 
 		public override bool Equals(object value)
 		{
-			if(value is Quirk == false)
+			if (value is Quirk == false)
 				return false;
-
+			else if (Object.ReferenceEquals(this, value))
+				return true;
+			else if (Object.ReferenceEquals(value, null))
+				return false;
+				
 			var other = (Quirk)value;
 			return this.GetHashCode() == other.GetHashCode()
 				&& AreEquals(this._Id, other._Id)
@@ -3120,7 +3349,7 @@ namespace Assets.Scripts
 	/// No description is provided.
 	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.4.0")]
+	[GeneratedCode("Charon", "2018.4.2.0")]
 	public sealed partial class Conditions : RpgGameData.Document, IEquatable<Conditions>, IComparable, IComparable<Conditions>
 	{
 		private int hashCode;
@@ -3160,15 +3389,26 @@ namespace Assets.Scripts
 			}
 		}
 
-		private ReadOnlyDictionary<string, object> _Check;
+		private ConditionsCheckExpression _Check;
 		/// <summary>
 		/// No description is provided. Not null.
 		/// </summary>
 		
-		public ReadOnlyDictionary<string, object> Check
+		public ConditionsCheckExpression Check
 		{
 			get { return this._Check; }
 			set { this.ThrowIfReadOnly(); this._Check = value; }
+		}
+
+		private UnboundExpression _UnboundCheck;
+		/// <summary>
+		/// No description is provided. Not null.
+		/// </summary>
+		
+		public UnboundExpression UnboundCheck
+		{
+			get { return this._UnboundCheck; }
+			set { this.ThrowIfReadOnly(); this._UnboundCheck = value; }
 		}
 
 		internal void _DoInitialize(Func<string, object, RpgGameData.Document> refResolver)
@@ -3213,14 +3453,19 @@ namespace Assets.Scripts
 
 		public override bool Equals(object value)
 		{
-			if(value is Conditions == false)
+			if (value is Conditions == false)
 				return false;
-
+			else if (Object.ReferenceEquals(this, value))
+				return true;
+			else if (Object.ReferenceEquals(value, null))
+				return false;
+				
 			var other = (Conditions)value;
 			return this.GetHashCode() == other.GetHashCode()
 				&& AreEquals(this._Id, other._Id)
 				&& AreEquals(this._Description, other._Description)
 				&& AreEquals(this._Check, other._Check)
+				&& AreEquals(this._UnboundCheck, other._UnboundCheck)
 			;
 		}
 
@@ -3258,6 +3503,7 @@ namespace Assets.Scripts
 				+ GetHashCodeFor(this._Id)
 				+ GetHashCodeFor(this._Description)
 				+ GetHashCodeFor(this._Check)
+				+ GetHashCodeFor(this._UnboundCheck)
 			);
 		}
 
@@ -3267,6 +3513,7 @@ namespace Assets.Scripts
 				sb.Append("Id: ").Append(this.Id).Append(", ");
 				sb.Append("Description: ").Append(this.Description).Append(", ");
 				sb.Append("Check: ").Append(this.Check).Append(", ");
+				sb.Append("UnboundCheck: ").Append(this.UnboundCheck).Append(", ");
 			if (sb.Length > 2)
 				sb.Length -= 2;
 
@@ -3278,7 +3525,7 @@ namespace Assets.Scripts
 	/// No description is provided.
 	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.4.0")]
+	[GeneratedCode("Charon", "2018.4.2.0")]
 	public sealed partial class Weapon : RpgGameData.Document, IEquatable<Weapon>, IComparable, IComparable<Weapon>
 	{
 		private int hashCode;
@@ -3404,9 +3651,13 @@ namespace Assets.Scripts
 
 		public override bool Equals(object value)
 		{
-			if(value is Weapon == false)
+			if (value is Weapon == false)
 				return false;
-
+			else if (Object.ReferenceEquals(this, value))
+				return true;
+			else if (Object.ReferenceEquals(value, null))
+				return false;
+				
 			var other = (Weapon)value;
 			return this.GetHashCode() == other.GetHashCode()
 				&& AreEquals(this._Id, other._Id)
@@ -3478,7 +3729,7 @@ namespace Assets.Scripts
 	/// No description is provided.
 	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.4.0")]
+	[GeneratedCode("Charon", "2018.4.2.0")]
 	public sealed partial class Armor : RpgGameData.Document, IEquatable<Armor>, IComparable, IComparable<Armor>
 	{
 		private int hashCode;
@@ -3582,9 +3833,13 @@ namespace Assets.Scripts
 
 		public override bool Equals(object value)
 		{
-			if(value is Armor == false)
+			if (value is Armor == false)
 				return false;
-
+			else if (Object.ReferenceEquals(this, value))
+				return true;
+			else if (Object.ReferenceEquals(value, null))
+				return false;
+				
 			var other = (Armor)value;
 			return this.GetHashCode() == other.GetHashCode()
 				&& AreEquals(this._Id, other._Id)
@@ -3650,7 +3905,7 @@ namespace Assets.Scripts
 	/// No description is provided.
 	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.4.0")]
+	[GeneratedCode("Charon", "2018.4.2.0")]
 	public sealed partial class ItemWithCount : RpgGameData.Document, IEquatable<ItemWithCount>, IComparable, IComparable<ItemWithCount>
 	{
 		private int hashCode;
@@ -3755,9 +4010,13 @@ namespace Assets.Scripts
 
 		public override bool Equals(object value)
 		{
-			if(value is ItemWithCount == false)
+			if (value is ItemWithCount == false)
 				return false;
-
+			else if (Object.ReferenceEquals(this, value))
+				return true;
+			else if (Object.ReferenceEquals(value, null))
+				return false;
+				
 			var other = (ItemWithCount)value;
 			return this.GetHashCode() == other.GetHashCode()
 				&& AreEquals(this._Id, other._Id)
@@ -3820,7 +4079,7 @@ namespace Assets.Scripts
 	/// No description is provided.
 	/// </summary>
 	
-	[GeneratedCode("Charon", "2017.4.4.0")]
+	[GeneratedCode("Charon", "2018.4.2.0")]
 	public sealed partial class StartingSet : RpgGameData.Document, IEquatable<StartingSet>, IComparable, IComparable<StartingSet>
 	{
 		private int hashCode;
@@ -3971,9 +4230,13 @@ namespace Assets.Scripts
 
 		public override bool Equals(object value)
 		{
-			if(value is StartingSet == false)
+			if (value is StartingSet == false)
 				return false;
-
+			else if (Object.ReferenceEquals(this, value))
+				return true;
+			else if (Object.ReferenceEquals(value, null))
+				return false;
+				
 			var other = (StartingSet)value;
 			return this.GetHashCode() == other.GetHashCode()
 				&& AreEquals(this._Id, other._Id)
@@ -4036,7 +4299,7 @@ namespace Assets.Scripts
 	}
 
 	
-	[GeneratedCode("Charon", "2017.4.4.0")]
+	[GeneratedCode("Charon", "2018.4.2.0")]
 	public enum ParameterId: int
 	{
 		HitPoints = 1,
@@ -4081,7 +4344,7 @@ namespace Assets.Scripts
 	}
 
 	
-	[GeneratedCode("Charon", "2017.4.4.0")]
+	[GeneratedCode("Charon", "2018.4.2.0")]
 	public enum ParameterValueKind: int
 	{
 		Integer = 1,
@@ -4090,7 +4353,7 @@ namespace Assets.Scripts
 	}
 
 	[Flags]
-	[GeneratedCode("Charon", "2017.4.4.0")]
+	[GeneratedCode("Charon", "2018.4.2.0")]
 	public enum LocationFlags: int
 	{
 		None = 0,
@@ -4099,7 +4362,7 @@ namespace Assets.Scripts
 	}
 
 	
-	[GeneratedCode("Charon", "2017.4.4.0")]
+	[GeneratedCode("Charon", "2018.4.2.0")]
 	public enum TrinketRarity: int
 	{
 		Common = 1,
@@ -4115,7 +4378,7 @@ namespace Assets.Scripts
 	}
 
 	
-	[GeneratedCode("Charon", "2017.4.4.0")]
+	[GeneratedCode("Charon", "2018.4.2.0")]
 	public enum MonsterType: int
 	{
 		Human = 1,
@@ -4131,7 +4394,7 @@ namespace Assets.Scripts
 	}
 
 	
-	[GeneratedCode("Charon", "2017.4.4.0")]
+	[GeneratedCode("Charon", "2018.4.2.0")]
 	public enum LootType: int
 	{
 		Any = 1,
@@ -4144,7 +4407,7 @@ namespace Assets.Scripts
 	}
 
 	
-	[GeneratedCode("Charon", "2017.4.4.0")]
+	[GeneratedCode("Charon", "2018.4.2.0")]
 	public enum DurationUnit: int
 	{
 		Rounds = 1,
@@ -4153,7 +4416,7 @@ namespace Assets.Scripts
 	}
 
 	[Flags]
-	[GeneratedCode("Charon", "2017.4.4.0")]
+	[GeneratedCode("Charon", "2018.4.2.0")]
 	public enum CurioType: int
 	{
 		None = 0,
@@ -4172,7 +4435,7 @@ namespace Assets.Scripts
 	}
 
 	[Flags]
-	[GeneratedCode("Charon", "2017.4.4.0")]
+	[GeneratedCode("Charon", "2018.4.2.0")]
 	public enum CurioPlacementRestictions: int
 	{
 		None = 0,
@@ -4181,11 +4444,145 @@ namespace Assets.Scripts
 	}
 
 
-	[GeneratedCode("Charon", "2017.4.4.0")]
+	[GeneratedCode("Charon", "2018.4.2.0")]
+	public partial class ConditionsCheckExpression
+	{
+		private static readonly ITypeResolver TypeResolver;
+		private static readonly Binder ExpressionBinder;
+
+		public partial class ConditionsScope
+		{
+			public Conditions @this;
+		}
+
+		private readonly SyntaxTreeNode syntaxTree;
+		private readonly Expression<Func<Assets.Scripts.CheckContext, System.Boolean>> expression;
+		private Func<Assets.Scripts.CheckContext, System.Boolean> compiledExpression;
+
+		static ConditionsCheckExpression()
+		{
+			// AOT
+			if (typeof(object).Name == string.Empty)
+			{
+				new System.Runtime.CompilerServices.StrongBox<ConditionsScope>(default(ConditionsScope));
+				
+				new System.Runtime.CompilerServices.StrongBox<Assets.Scripts.AttackType>(default(Assets.Scripts.AttackType));
+			}
+
+			var parameters = new ParameterExpression[]
+			{
+				Expression.Parameter(typeof(Assets.Scripts.CheckContext), "context"),
+			};
+
+			TypeResolver = new KnownTypeResolver(new Type[]
+			{
+				typeof(Assets.Scripts.CheckContext),
+				typeof(Assets.Scripts.AttackType),
+				typeof(System.Boolean),
+				typeof(ConditionsScope)
+			}, RpgGameData.TypeResolver);
+
+			ExpressionBinder = new Binder(parameters, typeof(System.Boolean), TypeResolver);
+
+			AotCompilation.RegisterFunc<Assets.Scripts.CheckContext, System.Boolean>();
+		}
+		public ConditionsCheckExpression(SyntaxTreeNode syntaxTree, Conditions thisObject)
+		{
+			if (syntaxTree == null) throw new ArgumentNullException("syntaxTree");
+			if (thisObject == null) throw new ArgumentNullException("thisObject");
+
+			this.syntaxTree = syntaxTree;
+			var globalObject = new ConditionsScope { @this = thisObject };
+			this.expression = (Expression<Func<Assets.Scripts.CheckContext, System.Boolean>>)ExpressionBinder.Bind(syntaxTree, Expression.Constant(globalObject));
+		}
+
+		public System.Boolean Invoke(Assets.Scripts.CheckContext context)
+		{
+			var fn = this.CompileAot();
+			return fn.Invoke(context);
+		}
+
+		public Func<Assets.Scripts.CheckContext, System.Boolean> CompileAot()
+		{
+			try
+			{
+				if (this.compiledExpression == null)
+					this.compiledExpression = this.expression.CompileAot();
+				return this.compiledExpression;
+			}
+			catch (Exception compilationError)
+			{
+				throw new InvalidOperationException(string.Format("Failed to compile expression '{0}' due errors: {1}{2}", this.syntaxTree.ToString(), Environment.NewLine, compilationError.Message), compilationError);
+			}
+		}
+		public Func<Assets.Scripts.CheckContext, System.Boolean> Compile()
+		{
+			try
+			{
+				if (this.compiledExpression == null)
+					this.compiledExpression = this.expression.Compile();
+				return this.compiledExpression;
+			}
+			catch (Exception compilationError)
+			{
+				throw new InvalidOperationException(string.Format("Failed to compile expression '{0}' due errors: {1}{2}", this.syntaxTree.ToString(), Environment.NewLine, compilationError.Message), compilationError);
+			}
+		}
+
+		public Expression<Func<Assets.Scripts.CheckContext, System.Boolean>> GetExpression()
+		{
+			return this.expression;
+		}
+
+		public override string ToString()
+		{
+			return this.expression.ToString();
+		}
+	}
+
+
+	[GeneratedCode("Charon", "2018.4.2.0")]
 	public partial class RpgGameData
 	{
+		public static readonly ITypeResolver TypeResolver = new KnownTypeResolver(new Type[]
+		{
+				typeof(RpgGameData),
+				typeof(ProjectSettings),
+				typeof(Parameter),
+				typeof(ParameterValue),
+				typeof(Provision),
+				typeof(Hero),
+				typeof(Item),
+				typeof(Location),
+				typeof(Trinket),
+				typeof(Monster),
+				typeof(Loot),
+				typeof(CombatEffect),
+				typeof(CurioCleansingOption),
+				typeof(Curio),
+				typeof(Disease),
+				typeof(Quirk),
+				typeof(Conditions),
+				typeof(Weapon),
+				typeof(Armor),
+				typeof(ItemWithCount),
+				typeof(StartingSet),
+				typeof(ConditionsCheckExpression),
+				typeof(ParameterId),
+				typeof(ParameterValueKind),
+				typeof(LocationFlags),
+				typeof(TrinketRarity),
+				typeof(MonsterType),
+				typeof(LootType),
+				typeof(DurationUnit),
+				typeof(CurioType),
+				typeof(CurioPlacementRestictions),
+		});
 
 		#region Storage fields
+		private ReadOnlyList<ProjectSettings> rootProjectSettings;
+		private ReadOnlyList<ProjectSettings> allProjectSettings;
+		private ReadOnlyDictionary<String, ProjectSettings> allProjectSettingsById;
 		private ReadOnlyList<Parameter> rootParameter;
 		private ReadOnlyList<Parameter> allParameter;
 		private ReadOnlyDictionary<ParameterId, Parameter> allParameterById;
@@ -4245,7 +4642,11 @@ namespace Assets.Scripts
 		private ReadOnlyDictionary<Int32, StartingSet> allStartingSetById;
 		#endregion
 
-		private readonly ReadOnlyCollection<string> languages = new ReadOnlyCollection<string>(new string[] { "en-US" });
+		private ReadOnlyCollection<String> languages = new ReadOnlyCollection<String>(new String[] { "en-US" });
+#pragma warning disable 0414 // The variable `primaryLanguage, changeNumber' is declared but never used
+		private string primaryLanguage = "en-US";
+		private int changeNumber = 0;
+#pragma warning restore 0414
 
 		public ReadOnlyCollection<string> SupportedLanguages { get { return this.languages; } }
 
@@ -4258,9 +4659,6 @@ namespace Assets.Scripts
 			switch(format)
 			{
 				case Format.Json: this.ReadJson(this, data, encoding, leaveOpen); break;
-				case Format.Bson: this.ReadBson(this, data, encoding, leaveOpen); break;
-				case Format.Xml: this.ReadXml(this, data, encoding, leaveOpen); break;
-				case Format.MessagePack: this.ReadMessagePack(this, data, encoding, leaveOpen); break;
 				default: throw new ArgumentException(string.Format("Unknown/Unsupported data format specified '{0}'.", format), "format");
 			}
 
@@ -4275,6 +4673,8 @@ namespace Assets.Scripts
 			var resolver = (Func<string, object, Document>)this.Resolve;
 #pragma warning restore 0168
 
+			if (this.rootProjectSettings == null) this.rootProjectSettings = ReadOnlyList<ProjectSettings>.Empty;
+			if (this.allProjectSettings == null) this.allProjectSettings = ReadOnlyList<ProjectSettings>.Empty;
 			if (this.rootParameter == null) this.rootParameter = ReadOnlyList<Parameter>.Empty;
 			if (this.allParameter == null) this.allParameter = ReadOnlyList<Parameter>.Empty;
 			if (this.rootParameterValue == null) this.rootParameterValue = ReadOnlyList<ParameterValue>.Empty;
@@ -4316,6 +4716,7 @@ namespace Assets.Scripts
 
 			this.FlattenStructure();
 
+			this.allProjectSettingsById = this.allProjectSettings.ToDictionarySkippingNullKeys(entry => entry.Id);
 			this.allParameterById = this.allParameter.ToDictionarySkippingNullKeys(entry => entry.Id);
 			this.allParameterValueById = this.allParameterValue.ToDictionarySkippingNullKeys(entry => entry.Id);
 			this.allProvisionById = this.allProvision.ToDictionarySkippingNullKeys(entry => entry.Id);
@@ -4338,6 +4739,12 @@ namespace Assets.Scripts
 
 			this.BeforeInitialize();
 
+			foreach(var entry in this.allProjectSettings)
+			{
+				entry._DoInitialize(resolver);
+				entry.SetLanguage("en-US");
+				entry.SetReadOnly();
+			}
 			foreach(var entry in this.allParameter)
 			{
 				entry._DoInitialize(resolver);
@@ -4459,6 +4866,60 @@ namespace Assets.Scripts
 		partial void OnInitialize();
 
 		#region Accessors
+		// ProjectSettings -> Id
+		public ProjectSettings GetProjectSettings(String id)
+		{
+			ThrowIfNull(id, "id");
+
+			var value = default(ProjectSettings);
+			if (this.allProjectSettingsById.TryGetValue(id, out value) == false)
+				throw new System.ArgumentException(string.Format("Unable find ProjectSettings with Id '{0}'.", id) ,"id");
+			return value;
+		}
+		public bool HasProjectSettings(String id)
+		{
+			ThrowIfNull(id, "id");
+
+			return this.allProjectSettingsById.ContainsKey(id);
+		}
+		public ProjectSettings FindProjectSettings(String id)
+		{
+			ThrowIfNull(id, "id");
+
+			var value = default(ProjectSettings);
+			this.allProjectSettingsById.TryGetValue(id, out value);
+			return value;
+		}
+		public bool TryGetProjectSettings(String id, out ProjectSettings value)
+		{
+			ThrowIfNull(id, "id");
+
+			return this.allProjectSettingsById.TryGetValue(id, out value);
+		}
+		public ReadOnlyList<ProjectSettings> GetProjectSettings(bool onlyRoot = false)
+		{
+			if(onlyRoot)
+				return this.rootProjectSettings;
+			else
+				return this.allProjectSettings;
+		}
+		// ProjectSettings -> Instance
+		private ProjectSettings theProjectSettings;
+		public ProjectSettings ProjectSettings 
+		{ 
+			get 
+			{ 
+				if (this.theProjectSettings != null)
+					return this.theProjectSettings;
+
+				switch(this.rootProjectSettings.Count)
+				{
+					case 0: throw new InvalidOperationException("Unable to find ProjectSettings document. Please create ProjectSettings document before using this property.");
+					case 1: return this.theProjectSettings = this.rootProjectSettings[0];
+					default: throw new InvalidOperationException("There is a multiple variants of ProjectSettings document. Please remove the excess before using this property.");
+				}
+			}
+		}
 		// Parameter -> Id
 		public Parameter GetParameter(ParameterId id)
 		{
@@ -5183,6 +5644,7 @@ namespace Assets.Scripts
 
 		public IEnumerable<Document> GetAllDocuments()
 		{
+			foreach (var entry in this.allProjectSettings) yield return entry;
 			foreach (var entry in this.allParameter) yield return entry;
 			foreach (var entry in this.allParameterValue) yield return entry;
 			foreach (var entry in this.allProvision) yield return entry;
@@ -5210,6 +5672,8 @@ namespace Assets.Scripts
 		{
 			if (language == null) throw new ArgumentNullException("language");
 
+			foreach(var entry in this.allProjectSettings)
+				entry.SetLanguage(language);
 			foreach(var entry in this.allParameter)
 				entry.SetLanguage(language);
 			foreach(var entry in this.allParameterValue)
@@ -5257,6 +5721,8 @@ namespace Assets.Scripts
 #pragma warning disable 1522 // Empty switch block
 			switch (entityId)
 			{
+				case "ProjectSettings":
+				case "55a4f32faca22e191098f3d9": return this.GetProjectSettings((String)(id is String ? id : ChangeType(id, typeof(String), System.Globalization.CultureInfo.InvariantCulture)));
 				case "Parameter":
 				case "59f5b0a730bb84165c06b547": return this.GetParameter((ParameterId)(id is ParameterId ? id : ChangeType(id, typeof(ParameterId), System.Globalization.CultureInfo.InvariantCulture)));
 				case "ParameterValue":
@@ -5318,6 +5784,8 @@ namespace Assets.Scripts
 		#region Visitors
 		public void ApplyVisitor(Visitor visitor)
 		{
+			foreach(var document in this.rootProjectSettings)
+				visitor.Visit(document);
 			foreach(var document in this.rootParameter)
 				visitor.Visit(document);
 			foreach(var document in this.rootParameterValue)
@@ -5363,6 +5831,12 @@ namespace Assets.Scripts
 			var flatteningStructureVisitor = new FlatteningStructureVisitor();
 			this.ApplyVisitor(flatteningStructureVisitor);
 
+			if (flatteningStructureVisitor.AllProjectSettings != null)
+			{
+				var list = flatteningStructureVisitor.AllProjectSettings;
+				list.Sort();
+				this.allProjectSettings = new ReadOnlyList<ProjectSettings>(list);
+			}
 			if (flatteningStructureVisitor.AllParameter != null)
 			{
 				var list = flatteningStructureVisitor.AllParameter;
@@ -5481,6 +5955,14 @@ namespace Assets.Scripts
 
 		public class Visitor
 		{
+			public virtual void Visit(ProjectSettings value)
+			{
+				if (value == null) 
+				{
+					return;
+				}
+
+			}
 			public virtual void Visit(Parameter value)
 			{
 				if (value == null) 
@@ -5729,6 +6211,7 @@ namespace Assets.Scripts
 
 		private class FlatteningStructureVisitor : Visitor
 		{
+			public List<ProjectSettings> AllProjectSettings;
 			public List<Parameter> AllParameter;
 			public List<ParameterValue> AllParameterValue;
 			public List<Provision> AllProvision;
@@ -5749,6 +6232,14 @@ namespace Assets.Scripts
 			public List<ItemWithCount> AllItemWithCount;
 			public List<StartingSet> AllStartingSet;
 		
+			public override void Visit(ProjectSettings value) 
+			{ 
+				if (this.AllProjectSettings == null)
+					this.AllProjectSettings = new List<ProjectSettings>();
+
+				this.AllProjectSettings.Add(value); 
+				base.Visit(value); 
+			}
 			public override void Visit(Parameter value) 
 			{ 
 				if (this.AllParameter == null)
@@ -5928,6 +6419,7 @@ namespace Assets.Scripts
 
 			public void ReadGameData(RpgGameData gameData)
 			{
+				var rootProjectSettings = default(List<ProjectSettings>);
 				var rootParameter = default(List<Parameter>);
 				var rootParameterValue = default(List<ParameterValue>);
 				var rootProvision = default(List<Provision>);
@@ -5954,6 +6446,10 @@ namespace Assets.Scripts
 					var memberName = this.ReadMember();
 					switch(memberName)
 					{
+						case "ChangeNumber":
+							gameData.changeNumber = (Int32)this.Node.AsInt32;
+							this.NextToken();
+						break;
 						case "Collections":
 							this.ReadObjectBegin();
 							while(this.Node.Token != ReaderToken.EndOfObject)
@@ -6499,6 +6995,60 @@ namespace Assets.Scripts
 												break;
 										}
 										break;
+									case 15:
+										switch(collectionName)
+										{
+											case "ProjectSettings":
+											{
+												if (this.Node.Token == ReaderToken.Null)
+												{
+													this.NextToken();
+													break;
+												}
+												this.ReadArrayBegin();
+												while(this.Node.Token != ReaderToken.EndOfArray)
+												{
+													var entry = this.ReadProjectSettings();
+
+													if (rootProjectSettings == null)
+														rootProjectSettings = new List<ProjectSettings>();
+
+													if (string.IsNullOrEmpty(entry.Languages) == false)
+													{
+															var languages = new List<String>(entry.Languages.Split(";,| ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
+															if (string.IsNullOrEmpty(entry.PrimaryLanguage) == false)
+															{
+																gameData.primaryLanguage = entry.PrimaryLanguage;
+															}
+															else if (languages.Count > 0)
+															{
+																gameData.primaryLanguage = languages[0];
+															}
+															else
+															{
+																gameData.primaryLanguage = "EN-US";
+															}
+															languages.Remove(entry.PrimaryLanguage);
+															languages.Add(entry.PrimaryLanguage);
+															languages.Sort(StringComparer.OrdinalIgnoreCase);
+
+															gameData.languages = new ReadOnlyCollection<String>(languages);
+													}
+													rootProjectSettings.Add(entry);
+												}
+												if (rootProjectSettings != null)
+													gameData.rootProjectSettings = new ReadOnlyList<ProjectSettings>(rootProjectSettings);
+												else
+													gameData.rootProjectSettings = ReadOnlyList<ProjectSettings>.Empty;
+
+												this.ReadArrayEnd();
+												break;
+											}
+											default:
+												this.ReadAny();
+												break;
+										}
+										break;
 									case 20:
 										switch(collectionName)
 										{
@@ -6546,6 +7096,160 @@ namespace Assets.Scripts
 				}
 
 				this.ReadObjectEnd();
+			}
+			private ProjectSettings ReadProjectSettings()
+			{
+				var entry = new ProjectSettings();
+#pragma warning disable 0168 // The variable `id' is declared but never used
+				var id = (object)"<unknown>";
+#pragma warning restore 0168
+				this.ReadObjectBegin();
+				while (this.Node.Token != ReaderToken.EndOfObject)
+				{
+					var attributeName = this.ReadMember();
+					switch (attributeName.Length)
+					{
+						case 2:
+						{
+							switch (attributeName)
+							{
+								case "Id":
+								{
+									if (this.Node.Token == ReaderToken.Null)
+									{
+										throw new InvalidOperationException("A null value is deserialized instead of 'Text' for required attribute 'Id' in entity 'ProjectSettings'.");
+									}
+									if(this.Node.Token != ReaderToken.Value)
+									{
+										throw ReaderException.UnexpectedToken(this, ReaderToken.Value);
+									}
+
+									entry.Id = (String) this.Node.AsString;
+									this.NextToken();
+
+									id = entry.Id;
+									break;
+								}
+								default:
+								{
+									this.ReadAny();
+									break;
+								}
+							}
+							break;
+						}
+						case 4:
+						{
+							switch (attributeName)
+							{
+								case "Name":
+								{
+									if (this.Node.Token == ReaderToken.Null)
+									{
+										throw new InvalidOperationException("A null value is deserialized instead of 'Text' for required attribute 'Name' in entity 'ProjectSettings'.");
+									}
+									if(this.Node.Token != ReaderToken.Value)
+									{
+										throw ReaderException.UnexpectedToken(this, ReaderToken.Value);
+									}
+
+									entry.Name = (String) this.Node.AsString;
+									this.NextToken();
+
+									break;
+								}
+								default:
+								{
+									this.ReadAny();
+									break;
+								}
+							}
+							break;
+						}
+						case 9:
+						{
+							switch (attributeName)
+							{
+								case "Languages":
+								{
+									if (this.Node.Token == ReaderToken.Null)
+									{
+										this.NextToken();
+										continue;
+									}
+									if(this.Node.Token != ReaderToken.Value)
+									{
+										throw ReaderException.UnexpectedToken(this, ReaderToken.Value);
+									}
+
+									entry.Languages = (String) this.Node.AsString;
+									this.NextToken();
+
+									break;
+								}
+								case "Copyright":
+								{
+									if (this.Node.Token == ReaderToken.Null)
+									{
+										this.NextToken();
+										continue;
+									}
+									if(this.Node.Token != ReaderToken.Value)
+									{
+										throw ReaderException.UnexpectedToken(this, ReaderToken.Value);
+									}
+
+									entry.Copyright = (String) this.Node.AsString;
+									this.NextToken();
+
+									break;
+								}
+								default:
+								{
+									this.ReadAny();
+									break;
+								}
+							}
+							break;
+						}
+						case 15:
+						{
+							switch (attributeName)
+							{
+								case "PrimaryLanguage":
+								{
+									if (this.Node.Token == ReaderToken.Null)
+									{
+										this.NextToken();
+										continue;
+									}
+									if(this.Node.Token != ReaderToken.Value)
+									{
+										throw ReaderException.UnexpectedToken(this, ReaderToken.Value);
+									}
+
+									entry.PrimaryLanguage = (String) this.Node.AsString;
+									this.NextToken();
+
+									break;
+								}
+								default:
+								{
+									this.ReadAny();
+									break;
+								}
+							}
+							break;
+						}
+						default:
+						{
+							this.ReadAny();
+							break;
+						}
+					}
+				}
+				this.ReadObjectEnd();
+				return entry;
 			}
 			private Parameter ReadParameter()
 			{
@@ -9068,7 +9772,35 @@ namespace Assets.Scripts
 									{
 										throw new InvalidOperationException("A null value is deserialized instead of 'Formula' for required attribute 'Check' in entity 'Conditions'.");
 									}
-									entry.Check = new ReadOnlyDictionary<string, object>(this.ReadObject());
+									var syntaxTree = default(SyntaxTreeNode);
+									try
+									{
+										syntaxTree = new SyntaxTreeNode(this.ReadObject());
+										entry.Check = new ConditionsCheckExpression(syntaxTree, entry);
+									}
+									catch (Exception e)
+									{
+										var expressionError = e;
+										while (expressionError is System.Reflection.TargetInvocationException)
+										{
+											expressionError = e.InnerException;
+										}
+
+										var expressionText = "<none>";
+										try
+										{
+											if(syntaxTree != null)
+											{
+												expressionText = syntaxTree.ToString();
+											}
+										}
+										catch
+										{
+											expressionText = "<error>";
+										}
+
+										throw new InvalidOperationException(string.Format("An error occured while trying to create {0} Expression '{1}' for {2} with id '{3}':\r\n{4}", "Check", expressionText, "Conditions", id, expressionError.Message), expressionError);
+									}
 
 									break;
 								}
@@ -9091,6 +9823,29 @@ namespace Assets.Scripts
 										throw new InvalidOperationException("A null value is deserialized instead of 'LocalizedText' for required attribute 'Description' in entity 'Conditions'.");
 									}
 									entry.Description_ByLanguage = this.ReadLocalizedString();
+
+									break;
+								}
+								default:
+								{
+									this.ReadAny();
+									break;
+								}
+							}
+							break;
+						}
+						case 12:
+						{
+							switch (attributeName)
+							{
+								case "UnboundCheck":
+								{
+									if (this.Node.Token == ReaderToken.Null)
+									{
+										throw new InvalidOperationException("A null value is deserialized instead of 'Formula' for required attribute 'UnboundCheck' in entity 'Conditions'.");
+									}
+									var syntaxTree = new SyntaxTreeNode(this.ReadObject());
+									entry.UnboundCheck = new UnboundExpression(syntaxTree);
 
 									break;
 								}
@@ -9754,30 +10509,58 @@ namespace Assets.Scripts
 					default: throw ReaderException.UnexpectedToken(this, ReaderToken.BeginArray, ReaderToken.BeginObject, ReaderToken.Null, ReaderToken.Value);
 				}
 			}
-			private object[] ReadArray(bool nextToken = true)
+			private ReadOnlyList<object> ReadArray(bool nextToken = true)
 			{
 				var list = new List<object>();
 				this.ReadArrayBegin();
 				while(this.Node.Token != ReaderToken.EndOfArray)
 				{
 					var value = this.ReadAny();
+
+					if (list == null)
+					{
+						list = new List<object>();
+					}
+
 					list.Add(value);
 				}
 				this.ReadArrayEnd( nextToken);
-				return list.ToArray();
+
+				if (list == null)
+				{
+					return ReadOnlyList<object>.Empty;
+				}
+				else
+				{
+					return new ReadOnlyList<object>(list);
+				}
 			}
-			private Dictionary<string, object> ReadObject(bool nextToken = true)
+			private ReadOnlyDictionary<string, object> ReadObject(bool nextToken = true)
 			{
-				var dictionary = new Dictionary<string, object>();
+				var dictionary = default(Dictionary<string, object>);
 				this.ReadObjectBegin();
 				while(this.Node.Token != ReaderToken.EndOfObject)
 				{
 					var key = this.ReadMember();
 					var value = this.ReadAny();
+
+					if (dictionary == null)
+					{
+						dictionary = new Dictionary<string, object>();
+					}
+
 					dictionary[key] = value;
 				}
 				this.ReadObjectEnd(nextToken);
-				return dictionary;
+
+				if (dictionary == null)
+				{
+					return ReadOnlyDictionary<string, object>.Empty;
+				}
+				else
+				{
+					return new ReadOnlyDictionary<string, object>(dictionary);
+				}
 			}
 			private LocalizedString ReadLocalizedString(bool nextToken = true)
 			{
@@ -9957,7 +10740,7 @@ namespace Assets.Scripts
 				get
 				{
 					var dateTimeStr = this.AsString;
-					var date = DateTime.ParseExact(dateTimeStr, DateTimeFormat, FormatProvider, System.Globalization.DateTimeStyles.AssumeUniversal);
+					var date = DateTime.ParseExact(dateTimeStr, DateTimeFormat, FormatProvider, System.Globalization.DateTimeStyles.RoundtripKind);
 					return date;
 				}
 			}
@@ -10182,481 +10965,6 @@ namespace Assets.Scripts
 				return new ReaderException(string.Format("An unknown Message Pack type '{0}'.", type), reader);
 			}
 		}
-		#region EndianBitConverter by Jon Skeet and Marc Gravell
-		/* "Miscellaneous Utility Library" Software Licence
-
-		Version 1.0
-
-		Copyright (c) 2004-2008 Jon Skeet and Marc Gravell.
-		All rights reserved.
-
-		Redistribution and use in source and binary forms, with or without
-		modification, are permitted provided that the following conditions
-		are met:
-
-		1. Redistributions of source code must retain the above copyright
-		notice, this list of conditions and the following disclaimer.
-
-		2. Redistributions in binary form must reproduce the above copyright
-		notice, this list of conditions and the following disclaimer in the
-		documentation and/or other materials provided with the distribution.
-
-		3. The end-user documentation included with the redistribution, if
-		any, must include the following acknowledgment:
-
-		"This product includes software developed by Jon Skeet
-		and Marc Gravell. Contact skeet@pobox.com, or see
-		http://www.pobox.com/~skeet/)."
-
-		Alternately, this acknowledgment may appear in the software itself,
-		if and wherever such third-party acknowledgments normally appear.
-
-		4. The name "Miscellaneous Utility Library" must not be used to endorse
-		or promote products derived from this software without prior written
-		permission. For written permission, please contact skeet@pobox.com.
-
-		5. Products derived from this software may not be called
-		"Miscellaneous Utility Library", nor may "Miscellaneous Utility Library"
-		appear in their name, without prior written permission of Jon Skeet.
-
-		THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED
-		WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-		MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-		IN NO EVENT SHALL JON SKEET BE LIABLE FOR ANY DIRECT, INDIRECT,
-		INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-		BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-		LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-		CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-		LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
-		ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-		POSSIBILITY OF SUCH DAMAGE.
-		*/
-
-		internal enum Endianness
-		{
-			LittleEndian,
-
-			BigEndian
-		}
-
-		private abstract class EndianBitConverter
-		{
-			#region Endianness of this converter
-
-			public abstract bool IsLittleEndian();
-
-			public abstract Endianness Endianness { get; }
-
-			#endregion
-
-			#region Factory properties
-
-			private static readonly LittleEndianBitConverter little = new LittleEndianBitConverter();
-
-			public static LittleEndianBitConverter Little
-			{
-				get { return little; }
-			}
-
-			private static readonly BigEndianBitConverter big = new BigEndianBitConverter();
-
-			public static BigEndianBitConverter Big
-			{
-				get { return big; }
-			}
-
-			#endregion
-
-			#region Double/primitive conversions
-
-			public long DoubleToInt64Bits(double value)
-			{
-				return BitConverter.DoubleToInt64Bits(value);
-			}
-
-			public double Int64BitsToDouble(long value)
-			{
-				return BitConverter.Int64BitsToDouble(value);
-			}
-
-			public int SingleToInt32Bits(float value)
-			{
-				return new Int32SingleUnion(value).AsInt32;
-			}
-
-			public float Int32BitsToSingle(int value)
-			{
-				return new Int32SingleUnion(value).AsSingle;
-			}
-
-			#endregion
-
-			#region To(PrimitiveType) conversions
-
-			public bool ToBoolean(byte[] value, int startIndex)
-			{
-				CheckByteArgument(value, startIndex, 1);
-				return BitConverter.ToBoolean(value, startIndex);
-			}
-
-			public char ToChar(byte[] value, int startIndex)
-			{
-				return unchecked((char)(CheckedFromBytes(value, startIndex, 2)));
-			}
-
-			public double ToDouble(byte[] value, int startIndex)
-			{
-				return Int64BitsToDouble(ToInt64(value, startIndex));
-			}
-
-			public float ToSingle(byte[] value, int startIndex)
-			{
-				return Int32BitsToSingle(ToInt32(value, startIndex));
-			}
-
-			public short ToInt16(byte[] value, int startIndex)
-			{
-				return unchecked((short)(CheckedFromBytes(value, startIndex, 2)));
-			}
-
-			public int ToInt32(byte[] value, int startIndex)
-			{
-				return unchecked((int)(CheckedFromBytes(value, startIndex, 4)));
-			}
-
-			public long ToInt64(byte[] value, int startIndex)
-			{
-				return CheckedFromBytes(value, startIndex, 8);
-			}
-
-			public ushort ToUInt16(byte[] value, int startIndex)
-			{
-				return unchecked((ushort)(CheckedFromBytes(value, startIndex, 2)));
-			}
-
-			public uint ToUInt32(byte[] value, int startIndex)
-			{
-				return unchecked((uint)(CheckedFromBytes(value, startIndex, 4)));
-			}
-
-			public ulong ToUInt64(byte[] value, int startIndex)
-			{
-				return unchecked((ulong)(CheckedFromBytes(value, startIndex, 8)));
-			}
-
-			private static void CheckByteArgument(byte[] value, int startIndex, int bytesRequired)
-			{
-				if (value == null)
-				{
-					throw new ArgumentNullException("value");
-				}
-				if (startIndex < 0 || startIndex > value.Length - bytesRequired)
-				{
-					throw new ArgumentOutOfRangeException("startIndex");
-				}
-			}
-
-			private long CheckedFromBytes(byte[] value, int startIndex, int bytesToConvert)
-			{
-				CheckByteArgument(value, startIndex, bytesToConvert);
-				return FromBytes(value, startIndex, bytesToConvert);
-			}
-
-			protected abstract long FromBytes(byte[] value, int startIndex, int bytesToConvert);
-
-			#endregion
-
-			#region ToString conversions
-
-			public static string ToString(byte[] value)
-			{
-				return BitConverter.ToString(value);
-			}
-
-			public static string ToString(byte[] value, int startIndex)
-			{
-				return BitConverter.ToString(value, startIndex);
-			}
-
-			public static string ToString(byte[] value, int startIndex, int length)
-			{
-				return BitConverter.ToString(value, startIndex, length);
-			}
-
-			#endregion
-
-			#region	Decimal conversions
-
-			public decimal ToDecimal(byte[] value, int startIndex)
-			{
-				// HACK: This always assumes four parts, each in their own endianness,
-				// starting with the first part at the start of the byte array.
-				// On the other hand, there's no real format specified...
-				var parts = new int[4];
-				for (var i = 0; i < 4; i++)
-				{
-					parts[i] = ToInt32(value, startIndex + i * 4);
-				}
-				return new decimal(parts);
-			}
-
-			public byte[] GetBytes(decimal value)
-			{
-				var bytes = new byte[16];
-				var parts = decimal.GetBits(value);
-				for (var i = 0; i < 4; i++)
-				{
-					CopyBytesImpl(parts[i], 4, bytes, i * 4);
-				}
-				return bytes;
-			}
-
-			public void CopyBytes(decimal value, byte[] buffer, int index)
-			{
-				var parts = decimal.GetBits(value);
-				for (var i = 0; i < 4; i++)
-				{
-					CopyBytesImpl(parts[i], 4, buffer, i * 4 + index);
-				}
-			}
-
-			#endregion
-
-			#region GetBytes conversions
-
-			private byte[] GetBytes(long value, int bytes)
-			{
-				var buffer = new byte[bytes];
-				CopyBytes(value, bytes, buffer, 0);
-				return buffer;
-			}
-
-			public byte[] GetBytes(bool value)
-			{
-				return BitConverter.GetBytes(value);
-			}
-
-			public byte[] GetBytes(char value)
-			{
-				return GetBytes(value, 2);
-			}
-
-			public byte[] GetBytes(double value)
-			{
-				return GetBytes(DoubleToInt64Bits(value), 8);
-			}
-
-			public byte[] GetBytes(short value)
-			{
-				return GetBytes(value, 2);
-			}
-
-			public byte[] GetBytes(int value)
-			{
-				return GetBytes(value, 4);
-			}
-
-			public byte[] GetBytes(long value)
-			{
-				return GetBytes(value, 8);
-			}
-
-			public byte[] GetBytes(float value)
-			{
-				return GetBytes(SingleToInt32Bits(value), 4);
-			}
-
-			public byte[] GetBytes(ushort value)
-			{
-				return GetBytes(value, 2);
-			}
-
-			public byte[] GetBytes(uint value)
-			{
-				return GetBytes(value, 4);
-			}
-
-			public byte[] GetBytes(ulong value)
-			{
-				return GetBytes(unchecked((long)value), 8);
-			}
-
-			#endregion
-
-			#region CopyBytes conversions
-
-			private void CopyBytes(long value, int bytes, byte[] buffer, int index)
-			{
-				if (buffer == null)
-				{
-					throw new ArgumentNullException("buffer", "Byte array must not be null");
-				}
-				if (buffer.Length < index + bytes)
-				{
-					throw new ArgumentOutOfRangeException("Buffer not big enough for value");
-				}
-				CopyBytesImpl(value, bytes, buffer, index);
-			}
-
-			protected abstract void CopyBytesImpl(long value, int bytes, byte[] buffer, int index);
-
-			public void CopyBytes(bool value, byte[] buffer, int index)
-			{
-				CopyBytes(value ? 1 : 0, 1, buffer, index);
-			}
-
-			public void CopyBytes(char value, byte[] buffer, int index)
-			{
-				CopyBytes(value, 2, buffer, index);
-			}
-
-			public void CopyBytes(double value, byte[] buffer, int index)
-			{
-				CopyBytes(DoubleToInt64Bits(value), 8, buffer, index);
-			}
-
-			public void CopyBytes(short value, byte[] buffer, int index)
-			{
-				CopyBytes(value, 2, buffer, index);
-			}
-
-			public void CopyBytes(int value, byte[] buffer, int index)
-			{
-				CopyBytes(value, 4, buffer, index);
-			}
-
-			public void CopyBytes(long value, byte[] buffer, int index)
-			{
-				CopyBytes(value, 8, buffer, index);
-			}
-
-			public void CopyBytes(float value, byte[] buffer, int index)
-			{
-				CopyBytes(SingleToInt32Bits(value), 4, buffer, index);
-			}
-
-			public void CopyBytes(ushort value, byte[] buffer, int index)
-			{
-				CopyBytes(value, 2, buffer, index);
-			}
-
-			public void CopyBytes(uint value, byte[] buffer, int index)
-			{
-				CopyBytes(value, 4, buffer, index);
-			}
-
-			public void CopyBytes(ulong value, byte[] buffer, int index)
-			{
-				CopyBytes(unchecked((long)value), 8, buffer, index);
-			}
-
-			#endregion
-
-			#region Private struct used for Single/Int32 conversions
-
-			[StructLayout(LayoutKind.Explicit)]
-			private struct Int32SingleUnion
-			{
-				[FieldOffset(0)]
-				private readonly int i;
-
-				[FieldOffset(0)]
-				private readonly float f;
-
-				internal Int32SingleUnion(int i)
-				{
-					this.f = 0; // Just to keep the compiler happy
-					this.i = i;
-				}
-
-				internal Int32SingleUnion(float f)
-				{
-					this.i = 0; // Just to keep the compiler happy
-					this.f = f;
-				}
-
-				internal int AsInt32
-				{
-					get { return i; }
-				}
-
-				internal float AsSingle
-				{
-					get { return f; }
-				}
-			}
-
-			#endregion
-		}
-
-		private sealed class BigEndianBitConverter : EndianBitConverter
-		{
-			public sealed override bool IsLittleEndian()
-			{
-				return false;
-			}
-
-			public sealed override Endianness Endianness
-			{
-				get { return Endianness.BigEndian; }
-			}
-
-			protected override void CopyBytesImpl(long value, int bytes, byte[] buffer, int index)
-			{
-				var endOffset = index + bytes - 1;
-				for (var i = 0; i < bytes; i++)
-				{
-					buffer[endOffset - i] = unchecked((byte)(value & 0xff));
-					value = value >> 8;
-				}
-			}
-
-			protected override long FromBytes(byte[] buffer, int startIndex, int bytesToConvert)
-			{
-				long ret = 0;
-				for (var i = 0; i < bytesToConvert; i++)
-				{
-					ret = unchecked((ret << 8) | buffer[startIndex + i]);
-				}
-				return ret;
-			}
-		}
-
-		private sealed class LittleEndianBitConverter : EndianBitConverter
-		{
-			public sealed override bool IsLittleEndian()
-			{
-				return true;
-			}
-
-			public sealed override Endianness Endianness
-			{
-				get { return Endianness.LittleEndian; }
-			}
-
-			protected override void CopyBytesImpl(long value, int bytes, byte[] buffer, int index)
-			{
-				for (var i = 0; i < bytes; i++)
-				{
-					buffer[i + index] = unchecked((byte)(value & 0xff));
-					value = value >> 8;
-				}
-			}
-
-			protected override long FromBytes(byte[] buffer, int startIndex, int bytesToConvert)
-			{
-				long ret = 0;
-				for (var i = 0; i < bytesToConvert; i++)
-				{
-					ret = unchecked((ret << 8) | buffer[startIndex + bytesToConvert - 1 - i]);
-				}
-				return ret;
-			}
-		}
-
-		/* end of Jon Skeet and Marc Gravell code */
-		#endregion
-
 		#endregion
 
 		#region Serialization: JSON
@@ -11548,1417 +11856,10 @@ namespace Assets.Scripts
 			}
 		}
 		#endregion
-		#region Serialization: Message Pack
-		private void ReadMessagePack(RpgGameData gameData, Stream stream, Encoding encoding, bool leaveOpen)
-		{
-			if (gameData == null) throw new ArgumentNullException("gameData");
-			if (stream == null) throw new ArgumentNullException("stream");
-			if (encoding == null) throw new ArgumentNullException("encoding");
-
-			using(var msgPackReader = new MessagePackReader(stream, leaveOpen))
-				msgPackReader.ReadGameData(gameData);
-		}
-
-		private sealed class MessagePackReader : Reader, IDisposable
-		{
-			private const int DEFAULT_BUFFER_SIZE = 8 * 1024;
-			private const int MAX_BINARY_LENGTH = 16 * 1024 * 1024;
-			private const int MAX_STRING_LENGTH = 16 * 1024 * 1024;
-
-			internal struct Map
-			{
-				public ReaderToken Token;
-				public long Counter;
-			}
-
-			private readonly Stream inputStream;
-			private readonly bool leaveOpen;
-			private readonly byte[] buffer;
-			private readonly EndianBitConverter bitConverter;
-			private readonly Stack<Map> maps;
-			private ReaderNode node;
-			private int bufferOffset;
-			private int bufferReaded;
-			private int bufferAvailable;
-			private int totalBytesReaded;
-
-			private StrongBox<int> int32Box;
-			private StrongBox<uint> uInt32Box;
-			private StrongBox<long> int64Box;
-			private StrongBox<ulong> uInt64Box;
-			private StrongBox<float> singleBox;
-			private StrongBox<double> doubleBox;
-			private StrongBox<decimal> decimalBox;
-			private StrongBox<DateTime> dateBox;
-			private StrongBox<DateTimeOffset> dateOffsetBox;
-			private StrongBox<bool> trueBox;
-			private StrongBox<bool> falseBox;
-
-			public override int LineNumber { get { return 0; } }
-			public override int ColumnNumber { get { return this.totalBytesReaded; } }
-			public override ReaderNode Node { get { if (this.node.Token == ReaderToken.None) this.NextToken(); return this.node; } }
-
-			public MessagePackReader(Stream stream, bool leaveOpen = false, int bufferSize = DEFAULT_BUFFER_SIZE)
-			{
-				if (stream == null) throw new ArgumentNullException("stream");
-
-				if (bufferSize < DEFAULT_BUFFER_SIZE)
-					bufferSize = DEFAULT_BUFFER_SIZE;
-
-				this.inputStream = stream;
-				this.leaveOpen = leaveOpen;
-				this.buffer = new byte[bufferSize];
-				this.bufferOffset = 0;
-				this.bufferReaded = 0;
-				this.bufferAvailable = 0;
-				this.bitConverter = EndianBitConverter.Big;
-				this.maps = new Stack<Map>();
-			}
-
-			public override bool NextToken()
-			{
-				if (this.maps.Count > 0 && this.maps.Peek().Counter == 0)
-				{
-					var closingToken = this.maps.Pop();
-					this.node = new ReaderNode(closingToken.Token);
-
-					this.DecrementClosingTokenCounter();
-					return true;
-				}
-
-				if (!this.ReadToBuffer(1, throwOnEos: false))
-				{
-					this.node = new ReaderNode(ReaderToken.EndOfStream);
-					return false;
-				}
-
-				var formatValue = buffer[this.bufferOffset];
-				if (formatValue >= (byte)MessagePackType.FixArrayStart && formatValue <= (byte)MessagePackType.FixArrayEnd)
-				{
-					var arrayCount = formatValue - (byte)MessagePackType.FixArrayStart;
-
-					this.maps.Push(new Map { Token = ReaderToken.EndOfArray, Counter = arrayCount + 1 });
-					this.node = new ReaderNode(ReaderToken.BeginArray);
-				}
-				else if (formatValue >= (byte)MessagePackType.FixStrStart && formatValue <= (byte)MessagePackType.FixStrEnd)
-				{
-					var strCount = formatValue - (byte)MessagePackType.FixStrStart;
-					var strBytes = this.ReadBytes(strCount);
-					var strValue = Encoding.UTF8.GetString(strBytes.Array, strBytes.Offset, strBytes.Count);
-
-					var token = ReaderToken.Value;
-					if (this.maps.Count > 0)
-					{
-						var closingToken = this.maps.Peek();
-						if (closingToken.Token == ReaderToken.EndOfObject && closingToken.Counter > 0 && closingToken.Counter % 2 == 0)
-							token = ReaderToken.Member;
-					}
-					this.node = new ReaderNode(token, strValue);
-				}
-				else if (formatValue >= (byte)MessagePackType.FixMapStart && formatValue <= (byte)MessagePackType.FixMapEnd)
-				{
-					var mapCount = formatValue - (byte)MessagePackType.FixMapStart;
-					this.maps.Push(new Map { Token = ReaderToken.EndOfObject, Counter = mapCount * 2 + 1 });
-					this.node = new ReaderNode(ReaderToken.BeginObject);
-				}
-				else if (formatValue >= (byte)MessagePackType.NegativeFixIntStart && formatValue <= (byte)MessagePackType.NegativeFixIntEnd)
-				{
-					var value = -(formatValue - (byte)MessagePackType.NegativeFixIntStart);
-					this.node = new ReaderNode(ReaderToken.Value, this.Box(value));
-				}
-				else if (formatValue >= (byte)MessagePackType.PositiveFixIntStart && formatValue <= (byte)MessagePackType.PositiveFixIntEnd)
-				{
-					var value = formatValue - (byte)MessagePackType.PositiveFixIntStart;
-					this.node = new ReaderNode(ReaderToken.Value, this.Box(value));
-				}
-				else
-				{
-					switch ((MessagePackType)formatValue)
-					{
-						case MessagePackType.Nil:
-							this.node = new ReaderNode(ReaderToken.Null);
-							break;
-						case MessagePackType.Array16:
-						case MessagePackType.Array32:
-							var arrayCount = 0L;
-							if (formatValue == (int)MessagePackType.Array16)
-							{
-								this.ReadToBuffer(2, throwOnEos: true);
-								arrayCount = bitConverter.ToUInt16(this.buffer, this.bufferOffset);
-							}
-							else if (formatValue == (int)MessagePackType.Array32)
-							{
-								this.ReadToBuffer(4, throwOnEos: true);
-								arrayCount = bitConverter.ToUInt32(this.buffer, this.bufferOffset);
-							}
-
-							if (arrayCount < 0) throw ReaderException.ReadingBrokenDocument(this, "negative size of array");
-							this.maps.Push(new Map { Token = ReaderToken.EndOfArray, Counter = arrayCount + 1 });
-							this.node = new ReaderNode(ReaderToken.BeginArray);
-							break;
-						case MessagePackType.Map16:
-						case MessagePackType.Map32:
-							var mapCount = 0L;
-							if (formatValue == (int)MessagePackType.Map16)
-							{
-								this.ReadToBuffer(2, throwOnEos: true);
-								mapCount = bitConverter.ToUInt16(this.buffer, this.bufferOffset);
-							}
-							else if (formatValue == (int)MessagePackType.Map32)
-							{
-								this.ReadToBuffer(4, throwOnEos: true);
-								mapCount = bitConverter.ToUInt32(this.buffer, this.bufferOffset);
-							}
-
-							if (mapCount < 0) throw ReaderException.ReadingBrokenDocument(this, "negative size of map");
-							this.maps.Push(new Map { Token = ReaderToken.EndOfObject, Counter = mapCount * 2 + 1 });
-							this.node = new ReaderNode(ReaderToken.BeginObject);
-							break;
-						case MessagePackType.Str16:
-						case MessagePackType.Str32:
-						case MessagePackType.Str8:
-							var strBytesCount = 0L;
-							if (formatValue == (int)MessagePackType.Str8)
-							{
-								this.ReadToBuffer(1, throwOnEos: true);
-								strBytesCount = this.buffer[this.bufferOffset];
-							}
-							else if (formatValue == (int)MessagePackType.Str16)
-							{
-								this.ReadToBuffer(2, throwOnEos: true);
-								strBytesCount = bitConverter.ToUInt16(this.buffer, this.bufferOffset);
-							}
-							else if (formatValue == (int)MessagePackType.Str32)
-							{
-								this.ReadToBuffer(4, throwOnEos: true);
-								strBytesCount = bitConverter.ToUInt32(this.buffer, this.bufferOffset);
-							}
-
-							var token = ReaderToken.Value;
-							if (this.maps.Count > 0)
-							{
-								var closingToken = this.maps.Peek();
-								if (closingToken.Token == ReaderToken.EndOfObject && closingToken.Counter > 0 && closingToken.Counter % 2 == 0)
-									token = ReaderToken.Member;
-							}
-
-							if (strBytesCount > MAX_STRING_LENGTH) throw ReaderException.StringLiteralIsTooLong(this, (int)strBytesCount, MAX_STRING_LENGTH);
-							if (strBytesCount < 0) throw ReaderException.ReadingBrokenDocument(this, "negative size of string");
-
-							var strBytes = this.ReadBytes(strBytesCount);
-							var strValue = Encoding.UTF8.GetString(strBytes.Array, strBytes.Offset, strBytes.Count);
-
-							this.node = new ReaderNode(token, strValue);
-							break;
-						case MessagePackType.Bin32:
-						case MessagePackType.Bin16:
-						case MessagePackType.Bin8:
-							var bytesCount = 0L;
-							if (formatValue == (int)MessagePackType.Bin8)
-							{
-								this.ReadToBuffer(1, throwOnEos: true);
-								bytesCount = this.buffer[this.bufferOffset];
-							}
-							else if (formatValue == (int)MessagePackType.Bin16)
-							{
-								this.ReadToBuffer(2, throwOnEos: true);
-								bytesCount = bitConverter.ToUInt16(this.buffer, this.bufferOffset);
-							}
-							else if (formatValue == (int)MessagePackType.Bin32)
-							{
-								this.ReadToBuffer(4, throwOnEos: true);
-								bytesCount = bitConverter.ToUInt32(this.buffer, this.bufferOffset);
-							}
-
-							if (bytesCount > MAX_BINARY_LENGTH) throw ReaderException.BinaryDataIsTooLong(this, (int)bytesCount, MAX_BINARY_LENGTH);
-							if (bytesCount < 0) throw ReaderException.ReadingBrokenDocument(this, "negative size of binary data");
-							var bytes = this.ReadBytes(bytesCount, forceNewBuffer: true);
-							this.node = new ReaderNode(ReaderToken.Value, bytes.Array);
-							break;
-						case MessagePackType.FixExt1:
-						case MessagePackType.FixExt16:
-						case MessagePackType.FixExt2:
-						case MessagePackType.FixExt4:
-						case MessagePackType.FixExt8:
-						case MessagePackType.Ext32:
-						case MessagePackType.Ext16:
-						case MessagePackType.Ext8:
-							var extLength = 0L;
-							if (formatValue == (int)MessagePackType.FixExt1)
-								extLength = 1;
-							else if (formatValue == (int)MessagePackType.FixExt2)
-								extLength = 2;
-							else if (formatValue == (int)MessagePackType.FixExt4)
-								extLength = 4;
-							else if (formatValue == (int)MessagePackType.FixExt8)
-								extLength = 8;
-							else if (formatValue == (int)MessagePackType.FixExt16)
-								extLength = 16;
-							if (formatValue == (int)MessagePackType.Ext8)
-							{
-								this.ReadToBuffer(1, throwOnEos: true);
-								extLength = this.buffer[this.bufferOffset];
-							}
-							else if (formatValue == (int)MessagePackType.Ext16)
-							{
-								this.ReadToBuffer(2, throwOnEos: true);
-								extLength = bitConverter.ToUInt16(this.buffer, this.bufferOffset);
-							}
-							else if (formatValue == (int)MessagePackType.Ext32)
-							{
-								this.ReadToBuffer(4, throwOnEos: true);
-								extLength = bitConverter.ToUInt32(this.buffer, this.bufferOffset);
-							}
-
-							this.ReadToBuffer(1, throwOnEos: true);
-							var extType = buffer[this.bufferOffset];
-
-							if (extLength > MAX_BINARY_LENGTH) throw ReaderException.BinaryDataIsTooLong(this, (int)extLength, MAX_BINARY_LENGTH);
-							if (extLength < 0) throw ReaderException.ReadingBrokenDocument(this, "negative size of binary data");
-
-							var data = this.ReadBytes(extLength, forceNewBuffer: true);
-							if (!this.TryReadExtType(extType, data, out this.node))
-								this.node = new ReaderNode(ReaderToken.Value, data.Array);
-							break;
-						case MessagePackType.False:
-							this.node = new ReaderNode(ReaderToken.Value, this.Box(false));
-							break;
-						case MessagePackType.True:
-							this.node = new ReaderNode(ReaderToken.Value, this.Box(true));
-							break;
-						case MessagePackType.Float32:
-							this.ReadToBuffer(4, throwOnEos: true);
-							this.node = new ReaderNode(ReaderToken.Value, this.Box(bitConverter.ToSingle(buffer, this.bufferOffset)));
-							break;
-						case MessagePackType.Float64:
-							this.ReadToBuffer(8, throwOnEos: true);
-							this.node = new ReaderNode(ReaderToken.Value, this.Box(bitConverter.ToDouble(buffer, this.bufferOffset)));
-							break;
-						case MessagePackType.Int16:
-							this.ReadToBuffer(2, throwOnEos: true);
-							this.node = new ReaderNode(ReaderToken.Value, this.Box(bitConverter.ToInt16(buffer, this.bufferOffset)));
-							break;
-						case MessagePackType.Int32:
-							this.ReadToBuffer(4, throwOnEos: true);
-							this.node = new ReaderNode(ReaderToken.Value, this.Box(bitConverter.ToInt32(buffer, this.bufferOffset)));
-							break;
-						case MessagePackType.Int64:
-							this.ReadToBuffer(8, throwOnEos: true);
-							this.node = new ReaderNode(ReaderToken.Value, this.Box(bitConverter.ToInt64(buffer, this.bufferOffset)));
-							break;
-						case MessagePackType.Int8:
-							this.ReadToBuffer(1, throwOnEos: true);
-							this.node = new ReaderNode(ReaderToken.Value, this.Box((sbyte)buffer[this.bufferOffset]));
-							break;
-						case MessagePackType.UInt16:
-							this.ReadToBuffer(2, throwOnEos: true);
-							this.node = new ReaderNode(ReaderToken.Value, this.Box((uint)bitConverter.ToUInt16(buffer, this.bufferOffset)));
-							break;
-						case MessagePackType.UInt32:
-							this.ReadToBuffer(4, throwOnEos: true);
-							this.node = new ReaderNode(ReaderToken.Value, this.Box(bitConverter.ToUInt32(buffer, this.bufferOffset)));
-							break;
-						case MessagePackType.UInt64:
-							this.ReadToBuffer(8, throwOnEos: true);
-							this.node = new ReaderNode(ReaderToken.Value, this.Box(bitConverter.ToUInt64(buffer, this.bufferOffset)));
-							break;
-						case MessagePackType.UInt8:
-							this.ReadToBuffer(1, throwOnEos: true);
-							this.node = new ReaderNode(ReaderToken.Value, this.Box((uint)buffer[this.bufferOffset]));
-							break;
-						case MessagePackType.PositiveFixIntStart:
-						case MessagePackType.PositiveFixIntEnd:
-						case MessagePackType.FixMapStart:
-						case MessagePackType.FixMapEnd:
-						case MessagePackType.FixArrayStart:
-						case MessagePackType.FixArrayEnd:
-						case MessagePackType.FixStrStart:
-						case MessagePackType.FixStrEnd:
-						case MessagePackType.Unused:
-						case MessagePackType.NegativeFixIntStart:
-						case MessagePackType.NegativeFixIntEnd:
-						default: throw ReaderException.UnknownMessagePackType(((MessagePackType)formatValue).ToString(), this);
-					}
-				}
-
-				this.DecrementClosingTokenCounter();
-
-				return true;
-			}
-
-			private bool ReadToBuffer(int bytesRequired, bool throwOnEos)
-			{
-				this.bufferAvailable -= this.bufferReaded;
-				this.bufferOffset += this.bufferReaded;
-				this.bufferReaded = 0;
-
-				if (this.bufferAvailable < bytesRequired)
-				{
-					if (this.bufferAvailable > 0)
-						Buffer.BlockCopy(this.buffer, this.bufferOffset, this.buffer, 0, this.bufferAvailable);
-
-					this.bufferOffset = 0;
-					while (this.bufferAvailable < bytesRequired)
-					{
-						var read = this.inputStream.Read(this.buffer, this.bufferAvailable, this.buffer.Length - this.bufferAvailable);
-						this.bufferAvailable += read;
-
-						if (read != 0 || this.bufferAvailable >= bytesRequired)
-							continue;
-
-						if (throwOnEos)
-							ReaderException.UnexpectedEndOfStream(this);
-						else
-							return false;
-					}
-				}
-
-				this.bufferReaded = bytesRequired;
-				this.totalBytesReaded += bytesRequired;
-				return true;
-			}
-			private ArraySegment<byte> ReadBytes(long bytesRequired, bool forceNewBuffer = false)
-			{
-				if (bytesRequired > int.MaxValue) throw new ArgumentOutOfRangeException("bytesRequired");
-
-				this.bufferAvailable -= this.bufferReaded;
-				this.bufferOffset += this.bufferReaded;
-				this.bufferReaded = 0;
-
-				if (this.bufferAvailable >= bytesRequired && !forceNewBuffer)
-				{
-					var bytes = new ArraySegment<byte>(this.buffer, this.bufferOffset, (int)bytesRequired);
-
-					this.bufferAvailable -= (int)bytesRequired;
-					this.bufferOffset += (int)bytesRequired;
-					this.totalBytesReaded += (int)bytesRequired;
-
-					return bytes;
-				}
-				else
-				{
-					var bytes = new byte[bytesRequired];
-					var bytesOffset = 0;
-					if (this.bufferAvailable > 0 && bytesOffset < bytes.Length)
-					{
-						var bytesToCopy = Math.Min(bytes.Length - bytesOffset, this.bufferAvailable);
-						Buffer.BlockCopy(this.buffer, this.bufferOffset, bytes, bytesOffset, bytesToCopy);
-
-						bytesOffset += bytesToCopy;
-						this.bufferOffset += bytesToCopy;
-
-						this.bufferAvailable -= bytesToCopy;
-						this.totalBytesReaded += bytesToCopy;
-					}
-
-					if (this.bufferAvailable == 0)
-						this.bufferOffset = 0;
-
-					while (bytesOffset < bytes.Length)
-					{
-						var read = this.inputStream.Read(bytes, bytesOffset, bytes.Length - bytesOffset);
-
-						bytesOffset += read;
-						this.totalBytesReaded += read;
-
-						if (read == 0 && bytesOffset < bytes.Length)
-							throw ReaderException.UnexpectedEndOfStream(this);
-					}
-
-					return new ArraySegment<byte>(bytes, 0, bytes.Length);
-				}
-			}
-			private bool TryReadExtType(byte extType, ArraySegment<byte> data, out ReaderNode node)
-			{
-				switch ((MessagePackExtentionType)extType)
-				{
-					case MessagePackExtentionType.DateTime:
-						var dateTime = new DateTime(bitConverter.ToInt64(data.Array, data.Offset + 1), (DateTimeKind)data.Array[data.Offset]);
-						node = new ReaderNode(ReaderToken.Value, this.Box(dateTime));
-						return true;
-					case MessagePackExtentionType.DateTimeOffset:
-						var time = new DateTime(bitConverter.ToInt64(data.Array, data.Offset), DateTimeKind.Utc);
-						var offset = new TimeSpan(bitConverter.ToInt64(data.Array, data.Offset + 8));
-						var dateTimeOffset = new DateTimeOffset(time, offset);
-						node = new ReaderNode(ReaderToken.Value, this.Box(dateTimeOffset));
-						return true;
-					case MessagePackExtentionType.Decimal:
-						var decimalValue = bitConverter.ToDecimal(data.Array, data.Offset);
-						node = new ReaderNode(ReaderToken.Value, this.Box(decimalValue));
-						return true;
-					default:
-						node = default(ReaderNode);
-						return false;
-				}
-			}
-
-			private object Box(int value)
-			{
-				if (this.int32Box == null)
-					this.int32Box = new StrongBox<int>(FormatProvider);
-
-				this.int32Box.Store(value);
-
-				return this.int32Box;
-			}
-			private object Box(uint value)
-			{
-				if (this.uInt32Box == null)
-					this.uInt32Box = new StrongBox<uint>(FormatProvider);
-
-				this.uInt32Box.Store(value);
-
-				return this.uInt32Box;
-			}
-			private object Box(long value)
-			{
-				if (this.int64Box == null)
-					this.int64Box = new StrongBox<long>(FormatProvider);
-
-				this.int64Box.Store(value);
-
-				return this.int64Box;
-			}
-			private object Box(ulong value)
-			{
-				if (this.uInt64Box == null)
-					this.uInt64Box = new StrongBox<ulong>(FormatProvider);
-
-				this.uInt64Box.Store(value);
-
-				return this.uInt64Box;
-			}
-			private object Box(float value)
-			{
-				if (this.singleBox == null)
-					this.singleBox = new StrongBox<float>(FormatProvider);
-
-				this.singleBox.Store(value);
-
-				return this.singleBox;
-			}
-			private object Box(double value)
-			{
-				if (this.doubleBox == null)
-					this.doubleBox = new StrongBox<double>(FormatProvider);
-
-				this.doubleBox.Store(value);
-
-				return this.doubleBox;
-			}
-			private object Box(decimal value)
-			{
-				if (this.decimalBox == null)
-					this.decimalBox = new StrongBox<decimal>(FormatProvider);
-
-				this.decimalBox.Store(value);
-
-				return this.decimalBox;
-			}
-			private object Box(DateTime value)
-			{
-				if (this.dateBox == null)
-					this.dateBox = new StrongBox<DateTime>(FormatProvider);
-
-				this.dateBox.Store(value);
-				return this.dateBox;
-			}
-			private object Box(DateTimeOffset value)
-			{
-				if (this.dateOffsetBox == null)
-					this.dateOffsetBox = new StrongBox<DateTimeOffset>(FormatProvider);
-
-				this.dateOffsetBox.Store(value);
-				return this.dateOffsetBox;
-			}
-			private object Box(bool value)
-			{
-				if (value)
-				{
-					if (this.trueBox == null)
-						this.trueBox = new StrongBox<bool>(true, FormatProvider);
-					return trueBox;
-				}
-				else
-				{
-					if (this.falseBox == null)
-						this.falseBox = new StrongBox<bool>(false, FormatProvider);
-					return falseBox;
-				}
-			}
-
-			private void DecrementClosingTokenCounter()
-			{
-				if (this.maps.Count > 0)
-				{
-					var closingToken = this.maps.Pop();
-					closingToken.Counter--;
-					this.maps.Push(closingToken);
-				}
-			}
-
-			public void Dispose()
-			{
-				if (this.leaveOpen == false)
-					this.inputStream.Dispose();
-			}
-
-
-			private enum MessagePackType : byte
-			{
-				PositiveFixIntStart = 0x00,
-				PositiveFixIntEnd = 0x7f,
-				FixMapStart = 0x80,
-				FixMapEnd = 0x8f,
-				FixArrayStart = 0x90,
-				FixArrayEnd = 0x9f,
-				FixStrStart = 0xa0,
-				FixStrEnd = 0xbf,
-				Nil = 0xc0,
-				Unused = 0xc1,
-				False = 0xc2,
-				True = 0xc3,
-				Bin8 = 0xc4,
-				Bin16 = 0xc5,
-				Bin32 = 0xc6,
-				Ext8 = 0xc7,
-				Ext16 = 0xc8,
-				Ext32 = 0xc9,
-				Float32 = 0xca,
-				Float64 = 0xcb,
-				UInt8 = 0xcc,
-				UInt16 = 0xcd,
-				UInt32 = 0xce,
-				UInt64 = 0xcf,
-				Int8 = 0xd0,
-				Int16 = 0xd1,
-				Int32 = 0xd2,
-				Int64 = 0xd3,
-				FixExt1 = 0xd4,
-				FixExt2 = 0xd5,
-				FixExt4 = 0xd6,
-				FixExt8 = 0xd7,
-				FixExt16 = 0xd8,
-				Str8 = 0xd9,
-				Str16 = 0xda,
-				Str32 = 0xdb,
-				Array16 = 0xdc,
-				Array32 = 0xdd,
-				Map16 = 0xde,
-				Map32 = 0xdf,
-				NegativeFixIntStart = 0xe0,
-				NegativeFixIntEnd = 0xff
-			}
-
-			private enum MessagePackExtentionType : byte
-			{
-				None = 0,
-				DateTime = 40,
-				DateTimeOffset = 41,
-				Decimal = 42
-			}
-		}
-		#endregion
-		#region Serialization: BSON
-		private void ReadBson(RpgGameData gameData, Stream stream, Encoding encoding, bool leaveOpen)
-		{
-			if (gameData == null) throw new ArgumentNullException("gameData");
-			if (stream == null) throw new ArgumentNullException("stream");
-			if (encoding == null) throw new ArgumentNullException("encoding");
-
-			using(var bsonReader = new BsonReader(stream, leaveOpen))
-				bsonReader.ReadGameData(gameData);
-		}
-
-		private class BsonReader : Reader, IDisposable
-		{
-			private const int DEFAULT_BUFFER_SIZE = ushort.MaxValue;
-			private const int MAX_BINARY_LENGTH = 16 * 1024 * 1024;
-			private const int MAX_STRING_LENGTH = 16 * 1024 * 1024;
-
-			private static readonly DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-
-			private struct Document
-			{
-				public readonly int Length;
-				public readonly BsonType Type;
-				public readonly int End;
-
-				public Document(BsonType docType, int length, int end)
-				{
-					this.Type = docType;
-					this.Length = length;
-					this.End = end;
-				}
-			}
-
-			private readonly Stream inputStream;
-			private readonly bool leaveOpen;
-			private readonly byte[] buffer;
-			private readonly EndianBitConverter bitConverter;
-			private readonly Stack<Document> documents;
-			private ReaderNode node;
-			private int bufferOffset;
-			private int bufferReaded;
-			private int bufferAvailable;
-			private int totalBytesReaded;
-			private BsonType memberType;
-
-			private StrongBox<int> int32Box;
-			private StrongBox<long> int64Box;
-			private StrongBox<double> doubleBox;
-			private StrongBox<decimal> decimalBox;
-			private StrongBox<DateTime> dateBox;
-			private StrongBox<DateTimeOffset> dateOffsetBox;
-			private StrongBox<bool> trueBox;
-			private StrongBox<bool> falseBox;
-
-			public override int LineNumber { get { return 0; } }
-			public override int ColumnNumber { get { return this.totalBytesReaded; } }
-			public override ReaderNode Node { get { if (this.node.Token == ReaderToken.None) this.NextToken(); return this.node; } }
-
-			public BsonReader(Stream stream, bool leaveOpen = false, int bufferSize = DEFAULT_BUFFER_SIZE)
-			{
-				if (stream == null) throw new ArgumentNullException("stream");
-
-				if (bufferSize < DEFAULT_BUFFER_SIZE)
-					bufferSize = DEFAULT_BUFFER_SIZE;
-
-				this.inputStream = stream;
-				this.leaveOpen = leaveOpen;
-				this.buffer = new byte[bufferSize];
-				this.bufferOffset = 0;
-				this.bufferReaded = 0;
-				this.bufferAvailable = 0;
-				this.bitConverter = EndianBitConverter.Little;
-				this.documents = new Stack<Document>();
-			}
-
-			public override bool NextToken()
-			{
-				var length = 0;
-				var end = 0;
-				if (this.documents.Count == 0)
-				{
-					if (!this.ReadToBuffer(4, throwOnEos: false))
-					{
-						this.node = new ReaderNode(ReaderToken.EndOfStream);
-						return false;
-					}
-					length = this.bitConverter.ToInt32(this.buffer, this.bufferOffset);
-					end = length <= 0 ? 0 : this.totalBytesReaded - this.bufferReaded + length;
-					var newDocument = new Document(BsonType.Document, length, end);
-					this.documents.Push(newDocument);
-					this.node = new ReaderNode(ReaderToken.BeginObject);
-					return true;
-				}
-
-				var document = this.documents.Peek();
-				if (this.memberType == BsonType.None)
-				{
-					this.ReadToBuffer(1, throwOnEos: true);
-					memberType = (BsonType)this.buffer[this.bufferOffset];
-					if (memberType != BsonType.None && document.Type == BsonType.Document)
-					{
-						var memberName = this.ReadCString();
-						this.node = new ReaderNode(ReaderToken.Member, memberName);
-						return true;
-					}
-					else if (memberType != BsonType.None)
-					{
-						this.SkipCString();
-					}
-				}
-
-				var type = this.memberType;
-				this.memberType = BsonType.None;
-				switch (type)
-				{
-					case BsonType.Double:
-						this.ReadToBuffer(8, throwOnEos: true);
-						var doubleValue = this.bitConverter.ToDouble(this.buffer, this.bufferOffset);
-						this.node = new ReaderNode(ReaderToken.Value, this.Box(doubleValue));
-						return true;
-					case BsonType.String:
-						var stringValue = this.ReadUtf8String();
-						this.node = new ReaderNode(ReaderToken.Value, stringValue);
-						return true;
-					case BsonType.Array:
-					case BsonType.Document:
-						this.ReadToBuffer(4, throwOnEos: true);
-						length = this.bitConverter.ToInt32(this.buffer, this.bufferOffset);
-						end = length <= 0 ? 0 : this.totalBytesReaded - this.bufferReaded + length;
-						var newDocument = new Document(type, length, end);
-						this.documents.Push(newDocument);
-						this.node = new ReaderNode(type == BsonType.Document ? ReaderToken.BeginObject : ReaderToken.BeginArray);
-						return true;
-					case BsonType.Binary:
-						this.ReadToBuffer(5, throwOnEos: true);
-						length = this.bitConverter.ToInt32(this.buffer, this.bufferOffset);
-
-						if (length > MAX_BINARY_LENGTH) throw ReaderException.BinaryDataIsTooLong(this, length, MAX_BINARY_LENGTH);
-						if (length < 0) throw ReaderException.ReadingBrokenDocument(this, "negative size of binary data");
-
-						var binaryType = (BsonBinaryType)this.buffer[this.bufferOffset + 4];
-						switch (binaryType)
-						{
-							case BsonBinaryType.Decimal:
-								this.ReadToBuffer(length, throwOnEos: true);
-								var decimalValue = this.bitConverter.ToDecimal(this.buffer, this.bufferOffset);
-								this.node = new ReaderNode(ReaderToken.Value, this.Box(decimalValue));
-								return true;
-							case BsonBinaryType.DateTime:
-								this.ReadToBuffer(length, throwOnEos: true);
-								var dateTimeBinary = this.bitConverter.ToInt64(this.buffer, this.bufferOffset);
-								this.node = new ReaderNode(ReaderToken.Value, this.Box(DateTime.FromBinary(dateTimeBinary)));
-								return true;
-							case BsonBinaryType.DateTimeOffset:
-								this.ReadToBuffer(length, throwOnEos: true);
-								var dateTicks = this.bitConverter.ToInt64(this.buffer, this.bufferOffset);
-								var offsetTicks = this.bitConverter.ToInt64(this.buffer, this.bufferOffset + 8);
-								this.node = new ReaderNode(ReaderToken.Value, this.Box(new DateTimeOffset(dateTicks, new TimeSpan(offsetTicks))));
-								return true;
-							case BsonBinaryType.Bytes:
-							case BsonBinaryType.Function:
-							case BsonBinaryType.BytesOld:
-							case BsonBinaryType.UUIDOld:
-							case BsonBinaryType.UUID:
-							case BsonBinaryType.MD5:
-							case BsonBinaryType.UserDefined:
-							default:
-								var bytes = this.ReadBytes(length, forceNewBuffer: true);
-								this.node = new ReaderNode(ReaderToken.Value, bytes.Array);
-								return true;
-						}
-					case BsonType.Undefined:
-						this.node = new ReaderNode(ReaderToken.Null);
-						return true;
-					case BsonType.ObjectId:
-						var objectIdStr = this.ReadObjectId();
-						this.node = new ReaderNode(ReaderToken.Value, objectIdStr);
-						return true;
-					case BsonType.Boolean:
-						this.ReadToBuffer(1, throwOnEos: true);
-						var boolValue = this.buffer[this.bufferOffset] > 0;
-						this.node = new ReaderNode(ReaderToken.Value, this.Box(boolValue));
-						return true;
-					case BsonType.DateTime:
-						this.ReadToBuffer(8, throwOnEos: true);
-						var dateTimeMilliseconds = this.bitConverter.ToInt64(this.buffer, this.bufferOffset);
-						this.node = new ReaderNode(ReaderToken.Value, this.Box(Epoch.AddTicks(checked(dateTimeMilliseconds * TimeSpan.TicksPerMillisecond))));
-						return true;
-					case BsonType.Null:
-						this.node = new ReaderNode(ReaderToken.Null);
-						return true;
-					case BsonType.Regex:
-						var regexPattern = this.ReadCString();
-						var regexOptions = this.ReadCString();
-						this.node = new ReaderNode(ReaderToken.Value, string.Concat("/", regexPattern, "/", regexOptions));
-						return true;
-					case BsonType.Reference:
-						var reference = this.ReadUtf8String();
-						var referenceId = this.ReadObjectId();
-						this.node = new ReaderNode(ReaderToken.Value, reference + " -> " + referenceId);
-						return true;
-					case BsonType.JavaScript:
-						var javascriptCode = this.ReadUtf8String();
-						this.node = new ReaderNode(ReaderToken.Value, javascriptCode);
-						return true;
-					case BsonType.JavaScriptWithScope:
-						this.ReadToBuffer(4, throwOnEos: true);
-						var javascriptScopedCode = this.ReadUtf8String();
-						this.memberType = BsonType.Document;
-						this.ReadAny(nextToken: false); // scope
-						this.node = new ReaderNode(ReaderToken.Value, javascriptScopedCode);
-						return true;
-					case BsonType.Symbol:
-						var symbolString = this.ReadUtf8String();
-						this.node = new ReaderNode(ReaderToken.Value, symbolString);
-						return true;
-					case BsonType.Int32:
-						this.ReadToBuffer(4, throwOnEos: true);
-						var intValue = this.bitConverter.ToInt32(this.buffer, this.bufferOffset);
-						this.node = new ReaderNode(ReaderToken.Value, this.Box(intValue));
-						return true;
-					case BsonType.Timestamp:
-						this.ReadToBuffer(8, throwOnEos: true);
-						var timestampSeconds = (this.bitConverter.ToInt64(this.buffer, this.bufferOffset) & uint.MaxValue);
-						this.node = new ReaderNode(ReaderToken.Value, this.Box(Epoch.AddTicks(checked(timestampSeconds * TimeSpan.TicksPerSecond))));
-						return true;
-					case BsonType.Int64:
-						this.ReadToBuffer(8, throwOnEos: true);
-						var longValue = this.bitConverter.ToInt64(this.buffer, this.bufferOffset);
-						this.node = new ReaderNode(ReaderToken.Value, this.Box(longValue));
-						return true;
-					case BsonType.MinKey:
-						this.node = new ReaderNode(ReaderToken.Value, "min");
-						return true;
-					case BsonType.MaxKey:
-						this.node = new ReaderNode(ReaderToken.Value, "max");
-						return true;
-					case BsonType.None:
-						if (this.documents.Count == 0)
-							goto default;
-
-						document = this.documents.Pop();
-						if (document.End != 0 && document.End != this.totalBytesReaded)
-							throw ReaderException.ReadingBrokenDocument(this, string.Format("invalid BSON document length '{0:##,###}' readed, while actual size is '{1:##,###}'", document.Length, document.Length + (this.totalBytesReaded - document.End)));
-						this.node = new ReaderNode(document.Type == BsonType.Document ? ReaderToken.EndOfObject : ReaderToken.EndOfArray);
-						return true;
-					default:
-						throw ReaderException.UnknownNotation(this, type.ToString());
-				}
-			}
-
-			private void SkipCString()
-			{
-				this.bufferAvailable -= this.bufferReaded;
-				this.bufferOffset += this.bufferReaded;
-				this.bufferReaded = 0;
-
-				var length = 0;
-				var originalTotalBytesReaded = this.totalBytesReaded;
-
-				while (true)
-				{
-					while (this.bufferAvailable > 0)
-					{
-						var isTerminated = this.buffer[this.bufferOffset] == 0;
-
-						length++;
-						this.bufferOffset++;
-						this.bufferAvailable--;
-
-						if (isTerminated)
-						{
-							this.totalBytesReaded = originalTotalBytesReaded + length; // length includes trailing zero
-							return;
-						}
-					}
-
-					this.bufferOffset = 0;
-					this.bufferAvailable = 0;
-					this.ReadToBuffer(this.buffer.Length, false);
-					if (this.bufferAvailable == 0)
-						throw ReaderException.UnterminatedStringLiteral(this);
-				}
-			}
-			private string ReadCString()
-			{
-				this.bufferAvailable -= this.bufferReaded;
-				this.bufferOffset += this.bufferReaded;
-				this.bufferReaded = 0;
-
-				var originalTotalBytesReaded = this.totalBytesReaded;
-
-				var tmpBuffer = default(byte[]);
-				var tmpBufferOffset = 0;
-				while (true)
-				{
-					var originalOffset = this.bufferOffset;
-					var isTerminated = false;
-					while (this.bufferAvailable > 0)
-					{
-						isTerminated = this.buffer[bufferOffset] == 0;
-
-						this.bufferOffset++;
-						this.bufferAvailable--;
-
-						if (isTerminated)
-							break;
-					}
-
-					var chunkLength = this.bufferOffset - originalOffset - 1;
-					if (isTerminated && tmpBufferOffset == 0)
-					{
-						this.totalBytesReaded = originalTotalBytesReaded + chunkLength + 1;
-						var strValue = chunkLength <= 0 ? string.Empty : Encoding.UTF8.GetString(this.buffer, originalOffset, chunkLength);
-						return strValue;
-					}
-
-					if (chunkLength > 0)
-					{
-						if (chunkLength + tmpBufferOffset > MAX_STRING_LENGTH)
-							throw ReaderException.StringLiteralIsTooLong(this, tmpBufferOffset + chunkLength, MAX_STRING_LENGTH);
-
-						if (tmpBuffer == null) tmpBuffer = new byte[Math.Max(DEFAULT_BUFFER_SIZE, chunkLength)];
-						if (tmpBufferOffset + chunkLength > tmpBuffer.Length)
-							Array.Resize(ref tmpBuffer, Math.Max((int)(tmpBuffer.Length * 1.5), tmpBufferOffset + chunkLength));
-
-						Array.Copy(this.buffer, originalOffset, tmpBuffer, tmpBufferOffset, chunkLength);
-						tmpBufferOffset += chunkLength;
-					}
-
-					if (isTerminated)
-					{
-						this.totalBytesReaded = originalTotalBytesReaded + tmpBufferOffset + 1;
-						var strValue = tmpBufferOffset == 0 || tmpBuffer == null ? string.Empty : Encoding.UTF8.GetString(tmpBuffer, 0, tmpBufferOffset);
-						return strValue;
-					}
-
-					this.bufferOffset = 0;
-					this.bufferAvailable = 0;
-					this.ReadToBuffer(this.buffer.Length, false);
-
-					if (this.bufferAvailable == 0)
-						throw ReaderException.UnterminatedStringLiteral(this);
-				}
-			}
-			private string ReadUtf8String()
-			{
-				this.ReadToBuffer(4, throwOnEos: true);
-				var length = this.bitConverter.ToInt32(this.buffer, this.bufferOffset);
-
-				if (length > MAX_STRING_LENGTH) throw ReaderException.StringLiteralIsTooLong(this, length, MAX_STRING_LENGTH);
-				if (length < 0) throw ReaderException.ReadingBrokenDocument(this, "negative size of string literal");
-
-				var bytes = this.ReadBytes(length);
-				return Encoding.UTF8.GetString(bytes.Array, bytes.Offset, bytes.Count - 1);
-			}
-			private string ReadObjectId()
-			{
-				this.ReadToBuffer(12, throwOnEos: true);
-
-				var timeStamp = this.bitConverter.ToUInt32(this.buffer, this.bufferOffset);
-				var machineAndPid = this.bitConverter.ToUInt32(this.buffer, this.bufferOffset + 4);
-				var pidAndIncrement = this.bitConverter.ToUInt32(this.buffer, this.bufferOffset + 8);
-				var objectIdStr = string.Concat(timeStamp.ToString("X8"), machineAndPid.ToString("X8"), pidAndIncrement.ToString("X8"));
-
-				return objectIdStr;
-			}
-			private bool ReadToBuffer(int bytesRequired, bool throwOnEos)
-			{
-				this.bufferAvailable -= this.bufferReaded;
-				this.bufferOffset += this.bufferReaded;
-				this.bufferReaded = 0;
-
-				if (this.bufferAvailable < bytesRequired)
-				{
-					if (this.bufferAvailable > 0)
-						Buffer.BlockCopy(this.buffer, this.bufferOffset, this.buffer, 0, this.bufferAvailable);
-
-					this.bufferOffset = 0;
-					while (this.bufferAvailable < bytesRequired)
-					{
-						var read = this.inputStream.Read(this.buffer, this.bufferAvailable, this.buffer.Length - this.bufferAvailable);
-						this.bufferAvailable += read;
-
-						if (read != 0 || this.bufferAvailable >= bytesRequired)
-							continue;
-
-						if (throwOnEos)
-							ReaderException.UnexpectedEndOfStream(this);
-						else
-							return false;
-					}
-				}
-
-				this.bufferReaded = bytesRequired;
-				this.totalBytesReaded += bytesRequired;
-				return true;
-			}
-			private ArraySegment<byte> ReadBytes(long bytesRequired, bool forceNewBuffer = false)
-			{
-				if (bytesRequired > int.MaxValue) throw new ArgumentOutOfRangeException("bytesRequired");
-
-				this.bufferAvailable -= this.bufferReaded;
-				this.bufferOffset += this.bufferReaded;
-				this.bufferReaded = 0;
-
-				if (this.bufferAvailable >= bytesRequired && !forceNewBuffer)
-				{
-					var bytes = new ArraySegment<byte>(this.buffer, this.bufferOffset, (int)bytesRequired);
-
-					this.bufferAvailable -= (int)bytesRequired;
-					this.bufferOffset += (int)bytesRequired;
-					this.totalBytesReaded += (int)bytesRequired;
-
-					return bytes;
-				}
-				else
-				{
-					var bytes = new byte[bytesRequired];
-					var bytesOffset = 0;
-					if (this.bufferAvailable > 0 && bytesOffset < bytes.Length)
-					{
-						var bytesToCopy = Math.Min(bytes.Length - bytesOffset, this.bufferAvailable);
-						Buffer.BlockCopy(this.buffer, this.bufferOffset, bytes, bytesOffset, bytesToCopy);
-
-						bytesOffset += bytesToCopy;
-						this.bufferOffset += bytesToCopy;
-
-						this.bufferAvailable -= bytesToCopy;
-						this.totalBytesReaded += bytesToCopy;
-					}
-
-					if (this.bufferAvailable == 0)
-						this.bufferOffset = 0;
-
-					while (bytesOffset < bytes.Length)
-					{
-						var read = this.inputStream.Read(bytes, bytesOffset, bytes.Length - bytesOffset);
-
-						bytesOffset += read;
-						this.totalBytesReaded += read;
-
-						if (read == 0 && bytesOffset < bytes.Length)
-							throw ReaderException.UnexpectedEndOfStream(this);
-					}
-
-					return new ArraySegment<byte>(bytes, 0, bytes.Length);
-				}
-			}
-
-			private object Box(DateTime value)
-			{
-				if (this.dateBox == null)
-					this.dateBox = new StrongBox<DateTime>(FormatProvider);
-
-				this.dateBox.Store(value);
-				return this.dateBox;
-			}
-			private object Box(DateTimeOffset value)
-			{
-				if (this.dateOffsetBox == null)
-					this.dateOffsetBox = new StrongBox<DateTimeOffset>(FormatProvider);
-
-				this.dateOffsetBox.Store(value);
-				return this.dateOffsetBox;
-			}
-			private object Box(int value)
-			{
-				if (this.int32Box == null)
-					this.int32Box = new StrongBox<int>(FormatProvider);
-
-				this.int32Box.Store(value);
-
-				return this.int32Box;
-			}
-			private object Box(long value)
-			{
-				if (this.int64Box == null)
-					this.int64Box = new StrongBox<long>(FormatProvider);
-
-				this.int64Box.Store(value);
-
-				return this.int64Box;
-			}
-			private object Box(double value)
-			{
-				if (this.doubleBox == null)
-					this.doubleBox = new StrongBox<double>(FormatProvider);
-
-				this.doubleBox.Store(value);
-
-				return this.doubleBox;
-			}
-			private object Box(decimal value)
-			{
-				if (this.decimalBox == null)
-					this.decimalBox = new StrongBox<decimal>(FormatProvider);
-
-				this.decimalBox.Store(value);
-
-				return this.decimalBox;
-			}
-			private object Box(bool value)
-			{
-				if (value)
-				{
-					if (this.trueBox == null)
-						this.trueBox = new StrongBox<bool>(true, FormatProvider);
-					return trueBox;
-				}
-				else
-				{
-					if (this.falseBox == null)
-						this.falseBox = new StrongBox<bool>(false, FormatProvider);
-					return falseBox;
-				}
-			}
-
-			public void Dispose()
-			{
-				if (this.leaveOpen == false)
-					this.inputStream.Dispose();
-			}
-
-			public enum BsonBinaryType
-			{
-				Bytes = 0,
-				Function = 1,
-				BytesOld = 2,
-				UUIDOld = 3,
-				UUID = 4,
-				MD5 = 5,
-				UserDefined = 80,
-
-				// 16 bytes
-				Decimal = 120,
-				// 16 bytes
-				DateTime = 121,
-				// 16 bytes
-				DateTimeOffset = 122,
-			}
-
-			public enum BsonType : byte
-			{
-				None = 0,
-				Double = 1,
-				String = 2,
-				Document = 3,
-				Array = 4,
-				Binary = 5,
-				Undefined = 6,
-				ObjectId = 7,
-				Boolean = 8,
-				DateTime = 9,
-				Null = 10,
-				Regex = 11,
-				Reference = 12,
-				JavaScript = 13,
-				Symbol = 14,
-				JavaScriptWithScope = 15,
-				Int32 = 16,
-				Timestamp = 17,
-				Int64 = 18,
-				MinKey = 255,
-				MaxKey = 127
-			}
-		}
-		#endregion
-		#region Serialization: XML
-		private void ReadXml(RpgGameData gameData, Stream stream, Encoding encoding, bool leaveOpen)
-		{
-			if (gameData == null) throw new ArgumentNullException("gameData");
-			if (stream == null) throw new ArgumentNullException("stream");
-			if (encoding == null) throw new ArgumentNullException("encoding");
-
-			var textReader = new StreamReader(stream, encoding);
-			using(var xmlReader = new XmlFormattingReader(textReader, leaveOpen))
-				xmlReader.ReadGameData(gameData);
-		}
-
-		private class XmlFormattingReader : Reader, IDisposable
-		{
-			private const int STATE_INITIAL = 0;
-			private const int STATE_ARRAY = 1;
-			private const int STATE_OBJECT = 2;
-			private const int STATE_MEMBER = 3;
-			private const int STATE_VALUE = 4;
-			private const int STATE_ATTRIBUTE_MEMBER = 5;
-			private const int STATE_ATTRIBUTE_VALUE = 6;
-			private const int STATE_EMPTY = 7;
-
-			private readonly XmlReader innerReader;
-			private readonly bool leaveOpen;
-			private readonly Stack<int> states;
-			private string memberName;
-			private ReaderNode node;
-
-			public override ReaderNode Node { get { if (this.node.Token == ReaderToken.None) this.NextToken(); return this.node; } }
-			public override int LineNumber { get { return this.innerReader is IXmlLineInfo ? ((IXmlLineInfo)this.innerReader).LineNumber : 0; } }
-			public override int ColumnNumber { get { return this.innerReader is IXmlLineInfo ? ((IXmlLineInfo)this.innerReader).LinePosition : 0; } }
-
-			public XmlFormattingReader(TextReader reader, bool leaveOpen = false)
-			{
-				if (reader == null) throw new ArgumentNullException("reader");
-
-				this.innerReader = new XmlTextReader(reader);
-				this.leaveOpen = leaveOpen;
-				this.states = new Stack<int>();
-			}
-
-			public override bool NextToken()
-			{
-				this.node = this.ReadNext();
-				return this.node.Token != ReaderToken.EndOfStream;
-			}
-
-			private ReaderNode ReadNext()
-			{
-				var state = this.states.Count == 0 ? STATE_INITIAL : this.states.Peek();
-
-				if (state == STATE_EMPTY)
-					return this.ReadEmptyElement();
-
-				if (state == STATE_ATTRIBUTE_MEMBER || state == STATE_ATTRIBUTE_VALUE)
-					return this.ReadAttributes();
-
-				while (this.innerReader.Read())
-				{
-					switch (this.innerReader.NodeType)
-					{
-						case XmlNodeType.Element:
-							switch (this.innerReader.Name)
-							{
-								case XmlNotation.ValueElementName:
-									if (state == STATE_OBJECT)
-										goto default;
-									if (state != STATE_INITIAL && state != STATE_ARRAY)
-										throw this.NewUnknownNotationException();
-
-									this.states.Push(STATE_VALUE);
-									if (this.innerReader.IsEmptyElement)
-										this.states.Push(STATE_EMPTY);
-
-									return ReadNext();
-								case XmlNotation.ArrayElementName:
-									if (state == STATE_OBJECT)
-										goto default;
-
-									this.states.Push(STATE_ARRAY);
-
-									if (this.innerReader.IsEmptyElement)
-										this.states.Push(STATE_EMPTY);
-
-									return new ReaderNode(ReaderToken.BeginArray);
-								case XmlNotation.ObjectElementName:
-									if (state == STATE_OBJECT)
-										goto default;
-									this.states.Push(STATE_OBJECT);
-
-									if (this.innerReader.IsEmptyElement)
-										this.states.Push(STATE_EMPTY);
-
-									if (this.innerReader.HasAttributes)
-										this.states.Push(STATE_ATTRIBUTE_MEMBER);
-
-									return new ReaderNode(ReaderToken.BeginObject);
-								default:
-									if (state != STATE_OBJECT)
-										throw this.NewUnknownNotationException();
-
-									this.memberName = this.innerReader.Name;
-									this.states.Push(STATE_MEMBER);
-
-									if (this.innerReader.IsEmptyElement)
-										this.states.Push(STATE_EMPTY);
-
-									return new ReaderNode(ReaderToken.Member, this.memberName);
-							}
-						case XmlNodeType.EndElement:
-							switch (state)
-							{
-								case STATE_VALUE:
-									if (this.innerReader.Name != XmlNotation.ValueElementName)
-										throw this.NewUnknownNotationException();
-									this.states.Pop(); // pop VALUE
-									return this.ReadNext();
-								case STATE_MEMBER:
-									this.states.Pop(); // pop MEMBER
-									return this.ReadNext();
-								case STATE_ARRAY:
-									if (this.innerReader.Name != XmlNotation.ArrayElementName)
-										throw this.NewUnknownNotationException();
-									this.states.Pop(); // pop ARRAY
-									return new ReaderNode(ReaderToken.EndOfArray);
-								case STATE_OBJECT:
-									if (this.innerReader.Name != XmlNotation.ObjectElementName)
-										throw this.NewUnknownNotationException();
-									this.states.Pop(); // pop OBJECT
-									return new ReaderNode(ReaderToken.EndOfObject);
-							}
-							throw this.NewUnknownNotationException();
-						case XmlNodeType.Text:
-						case XmlNodeType.CDATA:
-							if (state == STATE_VALUE || state == STATE_MEMBER)
-								return new ReaderNode(ReaderToken.Value, this.innerReader.Value);
-							throw this.NewUnknownNotationException();
-						case XmlNodeType.SignificantWhitespace:
-						case XmlNodeType.Whitespace:
-						case XmlNodeType.Comment:
-						case XmlNodeType.XmlDeclaration:
-						case XmlNodeType.DocumentType:
-						case XmlNodeType.Document:
-							continue;
-						case XmlNodeType.None:
-						case XmlNodeType.EntityReference:
-						case XmlNodeType.Entity:
-						case XmlNodeType.EndEntity:
-						case XmlNodeType.ProcessingInstruction:
-						case XmlNodeType.DocumentFragment:
-						case XmlNodeType.Notation:
-						default:
-							throw this.NewUnknownNotationException();
-					}
-				}
-
-				return new ReaderNode(ReaderToken.EndOfStream);
-			}
-
-			private ReaderNode ReadEmptyElement()
-			{
-				this.states.Pop(); // pop EMPTY
-				var state = this.states.Count > 0 ? this.states.Peek() : STATE_INITIAL;
-				switch (state)
-				{
-					case STATE_MEMBER:
-						this.states.Pop(); // pop MEMBER
-						this.memberName = null;
-						if (this.innerReader["nil", XmlNotation.XmlSchemaInstanceUrl] == XmlNotation.NullEntityTrue)
-							return new ReaderNode(ReaderToken.Null);
-						else
-							return new ReaderNode(ReaderToken.Value, "");
-					case STATE_VALUE:
-						this.states.Pop(); // pop VALUE
-						return new ReaderNode(ReaderToken.Null);
-					case STATE_OBJECT:
-						this.states.Pop(); // pop OBJECT
-						return new ReaderNode(ReaderToken.EndOfObject);
-					case STATE_ARRAY:
-						this.states.Pop(); // pop ARRAY
-						return new ReaderNode(ReaderToken.EndOfArray);
-				}
-				return this.ReadNext();
-			}
-			private ReaderNode ReadAttributes()
-			{
-				switch (this.states.Pop())
-				{
-					case STATE_ATTRIBUTE_MEMBER:
-						while (this.innerReader.MoveToNextAttribute())
-						{
-							if (this.innerReader.Prefix == "xmlns" || this.innerReader.Prefix == "xsi")
-								continue;
-
-							this.states.Push(STATE_ATTRIBUTE_VALUE);
-							return new ReaderNode(ReaderToken.Member, this.innerReader.Name);
-						}
-						break;
-					case STATE_ATTRIBUTE_VALUE:
-						this.states.Push(STATE_ATTRIBUTE_MEMBER);
-						return new ReaderNode(ReaderToken.Value, this.innerReader.Value);
-				}
-				return this.ReadNext();
-			}
-
-			private Exception NewUnknownNotationException()
-			{
-				throw ReaderException.UnknownNotation(this, this.innerReader.NodeType.ToString() + "[" + this.innerReader.Name + "]");
-			}
-
-			public void Dispose()
-			{
-				if (this.leaveOpen == false)
-					this.innerReader.Close();
-			}
-
-			private class XmlNotation
-			{
-				public const string ObjectElementName = "Object";
-				public const string ArrayElementName = "Array";
-				public const string ValueElementName = "Value";
-
-				public const string XmlSchemaInstanceUrl = "http://www.w3.org/2001/XMLSchema-instance";
-				public const string NullEntityTrue = "true";
-			}
-		}
-		#endregion
 		#endregion
 
 #pragma warning disable 0660, 0661
-		[GeneratedCode("Charon", "2017.4.4.0")]
+		[GeneratedCode("Charon", "2018.4.2.0")]
 		public abstract partial class Document
 		{
 #pragma warning restore 0660, 0661
@@ -12966,15 +11867,15 @@ namespace Assets.Scripts
 
 			public static bool operator ==(Document value1, Document value2)
 			{
-				if (ReferenceEquals(value1, value2)) return true;
-				if (ReferenceEquals(value1, null) || ReferenceEquals(value2,null)) return false;
+				if (Object.ReferenceEquals(value1, value2)) return true;
+				if (Object.ReferenceEquals(value1, null) || Object.ReferenceEquals(value2,null)) return false;
 
 				return Object.Equals(value1, value2);
 			}
 			public static bool operator !=(Document value1, Document value2)
 			{
-				if (ReferenceEquals(value1, value2)) return false;
-				if (ReferenceEquals(value1, null) || ReferenceEquals(value2,null)) return true;
+				if (Object.ReferenceEquals(value1, value2)) return false;
+				if (Object.ReferenceEquals(value1, null) || Object.ReferenceEquals(value2,null)) return true;
 
 				return Object.Equals(value1, value2) == false;
 			}
@@ -12999,7 +11900,7 @@ namespace Assets.Scripts
 			}
 			protected static bool AreEquals<T>(ReadOnlyList<T> value1, ReadOnlyList<T> value2)
 			{
-				if (ReferenceEquals(value1, value2))
+				if (Object.ReferenceEquals(value1, value2))
 					return true;
 				else if (value1 == null || value2 == null)
 					return false;
@@ -13031,7 +11932,7 @@ namespace Assets.Scripts
 		}
 
 		
-		[GeneratedCode("Charon", "2017.4.4.0")]
+		[GeneratedCode("Charon", "2018.4.2.0")]
 		public sealed partial class Reference<T> where T : Document
 		{
 			// Uncomment it to delay reference resolution
@@ -13082,6 +11983,8 @@ namespace Assets.Scripts
 				var other = value as Reference<T>;
 				if (other == null)
 					return false;
+				else if (Object.ReferenceEquals(this, value))
+					return true;
 
 				return Object.Equals(this.Id, other.Id);
 			}
@@ -13098,7 +12001,7 @@ namespace Assets.Scripts
 			}
 		}
 
-		[GeneratedCode("Charon", "2017.4.4.0")]
+		[GeneratedCode("Charon", "2018.4.2.0")]
 		public sealed partial class LocalizedString : IDictionary<string, string>
 		{
 			private const string NOTES_KEY = "notes";
@@ -13140,6 +12043,8 @@ namespace Assets.Scripts
 				var other = value as LocalizedString;
 				if (other == null)
 					return false;
+				else if (Object.ReferenceEquals(this, value))
+					return true;
 
 				return Enumerable.SequenceEqual(this.valueByLang, other.valueByLang);
 			}
@@ -13250,7 +12155,7 @@ namespace Assets.Scripts
 
 	}
 
-	[GeneratedCode("Charon", "2017.4.4.0")]
+	[GeneratedCode("Charon", "2018.4.2.0")]
 	internal static class RpgGameDataExtensions
 	{
 		public static ReadOnlyDictionary<KeyT, ValueT> ToDictionarySkippingNullKeys<KeyT, ValueT>(this ReadOnlyList<ValueT> list, Func<ValueT, KeyT> keySelector)
@@ -13278,7 +12183,7 @@ namespace Assets.Scripts
 				{
 					var value = list[i];
 					var key = keySelector(value);
-					if (ReferenceEquals(key, default(KeyT))) continue;
+					if (Object.ReferenceEquals(key, default(KeyT))) continue;
 					dictionary[key] = value;
 				}
 			}
@@ -13331,8 +12236,8 @@ namespace Assets.Scripts
 		}
 	}
 
-	[GeneratedCode("Charon", "2017.4.4.0")]
-	public class ReadOnlyList<T> : IEnumerable<T>
+	[GeneratedCode("Charon", "2018.4.2.0")]
+	public class ReadOnlyList<T> : IList<T>
 	{
 		public static readonly ReadOnlyList<T> Empty = new ReadOnlyList<T>();
 
@@ -13342,8 +12247,12 @@ namespace Assets.Scripts
 
 		private List<T> InnerList { get { return this.list ?? EmptyList; } }
 
+		/// <inheritdoc />
 		public int Count { get { return this.InnerList.Count; } }
-		public T this[int index] { get { return this.InnerList[index]; } }
+		/// <inheritdoc />
+		public bool IsReadOnly { get { return true; } }
+		/// <inheritdoc />
+		public T this[int index] { get { return this.InnerList[index]; } set { throw new NotSupportedException(); } }
 
 		public ReadOnlyList()
 		{
@@ -13356,6 +12265,8 @@ namespace Assets.Scripts
 		}
 
 		public bool Contains(T item) { return this.InnerList.Contains(item); }
+		/// <inheritdoc />
+		public void CopyTo(T[] array, int arrayIndex) { this.InnerList.CopyTo(array, arrayIndex); }
 		public void ForEach(Action<T> action) { this.InnerList.ForEach(action); }
 		public T Find(Predicate<T> match) { return this.InnerList.Find(match); }
 		public bool Exists(Predicate<T> match) { return this.InnerList.Exists(match); }
@@ -13396,8 +12307,11 @@ namespace Assets.Scripts
 
 		public override bool Equals(object obj)
 		{
-			if (obj is ReadOnlyList<T>)
-				return Object.Equals(this.list, ((ReadOnlyList<T>)obj).list);
+			var otherList = obj as ReadOnlyList<T>;
+			if (Object.ReferenceEquals(this, obj))
+				return true;
+			else if (otherList != null && this.Count == otherList.Count)
+				return Enumerable.SequenceEqual(this.list, otherList.list);
 			else
 				return Object.Equals(this.list, obj);
 		}
@@ -13408,18 +12322,46 @@ namespace Assets.Scripts
 
 		public static bool operator ==(ReadOnlyList<T> value1, ReadOnlyList<T> value2)
 		{
-			if (ReferenceEquals(value1, value2)) return true;
-			if (ReferenceEquals(value1, null) || ReferenceEquals(value2,null)) return false;
+			if (Object.ReferenceEquals(value1, value2)) return true;
+			if (Object.ReferenceEquals(value1, null) || Object.ReferenceEquals(value2, null)) return false;
 
 			return value1.Equals(value2);
 		}
 		public static bool operator !=(ReadOnlyList<T> value1, ReadOnlyList<T> value2)
 		{
-			if (ReferenceEquals(value1, value2)) return false;
-			if (ReferenceEquals(value1, null) || ReferenceEquals(value2,null)) return true;
+			if (Object.ReferenceEquals(value1, value2)) return false;
+			if (Object.ReferenceEquals(value1, null) || Object.ReferenceEquals(value2, null)) return true;
 
 			return value1.Equals(value2) == false;
 		}
+
+		#region NotSupported
+		/// <inheritdoc />
+		public void Insert(int index, T item)
+		{
+			throw new NotSupportedException();
+		}
+		/// <inheritdoc />
+		public void RemoveAt(int index)
+		{
+			throw new NotSupportedException();
+		}
+		/// <inheritdoc />
+		public bool Remove(T item)
+		{
+			throw new NotSupportedException();
+		}
+		/// <inheritdoc />
+		public void Add(T item)
+		{
+			throw new NotSupportedException();
+		}
+		/// <inheritdoc />
+		public void Clear()
+		{
+			throw new NotSupportedException();
+		}
+		#endregion
 
 		public override string ToString()
 		{
@@ -13427,8 +12369,8 @@ namespace Assets.Scripts
 		}
 	}
 
-	[GeneratedCode("Charon", "2017.4.4.0")]
-	public class ReadOnlyDictionary<KeyT, ValueT> : IEnumerable<KeyValuePair<KeyT, ValueT>>
+	[GeneratedCode("Charon", "2018.4.2.0")]
+	public class ReadOnlyDictionary<KeyT, ValueT> : IDictionary<KeyT, ValueT>
 	{
 		public static readonly ReadOnlyDictionary<KeyT, ValueT> Empty = new ReadOnlyDictionary<KeyT, ValueT>();
 
@@ -13437,10 +12379,17 @@ namespace Assets.Scripts
 		private readonly Dictionary<KeyT, ValueT> dictionary;
 
 		private Dictionary<KeyT, ValueT> InnerDictionary { get { return this.dictionary ?? EmptyDictionary; } }
+		/// <inheritdoc />
 		public int Count { get { return this.InnerDictionary.Count; } }
-		public ValueT this[KeyT key] { get { return this.dictionary[key]; } }
+		/// <inheritdoc />
+		public bool IsReadOnly { get { return true; } }
+		public ValueT this[KeyT key] { get { return this.dictionary[key]; } set { throw new NotSupportedException();} }
 		public Dictionary<KeyT, ValueT>.KeyCollection Keys { get { return this.InnerDictionary.Keys; } }
 		public Dictionary<KeyT, ValueT>.ValueCollection Values { get { return this.InnerDictionary.Values; } }
+		/// <inheritdoc />
+		ICollection<ValueT> IDictionary<KeyT, ValueT>.Values { get { return this.Values; } }
+		/// <inheritdoc />
+		ICollection<KeyT> IDictionary<KeyT, ValueT>.Keys { get { return this.Keys; } }
 		public IEqualityComparer<KeyT> Comparer { get { return this.InnerDictionary.Comparer; } }
 
 		public ReadOnlyDictionary()
@@ -13451,6 +12400,11 @@ namespace Assets.Scripts
 		public ReadOnlyDictionary(Dictionary<KeyT, ValueT> dictionary)
 		{
 			this.dictionary = dictionary;
+		}
+		/// <inheritdoc />
+		public bool Contains(KeyValuePair<KeyT, ValueT> item)
+		{
+			return ((ICollection<KeyValuePair<KeyT, ValueT>>)this.InnerDictionary).Contains(item);
 		}
 		public void CopyTo(KeyValuePair<KeyT, ValueT>[] array, int arrayIndex)
 		{
@@ -13472,7 +12426,7 @@ namespace Assets.Scripts
 		{
 			return this.InnerDictionary.TryGetValue(key, out value);
 		}
-
+	
 		IEnumerator<KeyValuePair<KeyT, ValueT>> IEnumerable<KeyValuePair<KeyT, ValueT>>.GetEnumerator()
 		{
 			// ReSharper disable once HeapView.BoxingAllocation
@@ -13490,12 +12444,16 @@ namespace Assets.Scripts
 
 		public override bool Equals(object obj)
 		{
-			if (obj is ReadOnlyDictionary<KeyT, ValueT>)
-				return Object.Equals(this.dictionary, ((ReadOnlyDictionary<KeyT, ValueT>)obj).dictionary);
-			else if (obj is Dictionary<KeyT, ValueT>)
-				return Object.Equals(this.dictionary, obj);
+			var otherReadOnlyDictionary = obj as ReadOnlyDictionary<KeyT, ValueT>;
+			var otherDictionary = obj as Dictionary<KeyT, ValueT>;
+			if (Object.ReferenceEquals(this, obj))
+				return true;
+			else if (otherReadOnlyDictionary != null && this.Count == otherReadOnlyDictionary.Count)
+				return Enumerable.SequenceEqual(this.dictionary, otherReadOnlyDictionary.dictionary);
+			else if (otherDictionary != null && this.Count == otherDictionary.Count)
+				return Enumerable.SequenceEqual(this.dictionary, otherDictionary);
 			else
-				return false;
+				return Object.Equals(this.dictionary, obj);
 		}
 		public override int GetHashCode()
 		{
@@ -13504,18 +12462,48 @@ namespace Assets.Scripts
 
 		public static bool operator ==(ReadOnlyDictionary<KeyT, ValueT> value1, ReadOnlyDictionary<KeyT, ValueT> value2)
 		{
-			if (ReferenceEquals(value1, value2)) return true;
-			if (ReferenceEquals(value1, null) || ReferenceEquals(value2,null)) return false;
+			if (Object.ReferenceEquals(value1, value2)) return true;
+			if (Object.ReferenceEquals(value1, null) || Object.ReferenceEquals(value2, null)) return false;
 
 			return value1.Equals(value2);
 		}
 		public static bool operator !=(ReadOnlyDictionary<KeyT, ValueT> value1, ReadOnlyDictionary<KeyT, ValueT> value2)
 		{
-			if (ReferenceEquals(value1, value2)) return false;
-			if (ReferenceEquals(value1, null) || ReferenceEquals(value2,null)) return true;
+			if (Object.ReferenceEquals(value1, value2)) return false;
+			if (Object.ReferenceEquals(value1, null) || Object.ReferenceEquals(value2, null)) return true;
 
 			return value1.Equals(value2) == false;
 		}
+
+		#region NotSupported
+
+		/// <inheritdoc />
+		void ICollection<KeyValuePair<KeyT, ValueT>>.Add(KeyValuePair<KeyT, ValueT> item)
+		{
+			throw new NotSupportedException();
+		}
+		/// <inheritdoc />
+		bool ICollection<KeyValuePair<KeyT, ValueT>>.Remove(KeyValuePair<KeyT, ValueT> item)
+		{
+			throw new NotSupportedException();
+		}
+		void ICollection<KeyValuePair<KeyT, ValueT>>.Clear()
+		{
+			throw new NotSupportedException();
+		}
+
+		/// <inheritdoc />
+		void IDictionary<KeyT, ValueT>.Add(KeyT key, ValueT value)
+		{
+			throw new NotSupportedException();
+		}
+		/// <inheritdoc />
+		bool IDictionary<KeyT, ValueT>.Remove(KeyT key)
+		{
+			throw new NotSupportedException();
+		}
+
+		#endregion
 
 		public override string ToString()
 		{
@@ -13523,3 +12511,4 @@ namespace Assets.Scripts
 		}
 	}
 }
+
