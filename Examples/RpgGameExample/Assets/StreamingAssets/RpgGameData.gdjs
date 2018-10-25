@@ -1,6 +1,6 @@
 {
-	"ChangeNumber": 2,
-	"ToolsVersion": "2018.4.2.0",
+	"ChangeNumber": 4,
+	"ToolsVersion": "2018.4.4.0",
 	"Collections": {
 		"Entity": [
 			{
@@ -1571,7 +1571,7 @@
 						"DataType": 35,
 						"DefaultValue": null,
 						"Uniqueness": 0,
-						"Requirement": 2,
+						"Requirement": 0,
 						"ReferenceType": null,
 						"Size": 0,
 						"Specifications": null
