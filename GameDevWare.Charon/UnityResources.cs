@@ -53,8 +53,10 @@ namespace GameDevWare.Charon {
 		public const string UI_UNITYPLUGIN_GENERATING_CODE_AND_ASSETS = "Generating Code and Assets...";
 		public const string UI_UNITYPLUGIN_INSPECTOR_ACTIONS_GROUP = "Actions";
 		public const string UI_UNITYPLUGIN_INSPECTOR_ADD_ASSET_BUTTON = "Add Asset";
+		public const string UI_UNITYPLUGIN_INSPECTOR_ADD_BUTTON = "Add";
 		public const string UI_UNITYPLUGIN_INSPECTOR_ADD_NAME_BUTTON = "Add Name";
 		public const string UI_UNITYPLUGIN_INSPECTOR_ASSET_GENERATION_PATH = "Asset Generation Path";
+		public const string UI_UNITYPLUGIN_INSPECTOR_ASSET_LABEL = "Asset";
 		public const string UI_UNITYPLUGIN_INSPECTOR_AUTO_GENERATION = "Auto-Generation";
 		public const string UI_UNITYPLUGIN_INSPECTOR_BACKUP_BUTTON = "Backup";
 		public const string UI_UNITYPLUGIN_INSPECTOR_CODE_API_CLASS_NAME = "API Class";
@@ -68,6 +70,7 @@ namespace GameDevWare.Charon {
 		public const string UI_UNITYPLUGIN_INSPECTOR_CODE_OPTIONS = "Options";
 		public const string UI_UNITYPLUGIN_INSPECTOR_EDIT_BUTTON = "Edit";
 		public const string UI_UNITYPLUGIN_INSPECTOR_GENERATION_PREFIX = "Generation:";
+		public const string UI_UNITYPLUGIN_INSPECTOR_NAME_LABEL = "Name";
 		public const string UI_UNITYPLUGIN_INSPECTOR_RESTORE_BUTTON = "Restore";
 		public const string UI_UNITYPLUGIN_INSPECTOR_RUN_GENERATOR_BUTTON = "Generate Source Code";
 		public const string UI_UNITYPLUGIN_INSPECTOR_SCRIPTING_ASSEMBLIES_LABEL = "Scripting Assemblies";

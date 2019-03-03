@@ -250,9 +250,9 @@ namespace GameDevWare.Charon.Windows
 					var assetExists = !string.IsNullOrEmpty(watchedAssetPath) && (File.Exists(watchedAssetPath) || Directory.Exists(watchedAssetPath));
 					var watchedAsset = assetExists ? AssetDatabase.LoadMainAssetAtPath(watchedAssetPath) : null;
 					if (watchedAsset != null)
-						this.gameDataSettings.ScriptingAssemblies[i] = AssetDatabase.GetAssetPath(EditorGUILayout.ObjectField("Asset", watchedAsset, typeof(Object), false));
+						this.gameDataSettings.ScriptingAssemblies[i] = AssetDatabase.GetAssetPath(EditorGUILayout.ObjectField(Resources.UI_UNITYPLUGIN_INSPECTOR_ASSET_LABEL, watchedAsset, typeof(Object), false));
 					else
-						this.gameDataSettings.ScriptingAssemblies[i] = EditorGUILayout.TextField("Name", watchedAssetPath);
+						this.gameDataSettings.ScriptingAssemblies[i] = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_INSPECTOR_NAME_LABEL, watchedAssetPath);
 				}
 				EditorGUILayout.Space();
 				this.newScriptingAssembly = EditorGUILayout.ObjectField("<" + Resources.UI_UNITYPLUGIN_INSPECTOR_ADD_ASSET_BUTTON + ">", this.newScriptingAssembly, typeof(Object), false);
@@ -267,7 +267,7 @@ namespace GameDevWare.Charon.Windows
 				}
 				EditorGUILayout.BeginHorizontal();
 				this.newScriptingAssemblyName = EditorGUILayout.TextField("<" + Resources.UI_UNITYPLUGIN_INSPECTOR_ADD_NAME_BUTTON + ">", this.newScriptingAssemblyName);
-				if (GUILayout.Button("Add", EditorStyles.toolbarButton, GUILayout.Width(70), GUILayout.Height(18)))
+				if (GUILayout.Button(Resources.UI_UNITYPLUGIN_INSPECTOR_ADD_BUTTON, EditorStyles.toolbarButton, GUILayout.Width(70), GUILayout.Height(18)))
 				{
 					var assemblies = new HashSet<string>(this.gameDataSettings.ScriptingAssemblies);
 					assemblies.Remove("");
