@@ -111,6 +111,8 @@
   <Target Name="AfterBuild">
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../GameDevWare.Charon.Unity/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
     <Copy SourceFiles="bin\$(Configuration)\$(AssemblyName).xml" DestinationFolder="$(ProjectDir)../GameDevWare.Charon.Unity/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+	<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../GameDevWare.Charon.Unity.2017/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+    <Copy SourceFiles="bin\$(Configuration)\$(AssemblyName).xml" DestinationFolder="$(ProjectDir)../GameDevWare.Charon.Unity.2017/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../Examples/RpgGameExample/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
     <Copy SourceFiles="bin\$(Configuration)\$(AssemblyName).xml" DestinationFolder="$(ProjectDir)../Examples/RpgGameExample/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
   </Target>

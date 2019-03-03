@@ -1,6 +1,4 @@
-﻿# 2018.4.3
-added warning message about 'pending routine' or 'compilation' in game data's inspector
-added list of supported extensions in About window
-fixed hung routines (some times)
-fixed wrong code generation flags
-updated RPG example project
+﻿# 2019.1.0
+fixed error with 'Restore' button
+added new generation options (Disable Patching)
+fixed some localization strings
