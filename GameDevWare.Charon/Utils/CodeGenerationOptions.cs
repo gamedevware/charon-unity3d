@@ -38,11 +38,12 @@ namespace GameDevWare.Charon.Utils
 		SuppressReferenceClass = 0x1 << 8,
 		SuppressDataContractAttributes = 0x1 << 9,
 		
-		DisableExpressions = 0x1 << 10,
+		DisableFormulas = 0x1 << 10,
 
 		DisableJsonSerialization = 0x1 << 11,
 		DisableMessagePackSerialization = 0x1 << 12,
 		DisableBsonSerialization = 0x1 << 13,
 		DisableXmlSerialization = 0x1 << 14,
+		DisablePatching = 0x1 << 15,
 	}
 }

@@ -324,7 +324,7 @@ namespace GameDevWare.Charon
 
 				var generationOptions = gameDataSettings.Options;
 				if (Array.IndexOf(Settings.SupportedExtensions, Settings.EXTENSION_FORMULAS) == -1) // no expression library installed
-					generationOptions |= (int)CodeGenerationOptions.DisableExpressions;
+					generationOptions |= (int)CodeGenerationOptions.DisableFormulas;
 
 				// trying to touch gamedata file
 				var touchGamedata = new Coroutine<FileStream>(TouchGameDataFile(gameDataPath));
@@ -478,6 +478,12 @@ namespace GameDevWare.Charon
 					{
 						Debug.LogError(Resources.UI_UNITYPLUGIN_GENERATE_ASSET_CANT_FIND_GAMEDATA_CLASS);
 						continue;
+					}
+
+					var assetDirectory = Path.GetDirectoryName(assetGenerationPath);
+					if (assetDirectory != null && !Directory.Exists(assetDirectory))
+					{
+						Directory.CreateDirectory(assetDirectory);
 					}
 
 					var gameDataAsset = ScriptableObject.CreateInstance(gameDataType);
