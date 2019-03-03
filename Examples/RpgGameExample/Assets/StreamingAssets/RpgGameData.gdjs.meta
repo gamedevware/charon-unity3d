@@ -2,10 +2,10 @@ fileFormatVersion: 2
 guid: ecc4a4a75587d60448213374b5a346b2
 DefaultImporter:
   externalObjects: {}
-  userData: '{"AssetGenerationPath": "Assets/Examples/GameData.asset", "AutoGeneration":
+  userData: '{"AssetGenerationPath": "Assets/Scripts/GameData.asset", "AutoGeneration":
     true, "CodeGenerationPath": "Assets/Scripts/RpgGameData.cs", "DocumentClassName":
     "Document", "GameDataClassName": "RpgGameData", "Generator": 1, "Indentation":
-    0, "LineEnding": 0, "Namespace": "Assets.Scripts", "Options": 29190, "ScriptingAssemblies":
+    0, "LineEnding": 0, "Namespace": "Assets.Scripts", "Options": 518, "ScriptingAssemblies":
     []}'
   assetBundleName: 
   assetBundleVariant: 
