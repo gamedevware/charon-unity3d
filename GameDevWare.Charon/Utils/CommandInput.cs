@@ -99,7 +99,6 @@ namespace GameDevWare.Charon.Utils
 		{
 			if (filePath == null) throw new ArgumentNullException("filePath");
 			if (format == null) throw new ArgumentNullException("format");
-			if (formattingOptions == null) throw new ArgumentNullException("formattingOptions");
 
 			if (IOFile.Exists(filePath) == false) throw new IOException(string.Format("File '{0}' doesn't exists.", filePath));
 
@@ -108,7 +107,7 @@ namespace GameDevWare.Charon.Utils
 				temporaryFile = deleteAfterUse ? filePath : null,
 				Source = filePath,
 				Format = format,
-				FormattingOptions = formattingOptions
+				FormattingOptions = formattingOptions ?? NoOptions
 			};
 		}
 
