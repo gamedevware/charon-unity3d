@@ -47,17 +47,6 @@ namespace GameDevWare.Charon.Utils
 			var downloadCoroutine = new Coroutine<long>(DownloadToAsync(url, downloadToStream, LEAVE_OPEN, requestHeader, downloadProgressCallback, timeout));
 			return downloadCoroutine;
 		}
-		public static Promise<FileStream> Download(Uri url, NameValueCollection requestHeader = null, Action<long, long> downloadProgressCallback = null, TimeSpan timeout = default(TimeSpan))
-		{
-			var tmpFilePath = Path.GetTempFileName();
-			return DownloadToFile(url, tmpFilePath, requestHeader, downloadProgressCallback).ContinueWith(p =>
-			{
-				if (p.HasErrors)
-					throw p.Error.Unwrap();
-
-				return File.OpenRead(tmpFilePath);
-			});
-		}
 		public static Promise DownloadTo(Stream downloadToStream, Uri url, NameValueCollection requestHeader = null, Action<long, long> downloadProgressCallback = null, TimeSpan timeout = default(TimeSpan))
 		{
 			var downloadCoroutine = new Coroutine<long>(DownloadToAsync(url, downloadToStream, true, requestHeader, downloadProgressCallback, timeout));
@@ -79,102 +68,167 @@ namespace GameDevWare.Charon.Utils
 					return JsonValue.Load(memoryStream).As<T>();
 			}));
 		}
+		public static Promise<MemoryStream> GetStream(Uri url, NameValueCollection requestHeader = null, Action<long, long> downloadProgressCallback = null, TimeSpan timeout = default(TimeSpan))
+		{
+			var memoryStream = new MemoryStream();
+			return DownloadTo(memoryStream, url, requestHeader, downloadProgressCallback).ContinueWith(p =>
+			{
+				if (p.HasErrors)
+					throw p.Error.Unwrap();
+
+				memoryStream.Position = 0;
+				return memoryStream;
+			});
+		}
 
 		private static IEnumerable DownloadToAsync(Uri url, Stream downloadToStream, bool leaveOpen, NameValueCollection requestHeader, Action<long, long> downloadProgressCallback, TimeSpan timeout)
 		{
 			if (url == null) throw new ArgumentNullException("url");
 			if (downloadToStream == null) throw new ArgumentNullException("downloadToStream");
 
-
-			var request = (HttpWebRequest)WebRequest.Create(url);
-			request.Accept = "*/*";
-			request.UserAgent = typeof(HttpUtils).Assembly.GetName().FullName;
-			request.AutomaticDecompression = DecompressionMethods.None;
-			if (timeout.Ticks > 0)
-				request.Timeout = (int)timeout.TotalMilliseconds;
-
-			if (requestHeader != null)
+			using (new NoCertificateValidationContext())
 			{
-				foreach (string header in requestHeader.Keys)
+				var request = (HttpWebRequest)WebRequest.Create(url);
+				request.Accept = "*/*";
+				request.UserAgent = typeof(HttpUtils).Assembly.GetName().FullName;
+				request.AutomaticDecompression = DecompressionMethods.None;
+				if (timeout.Ticks > 0)
+					request.Timeout = (int)timeout.TotalMilliseconds;
+
+				if (requestHeader != null)
 				{
-					foreach (var headerValue in requestHeader.GetValues(header ?? "") ?? Enumerable.Empty<string>())
+					foreach (string header in requestHeader.Keys)
 					{
-						switch (header)
+						foreach (var headerValue in requestHeader.GetValues(header ?? "") ?? Enumerable.Empty<string>())
 						{
-							case "Accept": request.Accept = headerValue; break;
-							case "Connection": request.Connection = headerValue; break;
-							case "Content-Type": request.ContentType = headerValue; break;
-							case "Content-Length": request.ContentLength = long.Parse(headerValue); break;
-							case "Expect": request.Expect = headerValue; break;
-							case "Referer": request.Referer = headerValue; break;
-							case "Transfer-Encoding": request.TransferEncoding = headerValue; break;
-							case "User-Agent": request.UserAgent = headerValue; break;
-							default: request.Headers.Add(header, headerValue); break;
+							switch (header)
+							{
+								case "Accept":
+									request.Accept = headerValue;
+									break;
+								case "Connection":
+									request.Connection = headerValue;
+									break;
+								case "Content-Type":
+									request.ContentType = headerValue;
+									break;
+								case "Content-Length":
+									request.ContentLength = long.Parse(headerValue);
+									break;
+								case "Expect":
+									request.Expect = headerValue;
+									break;
+								case "Referer":
+									request.Referer = headerValue;
+									break;
+								case "Transfer-Encoding":
+									request.TransferEncoding = headerValue;
+									break;
+								case "User-Agent":
+									request.UserAgent = headerValue;
+									break;
+								default:
+									request.Headers.Add(header, headerValue);
+									break;
+							}
 						}
 					}
 				}
-			}
 
-			if (Settings.Current.Verbose)
-				UnityEngine.Debug.Log(string.Format("Staring new request to [{0}]'{1}'.", request.Method, request.RequestUri));
+				if (Settings.Current.Verbose)
+					UnityEngine.Debug.Log(string.Format("Staring new request to [{0}]'{1}'.", request.Method, request.RequestUri));
 
-			var getResponseAsync = request.BeginGetResponse(ar => { try { request.EndGetResponse(ar); } catch { /* ignore */ } }, null);
-			yield return getResponseAsync;
-			var response = (HttpWebResponse)request.EndGetResponse(getResponseAsync);
-			var responseStream = response.GetResponseStream();
-			if (Settings.Current.Verbose)
-				UnityEngine.Debug.Log(string.Format("Got '{2}' response for [{0}]'{1}' request.", request.Method, request.RequestUri, response.StatusCode));
-
-			if (response.StatusCode != HttpStatusCode.OK)
-				throw new WebException(string.Format("An unexpected status code '{0}' returned for request '{1}'.", response.StatusCode, url));
-
-			var totalLength = response.ContentLength;
-			if (!string.IsNullOrEmpty(response.Headers["Content-Disposition"]))
-			{
-				var contentDisposition = new ContentDisposition(response.Headers["Content-Disposition"]);
-				if (contentDisposition.Size > 0)
-					totalLength = contentDisposition.Size;
-			}
-			if (downloadProgressCallback != null) downloadProgressCallback(0, totalLength);
-			var lastReported = 0L;
-			var writen = 0L;
-			try
-			{
-				var buffer = new byte[BUFFER_SIZE];
-				var read = 0;
-				do
+				var getResponseAsync = request.BeginGetResponse(ar =>
 				{
-					if (UnityEditor.EditorApplication.isCompiling)
-						throw new InvalidOperationException("Download has been canceled due pending compilation.");
+					try
+					{
+						request.EndGetResponse(ar);
+					}
+					catch
+					{
+						/* ignore */
+					}
+				}, null);
+				yield return getResponseAsync;
 
-					var readAsync = responseStream.BeginRead(buffer, 0, buffer.Length, ar => { try { responseStream.EndRead(ar); } catch { /* ignore */ } }, null);
-					yield return readAsync;
+				var response = (HttpWebResponse)request.EndGetResponse(getResponseAsync);
+				var responseStream = response.GetResponseStream();
+				if (Settings.Current.Verbose)
+					UnityEngine.Debug.Log(string.Format("Got '{2}' response for [{0}]'{1}' request.", request.Method, request.RequestUri, response.StatusCode));
 
-					if (UnityEditor.EditorApplication.isCompiling)
-						throw new InvalidOperationException("Download has been canceled due pending compilation.");
+				if (response.StatusCode != HttpStatusCode.OK)
+					throw new WebException(string.Format("An unexpected status code '{0}' returned for request '{1}'.", response.StatusCode, url));
 
-					read = responseStream.EndRead(readAsync);
-					if (read <= 0) continue;
+				var totalLength = response.ContentLength;
+				if (!string.IsNullOrEmpty(response.Headers["Content-Disposition"]))
+				{
+					var contentDisposition = new ContentDisposition(response.Headers["Content-Disposition"]);
+					if (contentDisposition.Size > 0)
+						totalLength = contentDisposition.Size;
+				}
 
-					var writeAsync = downloadToStream.BeginWrite(buffer, 0, read, ar => { try { downloadToStream.EndWrite(ar); } catch { /* ignore */ } }, null);
-					yield return writeAsync;
+				if (downloadProgressCallback != null) downloadProgressCallback(0, totalLength);
+				var lastReported = 0L;
+				var writen = 0L;
+				try
+				{
+					var buffer = new byte[BUFFER_SIZE];
+					var read = 0;
+					do
+					{
+						if (UnityEditor.EditorApplication.isCompiling)
+							throw new InvalidOperationException("Download has been canceled due pending compilation.");
 
-					writen += read;
+						var readAsync = responseStream.BeginRead(buffer, 0, buffer.Length, ar =>
+						{
+							try
+							{
+								responseStream.EndRead(ar);
+							}
+							catch
+							{
+								/* ignore */
+							}
+						}, null);
+						yield return readAsync;
 
-					if (downloadProgressCallback != null && (writen - lastReported) > (totalLength / 200.0f))
-						downloadProgressCallback(lastReported = writen, totalLength);
-				} while (read != 0);
+						if (UnityEditor.EditorApplication.isCompiling)
+							throw new InvalidOperationException("Download has been canceled due pending compilation.");
 
-				downloadToStream.Flush();
+						read = responseStream.EndRead(readAsync);
+						if (read <= 0) continue;
+
+						var writeAsync = downloadToStream.BeginWrite(buffer, 0, read, ar =>
+						{
+							try
+							{
+								downloadToStream.EndWrite(ar);
+							}
+							catch
+							{
+								/* ignore */
+							}
+						}, null);
+						yield return writeAsync;
+
+						writen += read;
+
+						if (downloadProgressCallback != null && (writen - lastReported) > (totalLength / 200.0f))
+							downloadProgressCallback(lastReported = writen, totalLength);
+					} while (read != 0);
+
+					downloadToStream.Flush();
+				}
+				finally
+				{
+					if (!leaveOpen)
+						downloadToStream.Dispose();
+				}
+
+				if (downloadProgressCallback != null) downloadProgressCallback(totalLength, totalLength);
+
+				yield return writen;
 			}
-			finally
-			{
-				if (!leaveOpen)
-					downloadToStream.Dispose();
-			}
-			if (downloadProgressCallback != null) downloadProgressCallback(totalLength, totalLength);
-
-			yield return writen;
 		}
 	}
 }

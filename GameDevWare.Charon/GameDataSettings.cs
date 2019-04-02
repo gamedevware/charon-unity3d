@@ -72,12 +72,12 @@ namespace GameDevWare.Charon
 			var settings = new GameDataSettings();
 			settings.Generator = (int)CodeGenerator.CSharp;
 			settings.AutoGeneration = true;
-			settings.LineEnding = (int) LineEndings.Windows;
-			settings.Indentation = (int) Indentations.Tab;
-			settings.AssetGenerationPath = Path.ChangeExtension(gameDataPath, "asset");
-			settings.CodeGenerationPath = Path.ChangeExtension(gameDataPath, "cs");
+			settings.LineEnding = (int)LineEndings.Windows;
+			settings.Indentation = (int)Indentations.Tab;
+			settings.AssetGenerationPath = Path.ChangeExtension(gameDataPath, ".asset");
+			settings.CodeGenerationPath = Path.ChangeExtension(gameDataPath, ".cs");
 			settings.GameDataClassName = Path.GetFileNameWithoutExtension(gameDataPath);
-			settings.Namespace = Path.GetDirectoryName(gameDataPath).Replace("\\", ".").Replace("/", ".");
+			settings.Namespace = (Path.GetDirectoryName(gameDataPath) ?? "").Replace("\\", ".").Replace("/", ".");
 			settings.DocumentClassName = "Document";
 			settings.Options = (int)(CodeGenerationOptions.HideLocalizedStrings | CodeGenerationOptions.HideReferences | CodeGenerationOptions.SuppressDataContractAttributes);
 			return settings;
@@ -107,7 +107,9 @@ namespace GameDevWare.Charon
 					gameDataSettings.AssetGenerationPath = FileAndPathUtils.MakeProjectRelative(gameDataSettings.AssetGenerationPath);
 					if (string.IsNullOrEmpty(gameDataSettings.CodeGenerationPath))
 						gameDataSettings.CodeGenerationPath = Path.ChangeExtension(gameDataPath, "cs");
+					gameDataSettings.Validate();
 				}
+
 			}
 			catch (Exception e) { Debug.LogError("Failed to deserialize gamedata's settings: " + e); }
 
@@ -123,6 +125,8 @@ namespace GameDevWare.Charon
 
 			try
 			{
+				this.Validate();
+
 				var gameDataObj = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(gameDataPath);
 				var importer = AssetImporter.GetAtPath(gameDataPath);
 				importer.userData = JsonObject.From(this).Stringify();
@@ -130,6 +134,24 @@ namespace GameDevWare.Charon
 				importer.SaveAndReimport();
 			}
 			catch (Exception e) { Debug.LogError("Failed to save gamedata's settings: " + e); }
+		}
+
+		public void Validate()
+		{
+			if (string.IsNullOrEmpty(this.Namespace))
+				this.Namespace = (Path.GetDirectoryName(this.CodeGenerationPath) ?? "").Replace("\\", ".").Replace("/", ".");
+			if (string.IsNullOrEmpty(this.Namespace))
+				this.Namespace = "Assets";
+			if (string.IsNullOrEmpty(this.GameDataClassName))
+				this.GameDataClassName = "GameData";
+			if (string.IsNullOrEmpty(this.DocumentClassName))
+				this.DocumentClassName = "Document";
+			if (Enum.IsDefined(typeof(Indentations), (Indentations)this.Indentation) == false)
+				this.Indentation = (int)Indentations.Tab;
+			if (Enum.IsDefined(typeof(CodeGenerator), (CodeGenerator)this.Generator) == false)
+				this.Generator = (int)CodeGenerator.None;
+			if (Enum.IsDefined(typeof(LineEndings), (LineEndings)this.LineEnding) == false)
+				this.LineEnding = (int)LineEndings.Windows;
 		}
 	}
 }

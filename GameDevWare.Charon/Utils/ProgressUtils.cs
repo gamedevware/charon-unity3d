@@ -41,5 +41,38 @@ namespace GameDevWare.Charon.Utils
 		{
 			return (t, p) => Debug.Log(prefix + t);
 		}
+		public static Action<long, long> ToDownloadProgress(this Action<string, float> progress, string fileName)
+		{
+			if (progress == null)
+			{
+				return null;
+			}
+
+			return (read, total) =>
+			{
+				if (total == 0)
+					return;
+
+				progress(
+					string.Format(
+							Resources.UI_UNITYPLUGIN_PROGRESS_DOWNLOADING,
+							(float)read / 1024 / 1024,
+							(float)total / 1024 / 1024,
+							fileName ?? ""), 
+					Mathf.Clamp01((float)read / total));
+			};
+		}
+		public static Action<string, float> Sub(this Action<string, float> progress, float from = 0.0f, float to = 1.0f)
+		{
+			if (progress == null)
+			{
+				return null;
+			}
+
+			to = Mathf.Clamp01(to);
+			from = Mathf.Clamp(from, 0, to);
+			return (t, p) => progress(t, from + (to - from) * Mathf.Clamp01(p));
+		}
+
 	}
 }

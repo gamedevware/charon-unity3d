@@ -35,10 +35,11 @@ namespace GameDevWare.Charon
 
 		public const string DEFAULT_SERVER_ADDRESS = "http://gamedevware.com/service/api/";
 
+		public static readonly string TempPath;
 		public static readonly string AppDataPath;
 		public static readonly string BasePath;
 		public static readonly string SettingsPath;
-		public static readonly string CharonPath;
+		public static readonly string CharonExecutablePath;
 
 		public const string EXTENSION_FORMULAS = "Formulas";
 
@@ -62,8 +63,9 @@ namespace GameDevWare.Charon
 				BasePath = Path.GetFullPath("Assets/Editor/GameDevWare.Charon");
 
 			AppDataPath = Path.GetFullPath("./Library/Charon/");
+			TempPath = Path.GetFullPath("./Temp/");
 			SettingsPath = Path.Combine(BasePath, "GameDevWare.Charon.Settings.json");
-			CharonPath = Path.Combine(AppDataPath, "Charon.exe");
+			CharonExecutablePath = Path.Combine(AppDataPath, "Charon.exe");
 
 			Current = Load();
 

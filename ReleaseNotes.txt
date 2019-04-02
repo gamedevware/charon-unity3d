@@ -1,4 +1,2 @@
-﻿# 2019.1.0
-fixed error with 'Restore' button
-added new generation options (Disable Patching)
-fixed some localization strings
+﻿# 2019.1.2
+added code generation warning for empty files

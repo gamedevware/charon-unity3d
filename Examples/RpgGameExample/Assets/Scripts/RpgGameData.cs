@@ -25,8 +25,7 @@ using GameDevWare.Dynamic.Expressions;
 
 namespace Assets.Scripts
 {
-	// types - count: 20
-	[GeneratedCode("Charon", "2018.4.7.0")]
+	[GeneratedCode("Charon", "2019.1.2.0")]
 	public sealed partial class ProjectSettings : Document, IEquatable<ProjectSettings>, IComparable, IComparable<ProjectSettings>
 	{
 		private readonly int hashCode;
@@ -158,7 +157,7 @@ namespace Assets.Scripts
 		}
 	}
 
-	[GeneratedCode("Charon", "2018.4.7.0")]
+	[GeneratedCode("Charon", "2019.1.2.0")]
 	public sealed partial class Parameter : Document, IEquatable<Parameter>, IComparable, IComparable<Parameter>
 	{
 		private readonly int hashCode;
@@ -304,7 +303,7 @@ namespace Assets.Scripts
 		}
 	}
 
-	[GeneratedCode("Charon", "2018.4.7.0")]
+	[GeneratedCode("Charon", "2019.1.2.0")]
 	public sealed partial class ParameterValue : Document, IEquatable<ParameterValue>, IComparable, IComparable<ParameterValue>
 	{
 		private readonly int hashCode;
@@ -432,7 +431,7 @@ namespace Assets.Scripts
 		}
 	}
 
-	[GeneratedCode("Charon", "2018.4.7.0")]
+	[GeneratedCode("Charon", "2019.1.2.0")]
 	public sealed partial class Provision : Document, IEquatable<Provision>, IComparable, IComparable<Provision>
 	{
 		private readonly int hashCode;
@@ -559,7 +558,7 @@ namespace Assets.Scripts
 		}
 	}
 
-	[GeneratedCode("Charon", "2018.4.7.0")]
+	[GeneratedCode("Charon", "2019.1.2.0")]
 	public sealed partial class Hero : Document, IEquatable<Hero>, IComparable, IComparable<Hero>
 	{
 		private readonly int hashCode;
@@ -841,7 +840,7 @@ namespace Assets.Scripts
 		}
 	}
 
-	[GeneratedCode("Charon", "2018.4.7.0")]
+	[GeneratedCode("Charon", "2019.1.2.0")]
 	public sealed partial class Item : Document, IEquatable<Item>, IComparable, IComparable<Item>
 	{
 		private readonly int hashCode;
@@ -994,7 +993,7 @@ namespace Assets.Scripts
 		}
 	}
 
-	[GeneratedCode("Charon", "2018.4.7.0")]
+	[GeneratedCode("Charon", "2019.1.2.0")]
 	public sealed partial class Location : Document, IEquatable<Location>, IComparable, IComparable<Location>
 	{
 		private readonly int hashCode;
@@ -1116,7 +1115,7 @@ namespace Assets.Scripts
 		}
 	}
 
-	[GeneratedCode("Charon", "2018.4.7.0")]
+	[GeneratedCode("Charon", "2019.1.2.0")]
 	public sealed partial class Trinket : Document, IEquatable<Trinket>, IComparable, IComparable<Trinket>
 	{
 		private readonly int hashCode;
@@ -1265,7 +1264,7 @@ namespace Assets.Scripts
 		}
 	}
 
-	[GeneratedCode("Charon", "2018.4.7.0")]
+	[GeneratedCode("Charon", "2019.1.2.0")]
 	public sealed partial class Monster : Document, IEquatable<Monster>, IComparable, IComparable<Monster>
 	{
 		private readonly int hashCode;
@@ -1413,7 +1412,7 @@ namespace Assets.Scripts
 		}
 	}
 
-	[GeneratedCode("Charon", "2018.4.7.0")]
+	[GeneratedCode("Charon", "2019.1.2.0")]
 	public sealed partial class Loot : Document, IEquatable<Loot>, IComparable, IComparable<Loot>
 	{
 		private readonly int hashCode;
@@ -1533,7 +1532,7 @@ namespace Assets.Scripts
 		}
 	}
 
-	[GeneratedCode("Charon", "2018.4.7.0")]
+	[GeneratedCode("Charon", "2019.1.2.0")]
 	public sealed partial class CombatEffect : Document, IEquatable<CombatEffect>, IComparable, IComparable<CombatEffect>
 	{
 		private readonly int hashCode;
@@ -1667,7 +1666,7 @@ namespace Assets.Scripts
 		}
 	}
 
-	[GeneratedCode("Charon", "2018.4.7.0")]
+	[GeneratedCode("Charon", "2019.1.2.0")]
 	public sealed partial class CurioCleansingOption : Document, IEquatable<CurioCleansingOption>, IComparable, IComparable<CurioCleansingOption>
 	{
 		private readonly int hashCode;
@@ -1840,7 +1839,7 @@ namespace Assets.Scripts
 		}
 	}
 
-	[GeneratedCode("Charon", "2018.4.7.0")]
+	[GeneratedCode("Charon", "2019.1.2.0")]
 	public sealed partial class Curio : Document, IEquatable<Curio>, IComparable, IComparable<Curio>
 	{
 		private readonly int hashCode;
@@ -1999,7 +1998,7 @@ namespace Assets.Scripts
 		}
 	}
 
-	[GeneratedCode("Charon", "2018.4.7.0")]
+	[GeneratedCode("Charon", "2019.1.2.0")]
 	public sealed partial class Disease : Document, IEquatable<Disease>, IComparable, IComparable<Disease>
 	{
 		private readonly int hashCode;
@@ -2126,7 +2125,7 @@ namespace Assets.Scripts
 		}
 	}
 
-	[GeneratedCode("Charon", "2018.4.7.0")]
+	[GeneratedCode("Charon", "2019.1.2.0")]
 	public sealed partial class Quirk : Document, IEquatable<Quirk>, IComparable, IComparable<Quirk>
 	{
 		private readonly int hashCode;
@@ -2259,7 +2258,7 @@ namespace Assets.Scripts
 		}
 	}
 
-	[GeneratedCode("Charon", "2018.4.7.0")]
+	[GeneratedCode("Charon", "2019.1.2.0")]
 	public sealed partial class Conditions : Document, IEquatable<Conditions>, IComparable, IComparable<Conditions>
 	{
 		private readonly int hashCode;
@@ -2388,7 +2387,7 @@ namespace Assets.Scripts
 		}
 	}
 
-	[GeneratedCode("Charon", "2018.4.7.0")]
+	[GeneratedCode("Charon", "2019.1.2.0")]
 	public sealed partial class Weapon : Document, IEquatable<Weapon>, IComparable, IComparable<Weapon>
 	{
 		private readonly int hashCode;
@@ -2531,7 +2530,7 @@ namespace Assets.Scripts
 		}
 	}
 
-	[GeneratedCode("Charon", "2018.4.7.0")]
+	[GeneratedCode("Charon", "2019.1.2.0")]
 	public sealed partial class Armor : Document, IEquatable<Armor>, IComparable, IComparable<Armor>
 	{
 		private readonly int hashCode;
@@ -2662,7 +2661,7 @@ namespace Assets.Scripts
 		}
 	}
 
-	[GeneratedCode("Charon", "2018.4.7.0")]
+	[GeneratedCode("Charon", "2019.1.2.0")]
 	public sealed partial class ItemWithCount : Document, IEquatable<ItemWithCount>, IComparable, IComparable<ItemWithCount>
 	{
 		private readonly int hashCode;
@@ -2783,7 +2782,7 @@ namespace Assets.Scripts
 		}
 	}
 
-	[GeneratedCode("Charon", "2018.4.7.0")]
+	[GeneratedCode("Charon", "2019.1.2.0")]
 	public sealed partial class StartingSet : Document, IEquatable<StartingSet>, IComparable, IComparable<StartingSet>
 	{
 		private readonly int hashCode;
@@ -2918,8 +2917,7 @@ namespace Assets.Scripts
 		}
 	}
 
-	// enums - count: 9
-	[GeneratedCode("Charon", "2018.4.7.0")]
+	[GeneratedCode("Charon", "2019.1.2.0")]
 	public enum ParameterId: uint
 	{
 		None = 0,
@@ -2964,7 +2962,7 @@ namespace Assets.Scripts
 		Position = 80,
 	}
 
-	[GeneratedCode("Charon", "2018.4.7.0")]
+	[GeneratedCode("Charon", "2019.1.2.0")]
 	public enum ParameterValueKind: uint
 	{
 		None = 0,
@@ -2974,7 +2972,7 @@ namespace Assets.Scripts
 	}
 
 	[Flags]
-	[GeneratedCode("Charon", "2018.4.7.0")]
+	[GeneratedCode("Charon", "2019.1.2.0")]
 	public enum LocationFlags: uint
 	{
 		None = 0,
@@ -2982,7 +2980,7 @@ namespace Assets.Scripts
 		Tutorial = 2,
 	}
 
-	[GeneratedCode("Charon", "2018.4.7.0")]
+	[GeneratedCode("Charon", "2019.1.2.0")]
 	public enum TrinketRarity: uint
 	{
 		None = 0,
@@ -2998,7 +2996,7 @@ namespace Assets.Scripts
 		Backer = 10,
 	}
 
-	[GeneratedCode("Charon", "2018.4.7.0")]
+	[GeneratedCode("Charon", "2019.1.2.0")]
 	public enum MonsterType: uint
 	{
 		None = 0,
@@ -3014,7 +3012,7 @@ namespace Assets.Scripts
 		Cosmic = 10,
 	}
 
-	[GeneratedCode("Charon", "2018.4.7.0")]
+	[GeneratedCode("Charon", "2019.1.2.0")]
 	public enum LootType: uint
 	{
 		None = 0,
@@ -3027,7 +3025,7 @@ namespace Assets.Scripts
 		Food = 7,
 	}
 
-	[GeneratedCode("Charon", "2018.4.7.0")]
+	[GeneratedCode("Charon", "2019.1.2.0")]
 	public enum DurationUnit: uint
 	{
 		None = 0,
@@ -3037,7 +3035,7 @@ namespace Assets.Scripts
 	}
 
 	[Flags]
-	[GeneratedCode("Charon", "2018.4.7.0")]
+	[GeneratedCode("Charon", "2019.1.2.0")]
 	public enum CurioType: uint
 	{
 		None = 0,
@@ -3056,7 +3054,7 @@ namespace Assets.Scripts
 	}
 
 	[Flags]
-	[GeneratedCode("Charon", "2018.4.7.0")]
+	[GeneratedCode("Charon", "2019.1.2.0")]
 	public enum CurioPlacementRestictions: uint
 	{
 		None = 0,
@@ -3064,9 +3062,8 @@ namespace Assets.Scripts
 		Corridor = 2,
 	}
 
-	// formulas - count: 1
 	
-	[GeneratedCode("Charon", "2018.4.7.0")]
+	[GeneratedCode("Charon", "2019.1.2.0")]
 	public partial class ConditionsCheckExpression
 	{
 		private static readonly ITypeResolver TypeResolver;
@@ -3163,7 +3160,7 @@ namespace Assets.Scripts
 
 
 
-	[GeneratedCode("Charon", "2018.4.7.0")]
+	[GeneratedCode("Charon", "2019.1.2.0")]
 	public partial class RpgGameData
 	{
 		public static readonly ITypeResolver TypeResolver = new KnownTypeResolver(new Type[]
@@ -13814,7 +13811,7 @@ namespace Assets.Scripts
 }
 
 #pragma warning disable 0660, 0661
-	[GeneratedCode("Charon", "2018.4.7.0")]
+	[GeneratedCode("Charon", "2019.1.2.0")]
 	public abstract partial class Document
 	{
 #pragma warning restore 0660, 0661
@@ -13945,7 +13942,7 @@ namespace Assets.Scripts
 			return hashCode;
 		}
 	}
-		[GeneratedCode("Charon", "2018.4.7.0")]
+		[GeneratedCode("Charon", "2019.1.2.0")]
 		public sealed partial class DocumentReference<T> where T : Document
 		{	
 			[NonSerialized]
@@ -14027,7 +14024,7 @@ namespace Assets.Scripts
 			}
 		}
 
-		[GeneratedCode("Charon", "2018.4.7.0")]
+		[GeneratedCode("Charon", "2019.1.2.0")]
 		public sealed partial class LocalizedString : IDictionary<string, string>
 		{
 			private static readonly string[] DefaultLanguageIds = new string[] { "en-US" };
@@ -14261,7 +14258,7 @@ namespace Assets.Scripts
 			}
 		}
 		
-	[GeneratedCode("Charon", "2018.4.7.0")]
+	[GeneratedCode("Charon", "2019.1.2.0")]
 	public class ReadOnlyList<T> : IList<T>
 	{
 		public static readonly ReadOnlyList<T> Empty = new ReadOnlyList<T>();
@@ -14406,7 +14403,7 @@ namespace Assets.Scripts
 		}
 	}
 
-	[GeneratedCode("Charon", "2018.4.7.0")]
+	[GeneratedCode("Charon", "2019.1.2.0")]
 	public class ReadOnlyDictionary<KeyT, ValueT> : IDictionary<KeyT, ValueT>
 	{
 		public static readonly ReadOnlyDictionary<KeyT, ValueT> Empty = new ReadOnlyDictionary<KeyT, ValueT>();

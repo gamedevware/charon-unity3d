@@ -22,9 +22,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using GameDevWare.Charon.Async;
 using GameDevWare.Charon.Json;
+using GameDevWare.Charon.Packages.Nuget;
 using GameDevWare.Charon.Utils;
 using GameDevWare.Charon.Windows;
 using UnityEditor;
@@ -309,18 +311,25 @@ namespace GameDevWare.Charon
 			{
 				var gameDataPath = paths[i];
 				if (File.Exists(gameDataPath) == false)
+				{
 					continue;
+				}
 				if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_PROGRESS_CURRENT_TARGET_IS, gameDataPath), (float)i / total);
 
 				var gameDataObj = AssetDatabase.LoadAssetAtPath(gameDataPath, typeof(UnityEngine.Object));
 				var assetImport = AssetImporter.GetAtPath(gameDataPath);
 				if (assetImport == null)
+				{
 					continue;
+				}
 
 				var gameDataSettings = GameDataSettings.Load(gameDataObj);
 				var codeGenerationPath = FileAndPathUtils.MakeProjectRelative(gameDataSettings.CodeGenerationPath);
 				if (gameDataSettings.Generator == (int)GameDataSettings.CodeGenerator.None)
+				{
+
 					continue;
+				}
 
 				var generationOptions = gameDataSettings.Options;
 				if (Array.IndexOf(Settings.SupportedExtensions, Settings.EXTENSION_FORMULAS) == -1) // no expression library installed
@@ -329,8 +338,13 @@ namespace GameDevWare.Charon
 				// trying to touch gamedata file
 				var touchGamedata = new Coroutine<FileStream>(TouchGameDataFile(gameDataPath));
 				yield return touchGamedata;
+
 				if (touchGamedata.GetResult().Length == 0)
+				{
+					if (Settings.Current.Verbose)
+						Debug.LogWarning(string.Format("Code generation was skipped for an empty file '{0}'.", gameDataPath));
 					continue;
+				}
 				touchGamedata.GetResult().Dispose(); // release touched file
 
 				var generator = (GameDataSettings.CodeGenerator)gameDataSettings.Generator;
@@ -345,6 +359,17 @@ namespace GameDevWare.Charon
 								CodeGenerationOptions.DisableMessagePackSerialization |
 								CodeGenerationOptions.DisableXmlSerialization
 							);
+
+							var assetCodeGenerationPath = Path.Combine(Path.GetDirectoryName(gameDataSettings.CodeGenerationPath) ?? "",
+								gameDataSettings.GameDataClassName + "Asset.cs");
+							var assetCodeGenerator = new AssetLoaderGenerator();
+							assetCodeGenerator.AssetClassName = gameDataSettings.GameDataClassName + "Asset";
+							assetCodeGenerator.GameDataClassName = gameDataSettings.Namespace + "." + gameDataSettings.GameDataClassName;
+							assetCodeGenerator.Namespace = gameDataSettings.Namespace;
+							var assetCode = assetCodeGenerator.TransformText();
+							File.WriteAllText(assetCodeGenerationPath, assetCode);
+
+							forceReImportList.Add(assetCodeGenerationPath);
 						}
 						goto generateCSharpCode;
 					case GameDataSettings.CodeGenerator.CSharp:
@@ -354,25 +379,15 @@ namespace GameDevWare.Charon
 						if (progressCallback != null)
 							progressCallback(string.Format(Resources.UI_UNITYPLUGIN_GENERATE_CODE_FOR, gameDataPath), (float)i / total);
 
-						var generateProcess = generator == GameDataSettings.CodeGenerator.CSharp
-							? CharonCli.GenerateCSharpCodeAsync
-							(
-								gameDataPath,
-								Path.GetFullPath(codeGenerationPath),
-								(CodeGenerationOptions)generationOptions,
-								gameDataSettings.DocumentClassName,
-								gameDataSettings.GameDataClassName,
-								gameDataSettings.Namespace
-							)
-							: CharonCli.GenerateUnityCSharpCodeAsync
-							(
-								gameDataPath,
-								Path.GetFullPath(codeGenerationPath),
-								(CodeGenerationOptions)generationOptions,
-								gameDataSettings.DocumentClassName,
-								gameDataSettings.GameDataClassName,
-								gameDataSettings.Namespace
-							);
+						var generateProcess = CharonCli.GenerateCSharpCodeAsync
+						(
+							gameDataPath,
+							Path.GetFullPath(codeGenerationPath),
+							(CodeGenerationOptions)generationOptions,
+							gameDataSettings.DocumentClassName,
+							gameDataSettings.GameDataClassName,
+							gameDataSettings.Namespace
+						);
 						yield return generateProcess;
 
 						if (Settings.Current.Verbose)
@@ -471,10 +486,10 @@ namespace GameDevWare.Charon
 					while ((read = file.Read(gameDataBytes, offset, gameDataBytes.Length - offset)) > 0)
 						offset += read;
 
-					var gameDataType = Type.GetType(gameDataSettings.Namespace + "." + gameDataSettings.GameDataClassName + ", Assembly-CSharp", throwOnError: false) ??
-									   Type.GetType(gameDataSettings.Namespace + "." + gameDataSettings.GameDataClassName + ", Assembly-CSharp-firstpass", throwOnError: false) ??
-									   Type.GetType(gameDataSettings.Namespace + "." + gameDataSettings.GameDataClassName + ", Assembly-CSharp-Editor", throwOnError: false);
-					if (gameDataType == null)
+					var gameDataAssetType = Type.GetType(gameDataSettings.Namespace + "." + gameDataSettings.GameDataClassName + "Asset, Assembly-CSharp", throwOnError: false) ??
+									   Type.GetType(gameDataSettings.Namespace + "." + gameDataSettings.GameDataClassName + "Asset, Assembly-CSharp-firstpass", throwOnError: false) ??
+									   Type.GetType(gameDataSettings.Namespace + "." + gameDataSettings.GameDataClassName + "Asset, Assembly-CSharp-Editor", throwOnError: false);
+					if (gameDataAssetType == null)
 					{
 						Debug.LogError(Resources.UI_UNITYPLUGIN_GENERATE_ASSET_CANT_FIND_GAMEDATA_CLASS);
 						continue;
@@ -486,9 +501,9 @@ namespace GameDevWare.Charon
 						Directory.CreateDirectory(assetDirectory);
 					}
 
-					var gameDataAsset = ScriptableObject.CreateInstance(gameDataType);
+					var gameDataAsset = ScriptableObject.CreateInstance(gameDataAssetType);
 					gameDataAsset.SetFieldValue("dataBytes", gameDataBytes);
-					gameDataAsset.SetFieldValue("format", 0);
+					gameDataAsset.SetFieldValue("extension", Path.GetExtension(gameDataPath));
 					AssetDatabase.CreateAsset(gameDataAsset, assetGenerationPath);
 					AssetDatabase.SaveAssets();
 				}

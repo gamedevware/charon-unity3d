@@ -49,10 +49,65 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssetGenerator.cs" />
+    <Compile Include="AssetLoaderGenerator.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AssetLoaderGenerator.tt</DependentUpon>
+    </Compile>
     <Compile Include="BrowserType.cs" />
     <Compile Include="ChangeHooks.cs" />
+    <Content Include="AssetLoaderGenerator.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>AssetLoaderGenerator.cs</LastGenOutput>
+    </Content>
+    <Compile Include="Json\JsonMemberAttribute.cs" />
+    <Compile Include="Packages\ArtifactKind.cs" />
+    <Compile Include="Packages\Deployment\CharonDeploymentAction.cs" />
+    <Compile Include="Packages\Deployment\DeploymentAction.cs" />
+    <Compile Include="Packages\Deployment\LibraryDeploymentAction.cs" />
+    <Compile Include="Packages\Nuget\NugetFeed.cs" />
+    <Compile Include="Packages\Nuget\PackageCatalogPage.cs" />
+    <Compile Include="Packages\Nuget\PackageMetadata.cs" />
+    <Compile Include="Packages\Nuget\PackageSpecification.cs" />
+    <Compile Include="Packages\Nuget\PackageVersion.cs" />
+    <Compile Include="Packages\Nuget\PackageVersionCatalogEntry.cs" />
+    <Compile Include="Packages\Nuget\ServiceDefinition.cs" />
+    <Compile Include="Packages\Zip\Checksum\Adler32.cs" />
+    <Compile Include="Packages\Zip\Checksum\Crc32.cs" />
+    <Compile Include="Packages\Zip\Checksum\IChecksum.cs" />
+    <Compile Include="Packages\Nuget\ServiceIndex.cs" />
+    <Compile Include="Packages\Zip\CompressionMethod.cs" />
+    <Compile Include="Packages\Zip\GeneralBitFlags.cs" />
+    <Compile Include="Packages\Zip\SharpZipBaseException.cs" />
+    <Compile Include="Packages\Zip\StreamDecodingException.cs" />
+    <Compile Include="Packages\Zip\UseZip64.cs" />
+    <Compile Include="Packages\Zip\ValueOutOfRangeException.cs" />
+    <Compile Include="Packages\Zip\StreamUtils.cs" />
+    <Compile Include="Packages\Zip\Compression\DeflaterConstants.cs" />
+    <Compile Include="Packages\Zip\Compression\Inflater.cs" />
+    <Compile Include="Packages\Zip\Compression\InflaterDynHeader.cs" />
+    <Compile Include="Packages\Zip\Compression\InflaterHuffmanTree.cs" />
+    <Compile Include="Packages\Zip\Compression\Streams\InflaterInputBuffer.cs" />
+    <Compile Include="Packages\Zip\Compression\Streams\InflaterInputStream.cs" />
+    <Compile Include="Packages\Zip\Compression\Streams\OutputWindow.cs" />
+    <Compile Include="Packages\Zip\Compression\Streams\StreamManipulator.cs" />
+    <Compile Include="Packages\Zip\DescriptorData.cs" />
+    <Compile Include="Packages\Zip\EntryPatchData.cs" />
+    <Compile Include="Packages\Zip\TestOperation.cs" />
+    <Compile Include="Packages\Zip\TestStatus.cs" />
+    <Compile Include="Packages\Zip\TestStrategy.cs" />
+    <Compile Include="Packages\Zip\ZipConstants.cs" />
+    <Compile Include="Packages\Zip\ZipEntry.cs" />
+    <Compile Include="Packages\Zip\ZipException.cs" />
+    <Compile Include="Packages\Zip\ZipExtraData.cs" />
+    <Compile Include="Packages\Zip\ZipFile.cs" />
+    <Compile Include="Packages\Zip\ZipHelperStream.cs" />
+    <Compile Include="Packages\Zip\ZipInputStream.cs" />
+    <Compile Include="Packages\Zip\ZipStrings.cs" />
+    <Compile Include="Packages\Zip\ZipTestResultHandler.cs" />
     <Compile Include="PluginInitializer.cs" />
-    <Compile Include="Utils\BuildInfo.cs" />
+    <Compile Include="Utils\AssemblyExtensions.cs" />
+    <Compile Include="Utils\PackageInfo.cs" />
     <Compile Include="Utils\CodeGenerationOptions.cs" />
     <Compile Include="GameDataSettings.cs" />
     <Compile Include="Json\JsonArray.cs" />
@@ -71,6 +126,7 @@
     <Compile Include="Async\Promise.cs" />
     <Compile Include="Async\PromiseContinuation.cs" />
     <Compile Include="UnityResources.cs" />
+    <Compile Include="Utils\NoCertificateValidationContext.cs" />
     <Compile Include="Utils\RequirementsCheckResult.cs" />
     <Compile Include="Utils\CharonCli.cs" />
     <Compile Include="Async\CoroutineScheduler.cs" />
@@ -85,6 +141,7 @@
     <Compile Include="Utils\IssueType.cs" />
     <Compile Include="Utils\MonoRuntimeInformation.cs" />
     <Compile Include="Utils\RuntimeInformation.cs" />
+    <Compile Include="Utils\SemanticVersion.cs" />
     <Compile Include="Utils\UnityObjectExtensions.cs" />
     <Compile Include="Utils\FileAndPathUtils.cs" />
     <Compile Include="Utils\ProcessExtensions.cs" />
@@ -92,7 +149,7 @@
     <Compile Include="Utils\RunOptions.cs" />
     <Compile Include="Utils\RunResult.cs" />
     <Compile Include="Utils\CommandLine.cs" />
-    <Compile Include="Utils\Updater.cs" />
+    <Compile Include="Packages\PackageManager.cs" />
     <Compile Include="Utils\ValidationOptions.cs" />
     <Compile Include="ValidationException.cs" />
     <Compile Include="Windows\UpdateWindow.cs" />
@@ -107,11 +164,14 @@
     <EmbeddedResource Include="Charon.exe.config">
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterBuild">
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../GameDevWare.Charon.Unity/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
     <Copy SourceFiles="bin\$(Configuration)\$(AssemblyName).xml" DestinationFolder="$(ProjectDir)../GameDevWare.Charon.Unity/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-	<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../GameDevWare.Charon.Unity.2017/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../GameDevWare.Charon.Unity.2017/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
     <Copy SourceFiles="bin\$(Configuration)\$(AssemblyName).xml" DestinationFolder="$(ProjectDir)../GameDevWare.Charon.Unity.2017/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../Examples/RpgGameExample/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
     <Copy SourceFiles="bin\$(Configuration)\$(AssemblyName).xml" DestinationFolder="$(ProjectDir)../Examples/RpgGameExample/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />

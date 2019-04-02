@@ -23,30 +23,29 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using GameDevWare.Charon.Async;
+using GameDevWare.Charon.Packages;
+using GameDevWare.Charon.Packages.Deployment;
 using GameDevWare.Charon.Utils;
 using UnityEditor;
 using UnityEngine;
+using PackageInfo = GameDevWare.Charon.Utils.PackageInfo;
 
 namespace GameDevWare.Charon.Windows
 {
 	internal class UpdateWindow : EditorWindow
 	{
-		public const string ACTION_SKIP = Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_SKIP_ACTION;
-		public const string ACTION_UPDATE = Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_UPDATE_ACTION;
-		public const string ACTION_REPAIR = Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_REPAIR_ACTION;
-		public const string ACTION_DOWNLOAD = Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_DOWNLOAD_ACTION;
-
 		private class ProductRow
 		{
 			public readonly string Id;
 			public readonly string Name;
 			public readonly bool Disabled;
-			public Promise<Version> CurrentVersion;
-			public Version SelectedVersion;
-			public Version[] AllVersions;
-			public Version ExpectedVersion;
-			public Promise<BuildInfo[]> AllBuilds;
+			public Promise<SemanticVersion> CurrentVersion;
+			public SemanticVersion SelectedVersion;
+			public SemanticVersion[] AllVersions;
+			public SemanticVersion ExpectedVersion;
+			public Promise<PackageInfo[]> AllBuilds;
 			public string Location;
 			public string Action;
 			public int ActionMask;
@@ -59,9 +58,9 @@ namespace GameDevWare.Charon.Windows
 				this.Id = id;
 				this.Name = name;
 				this.Disabled = disabled;
-				this.CurrentVersion = Promise.FromResult<Version>(null);
-				this.AllBuilds = Promise.FromResult<BuildInfo[]>(null);
-				this.Action = ACTION_SKIP;
+				this.CurrentVersion = Promise.FromResult<SemanticVersion>(null);
+				this.AllBuilds = Promise.FromResult<PackageInfo[]>(null);
+				this.Action = DeploymentAction.ACTION_SKIP;
 			}
 		}
 		private class ProductColumn
@@ -81,7 +80,7 @@ namespace GameDevWare.Charon.Windows
 			}
 		}
 
-		private static readonly string[] Actions = new[] { ACTION_SKIP, ACTION_UPDATE, ACTION_REPAIR, ACTION_DOWNLOAD };
+		private static readonly string[] Actions = new[] { DeploymentAction.ACTION_SKIP, DeploymentAction.ACTION_UPDATE, DeploymentAction.ACTION_REPAIR, DeploymentAction.ACTION_DOWNLOAD };
 
 		private readonly ProductRow[] rows;
 		private readonly ProductColumn[] columns;
@@ -102,26 +101,26 @@ namespace GameDevWare.Charon.Windows
 			this.padding = new Rect(10, 10, 10, 10);
 
 			this.rows = new[] {
-				new ProductRow(Updater.PRODUCT_CHARON, Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_CHARON_NAME, disabled: false) {
+				new ProductRow(PackageManager.PRODUCT_CHARON, Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_CHARON_NAME, disabled: false) {
 					CurrentVersion = CharonCli.GetVersionAsync().IgnoreFault(),
-					AllBuilds = Updater.GetBuilds(Updater.PRODUCT_CHARON),
-					Location = Path.GetFullPath(Settings.CharonPath),
-					ExpectedVersion = string.IsNullOrEmpty(Settings.Current.EditorVersion) ? default(Version) : new Version(Settings.Current.EditorVersion)
+					AllBuilds = PackageManager.GetVersions(PackageManager.PRODUCT_CHARON),
+					Location = Path.GetFullPath(Settings.CharonExecutablePath),
+					ExpectedVersion = string.IsNullOrEmpty(Settings.Current.EditorVersion) ? default(SemanticVersion) : new SemanticVersion(Settings.Current.EditorVersion)
 				},
-				new ProductRow(Updater.PRODUCT_CHARON_UNITY, Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_CHARON_UNITY_PLUGIN_NAME, disabled: !IsAssemblyLoaded(Updater.PRODUCT_CHARON_UNITY_ASSEMBLY)) {
-					CurrentVersion = Promise.FromResult(GetAssemblyVersion(Updater.PRODUCT_CHARON_UNITY_ASSEMBLY)),
-					AllBuilds = Updater.GetBuilds(Updater.PRODUCT_CHARON_UNITY),
-					Location = GetAssemblyLocation(Updater.PRODUCT_CHARON_UNITY_ASSEMBLY)
+				new ProductRow(PackageManager.PRODUCT_CHARON_UNITY, Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_CHARON_UNITY_PLUGIN_NAME, disabled: !IsAssemblyLoaded(PackageManager.PRODUCT_CHARON_UNITY_ASSEMBLY)) {
+					CurrentVersion = Promise.FromResult(GetAssemblyVersion(PackageManager.PRODUCT_CHARON_UNITY_ASSEMBLY)),
+					AllBuilds = PackageManager.GetVersions(PackageManager.PRODUCT_CHARON_UNITY),
+					Location = GetAssemblyLocation(PackageManager.PRODUCT_CHARON_UNITY_ASSEMBLY)
 				},
-				new ProductRow(Updater.PRODUCT_EXPRESSIONS, Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_EXPRESSIONS_PLUGIN_NAME, disabled: !IsAssemblyLoaded(Updater.PRODUCT_EXPRESSIONS_ASSEMBLY)) {
-					CurrentVersion = Promise.FromResult(GetAssemblyVersion(Updater.PRODUCT_EXPRESSIONS_ASSEMBLY)),
-					AllBuilds = Updater.GetBuilds(Updater.PRODUCT_EXPRESSIONS),
-					Location = GetAssemblyLocation(Updater.PRODUCT_EXPRESSIONS_ASSEMBLY)
+				new ProductRow(PackageManager.PRODUCT_EXPRESSIONS, Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_EXPRESSIONS_PLUGIN_NAME, disabled: !IsAssemblyLoaded(PackageManager.PRODUCT_EXPRESSIONS_ASSEMBLY)) {
+					CurrentVersion = Promise.FromResult(GetAssemblyVersion(PackageManager.PRODUCT_EXPRESSIONS_ASSEMBLY)),
+					AllBuilds = PackageManager.GetVersions(PackageManager.PRODUCT_EXPRESSIONS),
+					Location = GetAssemblyLocation(PackageManager.PRODUCT_EXPRESSIONS_ASSEMBLY)
 				},
-				new ProductRow(Updater.PRODUCT_TEXT_TEMPLATES, Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_TEXT_TRANSFORM_PLUGIN_NAME, disabled: !IsAssemblyLoaded(Updater.PRODUCT_TEXT_TEMPLATES_ASSEMBLY)) {
-					CurrentVersion = Promise.FromResult(GetAssemblyVersion(Updater.PRODUCT_TEXT_TEMPLATES_ASSEMBLY)),
-					AllBuilds = Updater.GetBuilds(Updater.PRODUCT_TEXT_TEMPLATES),
-					Location = GetAssemblyLocation(Updater.PRODUCT_TEXT_TEMPLATES_ASSEMBLY)
+				new ProductRow(PackageManager.PRODUCT_TEXT_TEMPLATES, Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_TEXT_TRANSFORM_PLUGIN_NAME, disabled: !IsAssemblyLoaded(PackageManager.PRODUCT_TEXT_TEMPLATES_ASSEMBLY)) {
+					CurrentVersion = Promise.FromResult(GetAssemblyVersion(PackageManager.PRODUCT_TEXT_TEMPLATES_ASSEMBLY)),
+					AllBuilds = PackageManager.GetVersions(PackageManager.PRODUCT_TEXT_TEMPLATES),
+					Location = GetAssemblyLocation(PackageManager.PRODUCT_TEXT_TEMPLATES_ASSEMBLY)
 				}
 			};
 			this.columns = new[] {
@@ -208,7 +207,7 @@ namespace GameDevWare.Charon.Windows
 			EditorGUILayout.Space();
 			var wasEnabled = GUI.enabled;
 			GUI.enabled = wasEnabled && this.rows.All(r => r.CurrentVersion.IsCompleted && r.AllBuilds.IsCompleted) && !EditorApplication.isCompiling;
-			var actionText = this.rows.Any(r => r.Action != ACTION_SKIP) ? Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_UPDATE_BUTTON : Resources.UI_UNITYPLUGIN_ABOUT_CLOSE_BUTTON;
+			var actionText = this.rows.Any(r => r.Action != DeploymentAction.ACTION_SKIP) ? Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_UPDATE_BUTTON : Resources.UI_UNITYPLUGIN_ABOUT_CLOSE_BUTTON;
 			if (this.updatePromise == null && GUILayout.Button(actionText, GUILayout.Width(80)))
 			{
 				this.updatePromise = new Coroutine<object>(this.PerformUpdateAsync());
@@ -247,12 +246,14 @@ namespace GameDevWare.Charon.Windows
 			this.Repaint();
 		}
 
-		private static Version GetAssemblyVersion(string assemblyName)
+		private static SemanticVersion GetAssemblyVersion(string assemblyName)
 		{
 			foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
 			{
 				if (assembly.GetName(copiedName: false).Name == assemblyName)
-					return assembly.GetName().Version;
+				{
+					return new SemanticVersion(assembly.GetInformationalVersion());
+				}
 			}
 
 			return null;
@@ -295,7 +296,7 @@ namespace GameDevWare.Charon.Windows
 						actions.Add(Actions[i]);
 				}
 				if (actions.Count == 0)
-					actions.Add(ACTION_SKIP);
+					actions.Add(DeploymentAction.ACTION_SKIP);
 				var actionIndex = EditorGUILayout.Popup(actions.IndexOf(row.Action), actions.ToArray(), GUILayout.Width(width));
 				if (actionIndex < 0)
 					actionIndex = 0;
@@ -318,7 +319,7 @@ namespace GameDevWare.Charon.Windows
 		{
 			if (row.SelectedVersion != null)
 			{
-				if ((row.Action == ACTION_DOWNLOAD || row.Action == ACTION_UPDATE) && row.AllVersions != null)
+				if ((row.Action == DeploymentAction.ACTION_DOWNLOAD || row.Action == DeploymentAction.ACTION_UPDATE) && row.AllVersions != null)
 				{
 					var versionNames = Array.ConvertAll(row.AllVersions, v => v.ToString());
 					var selectedVersion = Array.IndexOf(row.AllVersions, row.SelectedVersion);
@@ -329,11 +330,11 @@ namespace GameDevWare.Charon.Windows
 						selectedVersion = 0;
 					row.SelectedVersion = row.AllVersions[selectedVersion];
 				}
-				else if (row.Action == ACTION_REPAIR)
+				else if (row.Action == DeploymentAction.ACTION_REPAIR)
 				{
 					GUILayout.Label(string.Empty, GUILayout.Width(width));
 				}
-				else if (row.Action == ACTION_SKIP && row.AllVersions != null)
+				else if (row.Action == DeploymentAction.ACTION_SKIP && row.AllVersions != null)
 				{
 					GUILayout.Label(Convert.ToString(row.AllVersions.FirstOrDefault()), GUILayout.Width(width));
 				}
@@ -363,7 +364,7 @@ namespace GameDevWare.Charon.Windows
 		private static void ChooseAction(ProductRow row)
 		{
 			var currentVersion = row.CurrentVersion.GetResult();
-			var builds = row.AllBuilds.HasErrors ? default(BuildInfo[]) : row.AllBuilds.GetResult();
+			var builds = row.AllBuilds.HasErrors ? default(PackageInfo[]) : row.AllBuilds.GetResult();
 			if (builds == null || builds.Length == 0)
 				return;
 
@@ -378,8 +379,8 @@ namespace GameDevWare.Charon.Windows
 			{
 				// no local artifacts
 				row.SelectedVersion = null;
-				row.Action = ACTION_SKIP;
-				row.ActionMask = (1 << Array.IndexOf(Actions, ACTION_SKIP));
+				row.Action = DeploymentAction.ACTION_SKIP;
+				row.ActionMask = (1 << Array.IndexOf(Actions, DeploymentAction.ACTION_SKIP));
 				return;
 			}
 
@@ -389,237 +390,119 @@ namespace GameDevWare.Charon.Windows
 			{
 				// current installed build is the last one
 				row.SelectedVersion = currentVersion;
-				row.Action = ACTION_SKIP;
-				row.ActionMask = (1 << Array.IndexOf(Actions, ACTION_SKIP));
+				row.Action = DeploymentAction.ACTION_SKIP;
+				row.ActionMask = (1 << Array.IndexOf(Actions, DeploymentAction.ACTION_SKIP));
 			}
 			else if (File.Exists(row.Location) == false || (expectedBuild != null && currentBuild != expectedBuild))
 			{
 				// missing file or invalid version is installed
 				row.SelectedVersion = expectedBuild != null ? expectedBuild.Version : currentVersion ?? lastVersion;
-				row.Action = ACTION_DOWNLOAD;
-				row.ActionMask = (1 << Array.IndexOf(Actions, ACTION_DOWNLOAD)) | (1 << Array.IndexOf(Actions, ACTION_SKIP));
+				row.Action = DeploymentAction.ACTION_DOWNLOAD;
+				row.ActionMask = (1 << Array.IndexOf(Actions, DeploymentAction.ACTION_DOWNLOAD)) | (1 << Array.IndexOf(Actions, DeploymentAction.ACTION_SKIP));
 			}
 			else if (currentBuild == null && currentVersion != null)
 			{
 				// current installed build is not found
 				row.SelectedVersion = lastVersion;
-				row.Action = ACTION_DOWNLOAD;
-				row.ActionMask = (1 << Array.IndexOf(Actions, ACTION_DOWNLOAD)) | (1 << Array.IndexOf(Actions, ACTION_SKIP));
+				row.Action = DeploymentAction.ACTION_DOWNLOAD;
+				row.ActionMask = (1 << Array.IndexOf(Actions, DeploymentAction.ACTION_DOWNLOAD)) | (1 << Array.IndexOf(Actions, DeploymentAction.ACTION_SKIP));
 			}
 			else
 			{
-				var actualHash = FileAndPathUtils.ComputeHash(row.Location, currentBuild.HashAlgorithm);
-				if (string.Equals(currentBuild.Hash, actualHash, StringComparison.OrdinalIgnoreCase) == false)
+				var hashAlgorithm = "SHA1";
+				var expectedHashFile = row.Location + ".sha1";
+				var expectedHash = File.Exists(expectedHashFile) == false ? null : File.ReadAllText(expectedHashFile);
+				var actualHash = FileAndPathUtils.ComputeHash(row.Location, hashAlgorithm);
+				if (expectedHash != null && string.Equals(expectedHash, actualHash, StringComparison.OrdinalIgnoreCase) == false)
 				{
 					if (Settings.Current.Verbose)
-						Debug.LogWarning(string.Format("File's '{0}' {1} hash '{2}' differs from expected '{3}'. File should be repaired.", row.Location, currentBuild.HashAlgorithm, actualHash, currentBuild.Hash));
+						Debug.LogWarning(string.Format("File's '{0}' {1} hash '{2}' differs from expected '{3}'. File should be repaired.", row.Location, hashAlgorithm, actualHash, expectedHash));
 
 					// corrupted file
 					row.SelectedVersion = lastVersion;
-					row.Action = ACTION_REPAIR;
-					row.ActionMask = (1 << Array.IndexOf(Actions, ACTION_REPAIR)) | (1 << Array.IndexOf(Actions, ACTION_UPDATE)) | (1 << Array.IndexOf(Actions, ACTION_SKIP));
+					row.Action = DeploymentAction.ACTION_REPAIR;
+					row.ActionMask = (1 << Array.IndexOf(Actions, DeploymentAction.ACTION_REPAIR)) | (1 << Array.IndexOf(Actions, DeploymentAction.ACTION_UPDATE)) | (1 << Array.IndexOf(Actions, DeploymentAction.ACTION_SKIP));
 				}
 				else if (currentVersion < lastVersion)
 				{
 					// outdated version
 					row.SelectedVersion = lastVersion;
-					row.Action = ACTION_UPDATE;
-					row.ActionMask = (1 << Array.IndexOf(Actions, ACTION_UPDATE)) | (1 << Array.IndexOf(Actions, ACTION_SKIP));
+					row.Action = DeploymentAction.ACTION_UPDATE;
+					row.ActionMask = (1 << Array.IndexOf(Actions, DeploymentAction.ACTION_UPDATE)) | (1 << Array.IndexOf(Actions, DeploymentAction.ACTION_SKIP));
 				}
 				else
 				{
 					// actual version
 					row.SelectedVersion = currentVersion ?? lastVersion;
-					row.Action = ACTION_SKIP;
-					row.ActionMask = (1 << Array.IndexOf(Actions, ACTION_SKIP));
+					row.Action = DeploymentAction.ACTION_SKIP;
+					row.ActionMask = (1 << Array.IndexOf(Actions, DeploymentAction.ACTION_SKIP));
 				}
 			}
 		}
 		public IEnumerable PerformUpdateAsync()
 		{
-			var artifacts = new string[this.rows.Length];
+			var deploymentActions = new List<DeploymentAction>();
 			try
 			{
 				// downloading
 				for (var i = 0; i < this.rows.Length; i++)
 				{
 					var row = this.rows[i];
-					if (row.Disabled || row.Action == ACTION_SKIP)
+					if (row.Disabled || row.Action == DeploymentAction.ACTION_SKIP)
 						continue;
 
-					var downloadProgress = this.GetProgressReportFor(row, i + 1, this.rows.Length);
-					var downloadAsync = new Coroutine<string>(DownloadAsync(row, downloadProgress));
-					yield return downloadAsync.IgnoreFault();
-					if (downloadAsync.HasErrors)
+					var progressCallback = this.GetProgressReportFor(row, i + 1, this.rows.Length);
+					var downloadVersion = default(SemanticVersion);
+					if (row.Action == DeploymentAction.ACTION_DOWNLOAD || row.Action == DeploymentAction.ACTION_UPDATE)
 					{
-						Debug.LogWarning(string.Format("Failed to download build version '{1}' of '{0}' product. Error: {2}", row.Name, row.SelectedVersion, downloadAsync.Error.Unwrap()));
-						continue;
+						downloadVersion = row.SelectedVersion;
 					}
-					artifacts[i] = downloadAsync.GetResult();
-
-					if (Settings.Current.Verbose)
-						Debug.Log(string.Format("Downloading '{0}' to '{1}'.", row.Name, artifacts[i]));
-				}
-
-				// cleanup
-				for (var i = 0; i < this.rows.Length; i++)
-				{
-					var row = this.rows[i];
-					if (row.Disabled || row.Action == ACTION_SKIP || artifacts[i] == null)
-						continue;
-
-					if (row.Id == Updater.PRODUCT_CHARON)
-						PreCharonDeploy(row.Location);
-				}
-
-				// deploy
-				for (var i = 0; i < this.rows.Length; i++)
-				{
-					var row = this.rows[i];
-					if (row.Disabled || row.Action == ACTION_SKIP || artifacts[i] == null)
-						continue;
-
-					if (Settings.Current.Verbose)
-						Debug.Log(string.Format("Deploying '{0}' from '{1}' to '{2}'.", row.Name, artifacts[i], row.Location));
-
-					try
+					else if (row.Action == DeploymentAction.ACTION_REPAIR)
 					{
-						File.Delete(row.Location);
-						File.Move(artifacts[i], row.Location);
-					}
-					catch (Exception moveError)
-					{
-						Debug.LogError(string.Format("Failed to move downloaded file to new location '{0}'.", row.Location));
-						Debug.LogError(moveError.Unwrap());
+						downloadVersion = row.CurrentVersion.GetResult();
 					}
 
-					var deployProgress = this.GetProgressReportFor(row, i + 1, this.rows.Length);
-					if (row.Id == Updater.PRODUCT_CHARON && artifacts[i] != null)
-						yield return new Coroutine<object>(PostCharonDeployAsync(row.Location, deployProgress)).IgnoreFault();
+					if (row.Id == PackageManager.PRODUCT_CHARON)
+					{
+						deploymentActions.Add(new CharonDeploymentAction(downloadVersion, progressCallback));
+					}
+					else
+					{
+						deploymentActions.Add(new LibraryDeploymentAction(row.Id, downloadVersion, row.Location, progressCallback));
+					}
 				}
 
-				// post deploy
-				for (var i = 0; i < this.rows.Length; i++)
+				if (deploymentActions.Count == 0)
 				{
-					var row = this.rows[i];
-					if (row.Disabled || row.Action == ACTION_SKIP || artifacts[i] == null)
-						continue;
-					var assetLocation = FileAndPathUtils.MakeProjectRelative(row.Location);
-					if (string.IsNullOrEmpty(assetLocation))
-						continue;
-					AssetDatabase.ImportAsset(assetLocation, ImportAssetOptions.ForceUpdate);
+					yield break;
 				}
+
+				// call prepare
+				yield return Promise.WhenAll(deploymentActions.ConvertAll(a => a.Prepare()).ToArray()).IgnoreFault();
+
+				// call deploy
+				yield return Promise.WhenAll(deploymentActions.ConvertAll(a => a.Complete()).ToArray()).IgnoreFault();
+
+				foreach (var forceReImportPath in deploymentActions.SelectMany(a => a.ChangedAssets))
+					AssetDatabase.ImportAsset(forceReImportPath, ImportAssetOptions.ForceUpdate);
 
 				this.updateStatus = Resources.UI_UNITYPLUGIN_PROGRESS_DONE;
 			}
 			finally
 			{
-				foreach (var tempFile in artifacts)
+				foreach (var deploymentAction in deploymentActions)
 				{
-					try
-					{
-						File.Delete(tempFile);
-					}
-					catch {/*ignore delete error*/}
+					deploymentAction.CleanUp();
 				}
 			}
 
 			this.Close();
 
 			// re-load window if not 'Close' button was pressed
-			if (this.rows.All(r => r.Action == ACTION_SKIP) == false)
+			if (this.rows.All(r => r.Action == DeploymentAction.ACTION_SKIP) == false)
 				Promise.Delayed(TimeSpan.FromSeconds(1)).ContinueWith(_ => EditorWindow.GetWindow<UpdateWindow>(utility: true));
 		}
-		private static void PreCharonDeploy(string charonPath)
-		{
-			if (charonPath == null) throw new ArgumentNullException("charonPath");
 
-			GameDataEditorWindow.FindAllAndClose();
-
-			try
-			{
-				if (File.Exists(charonPath))
-					File.Delete(charonPath);
-				if (Directory.Exists(charonPath))
-					Directory.Delete(charonPath);
-
-				var charonDirectory = Path.GetDirectoryName(charonPath) ?? "";
-				if (Directory.Exists(charonDirectory) == false)
-					Directory.CreateDirectory(charonDirectory);
-			}
-			catch (Exception cleanupError)
-			{
-				Debug.LogWarning(string.Format("Failed to cleanup before '{0}' deployment to '{1}'. {2}.", Path.GetFileName(charonPath), Path.GetDirectoryName(charonPath), cleanupError.Message));
-				Debug.LogError(cleanupError);
-			}
-		}
-		private static IEnumerable PostCharonDeployAsync(string charonPath, Action<string, float> progressCallback = null)
-		{
-			// ensure config file
-			var charonConfigPath = charonPath + ".config";
-			if (File.Exists(charonConfigPath) == false)
-			{
-				var embeddedConfigStream = typeof(Menu).Assembly.GetManifestResourceStream("GameDevWare.Charon.Charon.exe.config");
-				if (embeddedConfigStream != null)
-				{
-					using (embeddedConfigStream)
-					using (var configFileStream = File.Create(charonConfigPath, 8 * 1024, FileOptions.SequentialScan))
-					{
-						var buffer = new byte[8 * 1024];
-						var read = 0;
-						while ((read = embeddedConfigStream.Read(buffer, 0, buffer.Length)) > 0)
-							configFileStream.Write(buffer, 0, read);
-					}
-				}
-			}
-
-			var currentVersion = default(Version);
-			if (File.Exists(charonPath))
-			{
-				if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESS_CHECKING_TOOLS_VERSION, 0.95f);
-
-				var checkToolsVersion = CharonCli.GetVersionAsync();
-				yield return checkToolsVersion.IgnoreFault();
-				currentVersion = checkToolsVersion.HasErrors ? default(Version) : checkToolsVersion.GetResult();
-			}
-
-			Settings.Current.EditorVersion = currentVersion != null ? currentVersion.ToString() : null;
-			Settings.Current.Save();
-		}
-		private static IEnumerable DownloadAsync(ProductRow row, Action<string, float> progressCallback = null)
-		{
-
-			var downloadVersion = default(Version);
-			if (row.Action == ACTION_DOWNLOAD || row.Action == ACTION_UPDATE)
-				downloadVersion = row.SelectedVersion;
-			else if (row.Action == ACTION_REPAIR)
-				downloadVersion = row.CurrentVersion.GetResult();
-
-			if (downloadVersion == null)
-				yield break;
-
-			var downloadPath = Path.GetTempFileName();
-			var downloadSuccess = false;
-			try
-			{
-				var downloadAsync = Updater.DownloadBuild(row.Id, downloadVersion, downloadPath, progressCallback);
-				yield return downloadAsync;
-				downloadSuccess = true;
-				yield return downloadPath;
-			}
-			finally
-			{
-				if (downloadSuccess == false && File.Exists(downloadPath))
-				{
-					try
-					{
-						File.Delete(downloadPath);
-					}
-					catch { /* ignore delete error */ }
-				}
-			}
-
-		}
 		private Action<string, float> GetProgressReportFor(ProductRow row, int number, int total)
 		{
 			return (msg, progress) =>

@@ -98,8 +98,9 @@ namespace GameDevWare.Charon {
 		public const string UI_UNITYPLUGIN_PROGRESS_CHECKING_TOOLS_VERSION = "Checking current tools version...";
 		public const string UI_UNITYPLUGIN_PROGRESS_CURRENT_TARGET_IS = "Current target is {0}";
 		public const string UI_UNITYPLUGIN_PROGRESS_DONE = "Done";
-		public const string UI_UNITYPLUGIN_PROGRESS_DOWNLOADINGS = "Downloading assets ({0:F2}/{1:F2}MiB)...";
+		public const string UI_UNITYPLUGIN_PROGRESS_DOWNLOADING = "Downloading '{2}' ({0:F2}/{1:F2}MiB)...";
 		public const string UI_UNITYPLUGIN_PROGRESS_GETTING_AVAILABLE_BUILDS = "Getting list of public releases...";
+		public const string UI_UNITYPLUGIN_PROGRESS_UNPACKING = "Unpacking '{0}'...";
 		public const string UI_UNITYPLUGIN_SELECT_FILE_TO_ATTACH_TITLE = "Select file to attach";
 		public const string UI_UNITYPLUGIN_SPECIFY_EXTRACTION_LOC_TITLE = "Specify extraction location...";
 		public const string UI_UNITYPLUGIN_T4_EXTRACTION_COMPLETE = "T4 Template extracted successfully.";

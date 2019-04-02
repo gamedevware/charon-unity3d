@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -147,6 +148,8 @@ namespace GameDevWare.Charon.Json
 		}
 		public override object As(Type type)
 		{
+			if (type == null) throw new ArgumentNullException("type");
+
 			var instance = Activator.CreateInstance(type);
 			var members = GetTypeMembers(type);
 
@@ -214,15 +217,25 @@ namespace GameDevWare.Charon.Json
 					{
 						if (prop.GetIndexParameters().Length != 0)
 							continue;
-						members[prop.Name] = prop;
+						members[GetMemberName(prop)] = prop;
 					}
 					foreach (var field in fields)
-						members[field.Name] = field;
+					{
+						members[GetMemberName(field)] = field;
+					}
 
 					TypeMembers.Add(type, members);
 				}
 			}
 			return members;
+		}
+		private static string GetMemberName(MemberInfo member)
+		{
+			var jsonMember = member.GetCustomAttributes(typeof(JsonMemberAttribute), true).FirstOrDefault() as JsonMemberAttribute;
+			if (jsonMember != null && string.IsNullOrEmpty(jsonMember.Name) == false)
+				return jsonMember.Name;
+			else
+				return member.Name;
 		}
 
 	}

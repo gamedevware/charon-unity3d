@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using GameDevWare.Charon.Utils;
 
 namespace GameDevWare.Charon.Json
 {
@@ -157,25 +158,60 @@ namespace GameDevWare.Charon.Json
 		}
 		public override object As(Type type)
 		{
-			if (type.IsEnum)
-				return Enum.Parse(type, Convert.ToString(this.Value, CultureInfo.InvariantCulture), true);
+			if (type == null) throw new ArgumentNullException("type");
 
-			var converter = TypeDescriptor.GetConverter(type);
-			if (converter.CanConvertFrom(typeof(string)))
+			var value = this.Value;
+			if (value == null)
 			{
-				return converter.ConvertFromInvariantString((string)Convert.ChangeType(this.Value, typeof(string), CultureInfo.InvariantCulture));
+				return type.IsValueType ? Activator.CreateInstance(type) : null;
 			}
-			else if (this.Value != null && converter.CanConvertFrom(this.Value.GetType()))
+			else if (type == typeof(object))
 			{
-				return converter.ConvertFrom(this.Value);
+				return value;
 			}
-			else if (type == typeof(Version))
+
+			try
 			{
-				return new Version((string)Convert.ChangeType(this.Value, typeof(string), CultureInfo.InvariantCulture));
+				if (type.IsEnum)
+				{
+					return Enum.Parse(type, Convert.ToString(value, CultureInfo.InvariantCulture) ?? "", true);
+				}
+
+				var converter = TypeDescriptor.GetConverter(type);
+				if (converter.CanConvertFrom(typeof(string)))
+				{
+					return converter.ConvertFromInvariantString((string)Convert.ChangeType(value, typeof(string), CultureInfo.InvariantCulture));
+				}
+				else if (converter.CanConvertFrom(value.GetType()))
+				{
+					return converter.ConvertFrom(value);
+				}
+				else if (type == typeof(Version))
+				{
+					return new Version((string)Convert.ChangeType(value, typeof(string), CultureInfo.InvariantCulture));
+				}
+				else if (type == typeof(SemanticVersion))
+				{
+					return new SemanticVersion((string)Convert.ChangeType(value, typeof(string), CultureInfo.InvariantCulture));
+				}
+				else if (type == typeof(DateTime))
+				{
+					return DateTime.Parse((string)Convert.ChangeType(value, typeof(string), CultureInfo.InvariantCulture), CultureInfo.InvariantCulture,
+						DateTimeStyles.AssumeUniversal);
+				}
+				else if (type == typeof(DateTimeOffset))
+				{
+					return DateTimeOffset.Parse((string)Convert.ChangeType(value, typeof(string), CultureInfo.InvariantCulture), CultureInfo.InvariantCulture,
+						DateTimeStyles.AssumeUniversal);
+				}
+				else
+				{
+					return Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
+				}
 			}
-			else
+			catch (FormatException formatException)
 			{
-				return Convert.ChangeType(this.Value, type, CultureInfo.InvariantCulture);
+				throw new FormatException(string.Format("Failed to convert '{0}' to {1} type.", value, type.Name), formatException);
 			}
 		}
 	}

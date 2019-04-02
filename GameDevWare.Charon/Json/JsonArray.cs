@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 
 namespace GameDevWare.Charon.Json
 {
@@ -99,7 +100,7 @@ namespace GameDevWare.Charon.Json
 		{
 			if (stream == null)
 				throw new ArgumentNullException("stream");
-			stream.WriteByte((byte) '[');
+			stream.WriteByte((byte)'[');
 			for (var i = 0; i < this.list.Count; i++)
 			{
 				var v = this.list[i];
@@ -107,36 +108,60 @@ namespace GameDevWare.Charon.Json
 					v.Save(stream);
 				else
 				{
-					stream.WriteByte((byte) 'n');
-					stream.WriteByte((byte) 'u');
-					stream.WriteByte((byte) 'l');
-					stream.WriteByte((byte) 'l');
+					stream.WriteByte((byte)'n');
+					stream.WriteByte((byte)'u');
+					stream.WriteByte((byte)'l');
+					stream.WriteByte((byte)'l');
 				}
 
 				if (i < this.Count - 1)
 				{
-					stream.WriteByte((byte) ',');
-					stream.WriteByte((byte) ' ');
+					stream.WriteByte((byte)',');
+					stream.WriteByte((byte)' ');
 				}
 			}
-			stream.WriteByte((byte) ']');
+			stream.WriteByte((byte)']');
 		}
 		public override object As(Type type)
 		{
-			if (type.IsArray == false)
-				throw new InvalidOperationException(string.Format("Can't convert JsonArray to non-array type '{0}'", type));
+			if (type == null) throw new ArgumentNullException("type");
 
-			var elementType = type.GetElementType();
-			Debug.Assert(elementType != null, "elementType != null");
-			var newArray = Array.CreateInstance(elementType, this.Count);
-			for (var i = 0; i < this.list.Count; i++)
+			var itemType = default(Type);
+			var genericEnumerableInterface = type.GetInterfaces().FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+			if (type.IsArray)
 			{
-				if (this.list[i] == null)
-					continue;
-
-				newArray.SetValue(this.list[i].As(elementType), i);
+				itemType = type.GetElementType();
 			}
-			return newArray;
+			else if (genericEnumerableInterface != null)
+			{
+				itemType = genericEnumerableInterface.GetGenericArguments()[0];
+			}
+			else
+			{
+				itemType = typeof(object);
+			}
+			var items = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(itemType));
+
+			foreach (var item in this.list)
+			{
+				if (item == null)
+					items.Add(null);
+				else
+					items.Add(item.As(itemType));
+			}
+
+			if (items.GetType().IsAssignableFrom(type))
+			{
+				return items;
+			}
+			else if (type.IsArray)
+			{
+				return items.GetType().InvokeMember("ToArray", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, items, null);
+			}
+			else
+			{
+				throw new InvalidOperationException(string.Format("Can't convert JsonArray to non-list type '{0}'", type));
+			}
 		}
 	}
 }

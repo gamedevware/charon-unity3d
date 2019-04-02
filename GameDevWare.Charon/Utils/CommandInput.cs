@@ -55,7 +55,7 @@ namespace GameDevWare.Charon.Utils
 		{
 			if (string.IsNullOrEmpty(jsonString)) throw new ArgumentException("Value cannot be null or empty.", "jsonString");
 
-			var temporaryFile = Path.GetTempFileName();
+			var temporaryFile = Path.Combine(Settings.TempPath, Path.GetTempFileName());
 			IOFile.WriteAllText(temporaryFile, jsonString);
 
 			return new CommandInput
@@ -83,7 +83,7 @@ namespace GameDevWare.Charon.Utils
 		public static CommandInput Json<T>(T value)
 		{
 			var jsonValue = JsonObject.From(value);
-			var temporaryFile = Path.GetTempFileName();
+			var temporaryFile = Path.Combine(Settings.TempPath, Path.GetTempFileName());
 			using (var temporaryFileStream = new FileStream(temporaryFile, FileMode.Create, FileAccess.Write, FileShare.None))
 				jsonValue.Save(temporaryFileStream);
 

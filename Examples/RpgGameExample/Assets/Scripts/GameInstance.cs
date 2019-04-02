@@ -30,6 +30,7 @@ namespace Assets.Scripts
 
 			Debug.Log("Loading game data...");
 
+			// CASE #1: load from data stream (file, network ...)
 			using (var loader = new WWW(pathToGameData))
 			{
 				// loading GameData into memory with WWW class
@@ -42,6 +43,10 @@ namespace Assets.Scripts
 				// reading game data from stream, format is set to JSON
 				this.GameData = new RpgGameData(gameDataStream, RpgGameData.Format.Json);
 			}
+
+			// CASE #2: load from asset at /Assets/Resources
+			//this.GameData = Resources.Load<RpgGameDataAsset>("RpgGameData").GameData;
+			
 
 			Debug.Log("Creating game world...");
 

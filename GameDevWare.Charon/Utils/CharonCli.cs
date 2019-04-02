@@ -27,34 +27,37 @@ using System.Linq;
 using System.Reflection.Emit;
 using System.Text.RegularExpressions;
 using GameDevWare.Charon.Async;
+using GameDevWare.Charon.Packages;
+using GameDevWare.Charon.Packages.Deployment;
 using GameDevWare.Charon.Windows;
+using JetBrains.Annotations;
 using Debug = UnityEngine.Debug;
 using FileMode = System.IO.FileMode;
 
 namespace GameDevWare.Charon.Utils
 {
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	public static class CharonCli
 	{
-		internal static readonly string TempDirectory = Path.Combine(Settings.AppDataPath, "Temp/");
 		internal static readonly Regex MonoVersionRegex = new Regex(@"version (?<v>[0-9]+\.[0-9]+\.[0-9]+)", RegexOptions.Multiline | RegexOptions.IgnoreCase);
 		internal static readonly Version MinimalMonoVersion = new Version(5, 2, 0);
 		public static readonly string CharonLogsDirectory = Path.Combine(Settings.AppDataPath, "Logs");
 
 		internal static Promise<RequirementsCheckResult> CheckRequirementsAsync()
 		{
-			if (String.IsNullOrEmpty(Settings.CharonPath) || !File.Exists(Settings.CharonPath))
+			if (string.IsNullOrEmpty(Settings.CharonExecutablePath) || !File.Exists(Settings.CharonExecutablePath))
 				return Promise.FromResult(RequirementsCheckResult.MissingExecutable);
 
 			var additionalChecks = new List<Promise<RequirementsCheckResult>>();
 			if (RuntimeInformation.IsWindows)
 			{
-				if (DotNetRuntimeInformation.GetVersion() == null && (String.IsNullOrEmpty(MonoRuntimeInformation.MonoPath) ||
+				if (DotNetRuntimeInformation.GetVersion() == null && (string.IsNullOrEmpty(MonoRuntimeInformation.MonoPath) ||
 																	File.Exists(MonoRuntimeInformation.MonoPath) == false))
 					return Promise.FromResult(RequirementsCheckResult.MissingRuntime);
 			}
 			else
 			{
-				if (String.IsNullOrEmpty(MonoRuntimeInformation.MonoPath) || File.Exists(MonoRuntimeInformation.MonoPath) == false)
+				if (string.IsNullOrEmpty(MonoRuntimeInformation.MonoPath) || File.Exists(MonoRuntimeInformation.MonoPath) == false)
 					return Promise.FromResult(RequirementsCheckResult.MissingRuntime);
 
 				additionalChecks.Add(GetMonoVersionAsync().ContinueWith(getMonoVersion =>
@@ -66,7 +69,7 @@ namespace GameDevWare.Charon.Utils
 				}));
 			}
 
-			if (!String.IsNullOrEmpty(Settings.Current.EditorVersion))
+			if (!string.IsNullOrEmpty(Settings.Current.EditorVersion))
 			{
 				additionalChecks.Add(GetVersionAsync().ContinueWith(getCharonVersion =>
 				{
@@ -87,28 +90,28 @@ namespace GameDevWare.Charon.Utils
 
 		internal static string GetDefaultLockFilePath()
 		{
-			var charonDir = Path.GetDirectoryName(Settings.CharonPath);
-			var lockFileName = Path.GetFileNameWithoutExtension(Settings.CharonPath) + ".lock";
+			var charonDir = Path.GetDirectoryName(Settings.CharonExecutablePath);
+			var lockFileName = Path.GetFileNameWithoutExtension(Settings.CharonExecutablePath) + ".lock";
 			// ReSharper disable once AssignNullToNotNullAttribute
 			return Path.GetFullPath(Path.Combine(charonDir, lockFileName));
 		}
 		internal static Promise<Process> Listen(string gameDataPath, string lockFilePath, int port, bool shadowCopy = true, Action<string, float> progressCallback = null)
 		{
-			if (String.IsNullOrEmpty(gameDataPath)) throw new ArgumentException("Value cannot be null or empty.", "gameDataPath");
-			if (String.IsNullOrEmpty(lockFilePath)) throw new ArgumentException("Value cannot be null or empty.", "lockFilePath");
-			if (port <= 0 || port > UInt16.MaxValue) throw new ArgumentOutOfRangeException("port");
+			if (string.IsNullOrEmpty(gameDataPath)) throw new ArgumentException("Value cannot be null or empty.", "gameDataPath");
+			if (string.IsNullOrEmpty(lockFilePath)) throw new ArgumentException("Value cannot be null or empty.", "lockFilePath");
+			if (port <= 0 || port > ushort.MaxValue) throw new ArgumentOutOfRangeException("port");
 
-			var charonPath = Path.GetFullPath(Settings.CharonPath);
+			var charonPath = Path.GetFullPath(Settings.CharonExecutablePath);
 
-			if (File.Exists(gameDataPath) == false) throw new IOException(String.Format("File '{0}' doesn't exists.", gameDataPath));
-			if (File.Exists(charonPath) == false) throw new IOException(String.Format("File '{0}' doesn't exists.", charonPath));
+			if (File.Exists(gameDataPath) == false) throw new IOException(string.Format("File '{0}' doesn't exists.", gameDataPath));
+			if (File.Exists(charonPath) == false) throw new IOException(string.Format("File '{0}' doesn't exists.", charonPath));
 
 			if (shadowCopy)
 			{
 				if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_WINDOW_EDITOR_COPYING_EXECUTABLE, 0.10f);
 
 				var charonMd5 = FileAndPathUtils.ComputeHash(charonPath);
-				var shadowDirectory = Path.GetFullPath(Path.Combine(TempDirectory, charonMd5));
+				var shadowDirectory = Path.GetFullPath(Path.Combine(Settings.TempPath, charonMd5));
 				if (Directory.Exists(shadowDirectory) == false)
 				{
 					if (Settings.Current.Verbose)
@@ -182,7 +185,7 @@ namespace GameDevWare.Charon.Utils
 		}
 		internal static void FindAndEndGracefully(string lockFilePath = null)
 		{
-			if (String.IsNullOrEmpty(lockFilePath))
+			if (string.IsNullOrEmpty(lockFilePath))
 				lockFilePath = GetDefaultLockFilePath();
 
 			if (File.Exists(lockFilePath) == false)
@@ -193,7 +196,7 @@ namespace GameDevWare.Charon.Utils
 				pidStr = new StreamReader(lockFileStream, detectEncodingFromByteOrderMarks: true).ReadToEnd();
 
 			var pid = 0;
-			if (String.IsNullOrEmpty(pidStr) || Int32.TryParse(pidStr, out pid) == false)
+			if (string.IsNullOrEmpty(pidStr) || int.TryParse(pidStr, out pid) == false)
 				return;
 
 			var stopError = default(Exception);
@@ -206,7 +209,7 @@ namespace GameDevWare.Charon.Utils
 			{
 				stopError = endError;
 				if (Settings.Current.Verbose)
-					Debug.LogWarning(String.Format("Failed to get Charon process by id {0}.\r\n{1}", pidStr, endError));
+					Debug.LogWarning(string.Format("Failed to get Charon process by id {0}.\r\n{1}", pidStr, endError));
 			}
 
 			try
@@ -217,7 +220,7 @@ namespace GameDevWare.Charon.Utils
 			catch (Exception lockDeleteError)
 			{
 				stopError = stopError ?? lockDeleteError;
-				Debug.LogWarning(String.Format("Failed to stop running Charon process with id {0}.\r\n{1}", pidStr, stopError));
+				Debug.LogWarning(string.Format("Failed to stop running Charon process with id {0}.\r\n{1}", pidStr, stopError));
 				throw stopError;
 			}
 		}
@@ -235,8 +238,8 @@ namespace GameDevWare.Charon.Utils
 			if (checkResult == RequirementsCheckResult.MissingRuntime)
 				yield return UpdateRuntimeWindow.ShowAsync();
 
-			var currentVersion = default(Version);
-			var charonPath = Path.GetFullPath(Settings.CharonPath);
+			var currentVersion = default(SemanticVersion);
+			var charonPath = Path.GetFullPath(Settings.CharonExecutablePath);
 			var toolName = Path.GetFileNameWithoutExtension(Path.GetFileName(charonPath));
 
 			if (File.Exists(charonPath))
@@ -246,18 +249,18 @@ namespace GameDevWare.Charon.Utils
 				var checkToolsVersion = CharonCli.GetVersionAsync();
 				yield return checkToolsVersion.IgnoreFault();
 
-				currentVersion = checkToolsVersion.HasErrors ? default(Version) : checkToolsVersion.GetResult();
+				currentVersion = checkToolsVersion.HasErrors ? default(SemanticVersion) : checkToolsVersion.GetResult();
 			}
 
 			if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESS_GETTING_AVAILABLE_BUILDS, 0.10f);
 
-			var getBuildsAsync = Updater.GetBuilds(Updater.PRODUCT_CHARON);
+			var getBuildsAsync = PackageManager.GetVersions(PackageManager.PRODUCT_CHARON);
 			yield return getBuildsAsync.IgnoreFault();
 			if (getBuildsAsync.HasErrors)
 			{
 				if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESS_DONE, 1.0f);
 
-				Debug.LogError(String.Format("Failed to get builds list from server. Error: {0}", getBuildsAsync.Error.Unwrap().Message));
+				Debug.LogError(string.Format("Failed to get builds list from server. Error: {0}", getBuildsAsync.Error.Unwrap().Message));
 				yield break;
 			}
 
@@ -270,75 +273,68 @@ namespace GameDevWare.Charon.Utils
 				if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESS_DONE, 1.0f);
 
 				if (Settings.Current.Verbose)
-					Debug.Log(String.Format("No builds of {0} are available.", toolName));
+					Debug.Log(string.Format("No builds of {0} are available.", toolName));
 				yield break;
 			}
 
 			var currentBuild = currentVersion != null ? builds.FirstOrDefault(b => b.Version == currentVersion) : null;
 			var lastVersion = lastBuild.Version;
 			var isMissing = File.Exists(charonPath);
-			var actualHash = isMissing || currentBuild == null ? null : FileAndPathUtils.ComputeHash(charonPath, currentBuild.HashAlgorithm);
-			var isCorrupted = currentBuild != null && String.Equals(currentBuild.Hash, actualHash, StringComparison.OrdinalIgnoreCase) == false;
-			var expectedVersion = String.IsNullOrEmpty(Settings.Current.EditorVersion) ? default(Version) : new Version(Settings.Current.EditorVersion);
+			var hashFileName = currentBuild == null ? null : Path.Combine(Path.Combine(Settings.AppDataPath, currentVersion.ToString()), Path.GetFileName(charonPath) + ".sha1");
+			var actualHash = isMissing || currentBuild == null ? null : FileAndPathUtils.ComputeHash(charonPath, "SHA1");
+			var expectedHash = isMissing || hashFileName == null || File.Exists(hashFileName) == false ? null : File.ReadAllText(hashFileName);
+			var isCorrupted = currentBuild != null && string.Equals(expectedHash, actualHash, StringComparison.OrdinalIgnoreCase) == false;
+			var expectedVersion = string.IsNullOrEmpty(Settings.Current.EditorVersion) ? default(SemanticVersion) : new SemanticVersion(Settings.Current.EditorVersion);
 
 			if (!isMissing && !isCorrupted && expectedVersion == currentVersion && currentVersion != null)
 			{
 				if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESS_DONE, 1.0f);
 
 				if (Settings.Current.Verbose)
-					Debug.Log(String.Format("{0} version '{1}' is expected and file is not corrupted.", toolName, currentVersion));
+					Debug.Log(string.Format("{0} version '{1}' is expected and file hash is matching.", toolName, currentVersion));
 				yield break;
 			}
 
-			var versionToDownload = expectedVersion ?? lastVersion;
-			if (buildsByVersion.ContainsKey(versionToDownload) == false)
+			var versionToDeploy = expectedVersion ?? lastVersion;
+			if (buildsByVersion.ContainsKey(versionToDeploy) == false)
 			{
 				if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESS_DONE, 1.0f);
 
-				Debug.LogError(String.Format("Build of {0} with version '{1}' is not available to download.", toolName, versionToDownload));
+				Debug.LogError(string.Format("Package of {0} with version '{1}' is not available to download.", toolName, versionToDeploy));
 				yield break;
 			}
 
-			if (progressCallback != null) progressCallback(String.Format(Resources.UI_UNITYPLUGIN_PROGRESS_DOWNLOADINGS, 0, 0), 0.10f);
+			if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_PROGRESS_DOWNLOADING, 0, 0, PackageManager.PRODUCT_CHARON), 0.10f);
 
-			var downloadPath = Path.GetTempFileName();
-			var downloadAsync = Updater.DownloadBuild(Updater.PRODUCT_CHARON, versionToDownload, downloadPath, progressCallback);
-			yield return downloadAsync.IgnoreFault();
-			if (downloadAsync.HasErrors)
+			var deployAction = new CharonDeploymentAction(versionToDeploy, progressCallback);
+			var prepareAsync = deployAction.Prepare();
+			yield return prepareAsync.IgnoreFault();
+			
+			if (prepareAsync.HasErrors)
 			{
 				if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESS_DONE, 1.0f);
 
-				Debug.LogError(String.Format("Failed to download build of {0} with version '{1}'.{2}{3}", toolName, versionToDownload, Environment.NewLine, downloadAsync.Error.Unwrap()));
+				Debug.LogError(string.Format("Failed to download package of {0} with version '{1}'.{2}{3}", toolName, versionToDeploy, Environment.NewLine, prepareAsync.Error.Unwrap()));
+
+				deployAction.Complete();
 				yield break;
 			}
 
-			GameDataEditorWindow.FindAllAndClose();
+			var deployAsync = deployAction.Complete();
+			yield return deployAsync.IgnoreFault();
 
-			try
+			if (deployAsync.HasErrors)
 			{
-				if (File.Exists(charonPath))
-					File.Delete(charonPath);
-				if (Directory.Exists(charonPath))
-					Directory.Delete(charonPath);
+				if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESS_DONE, 1.0f);
 
-				var toolsDirectory = Path.GetDirectoryName(charonPath) ?? "";
-				if (Directory.Exists(toolsDirectory) == false)
-					Directory.CreateDirectory(toolsDirectory);
+				Debug.LogError(string.Format("Failed to deploy package of {0} with version '{1}'.{2}{3}", toolName, versionToDeploy, Environment.NewLine, deployAsync.Error.Unwrap()));
+				
+				deployAction.Complete();
+				yield break;
+			}
 
-				File.Move(downloadPath, charonPath);
-
-				UpdateCharonConfig();
-			}
-			catch (Exception moveError)
-			{
-				Debug.LogWarning(String.Format("Failed to move downloaded file from '{0}' to {1}. {2}.", downloadPath, charonPath, moveError.Message));
-				Debug.LogError(moveError);
-			}
-			finally
-			{
-				try { if (File.Exists(downloadPath)) File.Delete(downloadPath); }
-				catch { /* ignore */ }
-			}
+			// cleanup resources
+			deployAction.Complete();
 
 			if (File.Exists(charonPath))
 			{
@@ -346,13 +342,13 @@ namespace GameDevWare.Charon.Utils
 
 				var checkToolsVersion = CharonCli.GetVersionAsync();
 				yield return checkToolsVersion.IgnoreFault();
-				currentVersion = checkToolsVersion.HasErrors ? default(Version) : checkToolsVersion.GetResult();
+				currentVersion = checkToolsVersion.HasErrors ? default(SemanticVersion) : checkToolsVersion.GetResult();
 			}
 
 			Settings.Current.EditorVersion = currentVersion != null ? currentVersion.ToString() : null;
 			Settings.Current.Save();
 
-			Debug.Log(String.Format("{1} version is '{0}'. Download is complete.", currentVersion, Path.GetFileName(charonPath)));
+			Debug.Log(string.Format("{1} version is '{0}'. Update is completed.", currentVersion, Path.GetFileName(charonPath)));
 
 			if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESS_DONE, 1.0f);
 		}
@@ -364,7 +360,7 @@ namespace GameDevWare.Charon.Utils
 			if (input == null) throw new ArgumentNullException("input");
 			if (output == null) throw new ArgumentNullException("output");
 
-			if (File.Exists(gameDataPath) == false) throw new IOException(String.Format("GameData file '{0}' doesn't exists.", gameDataPath));
+			if (File.Exists(gameDataPath) == false) throw new IOException(string.Format("GameData file '{0}' doesn't exists.", gameDataPath));
 
 			var runTask = RunInternal
 			(
@@ -385,7 +381,7 @@ namespace GameDevWare.Charon.Utils
 
 		public static Promise<RunResult> UpdateDocumentAsync(string gameDataPath, string entity, CommandInput input, CommandOutput output)
 		{
-			return UpdateDocumentAsync(gameDataPath, entity, String.Empty, input, output);
+			return UpdateDocumentAsync(gameDataPath, entity, string.Empty, input, output);
 		}
 		public static Promise<RunResult> UpdateDocumentAsync(string gameDataPath, string entity, string id, CommandInput input, CommandOutput output)
 		{
@@ -395,7 +391,7 @@ namespace GameDevWare.Charon.Utils
 			if (input == null) throw new ArgumentNullException("input");
 			if (output == null) throw new ArgumentNullException("output");
 
-			if (File.Exists(gameDataPath) == false) throw new IOException(String.Format("GameData file '{0}' doesn't exists.", gameDataPath));
+			if (File.Exists(gameDataPath) == false) throw new IOException(string.Format("GameData file '{0}' doesn't exists.", gameDataPath));
 
 			var runTask = RunInternal
 			(
@@ -418,7 +414,7 @@ namespace GameDevWare.Charon.Utils
 
 		public static Promise<RunResult> DeleteDocumentAsync(string gameDataPath, string entity, CommandInput input, CommandOutput output)
 		{
-			return DeleteDocumentAsync(gameDataPath, entity, String.Empty, input, output);
+			return DeleteDocumentAsync(gameDataPath, entity, string.Empty, input, output);
 		}
 		public static Promise<RunResult> DeleteDocumentAsync(string gameDataPath, string entity, string id, CommandInput input, CommandOutput output)
 		{
@@ -428,7 +424,7 @@ namespace GameDevWare.Charon.Utils
 			if (input == null) throw new ArgumentNullException("input");
 			if (output == null) throw new ArgumentNullException("output");
 
-			if (File.Exists(gameDataPath) == false) throw new IOException(String.Format("GameData file '{0}' doesn't exists.", gameDataPath));
+			if (File.Exists(gameDataPath) == false) throw new IOException(string.Format("GameData file '{0}' doesn't exists.", gameDataPath));
 
 			var runTask = RunInternal
 			(
@@ -455,7 +451,7 @@ namespace GameDevWare.Charon.Utils
 			if (id == null) throw new ArgumentNullException("id");
 			if (output == null) throw new ArgumentNullException("output");
 
-			if (File.Exists(gameDataPath) == false) throw new IOException(String.Format("GameData file '{0}' doesn't exists.", gameDataPath));
+			if (File.Exists(gameDataPath) == false) throw new IOException(string.Format("GameData file '{0}' doesn't exists.", gameDataPath));
 
 			var runTask = RunInternal
 			(
@@ -482,7 +478,7 @@ namespace GameDevWare.Charon.Utils
 			if (input == null) throw new ArgumentNullException("input");
 
 			if (Enum.IsDefined(typeof(ImportMode), mode) == false) throw new ArgumentException("Unknown import mode.", "mode");
-			if (File.Exists(gameDataPath) == false) throw new IOException(String.Format("GameData file '{0}' doesn't exists.", gameDataPath));
+			if (File.Exists(gameDataPath) == false) throw new IOException(string.Format("GameData file '{0}' doesn't exists.", gameDataPath));
 
 			var runTask = RunInternal
 			(
@@ -520,7 +516,7 @@ namespace GameDevWare.Charon.Utils
 			if (output == null) throw new ArgumentNullException("output");
 
 			if (Enum.IsDefined(typeof(ExportMode), mode) == false) throw new ArgumentException("Unknown export mode.", "mode");
-			if (File.Exists(gameDataPath) == false) throw new IOException(String.Format("GameData file '{0}' doesn't exists.", gameDataPath));
+			if (File.Exists(gameDataPath) == false) throw new IOException(string.Format("GameData file '{0}' doesn't exists.", gameDataPath));
 
 			var runTask = RunInternal
 			(
@@ -543,7 +539,7 @@ namespace GameDevWare.Charon.Utils
 			if (gameDataPath == null) throw new ArgumentNullException("gameDataPath");
 			if (output == null) throw new ArgumentNullException("output");
 
-			if (File.Exists(gameDataPath) == false) throw new IOException(String.Format("GameData file '{0}' doesn't exists.", gameDataPath));
+			if (File.Exists(gameDataPath) == false) throw new IOException(string.Format("GameData file '{0}' doesn't exists.", gameDataPath));
 
 			var runTask = RunInternal
 			(
@@ -579,7 +575,7 @@ namespace GameDevWare.Charon.Utils
 			if (gameDataPath == null) throw new ArgumentNullException("gameDataPath");
 			if (output == null) throw new ArgumentNullException("output");
 
-			if (File.Exists(gameDataPath) == false) throw new IOException(String.Format("GameData file '{0}' doesn't exists.", gameDataPath));
+			if (File.Exists(gameDataPath) == false) throw new IOException(string.Format("GameData file '{0}' doesn't exists.", gameDataPath));
 
 			var runTask = RunInternal
 			(
@@ -607,7 +603,7 @@ namespace GameDevWare.Charon.Utils
 			if (@namespace == null) throw new ArgumentNullException("namespace");
 			if (outputEncoding == null) throw new ArgumentNullException("outputEncoding");
 
-			if (File.Exists(gameDataPath) == false) throw new IOException(String.Format("GameData file '{0}' doesn't exists.", gameDataPath));
+			if (File.Exists(gameDataPath) == false) throw new IOException(string.Format("GameData file '{0}' doesn't exists.", gameDataPath));
 
 			var runTask = RunInternal
 			(
@@ -625,6 +621,7 @@ namespace GameDevWare.Charon.Utils
 			return runTask;
 		}
 
+		[Obsolete("Deprecated. Will be removed in next version.", true)]
 		public static Promise<RunResult> GenerateUnityCSharpCodeAsync(string gameDataPath, string outputFilePath,
 			CodeGenerationOptions options = CodeGenerationOptions.HideReferences | CodeGenerationOptions.HideLocalizedStrings,
 			string documentClassName = "Document", string apiClassName = "GameData",
@@ -638,7 +635,7 @@ namespace GameDevWare.Charon.Utils
 			if (@namespace == null) throw new ArgumentNullException("namespace");
 			if (outputEncoding == null) throw new ArgumentNullException("outputEncoding");
 
-			if (File.Exists(gameDataPath) == false) throw new IOException(String.Format("GameData file '{0}' doesn't exists.", gameDataPath));
+			if (File.Exists(gameDataPath) == false) throw new IOException(string.Format("GameData file '{0}' doesn't exists.", gameDataPath));
 
 			var runTask = RunInternal
 			(
@@ -658,9 +655,9 @@ namespace GameDevWare.Charon.Utils
 
 		internal static Promise<RunResult> DumpTemplatesAsync(string outputDirectory)
 		{
-			if (String.IsNullOrEmpty(outputDirectory)) throw new ArgumentException("Value cannot be null or empty.", "outputDirectory");
+			if (string.IsNullOrEmpty(outputDirectory)) throw new ArgumentException("Value cannot be null or empty.", "outputDirectory");
 
-			if (Directory.Exists(outputDirectory) == false) throw new IOException(String.Format("Directory '{0}' doesn't exists.", outputDirectory));
+			if (Directory.Exists(outputDirectory) == false) throw new IOException(string.Format("Directory '{0}' doesn't exists.", outputDirectory));
 
 			var runTask = RunInternal
 			(
@@ -677,7 +674,7 @@ namespace GameDevWare.Charon.Utils
 		}
 		internal static Promise<RunResult> ReportIssueAsync(string reporter, IssueType type, string description, string[] attachments)
 		{
-			if (String.IsNullOrEmpty(reporter)) throw new ArgumentException("Value cannot be null or empty.", "reporter");
+			if (string.IsNullOrEmpty(reporter)) throw new ArgumentException("Value cannot be null or empty.", "reporter");
 			if (description == null) throw new ArgumentNullException("description");
 			if (attachments == null) throw new ArgumentNullException("attachments");
 
@@ -697,9 +694,9 @@ namespace GameDevWare.Charon.Utils
 
 		public static Promise<Version> GetGameDataVersionAsync(string gameDataPath)
 		{
-			if (String.IsNullOrEmpty(gameDataPath)) throw new ArgumentException("Value cannot be null or empty.", "gameDataPath");
+			if (string.IsNullOrEmpty(gameDataPath)) throw new ArgumentException("Value cannot be null or empty.", "gameDataPath");
 
-			if (File.Exists(gameDataPath) == false) throw new IOException(String.Format("GameData file '{0}' doesn't exists.", gameDataPath));
+			if (File.Exists(gameDataPath) == false) throw new IOException(string.Format("GameData file '{0}' doesn't exists.", gameDataPath));
 
 			var runTask = RunInternal("DATA", "VERSION", gameDataPath);
 			return runTask.ContinueWith(r =>
@@ -709,13 +706,13 @@ namespace GameDevWare.Charon.Utils
 			});
 		}
 
-		internal static Promise<Version> GetVersionAsync()
+		internal static Promise<SemanticVersion> GetVersionAsync()
 		{
 			var runTask = RunInternal("VERSION");
 			return runTask.ContinueWith(r =>
 			{
 				using (var result = r.GetResult())
-					return new Version(result.GetOutputData());
+					return new SemanticVersion(result.GetOutputData());
 			});
 		}
 
@@ -730,7 +727,7 @@ namespace GameDevWare.Charon.Utils
 			});
 			return checkMonoRuntimeVersion.ContinueWith(runTask =>
 			{
-				var checkMonoRuntimeVersionOutput = String.Empty;
+				var checkMonoRuntimeVersionOutput = string.Empty;
 				if (runTask.HasErrors == false)
 					checkMonoRuntimeVersionOutput = runTask.GetResult().GetOutputData() ?? "";
 				if (runTask.HasErrors || MonoVersionRegex.IsMatch(checkMonoRuntimeVersionOutput) == false)
@@ -750,36 +747,6 @@ namespace GameDevWare.Charon.Utils
 			});
 		}
 
-		internal static void UpdateCharonConfig()
-		{
-			var charonPath = Path.GetFullPath(Settings.CharonPath);
-			// ensure config file
-			var charonConfigPath = charonPath + ".config";
-			var charonConfigDir = Path.GetDirectoryName(charonPath);
-			if (File.Exists(charonConfigPath))
-				File.Delete(charonConfigPath);
-
-			if (string.IsNullOrEmpty(charonConfigDir) == false && Directory.Exists(charonConfigDir) == false)
-				Directory.CreateDirectory(charonConfigDir);
-
-			if (Settings.Current.Verbose)
-			{
-				Debug.Log(string.Format("Updating Charon configuration file at '{0}'.", charonConfigPath));
-			}
-
-			var embeddedConfigStream = typeof(Menu).Assembly.GetManifestResourceStream("GameDevWare.Charon.Charon.exe.config");
-			if (embeddedConfigStream != null)
-			{
-				using (embeddedConfigStream)
-				using (var configFileStream = File.Create(charonConfigPath, 8 * 1024, FileOptions.SequentialScan))
-				{
-					var buffer = new byte[8 * 1024];
-					var read = 0;
-					while ((read = embeddedConfigStream.Read(buffer, 0, buffer.Length)) > 0)
-						configFileStream.Write(buffer, 0, read);
-				}
-			}
-		}
 		internal static void CleanUpLogsDirectory()
 		{
 			if (string.IsNullOrEmpty(CharonLogsDirectory) || Directory.Exists(CharonLogsDirectory) == false)
@@ -815,9 +782,9 @@ namespace GameDevWare.Charon.Utils
 		{
 			try
 			{
-				var charonPath = Settings.CharonPath;
+				var charonPath = Settings.CharonExecutablePath;
 
-				if (File.Exists(charonPath) == false) throw new IOException(String.Format("File '{0}' doesn't exists.", charonPath));
+				if (File.Exists(charonPath) == false) throw new IOException(string.Format("File '{0}' doesn't exists.", charonPath));
 
 				arguments = arguments.Concat(new[] { Settings.Current.Verbose ? "--verbose" : "" }).ToArray();
 
@@ -841,7 +808,7 @@ namespace GameDevWare.Charon.Utils
 				{
 					var result = t.GetResult();
 					if (result.ExitCode != 0)
-						throw new InvalidOperationException(result.GetErrorData() ?? String.Format("An error occurred. Process exited with code: {0}.", result.ExitCode));
+						throw new InvalidOperationException(result.GetErrorData() ?? string.Format("An error occurred. Process exited with code: {0}.", result.ExitCode));
 					else
 						return result;
 				});
@@ -861,7 +828,7 @@ namespace GameDevWare.Charon.Utils
 			// enumerate loaded assemblies by name and fullname
 			var loadedAssemblies = (
 				from assembly in AppDomain.CurrentDomain.GetAssemblies()
-				where assembly is AssemblyBuilder == false && String.IsNullOrEmpty(assembly.Location) == false
+				where assembly is AssemblyBuilder == false && string.IsNullOrEmpty(assembly.Location) == false
 				let assemblyName = assembly.GetName(false)
 				from name in new[] { assemblyName.Name, assemblyName.FullName }
 				select new { name, assembly.Location }

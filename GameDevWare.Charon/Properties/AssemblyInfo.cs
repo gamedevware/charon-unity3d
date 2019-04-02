@@ -36,6 +36,6 @@ using UnityEngine;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion("2019.1.0.0")]
-[assembly: AssemblyFileVersion("2019.1.0.0")]
+[assembly: AssemblyVersion("2019.1.2.0")]
+[assembly: AssemblyFileVersion("2019.1.2.0")]
 [assembly: AssemblyIsEditorAssembly]
