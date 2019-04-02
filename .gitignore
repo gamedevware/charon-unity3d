@@ -23,12 +23,12 @@ obj/
 packages/
 AssetStoreTools*
 
-GameDevWare.Charon.Unity*/Assembly*
-GameDevWare.Charon.Unity*/Library/
-GameDevWare.Charon.Unity*/Temp/
-GameDevWare.Charon.Unity*/ProjectSettings/
-GameDevWare.Charon.Unity*/Assets/Plugins*
-Examples/RpgGameExample/Assembly*
-Examples/RpgGameExample/Library/
-Examples/RpgGameExample/Temp/
-Examples/RpgGameExample/ProjectSettings/
+src/GameDevWare.Charon.Unity*/Assembly*
+src/GameDevWare.Charon.Unity*/Library/
+src/GameDevWare.Charon.Unity*/Temp/
+src/GameDevWare.Charon.Unity*/ProjectSettings/
+src/GameDevWare.Charon.Unity*/Assets/Plugins*
+example/RpgGame/Assembly*
+example/RpgGame/Library/
+example/RpgGame/Temp/
+example/RpgGame/ProjectSettings/
