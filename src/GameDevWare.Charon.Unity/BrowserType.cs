@@ -17,7 +17,7 @@
     along with this program.  If not, see http://www.gnu.org/licenses.
 */
 
-namespace GameDevWare.Charon
+namespace GameDevWare.Charon.Unity
 {
 	internal enum BrowserType
 	{

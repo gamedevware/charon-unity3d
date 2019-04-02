@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace GameDevWare.Charon.Async
+namespace GameDevWare.Charon.Unity.Async
 {
 	public partial class Promise : IAsyncResult, IDisposable
 	{

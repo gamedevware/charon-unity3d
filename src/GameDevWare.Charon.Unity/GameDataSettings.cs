@@ -19,12 +19,12 @@
 
 using System;
 using System.IO;
-using GameDevWare.Charon.Json;
-using GameDevWare.Charon.Utils;
+using GameDevWare.Charon.Unity.Json;
+using GameDevWare.Charon.Unity.Utils;
 using UnityEditor;
 using UnityEngine;
 
-namespace GameDevWare.Charon
+namespace GameDevWare.Charon.Unity
 {
 	internal sealed class GameDataSettings
 	{

@@ -20,9 +20,9 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using GameDevWare.Charon.Async;
+using GameDevWare.Charon.Unity.Async;
 
-namespace GameDevWare.Charon.Utils
+namespace GameDevWare.Charon.Unity.Utils
 {
 	internal static class ExceptionUtils
     {

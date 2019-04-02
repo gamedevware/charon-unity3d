@@ -26,15 +26,15 @@ using System.IO;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text.RegularExpressions;
-using GameDevWare.Charon.Async;
-using GameDevWare.Charon.Packages;
-using GameDevWare.Charon.Packages.Deployment;
-using GameDevWare.Charon.Windows;
+using GameDevWare.Charon.Unity.Async;
+using GameDevWare.Charon.Unity.Packages;
+using GameDevWare.Charon.Unity.Packages.Deployment;
+using GameDevWare.Charon.Unity.Windows;
 using JetBrains.Annotations;
 using Debug = UnityEngine.Debug;
 using FileMode = System.IO.FileMode;
 
-namespace GameDevWare.Charon.Utils
+namespace GameDevWare.Charon.Unity.Utils
 {
 	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	public static class CharonCli

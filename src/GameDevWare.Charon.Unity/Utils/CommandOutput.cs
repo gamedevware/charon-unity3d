@@ -20,10 +20,10 @@
 using System;
 using System.IO;
 using System.Text;
-using GameDevWare.Charon.Async;
-using GameDevWare.Charon.Json;
+using GameDevWare.Charon.Unity.Async;
+using GameDevWare.Charon.Unity.Json;
 
-namespace GameDevWare.Charon.Utils
+namespace GameDevWare.Charon.Unity.Utils
 {
 	public class CommandOutput
 	{

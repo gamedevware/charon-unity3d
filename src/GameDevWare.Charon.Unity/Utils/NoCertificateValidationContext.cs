@@ -2,7 +2,7 @@
 using System.Net;
 using System.Net.Security;
 
-namespace GameDevWare.Charon.Utils
+namespace GameDevWare.Charon.Unity.Utils
 {
 	internal sealed class NoCertificateValidationContext : IDisposable
 	{

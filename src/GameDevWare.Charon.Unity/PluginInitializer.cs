@@ -1,10 +1,10 @@
 ﻿using System;
-using GameDevWare.Charon.Utils;
-using GameDevWare.Charon.Windows;
+using GameDevWare.Charon.Unity.Utils;
+using GameDevWare.Charon.Unity.Windows;
 using UnityEditor;
 using UnityEngine;
 
-namespace GameDevWare.Charon
+namespace GameDevWare.Charon.Unity
 {
 	[InitializeOnLoad]
 	internal static class PluginInitializer

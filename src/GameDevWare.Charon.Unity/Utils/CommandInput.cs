@@ -19,12 +19,12 @@
 
 using System;
 using System.IO;
-using GameDevWare.Charon.Async;
-using GameDevWare.Charon.Json;
+using GameDevWare.Charon.Unity.Async;
+using GameDevWare.Charon.Unity.Json;
 using UnityEngine;
 using IOFile = System.IO.File;
 
-namespace GameDevWare.Charon.Utils
+namespace GameDevWare.Charon.Unity.Utils
 {
 	public class CommandInput : IDisposable
 	{

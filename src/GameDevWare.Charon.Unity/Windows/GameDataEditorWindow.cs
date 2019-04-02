@@ -21,17 +21,16 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
-using GameDevWare.Charon.Async;
-using GameDevWare.Charon.Utils;
+using GameDevWare.Charon.Unity.Async;
+using GameDevWare.Charon.Unity.Utils;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEngine;
-
 using Debug = UnityEngine.Debug;
 
 // ReSharper disable InconsistentNaming
 
-namespace GameDevWare.Charon.Windows
+namespace GameDevWare.Charon.Unity.Windows
 {
 	internal class GameDataEditorWindow : WebViewEditorWindow, IHasCustomMenu
 	{

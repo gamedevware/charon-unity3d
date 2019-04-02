@@ -20,7 +20,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace GameDevWare.Charon.Async
+namespace GameDevWare.Charon.Unity.Async
 {
 	partial class Promise
 	{

@@ -22,9 +22,9 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Text;
-using GameDevWare.Charon.Async;
+using GameDevWare.Charon.Unity.Async;
 
-namespace GameDevWare.Charon.Utils
+namespace GameDevWare.Charon.Unity.Utils
 {
 	internal static class CommandLine
 	{

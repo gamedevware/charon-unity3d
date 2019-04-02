@@ -24,7 +24,7 @@ using System.Threading;
 
 #pragma warning disable 420
 
-namespace GameDevWare.Charon.Utils
+namespace GameDevWare.Charon.Unity.Utils
 {
 	public sealed class RunResult : IDisposable
 	{

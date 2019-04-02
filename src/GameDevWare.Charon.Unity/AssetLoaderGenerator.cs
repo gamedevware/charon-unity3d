@@ -7,7 +7,7 @@
 //     the code is regenerated.
 // </auto-generated>
 // ------------------------------------------------------------------------------
-namespace GameDevWare.Charon
+namespace GameDevWare.Charon.Unity
 {
     using System;
     

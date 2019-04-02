@@ -19,7 +19,7 @@
 
 using System;
 
-namespace GameDevWare.Charon.Utils
+namespace GameDevWare.Charon.Unity.Utils
 {
 	[Flags]
 	public enum CodeGenerationOptions

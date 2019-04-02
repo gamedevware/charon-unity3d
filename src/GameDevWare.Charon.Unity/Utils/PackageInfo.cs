@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GameDevWare.Charon.Utils
+namespace GameDevWare.Charon.Unity.Utils
 {
 	internal class PackageInfo : IComparable, IComparable<PackageInfo>
 	{

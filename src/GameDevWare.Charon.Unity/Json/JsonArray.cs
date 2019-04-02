@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace GameDevWare.Charon.Json
+namespace GameDevWare.Charon.Unity.Json
 {
 	internal class JsonArray : JsonValue, IList<JsonValue>
 	{

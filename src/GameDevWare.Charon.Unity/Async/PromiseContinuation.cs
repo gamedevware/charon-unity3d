@@ -17,7 +17,7 @@
     along with this program.  If not, see http://www.gnu.org/licenses.
 */
 
-namespace GameDevWare.Charon.Async
+namespace GameDevWare.Charon.Unity.Async
 {
 	public delegate void ActionContinuation(Promise promise);
 	public delegate void ActionContinuation<PromiseT>(Promise<PromiseT> promise);

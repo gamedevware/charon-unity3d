@@ -18,15 +18,14 @@
 */
 
 using System;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
-using GameDevWare.Charon.Json;
-using GameDevWare.Charon.Utils;
+using GameDevWare.Charon.Unity.Json;
+using GameDevWare.Charon.Unity.Utils;
 using UnityEngine;
 
-namespace GameDevWare.Charon
+namespace GameDevWare.Charon.Unity
 {
 	[Serializable]
 	internal class Settings

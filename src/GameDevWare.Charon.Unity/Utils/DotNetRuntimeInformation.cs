@@ -21,7 +21,7 @@ using System;
 using System.Globalization;
 using Microsoft.Win32;
 
-namespace GameDevWare.Charon.Utils
+namespace GameDevWare.Charon.Unity.Utils
 {
 	internal static class DotNetRuntimeInformation
 	{

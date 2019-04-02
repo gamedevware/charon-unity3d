@@ -24,10 +24,10 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Mime;
-using GameDevWare.Charon.Async;
-using GameDevWare.Charon.Json;
+using GameDevWare.Charon.Unity.Async;
+using GameDevWare.Charon.Unity.Json;
 
-namespace GameDevWare.Charon.Utils
+namespace GameDevWare.Charon.Unity.Utils
 {
 	internal static class HttpUtils
 	{

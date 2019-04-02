@@ -23,9 +23,9 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.Serialization;
-using GameDevWare.Charon.Utils;
+using GameDevWare.Charon.Unity.Utils;
 
-namespace GameDevWare.Charon.Async
+namespace GameDevWare.Charon.Unity.Async
 {
 	[Serializable, DebuggerDisplay("Count = {InnerExceptions.Count}")]
 	internal class AggregateException : Exception

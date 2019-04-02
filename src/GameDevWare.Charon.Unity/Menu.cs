@@ -22,18 +22,16 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
-using GameDevWare.Charon.Async;
-using GameDevWare.Charon.Json;
-using GameDevWare.Charon.Packages.Nuget;
-using GameDevWare.Charon.Utils;
-using GameDevWare.Charon.Windows;
+using GameDevWare.Charon.Unity.Async;
+using GameDevWare.Charon.Unity.Json;
+using GameDevWare.Charon.Unity.Utils;
+using GameDevWare.Charon.Unity.Windows;
 using UnityEditor;
 using UnityEngine;
 
 // ReSharper disable UnusedMember.Local
-namespace GameDevWare.Charon
+namespace GameDevWare.Charon.Unity
 {
 	internal static class Menu
 	{

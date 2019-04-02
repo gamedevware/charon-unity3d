@@ -21,7 +21,7 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 
-namespace GameDevWare.Charon.Utils
+namespace GameDevWare.Charon.Unity.Utils
 {
 	internal static class ProcessExtensions
 	{

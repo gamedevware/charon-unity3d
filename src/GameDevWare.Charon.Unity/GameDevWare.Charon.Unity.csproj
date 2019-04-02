@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net35</TargetFramework>
+		<Version>2019.1.3</Version>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+		<Authors>Denis Zykov</Authors>
+		<Company>GameDevWare</Company>
+		<Copyright>2019 @ GameDevWare, Denis Zykov</Copyright>
+		<LangVersion>latest</LangVersion>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+		<Description>Charon is a software for managing game's data. It is used for creating data structure, editing data and accessing this data in the code.
+
+# Documentation
+https://gamedevware.com/docs/pages/viewpage.action?pageId=1736708</Description>
+		<PackageReleaseNotes>No release notes specified.</PackageReleaseNotes>
+		<PackageProjectUrl>https://gamedevware.com/w/view/product/charon</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/deniszykov/charon-unity3d</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)'=='Release'">
+		<DefineConstants>RELEASE</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
+		<DefineConstants>DEBUG;TRACE</DefineConstants>
+	</PropertyGroup>
+	<ItemGroup>
+	  <None Remove="Charon.exe.config" />
+	</ItemGroup>
+	<ItemGroup>
+	  <EmbeddedResource Include="Charon.exe.config" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Reference Include="UnityEditor">
+	    <HintPath>..\..\..\..\..\apps\unity\Editor\Data\Managed\UnityEditor.dll</HintPath>
+	  </Reference>
+	  <Reference Include="UnityEngine">
+	    <HintPath>..\..\..\..\..\apps\unity\Editor\Data\Managed\UnityEngine.dll</HintPath>
+	  </Reference>
+	</ItemGroup>
+	<ItemGroup>
+		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Compile Update="AssetLoaderGenerator.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>AssetLoaderGenerator.tt</DependentUpon>
+	  </Compile>
+	</ItemGroup> 
+	<ItemGroup>
+	  <None Update="AssetLoaderGenerator.tt">
+	    <Generator>TextTemplatingFilePreprocessor</Generator>
+	    <LastGenOutput>AssetLoaderGenerator.cs</LastGenOutput>
+	  </None>
+	</ItemGroup> 
+	<ItemGroup>
+	  <Folder Include="Properties\" />
+	</ItemGroup>
+
+	<Target Name="ReadPackageMetadataromFile" BeforeTargets="GenerateNuspec">
+		<ItemGroup>
+			<ReleaseNotesFile Include="..\..\ReleaseNotes.txt" />
+		</ItemGroup>
+		<ReadLinesFromFile File="@(ReleaseNotesFile)">
+			<Output TaskParameter="Lines" ItemName="PackageReleaseNotesLines" />
+		</ReadLinesFromFile>
+		<CreateProperty Value="@(PackageReleaseNotesLines->'%(Identity)', '%0D%0A')">
+			<Output PropertyName="PackageReleaseNotes" TaskParameter="Value" />
+		</CreateProperty>
+	</Target>
+	
+  <Target Name="AfterBuild">
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../GameDevWare.Charon.Unity.5.4/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+    <Copy SourceFiles="bin\$(Configuration)\$(AssemblyName).xml" DestinationFolder="$(ProjectDir)../GameDevWare.Charon.Unity.5.4/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../GameDevWare.Charon.Unity.2017/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+    <Copy SourceFiles="bin\$(Configuration)\$(AssemblyName).xml" DestinationFolder="$(ProjectDir)../GameDevWare.Charon.Unity.2017/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../../example/RpgGame/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+    <Copy SourceFiles="bin\$(Configuration)\$(AssemblyName).xml" DestinationFolder="$(ProjectDir)../../example/RpgGame/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+  </Target>
+</Project>

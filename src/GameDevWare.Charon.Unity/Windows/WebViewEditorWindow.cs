@@ -19,14 +19,13 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Reflection;
-using GameDevWare.Charon.Async;
-using GameDevWare.Charon.Utils;
+using GameDevWare.Charon.Unity.Async;
+using GameDevWare.Charon.Unity.Utils;
 using UnityEditor;
 using UnityEngine;
 
-namespace GameDevWare.Charon.Windows
+namespace GameDevWare.Charon.Unity.Windows
 {
 	internal abstract class WebViewEditorWindow : EditorWindow
 	{

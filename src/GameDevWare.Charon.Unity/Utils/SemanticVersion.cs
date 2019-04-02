@@ -13,12 +13,13 @@
    See the License for the specific language governing permissions and
 limitations under the License.
  */
+
 using System;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace GameDevWare.Charon.Utils
+namespace GameDevWare.Charon.Unity.Utils
 {
 	/// <summary>
 	///     A hybrid implementation of SemVer that supports semantic versioning as described at http://semver.org while not

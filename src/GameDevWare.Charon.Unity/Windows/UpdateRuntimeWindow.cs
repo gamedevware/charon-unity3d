@@ -21,14 +21,14 @@ using System;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using GameDevWare.Charon.Async;
-using GameDevWare.Charon.Utils;
+using GameDevWare.Charon.Unity.Async;
+using GameDevWare.Charon.Unity.Utils;
 using UnityEditor;
 using UnityEngine;
-using Coroutine = GameDevWare.Charon.Async.Coroutine;
+using Coroutine = GameDevWare.Charon.Unity.Async.Coroutine;
 
 // ReSharper disable UnusedMember.Local
-namespace GameDevWare.Charon.Windows
+namespace GameDevWare.Charon.Unity.Windows
 {
 	internal class UpdateRuntimeWindow : EditorWindow
 	{

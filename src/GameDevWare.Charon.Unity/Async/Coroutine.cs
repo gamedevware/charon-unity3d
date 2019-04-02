@@ -20,11 +20,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using GameDevWare.Charon.Utils;
+using GameDevWare.Charon.Unity.Utils;
 using UnityEditor;
 using UnityEngine;
 
-namespace GameDevWare.Charon.Async
+namespace GameDevWare.Charon.Unity.Async
 {
 	internal class Coroutine : Coroutine<object>
 	{

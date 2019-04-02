@@ -21,12 +21,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using GameDevWare.Charon.Async;
-using GameDevWare.Charon.Utils;
+using GameDevWare.Charon.Unity.Async;
+using GameDevWare.Charon.Unity.Utils;
 using UnityEditor;
 using UnityEngine;
 
-namespace GameDevWare.Charon
+namespace GameDevWare.Charon.Unity
 {
 	internal class ChangeHooks : AssetPostprocessor
 	{

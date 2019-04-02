@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GameDevWare.Charon.Json
+namespace GameDevWare.Charon.Unity.Json
 {
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
 	public class JsonMemberAttribute : Attribute

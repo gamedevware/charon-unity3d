@@ -23,7 +23,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 
-namespace GameDevWare.Charon.Utils
+namespace GameDevWare.Charon.Unity.Utils
 {
 	public sealed class RunOptions
 	{

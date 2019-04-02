@@ -5,10 +5,9 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using JsonPair = System.Collections.Generic.KeyValuePair<string, GameDevWare.Charon.Unity.Json.JsonValue>;
 
-using JsonPair = System.Collections.Generic.KeyValuePair<string, GameDevWare.Charon.Json.JsonValue>;
-
-namespace GameDevWare.Charon.Json
+namespace GameDevWare.Charon.Unity.Json
 {
 	internal abstract class JsonValue : IEnumerable
 	{

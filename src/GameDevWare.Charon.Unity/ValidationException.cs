@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace GameDevWare.Charon
+namespace GameDevWare.Charon.Unity
 {
 	internal class ValidationException : Exception
 	{

@@ -1,4 +1,4 @@
-﻿namespace GameDevWare.Charon.Json
+﻿namespace GameDevWare.Charon.Unity.Json
 {
 	internal enum JsonType
 	{

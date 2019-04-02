@@ -19,7 +19,7 @@
 
 using UnityEngine;
 
-namespace GameDevWare.Charon.Utils
+namespace GameDevWare.Charon.Unity.Utils
 {
 	internal static class RuntimeInformation
 	{

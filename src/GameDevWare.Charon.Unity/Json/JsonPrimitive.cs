@@ -3,9 +3,9 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Text;
-using GameDevWare.Charon.Utils;
+using GameDevWare.Charon.Unity.Utils;
 
-namespace GameDevWare.Charon.Json
+namespace GameDevWare.Charon.Unity.Json
 {
 	internal class JsonPrimitive : JsonValue
 	{

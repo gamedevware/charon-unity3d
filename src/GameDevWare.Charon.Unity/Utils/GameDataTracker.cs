@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 
-namespace GameDevWare.Charon.Utils
+namespace GameDevWare.Charon.Unity.Utils
 {
 	internal static class GameDataTracker
 	{

@@ -23,16 +23,15 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using GameDevWare.Charon.Async;
-using GameDevWare.Charon.Packages;
-using GameDevWare.Charon.Packages.Deployment;
-using GameDevWare.Charon.Utils;
+using GameDevWare.Charon.Unity.Async;
+using GameDevWare.Charon.Unity.Packages;
+using GameDevWare.Charon.Unity.Packages.Deployment;
+using GameDevWare.Charon.Unity.Utils;
 using UnityEditor;
 using UnityEngine;
-using PackageInfo = GameDevWare.Charon.Utils.PackageInfo;
+using PackageInfo = GameDevWare.Charon.Unity.Utils.PackageInfo;
 
-namespace GameDevWare.Charon.Windows
+namespace GameDevWare.Charon.Unity.Windows
 {
 	internal class UpdateWindow : EditorWindow
 	{
