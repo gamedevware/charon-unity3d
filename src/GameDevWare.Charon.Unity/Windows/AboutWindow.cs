@@ -32,7 +32,7 @@ namespace GameDevWare.Charon.Windows
 		private string assetVersion = (Settings.GetCurrentAssetVersion() ?? new Version()).ToString();
 
 		[NonSerialized]
-		private Promise<Version> checkToolsVersion;
+		private Promise<SemanticVersion> checkToolsVersion;
 		private Promise<RequirementsCheckResult> checkRequirements;
 
 		public AboutWindow()
@@ -104,6 +104,7 @@ namespace GameDevWare.Charon.Windows
 			}
 
 			var result = this.checkRequirements.GetResult();
+			// ReSharper disable once SwitchStatementMissingSomeCases REASON: Other cases are irrelevant for display purposes
 			switch (result)
 			{
 				case RequirementsCheckResult.MissingRuntime:

@@ -26,7 +26,6 @@ namespace GameDevWare.Charon
 				System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(Settings).TypeHandle);
 				System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(Menu).TypeHandle);
 
-				CharonCli.UpdateCharonConfig();
 				CharonCli.CleanUpLogsDirectory();
 			}
 			catch (Exception initializationError)
