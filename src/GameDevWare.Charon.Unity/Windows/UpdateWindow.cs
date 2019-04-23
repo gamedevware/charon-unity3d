@@ -26,6 +26,7 @@ using System.Linq;
 using GameDevWare.Charon.Unity.Async;
 using GameDevWare.Charon.Unity.Packages;
 using GameDevWare.Charon.Unity.Packages.Deployment;
+using GameDevWare.Charon.Unity.Updates;
 using GameDevWare.Charon.Unity.Utils;
 using UnityEditor;
 using UnityEngine;
@@ -99,29 +100,13 @@ namespace GameDevWare.Charon.Unity.Windows
 			);
 			this.padding = new Rect(10, 10, 10, 10);
 
-			this.rows = new[] {
-				new ProductRow(PackageManager.PRODUCT_CHARON, Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_CHARON_NAME, disabled: false) {
-					CurrentVersion = CharonCli.GetVersionAsync().IgnoreFault(),
-					AllBuilds = PackageManager.GetVersions(PackageManager.PRODUCT_CHARON),
-					Location = Path.GetFullPath(Settings.CharonExecutablePath),
-					ExpectedVersion = string.IsNullOrEmpty(Settings.Current.EditorVersion) ? default(SemanticVersion) : new SemanticVersion(Settings.Current.EditorVersion)
-				},
-				new ProductRow(PackageManager.PRODUCT_CHARON_UNITY, Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_CHARON_UNITY_PLUGIN_NAME, disabled: !IsAssemblyLoaded(PackageManager.PRODUCT_CHARON_UNITY_ASSEMBLY)) {
-					CurrentVersion = Promise.FromResult(GetAssemblyVersion(PackageManager.PRODUCT_CHARON_UNITY_ASSEMBLY)),
-					AllBuilds = PackageManager.GetVersions(PackageManager.PRODUCT_CHARON_UNITY),
-					Location = GetAssemblyLocation(PackageManager.PRODUCT_CHARON_UNITY_ASSEMBLY)
-				},
-				new ProductRow(PackageManager.PRODUCT_EXPRESSIONS, Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_EXPRESSIONS_PLUGIN_NAME, disabled: !IsAssemblyLoaded(PackageManager.PRODUCT_EXPRESSIONS_ASSEMBLY)) {
-					CurrentVersion = Promise.FromResult(GetAssemblyVersion(PackageManager.PRODUCT_EXPRESSIONS_ASSEMBLY)),
-					AllBuilds = PackageManager.GetVersions(PackageManager.PRODUCT_EXPRESSIONS),
-					Location = GetAssemblyLocation(PackageManager.PRODUCT_EXPRESSIONS_ASSEMBLY)
-				},
-				new ProductRow(PackageManager.PRODUCT_TEXT_TEMPLATES, Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_TEXT_TRANSFORM_PLUGIN_NAME, disabled: !IsAssemblyLoaded(PackageManager.PRODUCT_TEXT_TEMPLATES_ASSEMBLY)) {
-					CurrentVersion = Promise.FromResult(GetAssemblyVersion(PackageManager.PRODUCT_TEXT_TEMPLATES_ASSEMBLY)),
-					AllBuilds = PackageManager.GetVersions(PackageManager.PRODUCT_TEXT_TEMPLATES),
-					Location = GetAssemblyLocation(PackageManager.PRODUCT_TEXT_TEMPLATES_ASSEMBLY)
-				}
-			};
+			this.rows = Array.ConvertAll(ProductInformation.GetKnownProducts(), p => new ProductRow(p.Id, p.Name, p.Disabled) {
+				CurrentVersion = p.CurrentVersion,
+				AllBuilds = p.AllBuilds,
+				Location = p.Location,
+				ExpectedVersion = p.ExpectedVersion
+			});
+
 			this.columns = new[] {
 				new ProductColumn(Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_PRODUCT_COLUMN_NAME, RenderProductCell) { Flex = true, Width = 10 },
 				new ProductColumn(Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_CURRENT_VERSION_COLUMN_NAME, RenderCurrentVersionCell ) { Width = 100 },
@@ -169,7 +154,7 @@ namespace GameDevWare.Charon.Unity.Windows
 				clipping = TextClipping.Clip,
 				normal = {
 					background = Texture2D.whiteTexture
-				}
+				} 
 			};
 
 			// paddings
@@ -209,6 +194,12 @@ namespace GameDevWare.Charon.Unity.Windows
 			var actionText = this.rows.Any(r => r.Action != DeploymentAction.ACTION_SKIP) ? Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_UPDATE_BUTTON : Resources.UI_UNITYPLUGIN_ABOUT_CLOSE_BUTTON;
 			if (this.updatePromise == null && GUILayout.Button(actionText, GUILayout.Width(80)))
 			{
+				if (actionText == Resources.UI_UNITYPLUGIN_ABOUT_CLOSE_BUTTON)
+				{
+					this.Close();
+					return;
+				}
+
 				this.updatePromise = new Coroutine<object>(this.PerformUpdateAsync());
 				this.updatePromise.ContinueWith(p =>
 				{
@@ -245,38 +236,6 @@ namespace GameDevWare.Charon.Unity.Windows
 			this.Repaint();
 		}
 
-		private static SemanticVersion GetAssemblyVersion(string assemblyName)
-		{
-			foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-			{
-				if (assembly.GetName(copiedName: false).Name == assemblyName)
-				{
-					return new SemanticVersion(assembly.GetInformationalVersion());
-				}
-			}
-
-			return null;
-		}
-		private static bool IsAssemblyLoaded(string assemblyName)
-		{
-			foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-			{
-				if (assembly.GetName(copiedName: false).Name == assemblyName)
-					return true;
-			}
-
-			return false;
-		}
-		private static string GetAssemblyLocation(string assemblyName)
-		{
-			foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-			{
-				if (assembly.GetName(copiedName: false).Name == assemblyName)
-					return assembly.Location;
-			}
-
-			return null;
-		}
 		private static void RenderActionCell(ProductRow row, float width)
 		{
 			var completed = row.CurrentVersion.IsCompleted &&
@@ -379,7 +338,7 @@ namespace GameDevWare.Charon.Unity.Windows
 				// no local artifacts
 				row.SelectedVersion = null;
 				row.Action = DeploymentAction.ACTION_SKIP;
-				row.ActionMask = (1 << Array.IndexOf(Actions, DeploymentAction.ACTION_SKIP));
+				row.ActionMask = (1 << Array.IndexOf(Actions, DeploymentAction.ACTION_UPDATE)) | (1 << Array.IndexOf(Actions, DeploymentAction.ACTION_SKIP));
 				return;
 			}
 
@@ -392,7 +351,7 @@ namespace GameDevWare.Charon.Unity.Windows
 				row.Action = DeploymentAction.ACTION_SKIP;
 				row.ActionMask = (1 << Array.IndexOf(Actions, DeploymentAction.ACTION_SKIP));
 			}
-			else if (File.Exists(row.Location) == false || (expectedBuild != null && currentBuild != expectedBuild))
+			else if (File.Exists(row.Location) == false || (expectedBuild != null && !ReferenceEquals(currentBuild, expectedBuild)))
 			{
 				// missing file or invalid version is installed
 				row.SelectedVersion = expectedBuild != null ? expectedBuild.Version : currentVersion ?? lastVersion;
@@ -434,7 +393,7 @@ namespace GameDevWare.Charon.Unity.Windows
 					// actual version
 					row.SelectedVersion = currentVersion ?? lastVersion;
 					row.Action = DeploymentAction.ACTION_SKIP;
-					row.ActionMask = (1 << Array.IndexOf(Actions, DeploymentAction.ACTION_SKIP));
+					row.ActionMask = (1 << Array.IndexOf(Actions, DeploymentAction.ACTION_UPDATE)) | (1 << Array.IndexOf(Actions, DeploymentAction.ACTION_SKIP));
 				}
 			}
 		}
@@ -461,7 +420,7 @@ namespace GameDevWare.Charon.Unity.Windows
 						downloadVersion = row.CurrentVersion.GetResult();
 					}
 
-					if (row.Id == PackageManager.PRODUCT_CHARON)
+					if (row.Id == ProductInformation.PRODUCT_CHARON)
 					{
 						deploymentActions.Add(new CharonDeploymentAction(downloadVersion, progressCallback));
 					}

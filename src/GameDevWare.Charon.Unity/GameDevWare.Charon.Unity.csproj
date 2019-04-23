@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFramework>net35</TargetFramework>
-		<Version>2019.1.3</Version>
+		<Version>2019.1.1</Version>
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 		<Authors>Denis Zykov</Authors>
 		<Company>GameDevWare</Company>
@@ -17,6 +17,8 @@ https://gamedevware.com/docs/pages/viewpage.action?pageId=1736708</Description>
 		<PackageProjectUrl>https://gamedevware.com/w/view/product/charon</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/deniszykov/charon-unity3d</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
+		<PackageLicenseUrl>https://github.com/deniszykov/charon-unity3d/blob/master/LICENSE.md</PackageLicenseUrl>
+		<DocumentationFile>$(TargetDir)\$(AssemblyName).xml</DocumentationFile>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)'=='Release'">
 		<DefineConstants>RELEASE</DefineConstants>
@@ -70,12 +72,14 @@ https://gamedevware.com/docs/pages/viewpage.action?pageId=1736708</Description>
 		</CreateProperty>
 	</Target>
 	
-  <Target Name="AfterBuild">
+  <Target Name="CopyFiles" AfterTargets="CoreBuild">
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../GameDevWare.Charon.Unity.5.4/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-    <Copy SourceFiles="bin\$(Configuration)\$(AssemblyName).xml" DestinationFolder="$(ProjectDir)../GameDevWare.Charon.Unity.5.4/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../GameDevWare.Charon.Unity.2017/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-    <Copy SourceFiles="bin\$(Configuration)\$(AssemblyName).xml" DestinationFolder="$(ProjectDir)../GameDevWare.Charon.Unity.2017/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../../example/RpgGame/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-    <Copy SourceFiles="bin\$(Configuration)\$(AssemblyName).xml" DestinationFolder="$(ProjectDir)../../example/RpgGame/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+    <Copy SourceFiles="$(TargetDir)\$(AssemblyName).xml" DestinationFolder="$(ProjectDir)../GameDevWare.Charon.Unity.5.4/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+    
+	<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../GameDevWare.Charon.Unity.2017/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+    <Copy SourceFiles="$(TargetDir)\$(AssemblyName).xml" DestinationFolder="$(ProjectDir)../GameDevWare.Charon.Unity.2017/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+    
+	<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../../example/RpgGame/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+    <Copy SourceFiles="$(TargetDir)\$(AssemblyName).xml" DestinationFolder="$(ProjectDir)../../example/RpgGame/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
   </Target>
 </Project>

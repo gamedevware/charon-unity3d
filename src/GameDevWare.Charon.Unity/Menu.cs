@@ -165,14 +165,6 @@ namespace GameDevWare.Charon.Unity
 			if (!CheckUpdatesCheck()) return;
 
 			EditorWindow.GetWindow<UpdateWindow>(utility: true);
-
-			//var checkUpdatesCheck = CoroutineScheduler.Schedule(
-			//	CheckForUpdatesAsync(
-			//		progressCallback: ProgressUtils.ShowProgressBar(Resources.UI_UNITYPLUGIN_MENU_CHECK_UPDATES)
-			//	)
-			//);
-			//checkUpdatesCheck.ContinueWith(ProgressUtils.HideProgressBar);
-			//FocusConsoleWindow();
 		}
 
 		[MenuItem(TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENU_CHECK_UPDATES, true, 28)]

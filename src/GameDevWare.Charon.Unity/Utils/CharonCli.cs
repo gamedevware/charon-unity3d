@@ -29,6 +29,7 @@ using System.Text.RegularExpressions;
 using GameDevWare.Charon.Unity.Async;
 using GameDevWare.Charon.Unity.Packages;
 using GameDevWare.Charon.Unity.Packages.Deployment;
+using GameDevWare.Charon.Unity.Updates;
 using GameDevWare.Charon.Unity.Windows;
 using JetBrains.Annotations;
 using Debug = UnityEngine.Debug;
@@ -41,7 +42,7 @@ namespace GameDevWare.Charon.Unity.Utils
 	{
 		internal static readonly Regex MonoVersionRegex = new Regex(@"version (?<v>[0-9]+\.[0-9]+\.[0-9]+)", RegexOptions.Multiline | RegexOptions.IgnoreCase);
 		internal static readonly Version MinimalMonoVersion = new Version(5, 2, 0);
-		public static readonly string CharonLogsDirectory = Path.Combine(Settings.AppDataPath, "Logs");
+		public static readonly string CharonLogsDirectory = Path.Combine(Settings.ToolBasePath, "Logs");
 
 		internal static Promise<RequirementsCheckResult> CheckRequirementsAsync()
 		{
@@ -254,7 +255,7 @@ namespace GameDevWare.Charon.Unity.Utils
 
 			if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESS_GETTING_AVAILABLE_BUILDS, 0.10f);
 
-			var getBuildsAsync = PackageManager.GetVersions(PackageManager.PRODUCT_CHARON);
+			var getBuildsAsync = PackageManager.GetVersions(ProductInformation.PRODUCT_CHARON);
 			yield return getBuildsAsync.IgnoreFault();
 			if (getBuildsAsync.HasErrors)
 			{
@@ -280,7 +281,7 @@ namespace GameDevWare.Charon.Unity.Utils
 			var currentBuild = currentVersion != null ? builds.FirstOrDefault(b => b.Version == currentVersion) : null;
 			var lastVersion = lastBuild.Version;
 			var isMissing = File.Exists(charonPath);
-			var hashFileName = currentBuild == null ? null : Path.Combine(Path.Combine(Settings.AppDataPath, currentVersion.ToString()), Path.GetFileName(charonPath) + ".sha1");
+			var hashFileName = currentBuild == null ? null : Path.Combine(Path.Combine(Settings.ToolBasePath, currentVersion.ToString()), Path.GetFileName(charonPath) + ".sha1");
 			var actualHash = isMissing || currentBuild == null ? null : FileAndPathUtils.ComputeHash(charonPath, "SHA1");
 			var expectedHash = isMissing || hashFileName == null || File.Exists(hashFileName) == false ? null : File.ReadAllText(hashFileName);
 			var isCorrupted = currentBuild != null && string.Equals(expectedHash, actualHash, StringComparison.OrdinalIgnoreCase) == false;
@@ -304,7 +305,7 @@ namespace GameDevWare.Charon.Unity.Utils
 				yield break;
 			}
 
-			if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_PROGRESS_DOWNLOADING, 0, 0, PackageManager.PRODUCT_CHARON), 0.10f);
+			if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_PROGRESS_DOWNLOADING, 0, 0, ProductInformation.PRODUCT_CHARON), 0.10f);
 
 			var deployAction = new CharonDeploymentAction(versionToDeploy, progressCallback);
 			var prepareAsync = deployAction.Prepare();
@@ -798,8 +799,9 @@ namespace GameDevWare.Charon.Unity.Utils
 					Schedule = CoroutineScheduler.CurrentId == null,
 					StartInfo = {
 						EnvironmentVariables = {
-							{"CHARON_APP_DATA", Settings.GetLocalUserDataPath()},
-							{"CHARON_SERVER", Settings.Current.ServerAddress},
+							{ "CHARON_APP_DATA", Settings.GetLocalUserDataPath() },
+							{ "CHARON_SERVER", Settings.Current.ServerAddress },
+							{ "BASE_DIRECTORY_PATH", Settings.ToolBasePath },
 						}
 					}
 				});

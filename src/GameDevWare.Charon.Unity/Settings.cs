@@ -35,8 +35,8 @@ namespace GameDevWare.Charon.Unity
 		public const string DEFAULT_SERVER_ADDRESS = "http://gamedevware.com/service/api/";
 
 		public static readonly string TempPath;
-		public static readonly string AppDataPath;
-		public static readonly string BasePath;
+		public static readonly string ToolBasePath;
+		public static readonly string PluginBasePath;
 		public static readonly string SettingsPath;
 		public static readonly string CharonExecutablePath;
 
@@ -55,16 +55,21 @@ namespace GameDevWare.Charon.Unity
 
 		static Settings()
 		{
-			if (typeof(Settings).Assembly.GetName().Name == "GameDevWare.Charon")
-				BasePath = Path.GetDirectoryName(typeof(Settings).Assembly.Location);
+			if (typeof(Settings).Assembly.GetName().Name == "GameDevWare.Charon.Unity")
+				PluginBasePath = Path.GetDirectoryName(typeof(Settings).Assembly.Location);
 
-			if (BasePath == null)
-				BasePath = Path.GetFullPath("Assets/Editor/GameDevWare.Charon");
+			if (PluginBasePath == null)
+				PluginBasePath = Path.GetFullPath("Assets/Editor/GameDevWare.Charon");
 
-			AppDataPath = Path.GetFullPath("./Library/Charon/");
+			ToolBasePath = Path.GetFullPath("./Library/Charon/");
 			TempPath = Path.GetFullPath("./Temp/");
-			SettingsPath = Path.Combine(BasePath, "GameDevWare.Charon.Settings.json");
-			CharonExecutablePath = Path.Combine(AppDataPath, "Charon.exe");
+			SettingsPath = Path.Combine(PluginBasePath, "GameDevWare.Charon.Unity.Settings.json");
+			CharonExecutablePath = Path.Combine(ToolBasePath, "Charon.exe");
+
+			// migrate to 2019.1.4
+			var oldSettingsPath = Path.Combine(PluginBasePath, "GameDevWare.Charon.Settings.json");
+			if (File.Exists(oldSettingsPath) && File.Exists(SettingsPath) == false)
+				File.Move(oldSettingsPath, SettingsPath);
 
 			Current = Load();
 
@@ -154,11 +159,11 @@ namespace GameDevWare.Charon.Unity
 		}
 		internal static string GetLocalUserDataPath()
 		{
-			return Path.Combine(Path.Combine(AppDataPath, "Users"), FileAndPathUtils.SanitizeFileName(Environment.UserName ?? "Default"));
+			return Path.Combine(Path.Combine(ToolBasePath, "Data"), FileAndPathUtils.SanitizeFileName(Environment.UserName ?? "Default"));
 		}
 		internal static Version GetCurrentAssetVersion()
 		{
-			if (typeof(Settings).Assembly.GetName().Name == "GameDevWare.Charon")
+			if (typeof(Settings).Assembly.GetName().Name == "GameDevWare.Charon.Unity")
 				return typeof(Settings).Assembly.GetName().Version;
 			else
 				return null;
