@@ -4,14 +4,13 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using GameDevWare.Charon.Unity.Async;
-using GameDevWare.Charon.Unity.Packages;
-using GameDevWare.Charon.Unity.Updates;
+using GameDevWare.Charon.Unity.Updates.Packages;
 using GameDevWare.Charon.Unity.Windows;
 using UnityEditor;
 using UnityEngine;
 using Coroutine = GameDevWare.Charon.Unity.Async.Coroutine;
 
-namespace GameDevWare.Charon.Unity
+namespace GameDevWare.Charon.Unity.Updates
 {
 	[InitializeOnLoad]
 	internal static class UpdateChecker

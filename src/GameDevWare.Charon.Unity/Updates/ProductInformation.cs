@@ -1,8 +1,7 @@
 ﻿using System;
 using System.IO;
 using GameDevWare.Charon.Unity.Async;
-using GameDevWare.Charon.Unity.Packages;
-using GameDevWare.Charon.Unity.Packages.Deployment;
+using GameDevWare.Charon.Unity.Updates.Packages;
 using GameDevWare.Charon.Unity.Utils;
 
 namespace GameDevWare.Charon.Unity.Updates
