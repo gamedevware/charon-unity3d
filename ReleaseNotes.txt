@@ -1,2 +1,5 @@
-﻿# 2019.1.2
-added code generation warning for empty files
+﻿# 2019.2.0
+
+internal updater has been refactored to use Nuget feed instead custom server
+added new "Code and Asset" generation logic
+added auto-update window and auto-update check
