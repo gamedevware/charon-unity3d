@@ -361,8 +361,8 @@ namespace GameDevWare.Charon.Unity.Windows
 			{
 				// current installed build is not found
 				row.SelectedVersion = lastVersion;
-				row.Action = DeploymentAction.ACTION_DOWNLOAD;
-				row.ActionMask = (1 << Array.IndexOf(Actions, DeploymentAction.ACTION_DOWNLOAD)) | (1 << Array.IndexOf(Actions, DeploymentAction.ACTION_SKIP));
+				row.Action = DeploymentAction.ACTION_UPDATE;
+				row.ActionMask = (1 << Array.IndexOf(Actions, DeploymentAction.ACTION_UPDATE)) | (1 << Array.IndexOf(Actions, DeploymentAction.ACTION_SKIP));
 			}
 			else
 			{

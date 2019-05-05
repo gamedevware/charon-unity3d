@@ -89,12 +89,23 @@ namespace GameDevWare.Charon.Unity.Updates.Packages
 						continue;
 					}
 
+					if (semVersion == fromVersion)
+					{
+						continue; // don't add current version to release notes
+					}
+
 					var getReleaseNotesAsync = Feed
 						.GetSpecification(packageId, semVersion)
 						.ContinueWith(p => p.HasErrors ? p.Error.Unwrap().ToString() : p.GetResult().ReleaseNotes);
 
 					releaseNotes.Add(semVersion, getReleaseNotesAsync);
 				}
+			}
+
+			if (releaseNotes.Count == 0)
+			{
+				yield return  string.Empty;
+				yield break;
 			}
 
 			yield return Promise.WhenAll(releaseNotes.Values.ToArray()).IgnoreFault();

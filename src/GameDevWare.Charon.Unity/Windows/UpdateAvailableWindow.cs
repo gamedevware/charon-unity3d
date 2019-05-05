@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using GameDevWare.Charon.Unity.Updates;
 using UnityEditor;
 using UnityEngine;
 
@@ -13,7 +14,7 @@ namespace GameDevWare.Charon.Unity.Windows
 
 		public UpdateAvailableWindow()
 		{
-			this.titleContent = new GUIContent(Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_TITLE);
+			this.titleContent = new GUIContent(Resources.UI_UNITYPLUGIN_UPDATE_AVAILABLE_TITLE);
 			this.minSize = new Vector2(500, 400);
 			this.position = new Rect(
 				(Screen.width - this.minSize.x) / 2,
@@ -42,7 +43,12 @@ namespace GameDevWare.Charon.Unity.Windows
 			GUILayout.Space(5);
 			GUILayout.BeginHorizontal();
 			EditorGUILayout.Space();
-			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_UPDATE_BUTTON, GUILayout.Width(80)))
+			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_SKIP_BUTTON, GUILayout.Width(80)))
+			{
+				UpdateChecker.SkipUpdates(this.ReleaseNotes);
+				this.Close();
+			}
+			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_REVIEW_UPDATES_BUTTON, GUILayout.Width(120)))
 			{
 				EditorWindow.GetWindow<UpdateWindow>(utility: true);
 				this.Close();

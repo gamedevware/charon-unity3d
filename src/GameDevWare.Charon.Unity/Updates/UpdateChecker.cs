@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using GameDevWare.Charon.Unity.Async;
 using GameDevWare.Charon.Unity.Updates.Packages;
+using GameDevWare.Charon.Unity.Utils;
 using GameDevWare.Charon.Unity.Windows;
 using UnityEditor;
 using UnityEngine;
@@ -15,6 +16,7 @@ namespace GameDevWare.Charon.Unity.Updates
 	[InitializeOnLoad]
 	internal static class UpdateChecker
 	{
+		private const string SKIPPED_UPDATE_PREFS_KEY = Settings.PREF_PREFIX + "SkippedUpdateHash";
 		private const string LAST_UPDATE_PREFS_KEY = Settings.PREF_PREFIX + "LastUpdateCheckTime";
 		private static readonly TimeSpan UpdateCheckPeriod = TimeSpan.FromHours(8);
 		private static readonly TimeSpan UpdateCheckCooldown = TimeSpan.FromMinutes(0.3);
@@ -68,7 +70,7 @@ namespace GameDevWare.Charon.Unity.Updates
 
 				var currentVersion = (product.ExpectedVersion ?? product.CurrentVersion.GetResult());
 				var lastVersion = product.AllBuilds.GetResult().Select(p => p.Version).Max();
-				if (lastVersion <= currentVersion)
+				if (lastVersion == null || lastVersion <= currentVersion)
 				{
 					continue; // no updates
 				}
@@ -88,8 +90,20 @@ namespace GameDevWare.Charon.Unity.Updates
 				releaseNotes.AppendLine();
 			}
 
-			var window = EditorWindow.GetWindow<UpdateAvailableWindow>(utility: true);
-			window.ReleaseNotes = releaseNotes.ToString();
+			var releaseNotesStr = releaseNotes.ToString();
+
+			if (releaseNotesStr.Length > 0 && IsUpdateSkipped(releaseNotesStr) == false)
+			{
+				var window = EditorWindow.GetWindow<UpdateAvailableWindow>(utility: true);
+				window.ReleaseNotes = releaseNotesStr;
+			}
+			else
+			{
+				if (Settings.Current.Verbose)
+				{
+					Debug.Log("No updates are found or current update is skipped.");
+				}
+			}
 			
 			SaveLastCheckTime(LastCheckTime = DateTime.UtcNow);
 			CheckCooldownTime = DateTime.UtcNow + UpdateCheckCooldown;
@@ -113,6 +127,25 @@ namespace GameDevWare.Charon.Unity.Updates
 		private static void SaveLastCheckTime(DateTime time)
 		{
 			EditorPrefs.SetString(LAST_UPDATE_PREFS_KEY, time.Ticks.ToString());
+		}
+		private static bool IsUpdateSkipped(string releaseNotes)
+		{
+			try
+			{
+				var skippedUpdateHash = EditorPrefs.GetString(SKIPPED_UPDATE_PREFS_KEY);
+				if (string.IsNullOrEmpty(skippedUpdateHash) || string.IsNullOrEmpty(releaseNotes))
+					return false;
+
+				return string.Equals(skippedUpdateHash, FileAndPathUtils.ComputeNameHash(releaseNotes, "SHA1"));
+			}
+			catch
+			{
+				return false;
+			}
+		}
+		public static void SkipUpdates(string releaseNotes)
+		{
+			EditorPrefs.SetString(SKIPPED_UPDATE_PREFS_KEY, FileAndPathUtils.ComputeNameHash(releaseNotes, "SHA1"));
 		}
 	}
 }

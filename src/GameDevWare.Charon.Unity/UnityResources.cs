@@ -27,7 +27,7 @@
 
 // ReSharper disable All
 
-namespace GameDevWare.Charon.Unity {
+namespace GameDevWare.Charon {
 	internal static class Resources
 	{
 		public const string UI_UNITYPLUGIN_ABOUT_CHARON_TITLE = "Charon: Game Data Editor";
@@ -79,7 +79,7 @@ namespace GameDevWare.Charon.Unity {
 		public const string UI_UNITYPLUGIN_MENU_ABOUT = "About...";
 		public const string UI_UNITYPLUGIN_MENU_ADVANCED = "Advanced";
 		public const string UI_UNITYPLUGIN_MENU_CHECK_RUNTIME = "Check Runtime...";
-		public const string UI_UNITYPLUGIN_MENU_CHECK_UPDATES = "Check for Updates";
+		public const string UI_UNITYPLUGIN_MENU_CHECK_UPDATES = "Check for Updates...";
 		public const string UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA = "Game Data";
 		public const string UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA_BSON = "Game Data (BSON)";
 		public const string UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA_JSON = "Game Data (JSON)";
@@ -146,6 +146,7 @@ namespace GameDevWare.Charon.Unity {
 		public const string UI_UNITYPLUGIN_WINDOW_RUNTIME_VERSION_UNKNOWN = "Unknown";
 		public const string UI_UNITYPLUGIN_WINDOW_SETTINGS_GROUP = "Settings:";
 		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_ACTION_COLUMN_NAME = "Action";
+		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_AVAILABLE_TITLE = "Update available!";
 		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_AVAILABLE_VERSION_COLUMN_NAME = "Available";
 		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_CHARON_NAME = "Charon";
 		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_CHARON_UNITY_PLUGIN_NAME = "Charon plugin for Unity";
@@ -158,10 +159,12 @@ namespace GameDevWare.Charon.Unity {
 		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_REPAIR_ACTION = "Repair";
 		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_RUNTIME_TITLE = ".NET Runtime Update";
 		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_SKIP_ACTION = "Skip";
+		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_SKIP_BUTTON = "Skip";
 		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_TEXT_TRANSFORM_PLUGIN_NAME = "Text Transform plugin for Unity";
 		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_TITLE = "Product Updates";
 		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_UPDATE_ACTION = "Update";
 		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_UPDATE_BUTTON = "Update";
+		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_REVIEW_UPDATES_BUTTON = "Review updates...";
 		public const string UI_UNITYPLUGIN_WINDOWCHECK_RESULT_MISSING_TOOLS = "Missing Tools!";
 	}
 }

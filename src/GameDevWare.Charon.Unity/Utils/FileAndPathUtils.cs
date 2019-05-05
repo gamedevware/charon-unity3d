@@ -51,6 +51,15 @@ namespace GameDevWare.Charon.Unity.Utils
 
 			return path;
 		}
+		public static string ComputeNameHash(string value, string hashAlgorithmName = "MD5")
+		{
+			using (var hashAlgorithm = HashAlgorithm.Create(hashAlgorithmName) ?? new MD5CryptoServiceProvider())
+			{
+				var valueBytes = Encoding.UTF8.GetBytes(value ?? string.Empty);
+				var valueHash = hashAlgorithm.ComputeHash(valueBytes);
+				return BitConverter.ToString(valueHash).Replace("-", "").ToLower();
+			}
+		}
 		public static string ComputeHash(string path, string hashAlgorithmName = "MD5", int tries = 5)
 		{
 			if (path == null) throw new ArgumentNullException("path");

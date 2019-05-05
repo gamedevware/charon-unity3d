@@ -203,14 +203,20 @@ namespace GameDevWare.Charon.Unity.Utils
 			var stopError = default(Exception);
 			try
 			{
+				if (Settings.Current.Verbose)
+					Debug.Log(string.Format("Trying to end process with id {0}.", pidStr));
+
 				using (var process = Process.GetProcessById(pid))
 					process.EndGracefully();
+
+				if (Settings.Current.Verbose)
+					Debug.Log(string.Format("Successfully ended process with id {0}.", pidStr));
 			}
 			catch (Exception endError)
 			{
 				stopError = endError;
 				if (Settings.Current.Verbose)
-					Debug.LogWarning(string.Format("Failed to get Charon process by id {0}.\r\n{1}", pidStr, endError));
+					Debug.LogWarning(string.Format("Failed to get process by id {0}.\r\n{1}", pidStr, endError));
 			}
 
 			try
@@ -221,7 +227,7 @@ namespace GameDevWare.Charon.Unity.Utils
 			catch (Exception lockDeleteError)
 			{
 				stopError = stopError ?? lockDeleteError;
-				Debug.LogWarning(string.Format("Failed to stop running Charon process with id {0}.\r\n{1}", pidStr, stopError));
+				Debug.LogWarning(string.Format("Failed to stop running process with id {0}.\r\n{1}", pidStr, stopError));
 				throw stopError;
 			}
 		}
@@ -535,6 +541,46 @@ namespace GameDevWare.Charon.Unity.Utils
 			return runTask;
 		}
 
+		public static Promise<RunResult> CreatePatchAsync(string gameDataPath1, string gameDataPath2, CommandOutput output)
+		{
+			if (gameDataPath1 == null) throw new ArgumentNullException("gameDataPath1");
+			if (gameDataPath2 == null) throw new ArgumentNullException("gameDataPath2");
+			if (output == null) throw new ArgumentNullException("output");
+
+			if (File.Exists(gameDataPath1) == false) throw new IOException(string.Format("GameData file '{0}' doesn't exists.", gameDataPath1));
+			if (File.Exists(gameDataPath2) == false) throw new IOException(string.Format("GameData file '{0}' doesn't exists.", gameDataPath2));
+
+			var runTask = RunInternal
+			(
+				RunOptions.FlattenArguments(
+					"DATA", "CREATEPATCH", gameDataPath1, gameDataPath2,
+					"--output", output.Target,
+					"--outputFormat", output.Format,
+					"--outputFormattingOptions", output.FormattingOptions
+				)
+			);
+			return runTask;
+		}
+		public static Promise<RunResult> ApplyPatchAsync(string gameDataPath, CommandInput input)
+		{
+			if (gameDataPath == null) throw new ArgumentNullException("gameDataPath");
+			if (input == null) throw new ArgumentNullException("input");
+
+			if (File.Exists(gameDataPath) == false) throw new IOException(string.Format("GameData file '{0}' doesn't exists.", gameDataPath));
+
+			var runTask = RunInternal
+			(
+				RunOptions.FlattenArguments(
+					"DATA", "APPLYPATCH", gameDataPath,
+					"--input", input.Source,
+					"--inputFormat", input.Format,
+					"--inputFormattingOptions", input.FormattingOptions
+				)
+			);
+			input.StickWith(runTask);
+			return runTask;
+		}
+		
 		public static Promise<RunResult> BackupAsync(string gameDataPath, CommandOutput output)
 		{
 			if (gameDataPath == null) throw new ArgumentNullException("gameDataPath");

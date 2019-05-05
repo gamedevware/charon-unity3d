@@ -6,13 +6,13 @@ using System.Linq;
 using GameDevWare.Charon.Unity.Async;
 using GameDevWare.Charon.Unity.Utils;
 using GameDevWare.Charon.Unity.Windows;
+using UnityEngine;
 
 namespace GameDevWare.Charon.Unity.Updates.Packages.Deployment
 {
 	internal sealed class CharonDeploymentAction : DeploymentAction
 	{
 		private readonly SemanticVersion versionToDeploy;
-		private readonly string location;
 		private readonly Action<string, float> progressCallback;
 		private readonly DirectoryInfo baseDirectory;
 		private readonly string[] changedAssets;
@@ -60,31 +60,49 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Deployment
 		{
 			GameDataEditorWindow.FindAllAndClose();
 
-			var extensionsToClean = new[] { ".exe", ".dll", ".config", ".xml", ".pdb", ".mdb" };
+			var extensionsToClean = new[] { ".exe", ".dll", ".config", ".xml", ".pdb", ".mdb", ".sha1" };
 			foreach (var fileToClean in this.baseDirectory.GetFiles().Where(file => extensionsToClean.Contains(file.Extension, StringComparer.OrdinalIgnoreCase)))
 			{
 				try
 				{
+					if (Settings.Current.Verbose)
+						Debug.Log(string.Format("Removing old file '{0}' of '{1}' product.", fileToClean.FullName, ProductInformation.PRODUCT_CHARON));
+
 					fileToClean.Delete();
 				}
-				catch
+				catch (Exception error)
 				{
-					/* ignore delete errors */
+					Debug.LogWarning(error);
 				}
 			}
 
 			foreach (var file in this.versionDirectory.GetFiles())
 			{
-				try { file.CopyTo(Path.Combine(Settings.ToolBasePath, file.Name)); }
-				catch { /* ignore copy errors */ }
+				if (Settings.Current.Verbose)
+					Debug.Log(string.Format("Copying target file '{0}' for product '{1}'.", file, ProductInformation.PRODUCT_CHARON));
+
+				try
+				{
+					file.CopyTo(Path.Combine(Settings.ToolBasePath, file.Name), overwrite: true);
+				}
+				catch (Exception error)
+				{
+					Debug.LogWarning(error);
+				}
 			}
 
 			// ensure config file
 			var charonConfigPath = new FileInfo(Settings.CharonExecutablePath + ".config");
 			if (charonConfigPath.Exists)
 			{
-				try { charonConfigPath.Delete(); }
-				catch { /* ignore copy errors */ }
+				try
+				{
+					charonConfigPath.Delete();
+				}
+				catch (Exception error)
+				{
+					Debug.LogWarning(error);
+				}
 			}
 			var embeddedConfigStream = typeof(Menu).Assembly.GetManifestResourceStream("GameDevWare.Charon.Unity.Charon.exe.config");
 			if (embeddedConfigStream != null)
@@ -117,8 +135,12 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Deployment
 		{
 			if (this.downloadDirectory.Exists)
 			{
-				try { this.downloadDirectory.Delete(); }
-				catch {/* ignore delete errors */}
+				try { this.downloadDirectory.Delete(recursive: true); }
+				catch (Exception error)
+				{
+					if (Settings.Current.Verbose)
+						Debug.LogWarning(error);
+				}
 			}
 		}
 	}

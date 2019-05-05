@@ -55,7 +55,7 @@ namespace GameDevWare.Charon.Unity.Windows
 		void IHasCustomMenu.AddItemsToMenu(GenericMenu menu)
 		{
 			menu.AddItem(new GUIContent(Resources.UI_UNITYPLUGIN_WINDOW_RELOAD_BUTTON), false, this.Reload);
-			menu.AddItem(new GUIContent(Resources.UI_UNITYPLUGIN_WINDOW_KILL_PROCESS_BUTTON), false, this.KillProcess);
+			//menu.AddItem(new GUIContent(Resources.UI_UNITYPLUGIN_WINDOW_KILL_PROCESS_BUTTON), false, this.KillProcess);
 		}
 
 		// ReSharper disable once InconsistentNaming
@@ -103,7 +103,7 @@ namespace GameDevWare.Charon.Unity.Windows
 				case RequirementsCheckResult.Ok:
 					break;
 				default:
-					throw new InvalidOperationException("Unknown Tools check result.");
+					throw new InvalidOperationException("Unknown requirements check result.");
 			}
 
 			var port = Settings.Current.EditorPort;
@@ -233,10 +233,23 @@ namespace GameDevWare.Charon.Unity.Windows
 			yield return false;
 		}
 
+		/// <inheritdoc />
+		protected override void OnDestroy()
+		{
+			base.OnDestroy();
+
+			if (Settings.Current.Verbose)
+				Debug.Log("Ending game data editor process because window is closed.");
+
+			CharonCli.FindAndEndGracefully();
+		}
+
 		private void KillProcess()
 		{
 			CharonCli.FindAndEndGracefully();
-			this.Close();
+
+			if (this)
+				this.Close();
 		}
 
 		public static void FindAllAndClose()
