@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFramework>net35</TargetFramework>
-		<Version>2019.2.0</Version>
+		<Version>2019.2.3</Version>
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 		<Authors>Denis Zykov</Authors>
 		<Company>GameDevWare</Company>
@@ -28,6 +28,9 @@ https://gamedevware.com/docs/pages/viewpage.action?pageId=1736708</Description>
 	</PropertyGroup>
 	<ItemGroup>
 	  <None Remove="Charon.exe.config" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Content Include="..\..\ReleaseNotes.txt" Link="ReleaseNotes.txt" />
 	</ItemGroup>
 	<ItemGroup>
 	  <EmbeddedResource Include="Charon.exe.config" />
