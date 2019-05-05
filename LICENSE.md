@@ -1,5 +1,5 @@
 # Charon - Game Data Editor Plugin for Unity3D
-Copyright (c) 2015, Denis Zykov
+Copyright (c) 2019, Denis Zykov
 
 ## Alternate Licensing
 ------------------------------------------------------------------------------------------
@@ -18,21 +18,21 @@ Copyright (c) 2015, Denis Zykov
 
 ## Components: 
 
-Autofac - MIT http://opensource.org/licenses/mit-license.php
-System.Collections.Immutable - Custom - http://www.microsoft.com/net/dotnet_library_license.htm
-EPPlus - LGPL http://epplus.codeplex.com/license
-Microsoft.AspNet.WebApi.Client - Custom - http://www.microsoft.com/web/webpi/eula/net_library_eula_enu.htm
-Microsoft.AspNet.WebApi.Core - Custom - http://www.microsoft.com/web/webpi/eula/net_library_eula_enu.htm
-Microsoft.Tpl.Dataflow - Custom - http://www.microsoft.com/net/dotnet_library_license.htm
-log4net - Apache2 - http://www.apache.org/licenses/LICENSE-2.0
-MongoDB.Bson - Apache2 - http://www.apache.org/licenses/LICENSE-2.0
-MongoDB.Driver - Apache2 - http://www.apache.org/licenses/LICENSE-2.0
-MongoDB.Driver.Core - Apache2 - http://www.apache.org/licenses/LICENSE-2.0
-MongoDB.Driver.GridFS - Apache2 - http://www.apache.org/licenses/LICENSE-2.0
-Mono.Cecil - MIT http://opensource.org/licenses/mit-license.php
-Newtonsoft.Json - MIT https://raw.githubusercontent.com/JamesNK/Newtonsoft.Json/master/LICENSE.md
-SharpZipLib - MIT http://icsharpcode.github.io/SharpZipLib/
-Newtonsoft.Json - MIT https://raw.githubusercontent.com/JamesNK/Newtonsoft.Json/master/LICENSE.md
+- Autofac - MIT http://opensource.org/licenses/mit-license.php
+- System.Collections.Immutable - Custom - http://www.microsoft.com/net/dotnet_library_license.htm
+- EPPlus - LGPL http://epplus.codeplex.com/license
+- Microsoft.AspNet.WebApi.Client - Custom - http://www.microsoft.com/web/webpi/eula/net_library_eula_enu.htm
+- Microsoft.AspNet.WebApi.Core - Custom - http://www.microsoft.com/web/webpi/eula/net_library_eula_enu.htm
+- Microsoft.Tpl.Dataflow - Custom - http://www.microsoft.com/net/dotnet_library_license.htm
+- log4net - Apache2 - http://www.apache.org/licenses/LICENSE-2.0
+- MongoDB.Bson - Apache2 - http://www.apache.org/licenses/LICENSE-2.0
+- MongoDB.Driver - Apache2 - http://www.apache.org/licenses/LICENSE-2.0
+- MongoDB.Driver.Core - Apache2 - http://www.apache.org/licenses/LICENSE-2.0
+- MongoDB.Driver.GridFS - Apache2 - http://www.apache.org/licenses/LICENSE-2.0
+- Mono.Cecil - MIT http://opensource.org/licenses/mit-license.php
+- Newtonsoft.Json - MIT https://raw.githubusercontent.com/JamesNK/Newtonsoft.Json/master/LICENSE.md
+- SharpZipLib - MIT http://icsharpcode.github.io/SharpZipLib/
+- Newtonsoft.Json - MIT https://raw.githubusercontent.com/JamesNK/Newtonsoft.Json/master/LICENSE.md
 
 # License
                     GNU GENERAL PUBLIC LICENSE
