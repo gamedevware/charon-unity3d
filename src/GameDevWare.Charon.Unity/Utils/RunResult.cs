@@ -116,11 +116,19 @@ namespace GameDevWare.Charon.Unity.Utils
 			if (disposed)
 				GC.SuppressFinalize(this);
 
-			if (this.standardOutputBuffer != null)
-				this.Process.CancelOutputRead();
-			if (this.standardErrorBuffer != null)
-				this.Process.CancelErrorRead();
-			this.Process.Dispose();
+			try
+			{
+				if (this.standardOutputBuffer != null)
+					this.Process.CancelOutputRead();
+				if (this.standardErrorBuffer != null)
+					this.Process.CancelErrorRead();
+
+				this.Process.Dispose();
+			}
+			catch
+			{
+				/* ignore dispose errors */
+			}
 		}
 
 		void IDisposable.Dispose()
