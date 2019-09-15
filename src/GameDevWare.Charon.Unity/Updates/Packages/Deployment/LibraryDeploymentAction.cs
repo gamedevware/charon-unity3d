@@ -39,7 +39,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Deployment
 		}
 		private IEnumerable PrepareAsync()
 		{
-			var downloadAsync = PackageManager.DownloadAndUnpack(this.product, this.versionToDeploy, ArtifactKind.Library, this.downloadDirectory.FullName, this.progressCallback);
+			var downloadAsync = PackageManager.DownloadAndUnpack(this.product, this.versionToDeploy, ArtifactKind.Library, this.downloadDirectory, this.progressCallback);
 			yield return downloadAsync;
 		}
 		/// <inheritdoc />
@@ -58,6 +58,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Deployment
 			{
 				try
 				{
+					fileToClean.Refresh();
 					if (!fileToClean.Exists)
 						continue;
 
@@ -105,6 +106,8 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Deployment
 		public override void CleanUp()
 		{
 			this.changedAssets.Clear();
+
+			this.downloadDirectory.Refresh();
 			if (this.downloadDirectory.Exists)
 			{
 				if (Settings.Current.Verbose)

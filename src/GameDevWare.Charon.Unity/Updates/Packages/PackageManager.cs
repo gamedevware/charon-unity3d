@@ -6,6 +6,7 @@ using System.Linq;
 using GameDevWare.Charon.Unity.Async;
 using GameDevWare.Charon.Unity.Updates.Packages.Nuget;
 using GameDevWare.Charon.Unity.Utils;
+using UnityEngine;
 
 namespace GameDevWare.Charon.Unity.Updates.Packages
 {
@@ -104,7 +105,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages
 
 			if (releaseNotes.Count == 0)
 			{
-				yield return  string.Empty;
+				yield return string.Empty;
 				yield break;
 			}
 
@@ -116,7 +117,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages
 			);
 		}
 
-		public static Promise<FileInfo[]> DownloadAndUnpack(string product, SemanticVersion version, ArtifactKind kind, string destinationDirectory, Action<string, float> progressCallback = null)
+		public static Promise<FileInfo[]> DownloadAndUnpack(string product, SemanticVersion version, ArtifactKind kind, DirectoryInfo destinationDirectory, Action<string, float> progressCallback = null)
 		{
 			if (product == null) throw new ArgumentNullException("product");
 			if (version == null) throw new ArgumentNullException("version");
@@ -124,7 +125,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages
 
 			return new Coroutine<FileInfo[]>(DownloadAndUnpackAsync(product, version, kind, destinationDirectory, progressCallback));
 		}
-		private static IEnumerable DownloadAndUnpackAsync(string product, SemanticVersion version, ArtifactKind kind, string destinationDirectory, Action<string, float> progressCallback = null)
+		private static IEnumerable DownloadAndUnpackAsync(string product, SemanticVersion version, ArtifactKind kind, DirectoryInfo destinationDirectory, Action<string, float> progressCallback = null)
 		{
 			var packageId = GetPackageId(product);
 
@@ -135,6 +136,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages
 			var packageDirectory = getContentAsync.GetResult();
 			var toolsDirectory = packageDirectory.GetDirectories().FirstOrDefault(d => string.Equals(d.Name, "tools", StringComparison.OrdinalIgnoreCase));
 			var libDirectory = packageDirectory.GetDirectories().FirstOrDefault(d => string.Equals(d.Name, "lib", StringComparison.OrdinalIgnoreCase));
+
 			if (kind == ArtifactKind.Library && libDirectory != null && libDirectory.Exists)
 			{
 				var prefTargets = default(string[]);
@@ -153,9 +155,15 @@ namespace GameDevWare.Charon.Unity.Updates.Packages
 
 				foreach (var targetFrameworkDirectory in targetFrameworkDirectories)
 				{
-					if (Directory.Exists(destinationDirectory) == false)
+					destinationDirectory.Refresh();
+					if (destinationDirectory.Exists == false)
 					{
-						Directory.CreateDirectory(destinationDirectory);
+						destinationDirectory.Create();
+					}
+
+					if (Settings.Current.Verbose)
+					{
+						Debug.Log(string.Format("Copying 'Library' artifacts from '{0}' package into '{1}' directory.", packageId, destinationDirectory.FullName));
 					}
 
 					foreach (var file in targetFrameworkDirectory.GetFiles())
@@ -169,9 +177,15 @@ namespace GameDevWare.Charon.Unity.Updates.Packages
 			}
 			else if (kind == ArtifactKind.Tool && toolsDirectory != null && toolsDirectory.Exists)
 			{
-				if (Directory.Exists(destinationDirectory) == false)
+				destinationDirectory.Refresh();
+				if (destinationDirectory.Exists == false)
 				{
-					Directory.CreateDirectory(destinationDirectory);
+					destinationDirectory.Create();
+				}
+
+				if (Settings.Current.Verbose)
+				{
+					Debug.Log(string.Format("Copying 'Tools' artifacts from '{0}' package into '{1}' directory.", packageId, destinationDirectory.FullName));
 				}
 
 				foreach (var file in toolsDirectory.GetFiles())
@@ -184,16 +198,29 @@ namespace GameDevWare.Charon.Unity.Updates.Packages
 			}
 			throw new InvalidOperationException("Package '{0}' doesn't contains libraries or tools to deploy.");
 		}
-		private static FileInfo DeployAtPath(FileInfo file, string destinationDirectory)
+		private static FileInfo DeployAtPath(FileInfo file, DirectoryInfo destinationDirectory)
 		{
 			if (destinationDirectory == null) throw new ArgumentNullException("destinationDirectory");
 			if (file == null) throw new ArgumentNullException("file");
 
-			var targetPath = Path.Combine(destinationDirectory, file.Name);
+			destinationDirectory.Refresh();
+
+			var targetPath = Path.Combine(destinationDirectory.FullName, file.Name);
+
+			if (Settings.Current.Verbose)
+			{
+				Debug.Log(string.Format("Copying '{0}' file to '{1}' directory.", file.Name, destinationDirectory.FullName));
+			}
+
 			file.CopyTo(targetPath, overwrite: true);
 			if (string.Equals(file.Extension, ".exe", StringComparison.OrdinalIgnoreCase) ||
 				string.Equals(file.Extension, ".dll", StringComparison.OrdinalIgnoreCase))
 			{
+				if (Settings.Current.Verbose)
+				{
+					Debug.Log(string.Format("Computing SHA1 hash for '{0}' file in '{1}' directory.", file.Name, destinationDirectory.FullName));
+				}
+
 				var targetPathHash = targetPath + ".sha1";
 				File.WriteAllText(targetPathHash, FileAndPathUtils.ComputeHash(targetPath, "SHA1"));
 			}

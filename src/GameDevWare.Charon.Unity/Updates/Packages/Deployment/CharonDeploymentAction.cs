@@ -37,18 +37,30 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Deployment
 		}
 		private IEnumerable PrepareAsync()
 		{
+			this.versionDirectory.Refresh();
 			if (this.versionDirectory.Exists && HasValidExecutableFiles(this.versionDirectory))
 			{
 				yield break;
 			}
 
-			var downloadAsync = PackageManager.DownloadAndUnpack(ProductInformation.PRODUCT_CHARON, this.versionToDeploy, ArtifactKind.Tool, this.downloadDirectory.FullName, this.progressCallback);
+			var downloadAsync = PackageManager.DownloadAndUnpack(ProductInformation.PRODUCT_CHARON, this.versionToDeploy, ArtifactKind.Tool, this.downloadDirectory, this.progressCallback);
 			yield return downloadAsync;
 
-			if (this.versionDirectory.Exists)
+			this.downloadDirectory.Refresh();
+			if (this.downloadDirectory.Exists == false)
 			{
-				this.versionDirectory.Delete();
+				Debug.LogError(string.Format("Failed to download version '{0}' of '{1}' because target directory '{2}' is empty or doesn't exists.",
+					this.versionDirectory.Name, ProductInformation.PRODUCT_CHARON, this.downloadDirectory.FullName));
+				yield break;
 			}
+
+			this.versionDirectory.Refresh();
+			if (this.versionDirectory.Exists == false)
+			{
+				this.versionDirectory.Create();
+			}
+			this.versionDirectory.Delete();
+
 			this.downloadDirectory.MoveTo(this.versionDirectory.FullName);
 		}
 		/// <inheritdoc />
@@ -59,6 +71,13 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Deployment
 		private IEnumerable CompleteAsync()
 		{
 			GameDataEditorWindow.FindAllAndClose();
+
+			this.versionDirectory.Refresh();
+			if (this.versionDirectory.Exists == false)
+			{
+				Debug.LogError(string.Format("Unable to complete deployment because directory '{0}' with '{1}' product doesn't exists.", this.versionDirectory.Name, ProductInformation.PRODUCT_CHARON));
+				yield break;
+			}
 
 			var extensionsToClean = new[] { ".exe", ".dll", ".config", ".xml", ".pdb", ".mdb", ".sha1" };
 			foreach (var fileToClean in this.baseDirectory.GetFiles().Where(file => extensionsToClean.Contains(file.Extension, StringComparer.OrdinalIgnoreCase)))
@@ -76,6 +95,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Deployment
 				}
 			}
 
+			this.versionDirectory.Refresh();
 			foreach (var file in this.versionDirectory.GetFiles())
 			{
 				if (Settings.Current.Verbose)
@@ -133,6 +153,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Deployment
 		/// <inheritdoc />
 		public override void CleanUp()
 		{
+			this.downloadDirectory.Refresh();
 			if (this.downloadDirectory.Exists)
 			{
 				try { this.downloadDirectory.Delete(recursive: true); }

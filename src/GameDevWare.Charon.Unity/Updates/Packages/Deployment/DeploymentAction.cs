@@ -39,7 +39,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Deployment
 				{
 					return false; // no hash file
 				}
-
+				
 				var expectedHashValue = File.ReadAllText(hashFilePath.FullName).Trim();
 				var actualHashValue = FileAndPathUtils.ComputeHash(file.FullName, "SHA1");
 
