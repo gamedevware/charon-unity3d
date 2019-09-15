@@ -1,6 +1,6 @@
 {
-	"ChangeNumber": 4,
-	"ToolsVersion": "2018.4.4.0",
+	"ToolsVersion": "2019.3.4.0",
+	"ChangeNumber": 23,
 	"Collections": {
 		"Entity": [
 			{
@@ -4936,21 +4936,21 @@
 				"Check": {
 					"expressionType": "GreaterThanOrEqual",
 					"left": {
-						"expressionType": "PropertyOrField",
-						"propertyOrFieldName": "LightLevel",
+						"expressionType": "MemberResolve",
 						"expression": {
-							"expressionType": "PropertyOrField",
-							"propertyOrFieldName": "Dungeon",
+							"expressionType": "MemberResolve",
 							"expression": {
-								"expressionType": "PropertyOrField",
-								"propertyOrFieldName": "context",
+								"expressionType": "MemberResolve",
 								"expression": null,
+								"name": "context",
 								"useNullPropagation": false,
 								"_pos": "1:1+7"
 							},
+							"name": "Dungeon",
 							"useNullPropagation": false,
 							"_pos": "1:8+1"
 						},
+						"name": "LightLevel",
 						"useNullPropagation": false,
 						"_pos": "1:16+1"
 					},
@@ -4960,7 +4960,7 @@
 						"value": "51",
 						"_pos": "1:31+2"
 					},
-					"_src": "context.Dungeon.LightLevel >= 51",
+					"_cs": "context.Dungeon.LightLevel >= 51",
 					"_pos": "1:28+2"
 				},
 				"UnboundCheck": null
@@ -4974,21 +4974,21 @@
 				"Check": {
 					"expressionType": "LessThanOrEqual",
 					"left": {
-						"expressionType": "PropertyOrField",
-						"propertyOrFieldName": "LightLevel",
+						"expressionType": "MemberResolve",
 						"expression": {
-							"expressionType": "PropertyOrField",
-							"propertyOrFieldName": "Dungeon",
+							"expressionType": "MemberResolve",
 							"expression": {
-								"expressionType": "PropertyOrField",
-								"propertyOrFieldName": "context",
+								"expressionType": "MemberResolve",
 								"expression": null,
+								"name": "context",
 								"useNullPropagation": false,
 								"_pos": "1:1+7"
 							},
+							"name": "Dungeon",
 							"useNullPropagation": false,
 							"_pos": "1:8+1"
 						},
+						"name": "LightLevel",
 						"useNullPropagation": false,
 						"_pos": "1:16+1"
 					},
@@ -4998,7 +4998,7 @@
 						"value": "26",
 						"_pos": "1:31+2"
 					},
-					"_src": "context.Dungeon.LightLevel <= 26",
+					"_cs": "context.Dungeon.LightLevel <= 26",
 					"_pos": "1:28+2"
 				},
 				"UnboundCheck": null
@@ -5012,21 +5012,21 @@
 				"Check": {
 					"expressionType": "Equal",
 					"left": {
-						"expressionType": "PropertyOrField",
-						"propertyOrFieldName": "Round",
+						"expressionType": "MemberResolve",
 						"expression": {
-							"expressionType": "PropertyOrField",
-							"propertyOrFieldName": "Combat",
+							"expressionType": "MemberResolve",
 							"expression": {
-								"expressionType": "PropertyOrField",
-								"propertyOrFieldName": "context",
+								"expressionType": "MemberResolve",
 								"expression": null,
+								"name": "context",
 								"useNullPropagation": false,
 								"_pos": "1:1+7"
 							},
+							"name": "Combat",
 							"useNullPropagation": false,
 							"_pos": "1:8+1"
 						},
+						"name": "Round",
 						"useNullPropagation": true,
 						"_pos": "1:15+2"
 					},
@@ -5036,7 +5036,7 @@
 						"value": "1",
 						"_pos": "1:26+1"
 					},
-					"_src": "context.Combat?.Round == 1",
+					"_cs": "context.Combat?.Round == 1",
 					"_pos": "1:23+2"
 				},
 				"UnboundCheck": null
@@ -5050,31 +5050,31 @@
 				"Check": {
 					"expressionType": "Equal",
 					"left": {
-						"expressionType": "PropertyOrField",
-						"propertyOrFieldName": "Id",
+						"expressionType": "MemberResolve",
 						"expression": {
-							"expressionType": "PropertyOrField",
-							"propertyOrFieldName": "Dungeon",
+							"expressionType": "MemberResolve",
 							"expression": {
-								"expressionType": "PropertyOrField",
-								"propertyOrFieldName": "context",
+								"expressionType": "MemberResolve",
 								"expression": null,
+								"name": "context",
 								"useNullPropagation": false,
 								"_pos": "1:1+7"
 							},
+							"name": "Dungeon",
 							"useNullPropagation": false,
 							"_pos": "1:8+1"
 						},
+						"name": "Id",
 						"useNullPropagation": false,
 						"_pos": "1:16+1"
 					},
 					"right": {
 						"expressionType": "Constant",
-						"type": "String",
+						"type": "System.String",
 						"value": "Cove",
 						"_pos": "1:23+6"
 					},
-					"_src": "context.Dungeon.Id == \u0022Cove\u0022",
+					"_cs": "context.Dungeon.Id == \u0022Cove\u0022",
 					"_pos": "1:20+2"
 				},
 				"UnboundCheck": null
@@ -5088,31 +5088,31 @@
 				"Check": {
 					"expressionType": "Equal",
 					"left": {
-						"expressionType": "PropertyOrField",
-						"propertyOrFieldName": "Id",
+						"expressionType": "MemberResolve",
 						"expression": {
-							"expressionType": "PropertyOrField",
-							"propertyOrFieldName": "Dungeon",
+							"expressionType": "MemberResolve",
 							"expression": {
-								"expressionType": "PropertyOrField",
-								"propertyOrFieldName": "context",
+								"expressionType": "MemberResolve",
 								"expression": null,
+								"name": "context",
 								"useNullPropagation": false,
 								"_pos": "1:1+7"
 							},
+							"name": "Dungeon",
 							"useNullPropagation": false,
 							"_pos": "1:8+1"
 						},
+						"name": "Id",
 						"useNullPropagation": false,
 						"_pos": "1:16+1"
 					},
 					"right": {
 						"expressionType": "Constant",
-						"type": "String",
+						"type": "System.String",
 						"value": "Ruins",
 						"_pos": "1:23+7"
 					},
-					"_src": "context.Dungeon.Id == \u0022Ruins\u0022",
+					"_cs": "context.Dungeon.Id == \u0022Ruins\u0022",
 					"_pos": "1:20+2"
 				},
 				"UnboundCheck": null
@@ -5126,31 +5126,31 @@
 				"Check": {
 					"expressionType": "Equal",
 					"left": {
-						"expressionType": "PropertyOrField",
-						"propertyOrFieldName": "Id",
+						"expressionType": "MemberResolve",
 						"expression": {
-							"expressionType": "PropertyOrField",
-							"propertyOrFieldName": "Dungeon",
+							"expressionType": "MemberResolve",
 							"expression": {
-								"expressionType": "PropertyOrField",
-								"propertyOrFieldName": "context",
+								"expressionType": "MemberResolve",
 								"expression": null,
+								"name": "context",
 								"useNullPropagation": false,
 								"_pos": "1:1+7"
 							},
+							"name": "Dungeon",
 							"useNullPropagation": false,
 							"_pos": "1:8+1"
 						},
+						"name": "Id",
 						"useNullPropagation": false,
 						"_pos": "1:16+1"
 					},
 					"right": {
 						"expressionType": "Constant",
-						"type": "String",
+						"type": "System.String",
 						"value": "Warrens",
 						"_pos": "1:23+9"
 					},
-					"_src": "context.Dungeon.Id == \u0022Warrens\u0022",
+					"_cs": "context.Dungeon.Id == \u0022Warrens\u0022",
 					"_pos": "1:20+2"
 				},
 				"UnboundCheck": null
@@ -5164,31 +5164,31 @@
 				"Check": {
 					"expressionType": "Equal",
 					"left": {
-						"expressionType": "PropertyOrField",
-						"propertyOrFieldName": "Id",
+						"expressionType": "MemberResolve",
 						"expression": {
-							"expressionType": "PropertyOrField",
-							"propertyOrFieldName": "Dungeon",
+							"expressionType": "MemberResolve",
 							"expression": {
-								"expressionType": "PropertyOrField",
-								"propertyOrFieldName": "context",
+								"expressionType": "MemberResolve",
 								"expression": null,
+								"name": "context",
 								"useNullPropagation": false,
 								"_pos": "1:1+7"
 							},
+							"name": "Dungeon",
 							"useNullPropagation": false,
 							"_pos": "1:8+1"
 						},
+						"name": "Id",
 						"useNullPropagation": false,
 						"_pos": "1:16+1"
 					},
 					"right": {
 						"expressionType": "Constant",
-						"type": "String",
+						"type": "System.String",
 						"value": "Weald",
 						"_pos": "1:23+7"
 					},
-					"_src": "context.Dungeon.Id == \u0022Weald\u0022",
+					"_cs": "context.Dungeon.Id == \u0022Weald\u0022",
 					"_pos": "1:20+2"
 				},
 				"UnboundCheck": null
@@ -5202,21 +5202,21 @@
 				"Check": {
 					"expressionType": "LessThan",
 					"left": {
-						"expressionType": "PropertyOrField",
-						"propertyOrFieldName": "HitPoints",
+						"expressionType": "MemberResolve",
 						"expression": {
-							"expressionType": "PropertyOrField",
-							"propertyOrFieldName": "Source",
+							"expressionType": "MemberResolve",
 							"expression": {
-								"expressionType": "PropertyOrField",
-								"propertyOrFieldName": "context",
+								"expressionType": "MemberResolve",
 								"expression": null,
+								"name": "context",
 								"useNullPropagation": false,
 								"_pos": "1:1+7"
 							},
+							"name": "Source",
 							"useNullPropagation": false,
 							"_pos": "1:8+1"
 						},
+						"name": "HitPoints",
 						"useNullPropagation": false,
 						"_pos": "1:15+1"
 					},
@@ -5225,21 +5225,21 @@
 						"expression": {
 							"expressionType": "Divide",
 							"left": {
-								"expressionType": "PropertyOrField",
-								"propertyOrFieldName": "MaxHitPoints",
+								"expressionType": "MemberResolve",
 								"expression": {
-									"expressionType": "PropertyOrField",
-									"propertyOrFieldName": "Source",
+									"expressionType": "MemberResolve",
 									"expression": {
-										"expressionType": "PropertyOrField",
-										"propertyOrFieldName": "context",
+										"expressionType": "MemberResolve",
 										"expression": null,
+										"name": "context",
 										"useNullPropagation": false,
 										"_pos": "1:29+7"
 									},
+									"name": "Source",
 									"useNullPropagation": false,
 									"_pos": "1:36+1"
 								},
+								"name": "MaxHitPoints",
 								"useNullPropagation": false,
 								"_pos": "1:43+1"
 							},
@@ -5253,7 +5253,7 @@
 						},
 						"_pos": "1:28+1"
 					},
-					"_src": "context.Source.HitPoints < (context.Source.MaxHitPoints / 2)",
+					"_cs": "context.Source.HitPoints < (context.Source.MaxHitPoints / 2)",
 					"_pos": "1:26+1"
 				},
 				"UnboundCheck": null
@@ -5267,38 +5267,38 @@
 				"Check": {
 					"expressionType": "Equal",
 					"left": {
-						"expressionType": "PropertyOrField",
-						"propertyOrFieldName": "Type",
+						"expressionType": "MemberResolve",
 						"expression": {
-							"expressionType": "PropertyOrField",
-							"propertyOrFieldName": "Attack",
+							"expressionType": "MemberResolve",
 							"expression": {
-								"expressionType": "PropertyOrField",
-								"propertyOrFieldName": "context",
+								"expressionType": "MemberResolve",
 								"expression": null,
+								"name": "context",
 								"useNullPropagation": false,
 								"_pos": "1:1+7"
 							},
+							"name": "Attack",
 							"useNullPropagation": false,
 							"_pos": "1:8+1"
 						},
+						"name": "Type",
 						"useNullPropagation": true,
 						"_pos": "1:15+2"
 					},
 					"right": {
-						"expressionType": "PropertyOrField",
-						"propertyOrFieldName": "Melee",
+						"expressionType": "MemberResolve",
 						"expression": {
-							"expressionType": "PropertyOrField",
-							"propertyOrFieldName": "AttackType",
+							"expressionType": "MemberResolve",
 							"expression": null,
+							"name": "AttackType",
 							"useNullPropagation": false,
 							"_pos": "1:25+10"
 						},
+						"name": "Melee",
 						"useNullPropagation": false,
 						"_pos": "1:35+1"
 					},
-					"_src": "context.Attack?.Type == AttackType.Melee",
+					"_cs": "context.Attack?.Type == AttackType.Melee",
 					"_pos": "1:22+2"
 				},
 				"UnboundCheck": null
@@ -5312,40 +5312,40 @@
 				"Check": {
 					"expressionType": "Invoke",
 					"expression": {
-						"expressionType": "PropertyOrField",
-						"propertyOrFieldName": "Is",
+						"expressionType": "MemberResolve",
 						"expression": {
-							"expressionType": "PropertyOrField",
-							"propertyOrFieldName": "Target",
+							"expressionType": "MemberResolve",
 							"expression": {
-								"expressionType": "PropertyOrField",
-								"propertyOrFieldName": "context",
+								"expressionType": "MemberResolve",
 								"expression": null,
+								"name": "context",
 								"useNullPropagation": false,
 								"_pos": "1:1+7"
 							},
+							"name": "Target",
 							"useNullPropagation": false,
 							"_pos": "1:8+1"
 						},
+						"name": "Is",
 						"useNullPropagation": false,
 						"_pos": "1:15+1"
 					},
 					"arguments": {
 						"0": {
-							"expressionType": "PropertyOrField",
-							"propertyOrFieldName": "Beast",
+							"expressionType": "MemberResolve",
 							"expression": {
-								"expressionType": "PropertyOrField",
-								"propertyOrFieldName": "MonsterType",
+								"expressionType": "MemberResolve",
 								"expression": null,
+								"name": "MonsterType",
 								"useNullPropagation": false,
 								"_pos": "1:19+11"
 							},
+							"name": "Beast",
 							"useNullPropagation": false,
 							"_pos": "1:30+1"
 						}
 					},
-					"_src": "context.Target.Is(MonsterType.Beast)",
+					"_cs": "context.Target.Is(MonsterType.Beast)",
 					"_pos": "1:18+1"
 				},
 				"UnboundCheck": null
@@ -5359,40 +5359,40 @@
 				"Check": {
 					"expressionType": "Invoke",
 					"expression": {
-						"expressionType": "PropertyOrField",
-						"propertyOrFieldName": "Is",
+						"expressionType": "MemberResolve",
 						"expression": {
-							"expressionType": "PropertyOrField",
-							"propertyOrFieldName": "Target",
+							"expressionType": "MemberResolve",
 							"expression": {
-								"expressionType": "PropertyOrField",
-								"propertyOrFieldName": "context",
+								"expressionType": "MemberResolve",
 								"expression": null,
+								"name": "context",
 								"useNullPropagation": false,
 								"_pos": "1:1+7"
 							},
+							"name": "Target",
 							"useNullPropagation": false,
 							"_pos": "1:8+1"
 						},
+						"name": "Is",
 						"useNullPropagation": false,
 						"_pos": "1:15+1"
 					},
 					"arguments": {
 						"0": {
-							"expressionType": "PropertyOrField",
-							"propertyOrFieldName": "Corpse",
+							"expressionType": "MemberResolve",
 							"expression": {
-								"expressionType": "PropertyOrField",
-								"propertyOrFieldName": "MonsterType",
+								"expressionType": "MemberResolve",
 								"expression": null,
+								"name": "MonsterType",
 								"useNullPropagation": false,
 								"_pos": "1:19+11"
 							},
+							"name": "Corpse",
 							"useNullPropagation": false,
 							"_pos": "1:30+1"
 						}
 					},
-					"_src": "context.Target.Is(MonsterType.Corpse)",
+					"_cs": "context.Target.Is(MonsterType.Corpse)",
 					"_pos": "1:18+1"
 				},
 				"UnboundCheck": null
@@ -5406,40 +5406,40 @@
 				"Check": {
 					"expressionType": "Invoke",
 					"expression": {
-						"expressionType": "PropertyOrField",
-						"propertyOrFieldName": "Is",
+						"expressionType": "MemberResolve",
 						"expression": {
-							"expressionType": "PropertyOrField",
-							"propertyOrFieldName": "Target",
+							"expressionType": "MemberResolve",
 							"expression": {
-								"expressionType": "PropertyOrField",
-								"propertyOrFieldName": "context",
+								"expressionType": "MemberResolve",
 								"expression": null,
+								"name": "context",
 								"useNullPropagation": false,
 								"_pos": "1:1+7"
 							},
+							"name": "Target",
 							"useNullPropagation": false,
 							"_pos": "1:8+1"
 						},
+						"name": "Is",
 						"useNullPropagation": false,
 						"_pos": "1:15+1"
 					},
 					"arguments": {
 						"0": {
-							"expressionType": "PropertyOrField",
-							"propertyOrFieldName": "Eldritch",
+							"expressionType": "MemberResolve",
 							"expression": {
-								"expressionType": "PropertyOrField",
-								"propertyOrFieldName": "MonsterType",
+								"expressionType": "MemberResolve",
 								"expression": null,
+								"name": "MonsterType",
 								"useNullPropagation": false,
 								"_pos": "1:19+11"
 							},
+							"name": "Eldritch",
 							"useNullPropagation": false,
 							"_pos": "1:30+1"
 						}
 					},
-					"_src": "context.Target.Is(MonsterType.Eldritch)",
+					"_cs": "context.Target.Is(MonsterType.Eldritch)",
 					"_pos": "1:18+1"
 				},
 				"UnboundCheck": null
@@ -5453,40 +5453,40 @@
 				"Check": {
 					"expressionType": "Invoke",
 					"expression": {
-						"expressionType": "PropertyOrField",
-						"propertyOrFieldName": "Is",
+						"expressionType": "MemberResolve",
 						"expression": {
-							"expressionType": "PropertyOrField",
-							"propertyOrFieldName": "Target",
+							"expressionType": "MemberResolve",
 							"expression": {
-								"expressionType": "PropertyOrField",
-								"propertyOrFieldName": "context",
+								"expressionType": "MemberResolve",
 								"expression": null,
+								"name": "context",
 								"useNullPropagation": false,
 								"_pos": "1:1+7"
 							},
+							"name": "Target",
 							"useNullPropagation": false,
 							"_pos": "1:8+1"
 						},
+						"name": "Is",
 						"useNullPropagation": false,
 						"_pos": "1:15+1"
 					},
 					"arguments": {
 						"0": {
-							"expressionType": "PropertyOrField",
-							"propertyOrFieldName": "Human",
+							"expressionType": "MemberResolve",
 							"expression": {
-								"expressionType": "PropertyOrField",
-								"propertyOrFieldName": "MonsterType",
+								"expressionType": "MemberResolve",
 								"expression": null,
+								"name": "MonsterType",
 								"useNullPropagation": false,
 								"_pos": "1:19+11"
 							},
+							"name": "Human",
 							"useNullPropagation": false,
 							"_pos": "1:30+1"
 						}
 					},
-					"_src": "context.Target.Is(MonsterType.Human)",
+					"_cs": "context.Target.Is(MonsterType.Human)",
 					"_pos": "1:18+1"
 				},
 				"UnboundCheck": null
@@ -5500,40 +5500,40 @@
 				"Check": {
 					"expressionType": "Invoke",
 					"expression": {
-						"expressionType": "PropertyOrField",
-						"propertyOrFieldName": "Is",
+						"expressionType": "MemberResolve",
 						"expression": {
-							"expressionType": "PropertyOrField",
-							"propertyOrFieldName": "Target",
+							"expressionType": "MemberResolve",
 							"expression": {
-								"expressionType": "PropertyOrField",
-								"propertyOrFieldName": "context",
+								"expressionType": "MemberResolve",
 								"expression": null,
+								"name": "context",
 								"useNullPropagation": false,
 								"_pos": "1:1+7"
 							},
+							"name": "Target",
 							"useNullPropagation": false,
 							"_pos": "1:8+1"
 						},
+						"name": "Is",
 						"useNullPropagation": false,
 						"_pos": "1:15+1"
 					},
 					"arguments": {
 						"0": {
-							"expressionType": "PropertyOrField",
-							"propertyOrFieldName": "Unholy",
+							"expressionType": "MemberResolve",
 							"expression": {
-								"expressionType": "PropertyOrField",
-								"propertyOrFieldName": "MonsterType",
+								"expressionType": "MemberResolve",
 								"expression": null,
+								"name": "MonsterType",
 								"useNullPropagation": false,
 								"_pos": "1:19+11"
 							},
+							"name": "Unholy",
 							"useNullPropagation": false,
 							"_pos": "1:30+1"
 						}
 					},
-					"_src": "context.Target.Is(MonsterType.Unholy)",
+					"_cs": "context.Target.Is(MonsterType.Unholy)",
 					"_pos": "1:18+1"
 				},
 				"UnboundCheck": null
@@ -5547,21 +5547,21 @@
 				"Check": {
 					"expressionType": "GreaterThanOrEqual",
 					"left": {
-						"expressionType": "PropertyOrField",
-						"propertyOrFieldName": "LightLevel",
+						"expressionType": "MemberResolve",
 						"expression": {
-							"expressionType": "PropertyOrField",
-							"propertyOrFieldName": "Dungeon",
+							"expressionType": "MemberResolve",
 							"expression": {
-								"expressionType": "PropertyOrField",
-								"propertyOrFieldName": "context",
+								"expressionType": "MemberResolve",
 								"expression": null,
+								"name": "context",
 								"useNullPropagation": false,
 								"_pos": "1:1+7"
 							},
+							"name": "Dungeon",
 							"useNullPropagation": false,
 							"_pos": "1:8+1"
 						},
+						"name": "LightLevel",
 						"useNullPropagation": false,
 						"_pos": "1:16+1"
 					},
@@ -5571,7 +5571,7 @@
 						"value": "75",
 						"_pos": "1:31+2"
 					},
-					"_src": "context.Dungeon.LightLevel >= 75",
+					"_cs": "context.Dungeon.LightLevel >= 75",
 					"_pos": "1:28+2"
 				},
 				"UnboundCheck": null
@@ -5585,38 +5585,38 @@
 				"Check": {
 					"expressionType": "Equal",
 					"left": {
-						"expressionType": "PropertyOrField",
-						"propertyOrFieldName": "Type",
+						"expressionType": "MemberResolve",
 						"expression": {
-							"expressionType": "PropertyOrField",
-							"propertyOrFieldName": "Attack",
+							"expressionType": "MemberResolve",
 							"expression": {
-								"expressionType": "PropertyOrField",
-								"propertyOrFieldName": "context",
+								"expressionType": "MemberResolve",
 								"expression": null,
+								"name": "context",
 								"useNullPropagation": false,
 								"_pos": "1:1+7"
 							},
+							"name": "Attack",
 							"useNullPropagation": false,
 							"_pos": "1:8+1"
 						},
+						"name": "Type",
 						"useNullPropagation": true,
 						"_pos": "1:15+2"
 					},
 					"right": {
-						"expressionType": "PropertyOrField",
-						"propertyOrFieldName": "Ranged",
+						"expressionType": "MemberResolve",
 						"expression": {
-							"expressionType": "PropertyOrField",
-							"propertyOrFieldName": "AttackType",
+							"expressionType": "MemberResolve",
 							"expression": null,
+							"name": "AttackType",
 							"useNullPropagation": false,
 							"_pos": "1:25+10"
 						},
+						"name": "Ranged",
 						"useNullPropagation": false,
 						"_pos": "1:35+1"
 					},
-					"_src": "context.Attack?.Type == AttackType.Ranged",
+					"_cs": "context.Attack?.Type == AttackType.Ranged",
 					"_pos": "1:22+2"
 				},
 				"UnboundCheck": null
@@ -5630,21 +5630,21 @@
 				"Check": {
 					"expressionType": "LessThanOrEqual",
 					"left": {
-						"expressionType": "PropertyOrField",
-						"propertyOrFieldName": "LightLevel",
+						"expressionType": "MemberResolve",
 						"expression": {
-							"expressionType": "PropertyOrField",
-							"propertyOrFieldName": "Dungeon",
+							"expressionType": "MemberResolve",
 							"expression": {
-								"expressionType": "PropertyOrField",
-								"propertyOrFieldName": "context",
+								"expressionType": "MemberResolve",
 								"expression": null,
+								"name": "context",
 								"useNullPropagation": false,
 								"_pos": "1:1+7"
 							},
+							"name": "Dungeon",
 							"useNullPropagation": false,
 							"_pos": "1:8+1"
 						},
+						"name": "LightLevel",
 						"useNullPropagation": false,
 						"_pos": "1:16+1"
 					},
@@ -5654,7 +5654,7 @@
 						"value": "51",
 						"_pos": "1:31+2"
 					},
-					"_src": "context.Dungeon.LightLevel <= 51",
+					"_cs": "context.Dungeon.LightLevel <= 51",
 					"_pos": "1:28+2"
 				},
 				"UnboundCheck": null
@@ -5668,21 +5668,21 @@
 				"Check": {
 					"expressionType": "GreaterThanOrEqual",
 					"left": {
-						"expressionType": "PropertyOrField",
-						"propertyOrFieldName": "Stress",
+						"expressionType": "MemberResolve",
 						"expression": {
-							"expressionType": "PropertyOrField",
-							"propertyOrFieldName": "Source",
+							"expressionType": "MemberResolve",
 							"expression": {
-								"expressionType": "PropertyOrField",
-								"propertyOrFieldName": "context",
+								"expressionType": "MemberResolve",
 								"expression": null,
+								"name": "context",
 								"useNullPropagation": false,
 								"_pos": "1:1+7"
 							},
+							"name": "Source",
 							"useNullPropagation": false,
 							"_pos": "1:8+1"
 						},
+						"name": "Stress",
 						"useNullPropagation": false,
 						"_pos": "1:15+1"
 					},
@@ -5692,7 +5692,7 @@
 						"value": "50",
 						"_pos": "1:26+2"
 					},
-					"_src": "context.Source.Stress >= 50",
+					"_cs": "context.Source.Stress >= 50",
 					"_pos": "1:23+2"
 				},
 				"UnboundCheck": null
