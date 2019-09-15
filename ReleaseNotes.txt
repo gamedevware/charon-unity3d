@@ -1,1 +1,2 @@
 ﻿fixed Charon deployment action if 'Charon' directory doesn't exists in Library
+fixed update window in `Dark Theme`

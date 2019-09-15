@@ -143,17 +143,14 @@ namespace GameDevWare.Charon.Unity.Windows
 			{
 				clipping = TextClipping.Clip,
 				fontStyle = FontStyle.Bold,
-				normal = {
-					background = Texture2D.whiteTexture
-				}
+				normal = EditorStyles.toolbar.normal
 			};
+			
 
 			var cellStyle = new GUIStyle(GUIStyle.none)
 			{
 				clipping = TextClipping.Clip,
-				normal = {
-					background = Texture2D.whiteTexture
-				} 
+				normal = EditorStyles.whiteLabel.normal
 			};
 
 			// paddings
