@@ -1,7 +1,1 @@
-﻿internal updater has been refactored to use Nuget feed instead custom server
-added new "Code and Asset" generation logic
-added auto-update window and auto-update check
-added CreatePatch and ApplyPatch methods to CharonCli helper
-changed behaviour of "Editor window" to close Charon.exe process on 
-  window close to prevent background re-saves and conflicts with source control
-fixed "Update Available!" window without actual updates
+﻿fixed Charon deployment action if 'Charon' directory doesn't exists in Library
