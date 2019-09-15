@@ -1,2 +1,4 @@
 ﻿fixed Charon deployment action if 'Charon' directory doesn't exists in Library
 fixed update window in `Dark Theme`
+fixed log path for 'GameData Editor ' window
+fixed 'InvalidOperationException: Standard output has not been redirected or process has not been started.' error in logs
