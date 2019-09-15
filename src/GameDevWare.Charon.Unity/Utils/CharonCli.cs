@@ -174,7 +174,8 @@ namespace GameDevWare.Charon.Unity.Utils
 						EnvironmentVariables =
 						{
 							{ "CHARON_APP_DATA", Settings.GetLocalUserDataPath() },
-							{ "CHARON_SERVER", Settings.Current.ServerAddress }
+							{ "CHARON_SERVER", Settings.Current.ServerAddress },
+							{ "BASE_DIRECTORY_PATH", Settings.ToolBasePath },
 						}
 					}
 				}
