@@ -6,29 +6,28 @@ For Unity game engine an Editor Extension is available. For other platforms stan
 
 # Basics 
 
-- [Installation](https://gamedevware.com/docs/pages/viewpage.action?pageId=1736708)
-- [Creating game data file](https://gamedevware.com/docs/pages/viewpage.action?pageId=1277966)
-- [Launching data editor](https://gamedevware.com/docs/pages/viewpage.action?pageId=1736795)
-- [Setting up data structure](https://gamedevware.com/docs/pages/viewpage.action?pageId=1277968)
-- [Editing documents](https://gamedevware.com/docs/pages/viewpage.action?pageId=1277974)
-- [Generating source code (С#)](https://gamedevware.com/docs/pages/viewpage.action?pageId=1277970)
-- [Accessing game data (C#)](https://gamedevware.com/docs/pages/viewpage.action?pageId=1277972)
+- [Installation](https://github.com/deniszykov/charon-unity3d/wiki/Installation)
+- [Creating game data file](https://github.com/deniszykov/charon-unity3d/wiki/Creating%20Game%20Data%20File)
+- [Launching data editor](https://github.com/deniszykov/charon-unity3d/wiki/Launching%20Data%20Editor)
+- [Setting up data structure](https://github.com/deniszykov/charon-unity3d/wiki/Setting%20Up%20Data%20Structure)
+- [Editing documents](https://github.com/deniszykov/charon-unity3d/wiki/Editing%20Documents)
+- [Generating source code (С#)](https://github.com/deniszykov/charon-unity3d/wiki/Generating%20Source%20Code%20C%23)
+- [Accessing game data (C#)](https://github.com/deniszykov/charon-unity3d/wiki/Accessing%20Game%20Data%20C%23)
 
 # Additional features 
 
-- [Command Line Interface (CLI)](https://gamedevware.com/docs/pages/viewpage.action?pageId=1277976&src=contextnavpagetreemode)
-- [Game data localization](https://gamedevware.com/docs/pages/viewpage.action?pageId=1277980&src=contextnavpagetreemode)
-- [Various data formats](https://gamedevware.com/docs/pages/viewpage.action?pageId=1737062&src=contextnavpagetreemode)
+- [Command Line Interface (CLI)](https://github.com/deniszykov/charon-unity3d/wiki/Command%20Line%20Interface%20CLI)
+- [Game data localization](https://github.com/deniszykov/charon-unity3d/wiki/Game%20Data%20Localization)
+- [Supported data formats](https://github.com/deniszykov/charon-unity3d/wiki/Supported%20Data%20Formats)
 
 # Requirements 
 
-- [Unity](https://gamedevware.com/docs/pages/viewpage.action?pageId=1277984#id-%D0%A2%D1%80%D0%B5%D0%B1%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F-Unity)
-- [Mac OS X](https://gamedevware.com/docs/pages/viewpage.action?pageId=1277984#id-%D0%A2%D1%80%D0%B5%D0%B1%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F-OSX)
-- [Windows](https://gamedevware.com/docs/pages/viewpage.action?pageId=1277984#id-%D0%A2%D1%80%D0%B5%D0%B1%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F-Windows)
-- [Linux](https://gamedevware.com/docs/pages/viewpage.action?pageId=1277984#id-%D0%A2%D1%80%D0%B5%D0%B1%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F-Linux)
+- [Unity](https://github.com/deniszykov/charon-unity3d/wiki/Requirements#unity)
+- [Mac OS X](https://github.com/deniszykov/charon-unity3d/wiki/Requirements#mac-os-x)
+- [Windows](https://github.com/deniszykov/charon-unity3d/wiki/Requirements#windows)
+- [Linux](https://github.com/deniszykov/charon-unity3d/wiki/Requirements#linux)
 
 # Troubleshooting 
-- [Reporting issues](https://gamedevware.com/docs/pages/viewpage.action?pageId=1277988&src=contextnavpagetreemode)
-- [Working with logs](https://gamedevware.com/docs/pages/viewpage.action?pageId=1277990&src=contextnavpagetreemode)
-- [Available versions](https://gamedevware.com/docs/pages/viewpage.action?pageId=1736755&src=contextnavpagetreemode)
-- [Resetting user preferences](https://gamedevware.com/docs/pages/viewpage.action?pageId=1737341&src=contextnavpagetreemode)
+- [Reporting issues](https://github.com/deniszykov/charon-unity3d/wiki/Reporting%20Issues)
+- [Working with logs](https://github.com/deniszykov/charon-unity3d/wiki/Working%20with%20Logs)
+- [Resetting user preferences](https://github.com/deniszykov/charon-unity3d/wiki/Resetting%20User%20Preferences)
