@@ -27,6 +27,7 @@ using GameDevWare.Charon.Unity.Async;
 using GameDevWare.Charon.Unity.Utils;
 using UnityEditor;
 using UnityEngine;
+
 using Object = UnityEngine.Object;
 
 namespace GameDevWare.Charon.Unity.Windows
@@ -61,8 +62,7 @@ namespace GameDevWare.Charon.Unity.Windows
 				var inspectorWindowType = typeof(PopupWindow).Assembly.GetType("UnityEditor.InspectorWindow");
 				var inspectorWindow = EditorWindow.GetWindow(inspectorWindowType);
 				var activeEditorTracker = inspectorWindow.HasProperty("tracker") ?
-					inspectorWindow.GetPropertyValue("tracker") :
-					inspectorWindow.GetFieldValue("m_Tracker");
+					inspectorWindow.GetPropertyValue("tracker") : inspectorWindow.GetFieldValue("m_Tracker");
 				var customEditorAttributesType = typeof(PopupWindow).Assembly.GetType("UnityEditor.CustomEditorAttributes");
 				var customEditorsList = customEditorAttributesType.GetFieldValue("kSCustomEditors") as IList;
 				var customEditorsDictionary = customEditorAttributesType.GetFieldValue("kSCustomEditors") as IDictionary;
@@ -71,6 +71,7 @@ namespace GameDevWare.Charon.Unity.Windows
 				// after unity 2018.*
 				if (customEditorsDictionary != null)
 				{
+					var activeEditors = default(IEnumerable);
 					foreach (IEnumerable customEditors in customEditorsDictionary.Values)
 					{
 						foreach (var customEditor in customEditors)
@@ -85,11 +86,16 @@ namespace GameDevWare.Charon.Unity.Windows
 
 							// force rebuild editor list
 							activeEditorTracker.Invoke("ForceRebuild");
-							inspectorWindow.Repaint();
+
+							activeEditors = (IEnumerable)activeEditorTracker.GetPropertyValue("activeEditors") ?? Enumerable.Empty<object>();
+							foreach (Editor activeEditor in activeEditors)
+							{
+								activeEditor.SetPropertyValue("alwaysAllowExpansion", true);
+							}
 
 							// restore original inspector
 							customEditor.SetFieldValue("m_InspectorType", originalInspectorType);
-							break;
+							return;
 						}
 					}
 
@@ -107,7 +113,12 @@ namespace GameDevWare.Charon.Unity.Windows
 
 					// force rebuild editor list
 					activeEditorTracker.Invoke("ForceRebuild");
-					inspectorWindow.Repaint();
+
+					activeEditors = (IEnumerable)activeEditorTracker.GetPropertyValue("activeEditors") ?? Enumerable.Empty<object>();
+					foreach (Editor activeEditor in activeEditors)
+					{
+						activeEditor.SetPropertyValue("alwaysAllowExpansion", true);
+					}
 
 					// restore original inspector
 					customEditorsDictionary.Remove(selectedAssetType);
@@ -139,7 +150,7 @@ namespace GameDevWare.Charon.Unity.Windows
 						customEditor.SetFieldValue("m_InspectorType", originalInspectorType);
 						if (cachedCustomEditorsByType != null)
 							cachedCustomEditorsByType.Remove(selectedAssetType);
-						break;
+						return;
 					}
 
 					var newMonoEditorType = Activator.CreateInstance(monoEditorType);
@@ -170,15 +181,17 @@ namespace GameDevWare.Charon.Unity.Windows
 			}
 		}
 
+		/// <inheritdoc />
 		public override void OnInspectorGUI()
 		{
+			this.DrawDefaultInspector();
+			
 			var gameDataAsset = (Object)this.target;
 			var gameDataPath = FileAndPathUtils.MakeProjectRelative(AssetDatabase.GetAssetPath(gameDataAsset));
 
 			var assetPath = FileAndPathUtils.MakeProjectRelative(AssetDatabase.GetAssetPath(Selection.activeObject));
 			if (GameDataTracker.IsGameDataFile(assetPath) == false)
 			{
-				this.DrawDefaultInspector();
 				return;
 			}
 
@@ -325,6 +338,7 @@ namespace GameDevWare.Charon.Unity.Windows
 				this.gameDataSettings.Save(gameDataPath);
 			}
 		}
+
 		private void Restore(string gameDataPath)
 		{
 			var openFile = EditorUtility.OpenFilePanelWithFilters(Resources.UI_UNITYPLUGIN_INSPECTOR_RESTORE_BUTTON, Path.GetFullPath("./"), GameDataTracker.GameDataExtensionFilters);
