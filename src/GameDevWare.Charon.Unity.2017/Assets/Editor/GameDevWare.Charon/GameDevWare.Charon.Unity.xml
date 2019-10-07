@@ -4058,5 +4058,8 @@
         <member name="M:GameDevWare.Charon.Unity.Windows.GameDataEditorWindow.OnDestroy">
             <inheritdoc />
         </member>
+        <member name="M:GameDevWare.Charon.Unity.Windows.GameDataInspector.OnInspectorGUI">
+            <inheritdoc />
+        </member>
     </members>
 </doc>
