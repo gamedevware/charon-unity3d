@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFramework>net35</TargetFramework>
-		<Version>2019.3.5</Version>
+		<Version>2019.3.6</Version>
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 		<Authors>Denis Zykov</Authors>
 		<Company>GameDevWare</Company>
@@ -12,7 +12,8 @@
 		<Description>Charon is a software for managing game's data. It is used for creating data structure, editing data and accessing this data in the code.
 
 # Documentation
-https://gamedevware.com/docs/pages/viewpage.action?pageId=1736708</Description>
+https://github.com/deniszykov/charon-unity3d/wiki
+		</Description>
 		<PackageReleaseNotes>No release notes specified.</PackageReleaseNotes>
 		<PackageProjectUrl>https://gamedevware.com/w/view/product/charon</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/deniszykov/charon-unity3d</RepositoryUrl>
