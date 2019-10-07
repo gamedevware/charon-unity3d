@@ -1,6 +1,6 @@
-# Charon - Game Data Editor Plugin for Unity3D
-Copyright (c) 2019, Denis Zykov
-License: GPL v3
+# Charon - Game Data Editor Plugin for Unity3D  
+Copyright (c) 2019, Denis Zykov  
+License: GPL v3  
 
 ## Alternate Licensing - Commercial License
 ------------------------------------------------------------------------------------------
