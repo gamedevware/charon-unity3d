@@ -1,9 +1,10 @@
 # Charon - Game Data Editor Plugin for Unity3D
 Copyright (c) 2019, Denis Zykov
+License: GPL v3
 
-## Alternate Licensing
+## Alternate Licensing - Commercial License
 ------------------------------------------------------------------------------------------
-> Commercial License are available for an alternate download of Game Data Editor Plugin for Unity3D.
+> Commercial License is available for Game Data Editor Plugin for Unity3D.
 > This is the appropriate option if you are creating proprietary applications and you are 
 > not prepared to distribute and share the source code of your application under the 
 > GPL v3 license.
