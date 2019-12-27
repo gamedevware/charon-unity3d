@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using GameDevWare.Charon.Unity.Async;
 using GameDevWare.Charon.Unity.Updates.Packages;
@@ -18,17 +20,20 @@ namespace GameDevWare.Charon.Unity.Updates
 	{
 		private const string SKIPPED_UPDATE_PREFS_KEY = Settings.PREF_PREFIX + "SkippedUpdateHash";
 		private const string LAST_UPDATE_PREFS_KEY = Settings.PREF_PREFIX + "LastUpdateCheckTime";
+		private const string LAST_VERSION_TEMPLATE_PREFS_KEY = Settings.PREF_PREFIX + "Last{0}Version";
 		private static readonly TimeSpan UpdateCheckPeriod = TimeSpan.FromHours(8);
 		private static readonly TimeSpan UpdateCheckCooldown = TimeSpan.FromMinutes(0.3);
 
 		private static DateTime LastCheckTime;
 		private static DateTime CheckCooldownTime;
+		private static readonly Dictionary<string, SemanticVersion> LastVersionByProductId;
 		private static Promise CheckPromise;
 
 		static UpdateChecker()
 		{
 			EditorApplication.update += Update;
 			CheckCooldownTime = DateTime.UtcNow + UpdateCheckCooldown;
+			LastVersionByProductId = new Dictionary<string, SemanticVersion>(StringComparer.OrdinalIgnoreCase);
 		}
 
 		private static void Update()
@@ -70,9 +75,17 @@ namespace GameDevWare.Charon.Unity.Updates
 
 				var currentVersion = (product.ExpectedVersion ?? product.CurrentVersion.GetResult());
 				var lastVersion = product.AllBuilds.GetResult().Select(p => p.Version).Max();
+
+				SaveLastVersion(product.Id, lastVersion);
+
 				if (lastVersion == null || lastVersion <= currentVersion)
 				{
 					continue; // no updates
+				}
+
+				if (Settings.Current.Verbose)
+				{
+					Debug.Log(string.Format("Product '{0}' current version is '{1}', last version is '{2}'.", product.Name, currentVersion, lastVersion));
 				}
 
 				releaseNotes.AppendFormat("<size=20>{0}</size>" + Environment.NewLine, product.Name);
@@ -104,7 +117,7 @@ namespace GameDevWare.Charon.Unity.Updates
 					Debug.Log("No updates are found or current update is skipped.");
 				}
 			}
-			
+
 			SaveLastCheckTime(LastCheckTime = DateTime.UtcNow);
 			CheckCooldownTime = DateTime.UtcNow + UpdateCheckCooldown;
 		}
@@ -128,6 +141,32 @@ namespace GameDevWare.Charon.Unity.Updates
 		{
 			EditorPrefs.SetString(LAST_UPDATE_PREFS_KEY, time.Ticks.ToString());
 		}
+		private static SemanticVersion LoadLastVersion(string productId)
+		{
+			try
+			{
+				var lastVersion = EditorPrefs.GetString(string.Format(LAST_VERSION_TEMPLATE_PREFS_KEY, productId));
+				if (string.IsNullOrEmpty(lastVersion))
+					return null;
+				else
+					return SemanticVersion.Parse(lastVersion);
+			}
+			catch
+			{
+				return null;
+			}
+		}
+		private static void SaveLastVersion(string productId, SemanticVersion lastVersion)
+		{
+			if (Settings.Current.Verbose && lastVersion != null)
+			{
+				Debug.Log(string.Format("Saving information about last version '{0}' of product '{1}' in EditorPrefs.", lastVersion, productId));
+			}
+
+			EditorPrefs.SetString(string.Format(LAST_VERSION_TEMPLATE_PREFS_KEY, productId), lastVersion != null ? lastVersion.ToString() : "");
+			lock (LastVersionByProductId)
+				LastVersionByProductId[productId] = lastVersion;
+		}
 		private static bool IsUpdateSkipped(string releaseNotes)
 		{
 			try
@@ -147,5 +186,19 @@ namespace GameDevWare.Charon.Unity.Updates
 		{
 			EditorPrefs.SetString(SKIPPED_UPDATE_PREFS_KEY, FileAndPathUtils.ComputeNameHash(releaseNotes, "SHA1"));
 		}
+		public static SemanticVersion GetLastCharonVersion()
+		{
+			const string PRODUCT_ID = ProductInformation.PRODUCT_CHARON;
+
+			lock (LastVersionByProductId)
+			{
+				if (!LastVersionByProductId.ContainsKey(PRODUCT_ID))
+				{
+					LastVersionByProductId[PRODUCT_ID] = LoadLastVersion(PRODUCT_ID);
+				}
+				return LastVersionByProductId[PRODUCT_ID];
+			}
+		}
+
 	}
 }

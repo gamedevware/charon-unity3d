@@ -173,10 +173,32 @@ namespace GameDevWare.Charon.Unity
 			return !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling;
 		}
 
-		[MenuItem(TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENU_ABOUT, false, 31)]
-		private static void About()
+		[MenuItem(TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENU_SETTINGS, false, 31)]
+		private static void ShowSettings()
 		{
-			EditorWindow.GetWindow<AboutWindow>(utility: true);
+			var settingsService = typeof(UnityEditor.EditorApplication).Assembly.GetType("UnityEditor.SettingsService", throwOnError: false, ignoreCase: true);
+			var preferencesWindowType = typeof(UnityEditor.EditorApplication).Assembly.GetType("UnityEditor.PreferencesWindow", throwOnError: false, ignoreCase: true);
+			var settingsWindowType = typeof(UnityEditor.EditorApplication).Assembly.GetType("UnityEditor.SettingsWindow", throwOnError: false, ignoreCase: true);
+			if (settingsService != null)
+			{
+				settingsService.Invoke("OpenUserPreferences", "Preferences/T4");
+			}
+			else if (preferencesWindowType != null)
+			{
+				var settingsWindow = EditorWindow.GetWindow(preferencesWindowType);
+				settingsWindow.Show();
+				settingsWindow.Focus();
+			}
+			else if (settingsWindowType != null)
+			{
+				var settingsWindow = EditorWindow.GetWindow(settingsWindowType);
+				settingsWindow.Show();
+				settingsWindow.Focus();
+			}
+			else
+			{
+				Debug.LogWarning("Unable to locate preferences window. Please open it manually 'Edit -> Preferences...'.");
+			}
 		}
 
 		[MenuItem("Assets/Create/" + Resources.UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA + "/" + Resources.UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA_JSON)]

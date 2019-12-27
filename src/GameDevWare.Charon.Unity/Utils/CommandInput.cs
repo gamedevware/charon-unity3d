@@ -123,7 +123,6 @@ namespace GameDevWare.Charon.Unity.Utils
 			return runTask;
 		}
 
-		/// <inheritdoc />
 		private void ReleaseUnmanagedResources()
 		{
 			if (this.temporaryFile != null && IOFile.Exists(this.temporaryFile))

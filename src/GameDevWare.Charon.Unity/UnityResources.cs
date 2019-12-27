@@ -76,7 +76,7 @@ namespace GameDevWare.Charon {
 		public const string UI_UNITYPLUGIN_INSPECTOR_SCRIPTING_ASSEMBLIES_LABEL = "Scripting Assemblies";
 		public const string UI_UNITYPLUGIN_INSPECTOR_VALIDATE_BUTTON = "Validate";
 		public const string UI_UNITYPLUGIN_INSPECTOR_VALIDATION_PREFIX = "Validation:";
-		public const string UI_UNITYPLUGIN_MENU_ABOUT = "About...";
+		public const string UI_UNITYPLUGIN_MENU_SETTINGS = "Settings...";
 		public const string UI_UNITYPLUGIN_MENU_ADVANCED = "Advanced";
 		public const string UI_UNITYPLUGIN_MENU_CHECK_RUNTIME = "Check Runtime...";
 		public const string UI_UNITYPLUGIN_MENU_CHECK_UPDATES = "Check for Updates...";

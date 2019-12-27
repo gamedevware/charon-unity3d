@@ -41,7 +41,7 @@ namespace GameDevWare.Charon.Unity.Utils
 	public static class CharonCli
 	{
 		internal static readonly Regex MonoVersionRegex = new Regex(@"version (?<v>[0-9]+\.[0-9]+\.[0-9]+)", RegexOptions.Multiline | RegexOptions.IgnoreCase);
-		internal static readonly Version MinimalMonoVersion = new Version(5, 2, 0);
+		internal static readonly Version MinimalMonoVersion = new Version(4, 8, 1);
 		public static readonly string CharonLogsDirectory = Path.Combine(Settings.ToolBasePath, "Logs");
 
 		internal static Promise<RequirementsCheckResult> CheckRequirementsAsync()

@@ -157,5 +157,12 @@ namespace GameDevWare.Charon.Unity.Windows
 
 			this.webView.Invoke("Reload");
 		}
+		protected void ShowDevTools()
+		{
+			if (!this.WebViewExists)
+				return;
+
+			this.webView.Invoke("ShowDevTools");
+		}
 	}
 }
