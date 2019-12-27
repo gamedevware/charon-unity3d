@@ -4,6 +4,15 @@
         <name>GameDevWare.TextTransform</name>
     </assembly>
     <members>
+        <member name="M:GameDevWare.TextTransform.Editors.AssemblyNameOnlyComparer.Equals(System.Reflection.AssemblyName,System.Reflection.AssemblyName)">
+            <inheritdoc />
+        </member>
+        <member name="M:GameDevWare.TextTransform.Editors.AssemblyNameOnlyComparer.GetHashCode(System.Reflection.AssemblyName)">
+            <inheritdoc />
+        </member>
+        <member name="M:GameDevWare.TextTransform.Editors.AssemblyNameOnlyComparer.Compare(System.Reflection.AssemblyName,System.Reflection.AssemblyName)">
+            <inheritdoc />
+        </member>
         <member name="T:GameDevWare.TextTransform.Processor.CrossAppDomainAssemblyResolver">
             <summary>
                 Provides a handler for AssemblyResolve events that looks them up in the domain that created the resolver.

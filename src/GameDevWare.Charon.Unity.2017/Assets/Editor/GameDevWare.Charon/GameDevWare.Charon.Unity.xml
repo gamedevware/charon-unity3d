@@ -3984,9 +3984,6 @@
         <member name="M:GameDevWare.Charon.Unity.Utils.CommandInput.Finalize">
             <inheritdoc />
         </member>
-        <member name="M:GameDevWare.Charon.Unity.Utils.CommandInput.ReleaseUnmanagedResources">
-            <inheritdoc />
-        </member>
         <member name="M:GameDevWare.Charon.Unity.Utils.CommandInput.Dispose">
             <inheritdoc />
         </member>
