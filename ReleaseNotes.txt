@@ -1,2 +1,1 @@
-﻿move settings to "Edit -> Preferences..." menu
-add "Update" button in 'Preferences...' window
+﻿falling back to system's default browser if unity >2021.1 because there is no embdedd browser in new Unity Editor

@@ -19,7 +19,9 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using GameDevWare.Charon.Unity.Async;
 using GameDevWare.Charon.Unity.Utils;
@@ -35,6 +37,10 @@ namespace GameDevWare.Charon.Unity.Windows
 	internal class GameDataEditorWindow : WebViewEditorWindow, IHasCustomMenu
 	{
 		private static Promise loadEditorTask;
+
+		public static readonly bool IsWebViewAvailable = typeof(UnityEditor.SceneView).Assembly.GetType("UnityEditor.WebView", throwOnError: false) != null;
+
+		public bool isOffsiteBrowserLaunched;
 
 		public GameDataEditorWindow()
 		{
@@ -73,6 +79,32 @@ namespace GameDevWare.Charon.Unity.Windows
 
 			return true;
 		}
+
+		[SuppressMessage("ReSharper", "InconsistentNaming")]
+		protected override void OnGUI()
+		{
+			if (!this.isOffsiteBrowserLaunched)
+			{
+				base.OnGUI();
+				return;
+			}
+			GUILayout.BeginVertical();
+				EditorGUILayout.Space();
+				GUILayout.BeginHorizontal();
+				EditorGUILayout.Space();
+				GUILayout.BeginVertical();
+					GUILayout.Box("The editor is open in the standard browser of your operating system. Click 'Close' when finished. ");
+					if (GUILayout.Button(Resources.UI_UNITYPLUGIN_ABOUT_CLOSE_BUTTON, EditorStyles.toolbarButton, GUILayout.Width(70), GUILayout.Height(18)))
+					{
+						FindAllAndClose();
+					}
+				GUILayout.EndVertical();
+				EditorGUILayout.Space();
+				GUILayout.EndHorizontal();
+				EditorGUILayout.Space();
+			GUILayout.EndVertical();
+		}
+
 		private static IEnumerable LoadEditor(string gameDataPath, string reference, Promise waitTask)
 		{
 			// un-select gamedata file in Project window
@@ -194,12 +226,17 @@ namespace GameDevWare.Charon.Unity.Windows
 			if (EditorApplication.isCompiling)
 				throw new InvalidOperationException("Interrupted by Unity's script compilation. Retry after Unity is finished script compilation.");
 
-			switch ((BrowserType)Settings.Current.Browser)
+			var nearPanels = typeof(SceneView);
+			var editorWindow = GetWindow<GameDataEditorWindow>(nearPanels);
+			editorWindow.titleContent = new GUIContent(title);
+			var browserType = (BrowserType)Settings.Current.Browser;
+			if (browserType == BrowserType.UnityEmbedded && !IsWebViewAvailable)
+			{
+				browserType = BrowserType.SystemDefault;
+			}
+			switch (browserType)
 			{
 				case BrowserType.UnityEmbedded:
-					var nearPanels = typeof(SceneView);
-					var editorWindow = GetWindow<GameDataEditorWindow>(nearPanels);
-					editorWindow.titleContent = new GUIContent(title);
 					editorWindow.LoadUrl(gameDataEditorUrl + reference);
 					editorWindow.SetWebViewVisibility(true);
 					editorWindow.Repaint();
@@ -209,9 +246,11 @@ namespace GameDevWare.Charon.Unity.Windows
 					if (string.IsNullOrEmpty(Settings.Current.BrowserPath))
 						goto case BrowserType.SystemDefault;
 					Process.Start(Settings.Current.BrowserPath, gameDataEditorUrl + reference);
+					editorWindow.isOffsiteBrowserLaunched = true;
 					break;
 				case BrowserType.SystemDefault:
 					EditorUtility.OpenWithDefaultApp(gameDataEditorUrl + reference);
+					editorWindow.isOffsiteBrowserLaunched = true;
 					break;
 			}
 		}

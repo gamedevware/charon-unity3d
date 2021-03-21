@@ -2,11 +2,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFramework>net35</TargetFramework>
-		<Version>2019.4.3</Version>
+		<Version>2021.1.1</Version>
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 		<Authors>Denis Zykov</Authors>
 		<Company>GameDevWare</Company>
-		<Copyright>2019 @ GameDevWare, Denis Zykov</Copyright>
+		<Copyright>2021 @ GameDevWare, Denis Zykov</Copyright>
 		<LangVersion>latest</LangVersion>
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<Description>Charon is a software for managing game's data. It is used for creating data structure, editing data and accessing this data in the code.
