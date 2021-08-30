@@ -60,6 +60,10 @@ namespace GameDevWare.Charon.Unity.Updates
 				Debug.Log("Checking for product updates.");
 			}
 
+			SaveLastCheckTime(LastCheckTime = DateTime.UtcNow);
+			CheckCooldownTime = DateTime.UtcNow + UpdateCheckCooldown;
+
+			var checkHadErrors = false;
 			var products = ProductInformation.GetKnownProducts();
 
 			yield return Promise.WhenAll(products.Select(p => p.AllBuilds).ToArray());
@@ -96,6 +100,7 @@ namespace GameDevWare.Charon.Unity.Updates
 
 				if (getReleaseNotesAsync.HasErrors)
 				{
+					checkHadErrors = true;
 					continue; // has errors
 				}
 
@@ -118,8 +123,10 @@ namespace GameDevWare.Charon.Unity.Updates
 				}
 			}
 
-			SaveLastCheckTime(LastCheckTime = DateTime.UtcNow);
-			CheckCooldownTime = DateTime.UtcNow + UpdateCheckCooldown;
+			if (checkHadErrors)
+			{
+				CheckCooldownTime = DateTime.UtcNow + UpdateCheckPeriod;
+			}
 		}
 
 		private static DateTime LoadLastCheckTime()

@@ -160,7 +160,7 @@ namespace GameDevWare.Charon.Unity.Async
 				{
 					if (Settings.Current.Verbose)
 						Debug.LogError(error);
-					Coroutine.ReportedExceptions.Add(error.Unwrap());
+					Coroutine.ReportedExceptions.Add(error);
 				}
 
 				this.TrySetFailed(error);

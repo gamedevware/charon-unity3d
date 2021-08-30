@@ -38,8 +38,13 @@ namespace GameDevWare.Charon.Unity.Async
 
 		public bool IsDisposed { get; private set; }
 		public bool HasErrors { get { return this.error != null; } }
-		public Exception Error { get {
-			this.IsErrorObserved = true; return this.error; } }
+		public Exception Error
+		{
+			get
+			{
+				this.IsErrorObserved = true; return this.error;
+			}
+		}
 		public object PromiseState { get { return this.promiseState; } }
 		public bool IsCompleted { get; private set; }
 		WaitHandle IAsyncResult.AsyncWaitHandle { get { this.EnsureCompletionEvent(); return this.completionEvent; } }
@@ -138,7 +143,7 @@ namespace GameDevWare.Charon.Unity.Async
 					if (this.error.InnerExceptions.Count == 1 && this.Error.InnerException != null)
 						throw this.Error.InnerException;
 					throw this.Error;
-				}				
+				}
 			}
 		}
 
@@ -365,8 +370,9 @@ namespace GameDevWare.Charon.Unity.Async
 				this.ThrowIfDisposed();
 
 				if (this.completionEvent == null)
-				this.completionEvent = new ManualResetEvent(this.IsCompleted);
-
+				{
+					this.completionEvent = new ManualResetEvent(this.IsCompleted);
+				}
 			}
 		}
 
