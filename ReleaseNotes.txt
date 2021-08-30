@@ -1,1 +1,1 @@
-﻿falling back to system's default browser if unity >2021.1 because there is no embdedd browser in new Unity Editor
+﻿fix UpdateChecker behaviour to stop spamming errors if internet is unavailable or TLS connection failed.
