@@ -181,7 +181,7 @@ namespace GameDevWare.Charon.Unity
 			var settingsWindowType = typeof(UnityEditor.EditorApplication).Assembly.GetType("UnityEditor.SettingsWindow", throwOnError: false, ignoreCase: true);
 			if (settingsService != null)
 			{
-				settingsService.Invoke("OpenUserPreferences", "Preferences/T4");
+				settingsService.Invoke("OpenUserPreferences", "Preferences/Charon");
 			}
 			else if (preferencesWindowType != null)
 			{
