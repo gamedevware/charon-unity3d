@@ -29,40 +29,35 @@ https://github.com/deniszykov/charon-unity3d/wiki
 		<DefineConstants>DEBUG;TRACE</DefineConstants>
 	</PropertyGroup>
 	<ItemGroup>
-	  <None Remove="Charon.exe.config" />
+		<None Remove="Charon.exe.config" />
 	</ItemGroup>
 	<ItemGroup>
-	  <None Include="..\..\ReleaseNotes.txt" Link="ReleaseNotes.txt" />
+		<None Include="..\..\ReleaseNotes.txt" Link="ReleaseNotes.txt" />
 	</ItemGroup>
 	<ItemGroup>
-	  <EmbeddedResource Include="Charon.exe.config" />
-	</ItemGroup>
-	<ItemGroup>
-	  <Reference Include="UnityEditor">
-	    <HintPath>..\..\..\..\..\apps\unity\Editor\Data\Managed\UnityEditor.dll</HintPath>
-	  </Reference>
-	  <Reference Include="UnityEngine">
-	    <HintPath>..\..\..\..\..\apps\unity\Editor\Data\Managed\UnityEngine.dll</HintPath>
-	  </Reference>
+		<EmbeddedResource Include="Charon.exe.config" />
 	</ItemGroup>
 	<ItemGroup>
 		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Compile Update="AssetLoaderGenerator.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>AssetLoaderGenerator.tt</DependentUpon>
-	  </Compile>
-	</ItemGroup> 
+		<Compile Update="AssetLoaderGenerator.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>AssetLoaderGenerator.tt</DependentUpon>
+		</Compile>
+	</ItemGroup>
 	<ItemGroup>
-	  <None Update="AssetLoaderGenerator.tt">
-	    <Generator>TextTemplatingFilePreprocessor</Generator>
-	    <LastGenOutput>AssetLoaderGenerator.cs</LastGenOutput>
-	  </None>
-	</ItemGroup> 
+		<None Update="AssetLoaderGenerator.tt">
+			<Generator>TextTemplatingFilePreprocessor</Generator>
+			<LastGenOutput>AssetLoaderGenerator.cs</LastGenOutput>
+		</None>
+	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="Properties\" />
+		<Folder Include="Properties\" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Unity3D.SDK" Version="2017.4.37.1" PrivateAssets="All" />
 	</ItemGroup>
 
 	<Target Name="ReadPackageMetadataromFile" BeforeTargets="GenerateNuspec">
@@ -76,15 +71,15 @@ https://github.com/deniszykov/charon-unity3d/wiki
 			<Output PropertyName="PackageReleaseNotes" TaskParameter="Value" />
 		</CreateProperty>
 	</Target>
-	
-  <Target Name="CopyFiles" AfterTargets="CoreBuild">
-	<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../GameDevWare.Charon.Unity.2018/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-    <Copy SourceFiles="$(TargetDir)\$(AssemblyName).xml" DestinationFolder="$(ProjectDir)../GameDevWare.Charon.Unity.2018/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-    
-	<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../GameDevWare.Charon.Unity.2021/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-    <Copy SourceFiles="$(TargetDir)\$(AssemblyName).xml" DestinationFolder="$(ProjectDir)../GameDevWare.Charon.Unity.2021/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-    
-	<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../../example/RpgGame/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-    <Copy SourceFiles="$(TargetDir)\$(AssemblyName).xml" DestinationFolder="$(ProjectDir)../../example/RpgGame/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-  </Target>
+
+	<Target Name="CopyFiles" AfterTargets="CoreBuild">
+		<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../../example/GameDevWare.Charon.Unity.2018/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="$(TargetDir)\$(AssemblyName).xml" DestinationFolder="$(ProjectDir)../../example/GameDevWare.Charon.Unity.2018/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+
+		<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../../example/GameDevWare.Charon.Unity.2021/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="$(TargetDir)\$(AssemblyName).xml" DestinationFolder="$(ProjectDir)../../example/GameDevWare.Charon.Unity.2021/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+
+		<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../../example/RpgGame/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="$(TargetDir)\$(AssemblyName).xml" DestinationFolder="$(ProjectDir)../../example/RpgGame/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+	</Target>
 </Project>

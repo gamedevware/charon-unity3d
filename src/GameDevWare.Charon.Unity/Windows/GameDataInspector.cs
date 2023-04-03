@@ -268,7 +268,7 @@ namespace GameDevWare.Charon.Unity.Windows
 				}
 				EditorGUILayout.Space();
 				this.newScriptingAssembly = EditorGUILayout.ObjectField("<" + Resources.UI_UNITYPLUGIN_INSPECTOR_ADD_ASSET_BUTTON + ">", this.newScriptingAssembly, typeof(Object), false);
-				if (Event.current.type == EventType.repaint && this.newScriptingAssembly != null)
+				if (Event.current.type == EventType.Repaint && this.newScriptingAssembly != null)
 				{
 					var assemblies = new HashSet<string>(this.gameDataSettings.ScriptingAssemblies);
 					assemblies.Remove("");

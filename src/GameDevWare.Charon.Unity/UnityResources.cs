@@ -164,7 +164,7 @@ namespace GameDevWare.Charon {
 		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_TITLE = "Product Updates";
 		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_UPDATE_ACTION = "Update";
 		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_UPDATE_BUTTON = "Update";
-		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_REVIEW_UPDATES_BUTTON = "Review updates...";
+		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_REVIEW_UPDATES_BUTTON = "Update...";
 		public const string UI_UNITYPLUGIN_WINDOWCHECK_RESULT_MISSING_TOOLS = "Missing Tools!";
 	}
 }

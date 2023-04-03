@@ -180,7 +180,7 @@ namespace GameDevWare.Charon.Unity.Windows
 			}
 
 			GUILayoutUtility.GetRect(1, 1, 1, 1);
-			if (Event.current.type == EventType.repaint && GUILayoutUtility.GetLastRect().y > 0)
+			if (Event.current.type == EventType.Repaint && GUILayoutUtility.GetLastRect().y > 0)
 			{
 				var newRect = GUILayoutUtility.GetLastRect();
 				this.position = new Rect(this.position.position, new Vector2(this.position.width, newRect.y + 7));
