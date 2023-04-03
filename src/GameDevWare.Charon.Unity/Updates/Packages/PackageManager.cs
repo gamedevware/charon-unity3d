@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using GameDevWare.Charon.Unity.Async;
+using GameDevWare.Charon.Unity.Json;
 using GameDevWare.Charon.Unity.Updates.Packages.Nuget;
 using GameDevWare.Charon.Unity.Utils;
 using UnityEngine;
@@ -13,15 +14,16 @@ namespace GameDevWare.Charon.Unity.Updates.Packages
 	internal static class PackageManager
 	{
 		public const string NUGET_FEED_URL = "https://api.nuget.org/v3/index.json";
-		public const string PRODUCT_EXPRESSIONS_ASSEMBLY = "GameDevWare.Dynamic.Expressions";
+		public const string GITHUB_FEED_URL = "https://nuget.pkg.github.com/deniszykov/index.json";
 
-		private static readonly NugetFeed Feed = new NugetFeed(new Uri(NUGET_FEED_URL));
+		private static readonly NugetFeed NugetOrgFeed = new NugetFeed(new Uri(NUGET_FEED_URL), null, null);
+		private static readonly NugetFeed GitHubFeed = new NugetFeed(new Uri(GITHUB_FEED_URL), "gamedevware", "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");
 
 		public static readonly Dictionary<string, string> NugetPackagesByProduct = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
-			{ProductInformation.PRODUCT_CHARON, "GameDevWare.Charon" },
-			{ProductInformation.PRODUCT_CHARON_UNITY, "GameDevWare.Charon.Unity" },
-			{ProductInformation.PRODUCT_EXPRESSIONS, "GameDevWare.Dynamic.Expressions" },
-			{ProductInformation.PRODUCT_TEXT_TEMPLATES, "GameDevWare.TextTransform" },
+			{ProductInformation.PRODUCT_CHARON, ProductInformation.PRODUCT_CHARON_PACKAGE },
+			{ProductInformation.PRODUCT_CHARON_UNITY, ProductInformation.PRODUCT_CHARON_UNITY_PACKAGE },
+			{ProductInformation.PRODUCT_EXPRESSIONS, ProductInformation.PRODUCT_EXPRESSIONS_PACKAGE },
+			{ProductInformation.PRODUCT_TEXT_TEMPLATES, ProductInformation.PRODUCT_TEXT_TEMPLATES_PACKAGE },
 		};
 
 		public static Promise<PackageInfo[]> GetVersions(string product, Action<string, float> progressCallback = null)
@@ -34,7 +36,8 @@ namespace GameDevWare.Charon.Unity.Updates.Packages
 		{
 			var packageId = GetPackageId(product);
 
-			var getMetadataAsync = Feed.GetMetadata(packageId, progressCallback);
+			var feed = GetFeedForPackage(packageId);
+			var getMetadataAsync = feed.GetMetadata(packageId, progressCallback);
 			yield return getMetadataAsync;
 
 			var list = new List<PackageInfo>();
@@ -68,7 +71,8 @@ namespace GameDevWare.Charon.Unity.Updates.Packages
 		{
 			var packageId = GetPackageId(product);
 
-			var getMetadataAsync = Feed.GetMetadata(packageId, progressCallback);
+			var feed = GetFeedForPackage(packageId);
+			var getMetadataAsync = feed.GetMetadata(packageId, progressCallback);
 			yield return getMetadataAsync;
 
 			var releaseNotes = new SortedDictionary<SemanticVersion, Promise<string>>();
@@ -95,7 +99,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages
 						continue; // don't add current version to release notes
 					}
 
-					var getReleaseNotesAsync = Feed
+					var getReleaseNotesAsync = feed
 						.GetSpecification(packageId, semVersion)
 						.ContinueWith(p => p.HasErrors ? p.Error.Unwrap().ToString() : p.GetResult().ReleaseNotes);
 
@@ -129,7 +133,8 @@ namespace GameDevWare.Charon.Unity.Updates.Packages
 		{
 			var packageId = GetPackageId(product);
 
-			var getContentAsync = Feed.GetPackageContent(packageId, version, progressCallback);
+			var feed = GetFeedForPackage(packageId);
+			var getContentAsync = feed.GetPackageContent(packageId, version, progressCallback);
 			yield return getContentAsync;
 
 			var touchedFiles = new List<FileInfo>();
@@ -236,6 +241,15 @@ namespace GameDevWare.Charon.Unity.Updates.Packages
 			}
 
 			return packageId;
+		}
+		private static NugetFeed GetFeedForPackage(string packageId)
+		{
+			if (packageId == ProductInformation.PRODUCT_CHARON_PACKAGE && Settings.Current.UseBetaFeed)
+			{
+				return GitHubFeed;
+			}
+
+			return NugetOrgFeed;
 		}
 	}
 }

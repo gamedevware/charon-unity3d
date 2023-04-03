@@ -99,6 +99,20 @@ namespace GameDevWare.Charon.Unity
 			return !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling;
 		}
 
+		[MenuItem(ADVANCED_PREFIX + Resources.UI_UNITYPLUGIN_MENU_USE_BETA_FEED, false, 20)]
+		private static void UseCharonFeed()
+		{
+			Settings.Current.UseBetaFeed = !Settings.Current.UseBetaFeed;
+			UnityEditor.Menu.SetChecked(ADVANCED_PREFIX + Resources.UI_UNITYPLUGIN_MENU_USE_BETA_FEED, Settings.Current.UseBetaFeed);
+			Settings.Current.Save();
+		}
+		[MenuItem(ADVANCED_PREFIX + Resources.UI_UNITYPLUGIN_MENU_USE_BETA_FEED, true, 20)]
+		private static bool UseCharonFeedCheck()
+		{
+			UnityEditor.Menu.SetChecked(ADVANCED_PREFIX + Resources.UI_UNITYPLUGIN_MENU_USE_BETA_FEED, Settings.Current.UseBetaFeed);
+			return true;
+		}
+
 		[MenuItem(TROUBLESHOOTING_PREFIX + Resources.UI_UNITYPLUGIN_MENU_SEND_FEEDBACK, false, 11)]
 		private static void SendFeedback()
 		{

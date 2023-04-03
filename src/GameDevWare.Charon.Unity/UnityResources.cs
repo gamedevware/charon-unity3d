@@ -94,6 +94,7 @@ namespace GameDevWare.Charon {
 		public const string UI_UNITYPLUGIN_MENU_TROUBLESHOOTING = "Troubleshooting";
 		public const string UI_UNITYPLUGIN_MENU_VALIDATE_ASSETS = "Validate Assets";
 		public const string UI_UNITYPLUGIN_MENU_VERBOSE_LOGS = "Verbose Logs";
+		public const string UI_UNITYPLUGIN_MENU_USE_BETA_FEED = "Use Beta Packages";
 		public const string UI_UNITYPLUGIN_OPERATION_CANCELLED = "Operation was cancelled by the user.";
 		public const string UI_UNITYPLUGIN_PROGRESS_CHECKING_TOOLS_VERSION = "Checking current tools version...";
 		public const string UI_UNITYPLUGIN_PROGRESS_CURRENT_TARGET_IS = "Current target is {0}";

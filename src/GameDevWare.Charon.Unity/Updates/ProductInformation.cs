@@ -40,9 +40,9 @@ namespace GameDevWare.Charon.Unity.Updates
 					CurrentVersion = Promise.FromResult(GetAssemblyVersion(PRODUCT_CHARON_UNITY_ASSEMBLY)),
 					Location = GetAssemblyLocation(PRODUCT_CHARON_UNITY_ASSEMBLY)
 				},
-				new ProductInformation(PRODUCT_EXPRESSIONS, Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_EXPRESSIONS_PLUGIN_NAME, disabled: !IsAssemblyLoaded(PackageManager.PRODUCT_EXPRESSIONS_ASSEMBLY)) {
-					CurrentVersion = Promise.FromResult(GetAssemblyVersion(PackageManager.PRODUCT_EXPRESSIONS_ASSEMBLY)),
-					Location = GetAssemblyLocation(PackageManager.PRODUCT_EXPRESSIONS_ASSEMBLY)
+				new ProductInformation(PRODUCT_EXPRESSIONS, Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_EXPRESSIONS_PLUGIN_NAME, disabled: !IsAssemblyLoaded(PRODUCT_EXPRESSIONS_ASSEMBLY)) {
+					CurrentVersion = Promise.FromResult(GetAssemblyVersion(PRODUCT_EXPRESSIONS_ASSEMBLY)),
+					Location = GetAssemblyLocation(PRODUCT_EXPRESSIONS_ASSEMBLY)
 				},
 				new ProductInformation(PRODUCT_TEXT_TEMPLATES, Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_TEXT_TRANSFORM_PLUGIN_NAME, disabled: !IsAssemblyLoaded(PRODUCT_TEXT_TEMPLATES_ASSEMBLY)) {
 					CurrentVersion = Promise.FromResult(GetAssemblyVersion(PRODUCT_TEXT_TEMPLATES_ASSEMBLY)),
@@ -84,10 +84,15 @@ namespace GameDevWare.Charon.Unity.Updates
 			return null;
 		}
 		public const string PRODUCT_CHARON = "GameDevWare.Charon";
+		public const string PRODUCT_CHARON_PACKAGE = "GameDevWare.Charon";
 		public const string PRODUCT_CHARON_UNITY = "GameDevWare.Charon.Unity";
 		public const string PRODUCT_CHARON_UNITY_ASSEMBLY = "GameDevWare.Charon.Unity";
+		public const string PRODUCT_CHARON_UNITY_PACKAGE = "GameDevWare.Charon.Unity";
 		public const string PRODUCT_EXPRESSIONS = "GameDevWare.Dynamic.Expressions";
+		public const string PRODUCT_EXPRESSIONS_PACKAGE = "GameDevWare.Dynamic.Expressions";
+		public const string PRODUCT_EXPRESSIONS_ASSEMBLY = "GameDevWare.Dynamic.Expressions";
 		public const string PRODUCT_TEXT_TEMPLATES = "GameDevWare.TextTransform";
+		public const string PRODUCT_TEXT_TEMPLATES_PACKAGE = "GameDevWare.TextTransform";
 		public const string PRODUCT_TEXT_TEMPLATES_ASSEMBLY = "GameDevWare.TextTransform";
 	}
 }

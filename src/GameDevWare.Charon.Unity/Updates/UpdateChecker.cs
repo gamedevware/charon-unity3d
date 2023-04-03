@@ -72,6 +72,14 @@ namespace GameDevWare.Charon.Unity.Updates
 			var releaseNotes = new StringBuilder();
 			foreach (var product in products)
 			{
+				if (Settings.Current.Verbose)
+				{
+					var currentVersionStr = product.CurrentVersion.HasErrors ? "error" : Convert.ToString(product.CurrentVersion.GetResult());
+					var lastVersionStr = product.AllBuilds.HasErrors ? "error" : Convert.ToString(product.AllBuilds.GetResult().Select(p => p.Version).Max());
+					var allVersionsStr = product.AllBuilds.HasErrors ? "error" : string.Join(", ", product.AllBuilds.GetResult().Select(p => Convert.ToString(p.Version)).ToArray());
+					Debug.Log(string.Format("Product '{0}' current version is '{1}', last version is '{2}', available version: '{3}'.", product.Name, currentVersionStr, lastVersionStr, allVersionsStr));
+				}
+
 				if (product.CurrentVersion.HasErrors || product.AllBuilds.HasErrors)
 				{
 					continue; // has errors
@@ -85,11 +93,6 @@ namespace GameDevWare.Charon.Unity.Updates
 				if (lastVersion == null || lastVersion <= currentVersion)
 				{
 					continue; // no updates
-				}
-
-				if (Settings.Current.Verbose)
-				{
-					Debug.Log(string.Format("Product '{0}' current version is '{1}', last version is '{2}'.", product.Name, currentVersion, lastVersion));
 				}
 
 				releaseNotes.AppendFormat("<size=20>{0}</size>" + Environment.NewLine, product.Name);

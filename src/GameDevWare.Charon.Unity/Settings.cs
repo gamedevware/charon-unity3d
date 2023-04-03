@@ -51,6 +51,7 @@ namespace GameDevWare.Charon.Unity
 		public string ServerAddress;
 		public string EditorVersion;
 		public int EditorPort;
+		public bool UseBetaFeed;
 		public bool Verbose;
 
 		static Settings()
@@ -90,7 +91,8 @@ namespace GameDevWare.Charon.Unity
 				{
 					EditorPort = new System.Random().Next(10000, 50000),
 					ServerAddress = null,
-					Verbose = false
+					Verbose = false,
+					UseBetaFeed = false
 				};
 
 				try { File.WriteAllText(SettingsPath, JsonObject.From(settings).Stringify(), DefaultEncoding); }

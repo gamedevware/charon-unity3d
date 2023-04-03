@@ -99,12 +99,34 @@ namespace GameDevWare.Charon.Unity.Windows
 			);
 			this.padding = new Rect(10, 10, 10, 10);
 
-			this.rows = Array.ConvertAll(ProductInformation.GetKnownProducts(), p => new ProductRow(p.Id, p.Name, p.Disabled) {
+			this.rows = Array.ConvertAll(ProductInformation.GetKnownProducts(), p => new ProductRow(p.Id, p.Name, p.Disabled)
+			{
 				CurrentVersion = p.CurrentVersion,
 				AllBuilds = p.AllBuilds,
 				Location = p.Location,
 				ExpectedVersion = p.ExpectedVersion
 			});
+
+			if (Settings.Current.Verbose)
+			{
+				foreach (var row in this.rows)
+				{
+					var product = row;
+					if (product.Disabled)
+					{
+						continue;
+					}
+
+					Promise.WhenAll(row.AllBuilds, row.CurrentVersion).ContinueWith(_ =>
+					{
+						var currentVersionStr = product.CurrentVersion.HasErrors ? "error" : Convert.ToString(product.CurrentVersion.GetResult());
+						var lastVersionStr = product.AllBuilds.HasErrors ? "error" : Convert.ToString(product.AllBuilds.GetResult().Select(p => p.Version).Max());
+						var allVersionsStr = product.AllBuilds.HasErrors ? "error" : string.Join(", ", product.AllBuilds.GetResult().Select(p => Convert.ToString(p.Version)).ToArray());
+
+						Debug.Log(string.Format("Product '{0}' current version is '{1}', last version is '{2}', available version: '{3}'.", product.Name, currentVersionStr, lastVersionStr, allVersionsStr));
+					});
+				}
+			}
 
 			this.columns = new[] {
 				new ProductColumn(Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_PRODUCT_COLUMN_NAME, RenderProductCell) { Flex = true, Width = 10 },
@@ -115,16 +137,16 @@ namespace GameDevWare.Charon.Unity.Windows
 
 			this.UpdateColumnWidths();
 
-			for (var i = 0; i < this.rows.Length; i++)
+			foreach (var row in this.rows)
 			{
-				var row = this.rows[i];
 				if (row.CurrentVersion.IsCompleted == false)
 					row.CurrentVersion.ContinueWith(this.ContinueWithRepaint);
 				if (row.AllBuilds.IsCompleted == false)
 					row.AllBuilds.ContinueWith(this.ContinueWithRepaint);
 
+				var product = row;
 				Promise.WhenAll(row.CurrentVersion, row.AllBuilds)
-					.ContinueWith(p => ChooseAction(row))
+					.ContinueWith(p => ChooseAction(product))
 					.ContinueWith(this.ContinueWithRepaint);
 			}
 		}
@@ -145,7 +167,7 @@ namespace GameDevWare.Charon.Unity.Windows
 				fontStyle = FontStyle.Bold,
 				normal = EditorStyles.toolbar.normal
 			};
-			
+
 
 			var cellStyle = new GUIStyle(GUIStyle.none)
 			{

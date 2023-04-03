@@ -153,13 +153,15 @@ namespace GameDevWare.Charon.Unity.Utils
 					charonPath,
 
 					RunOptions.FlattenArguments(
-						"SERVE", Path.GetFullPath(gameDataPath),
+						"SERVE", 
+						"--dataBase", Path.GetFullPath(gameDataPath),
 						"--port", port.ToString(),
 						"--watchPid", unityPid.ToString(),
 						"--lockFile", Path.GetFullPath(lockFilePath),
-						"--environment", "Unity",
-						"--extensions", Settings.SupportedExtensions,
+						// "--environment", "Unity",
+						// "--extensions", Settings.SupportedExtensions,
 						"--scriptAssemblies", scriptingAssemblies,
+						"--log", "out",
 						Settings.Current.Verbose ? "--verbose" : ""
 					)
 				)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Specialized;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -13,12 +14,22 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Nuget
 	internal sealed class NugetFeed
 	{
 		private readonly Uri feedUri;
+		private readonly NameValueCollection defaultRequestHeaders;
 		private Uri metadataServiceUri;
 		private Uri packageServiceUri;
 
-		public NugetFeed(Uri feedUri)
+		public NugetFeed(Uri feedUri, string username, string password)
 		{
 			this.feedUri = feedUri;
+			this.defaultRequestHeaders = new NameValueCollection();
+			if (string.IsNullOrEmpty(username) == false && string.IsNullOrEmpty(password) == false)
+			{
+				this.defaultRequestHeaders.Add("Authorization", "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(username + ":" + password)));
+			}
+			else if (string.IsNullOrEmpty(username) == false)
+			{
+				this.defaultRequestHeaders.Add("Authorization", "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(username)));
+			}
 		}
 
 		public Promise<PackageSpecification> GetSpecification(string packageId, SemanticVersion version, Action<string, float> progressCallback = null)
@@ -34,8 +45,10 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Nuget
 
 			var specificationAddress = new Uri(this.packageServiceUri, packageId.ToLowerInvariant() + "/" +
 				version.ToString().ToLowerInvariant() + "/" + packageId.ToLowerInvariant() + ".nuspec");
-
+			var requestHeaders = new NameValueCollection(this.defaultRequestHeaders);
+			
 			var getMetadataAsync = HttpUtils.GetStream(specificationAddress,
+				requestHeaders: requestHeaders,
 				downloadProgressCallback: progressCallback.Sub(0, 0.1f).ToDownloadProgress(packageId.ToLowerInvariant() + ".nuspec"),
 				timeout: TimeSpan.FromSeconds(10));
 			yield return getMetadataAsync;
@@ -73,8 +86,10 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Nuget
 			yield return new Coroutine(this.LocateServices(progressCallback.Sub(0, 0.1f)));
 
 			var metadataUrl = new Uri(this.metadataServiceUri, packageId.ToLowerInvariant() + "/index.json");
+			var requestHeaders = new NameValueCollection(this.defaultRequestHeaders);
 
 			var getMetadataAsync = HttpUtils.GetJson<PackageMetadata>(metadataUrl,
+				requestHeaders: requestHeaders,
 				downloadProgressCallback: progressCallback.Sub(0, 0.1f).ToDownloadProgress(metadataUrl.AbsoluteUri));
 
 			yield return getMetadataAsync;
@@ -121,8 +136,10 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Nuget
 			var fileName = Path.GetFileName(packageContentUrl.AbsolutePath);
 			var downloadDirectory = Path.Combine(Settings.TempPath, Path.GetRandomFileName());
 			var downloadPath = Path.Combine(downloadDirectory, fileName);
+			var requestHeaders = new NameValueCollection(this.defaultRequestHeaders);
 			var downloadAsync = HttpUtils.DownloadToFile(packageContentUrl,
 				downloadPath,
+				requestHeaders: requestHeaders,
 				downloadProgressCallback: progressCallback.Sub(0, 0.5f).ToDownloadProgress(fileName));
 
 			yield return downloadAsync;
@@ -183,7 +200,9 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Nuget
 				yield break;
 			}
 
+			var requestHeaders = new NameValueCollection(this.defaultRequestHeaders);
 			var getIndexAsync = HttpUtils.GetJson<ServiceIndex>(this.feedUri,
+				requestHeaders: requestHeaders,
 				downloadProgressCallback: progressCallback.ToDownloadProgress(this.feedUri.AbsoluteUri),
 				timeout: TimeSpan.FromSeconds(10));
 
@@ -194,11 +213,21 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Nuget
 			{
 				if (service.Type.StartsWith("PackageBaseAddress", StringComparison.OrdinalIgnoreCase))
 				{
-					this.packageServiceUri = new Uri(service.Id);
+					var serviceUrl = service.Id;
+					if (!serviceUrl.EndsWith("/"))
+					{
+						serviceUrl += "/";
+					}
+					this.packageServiceUri = new Uri(serviceUrl);
 				}
 				if (string.Equals(service.Type, "RegistrationsBaseUrl", StringComparison.OrdinalIgnoreCase))
 				{
-					this.metadataServiceUri = new Uri(service.Id);
+					var serviceUrl = service.Id;
+					if (!serviceUrl.EndsWith("/"))
+					{
+						serviceUrl += "/";
+					}
+					this.metadataServiceUri = new Uri(serviceUrl);
 				}
 			}
 

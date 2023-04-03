@@ -141,6 +141,8 @@ namespace GameDevWare.Charon.Unity.Json
 						return (string)this.Value;
 					if (this.Value is char)
 						return this.Value.ToString();
+					if (this.Value is DateTime)
+						return ((DateTime)this.Value).ToString("o");
 					throw new NotImplementedException("GetFormattedString from value type " + this.Value.GetType());
 				case JsonType.Number:
 					string s;

@@ -33,7 +33,7 @@ namespace GameDevWare.Charon.Unity.Utils
 	{
 		private const int BUFFER_SIZE = 32 * 1024;
 
-		public static Promise DownloadToFile(Uri url, string downloadToFilePath, NameValueCollection requestHeader = null, Action<long, long> downloadProgressCallback = null, TimeSpan timeout = default(TimeSpan))
+		public static Promise DownloadToFile(Uri url, string downloadToFilePath, NameValueCollection requestHeaders = null, Action<long, long> downloadProgressCallback = null, TimeSpan timeout = default(TimeSpan))
 		{
 			if (url == null) throw new ArgumentNullException("url");
 			if (downloadToFilePath == null) throw new ArgumentNullException("downloadToFilePath");
@@ -44,22 +44,40 @@ namespace GameDevWare.Charon.Unity.Utils
 
 			const bool LEAVE_OPEN = false;
 			var downloadToStream = new FileStream(downloadToFilePath, FileMode.Create, FileAccess.Write, FileShare.None, BUFFER_SIZE, FileOptions.None);
-			var downloadCoroutine = new Coroutine<long>(DownloadToAsync(url, downloadToStream, LEAVE_OPEN, requestHeader, downloadProgressCallback, timeout));
+			var downloadCoroutine = new Coroutine<long>(DownloadToAsync(url, downloadToStream, LEAVE_OPEN, requestHeaders, downloadProgressCallback, timeout)).ContinueWith(new FuncContinuation<long, long>(p =>
+			{
+				if (p.HasErrors)
+				{
+					throw EnrichWebError(p.Error, url, requestHeaders, timeout);
+				}
+
+				return p.GetResult();
+			})); ;
 			return downloadCoroutine;
 		}
-		public static Promise DownloadTo(Stream downloadToStream, Uri url, NameValueCollection requestHeader = null, Action<long, long> downloadProgressCallback = null, TimeSpan timeout = default(TimeSpan))
+		public static Promise DownloadTo(Stream downloadToStream, Uri url, NameValueCollection requestHeaders = null, Action<long, long> downloadProgressCallback = null, TimeSpan timeout = default(TimeSpan))
 		{
-			var downloadCoroutine = new Coroutine<long>(DownloadToAsync(url, downloadToStream, true, requestHeader, downloadProgressCallback, timeout));
+			var downloadCoroutine = new Coroutine<long>(DownloadToAsync(url, downloadToStream, true, requestHeaders, downloadProgressCallback, timeout)).ContinueWith(new FuncContinuation<long, long>(p =>
+			{
+				if (p.HasErrors)
+				{
+					throw EnrichWebError(p.Error, url, requestHeaders, timeout);
+				}
+
+				return p.GetResult();
+			}));
 			return downloadCoroutine;
 		}
-		public static Promise<T> GetJson<T>(Uri url, NameValueCollection requestHeader = null, Action<long, long> downloadProgressCallback = null, TimeSpan timeout = default(TimeSpan))
+		public static Promise<T> GetJson<T>(Uri url, NameValueCollection requestHeaders = null, Action<long, long> downloadProgressCallback = null, TimeSpan timeout = default(TimeSpan))
 		{
 			var memoryStream = new MemoryStream();
 			const bool LEAVE_OPEN = true;
-			return new Coroutine<long>(DownloadToAsync(url, memoryStream, LEAVE_OPEN, requestHeader, downloadProgressCallback, timeout)).ContinueWith(new FuncContinuation<T>(p =>
+			return new Coroutine<long>(DownloadToAsync(url, memoryStream, LEAVE_OPEN, requestHeaders, downloadProgressCallback, timeout)).ContinueWith(new FuncContinuation<T>(p =>
 			{
 				if (p.HasErrors)
-					throw p.Error.Unwrap();
+				{
+					throw EnrichWebError(p.Error, url, requestHeaders, timeout);
+				}
 
 				memoryStream.Position = 0;
 				if (typeof(JsonValue) == typeof(T))
@@ -68,20 +86,23 @@ namespace GameDevWare.Charon.Unity.Utils
 					return JsonValue.Load(memoryStream).As<T>();
 			}));
 		}
-		public static Promise<MemoryStream> GetStream(Uri url, NameValueCollection requestHeader = null, Action<long, long> downloadProgressCallback = null, TimeSpan timeout = default(TimeSpan))
+
+		public static Promise<MemoryStream> GetStream(Uri url, NameValueCollection requestHeaders = null, Action<long, long> downloadProgressCallback = null, TimeSpan timeout = default(TimeSpan))
 		{
 			var memoryStream = new MemoryStream();
-			return DownloadTo(memoryStream, url, requestHeader, downloadProgressCallback).ContinueWith(p =>
+			return DownloadTo(memoryStream, url, requestHeaders, downloadProgressCallback).ContinueWith(p =>
 			{
 				if (p.HasErrors)
-					throw p.Error.Unwrap();
+				{
+					throw EnrichWebError(p.Error, url, requestHeaders, timeout);
+				}
 
 				memoryStream.Position = 0;
 				return memoryStream;
 			});
 		}
 
-		private static IEnumerable DownloadToAsync(Uri url, Stream downloadToStream, bool leaveOpen, NameValueCollection requestHeader, Action<long, long> downloadProgressCallback, TimeSpan timeout)
+		private static IEnumerable DownloadToAsync(Uri url, Stream downloadToStream, bool leaveOpen, NameValueCollection requestHeaders, Action<long, long> downloadProgressCallback, TimeSpan timeout)
 		{
 			if (url == null) throw new ArgumentNullException("url");
 			if (downloadToStream == null) throw new ArgumentNullException("downloadToStream");
@@ -95,11 +116,11 @@ namespace GameDevWare.Charon.Unity.Utils
 				if (timeout.Ticks > 0)
 					request.Timeout = (int)timeout.TotalMilliseconds;
 
-				if (requestHeader != null)
+				if (requestHeaders != null)
 				{
-					foreach (string header in requestHeader.Keys)
+					foreach (string header in requestHeaders.Keys)
 					{
-						foreach (var headerValue in requestHeader.GetValues(header ?? "") ?? Enumerable.Empty<string>())
+						foreach (var headerValue in requestHeaders.GetValues(header ?? "") ?? Enumerable.Empty<string>())
 						{
 							switch (header)
 							{
@@ -229,6 +250,21 @@ namespace GameDevWare.Charon.Unity.Utils
 
 				yield return writen;
 			}
+		}
+
+		private static Exception EnrichWebError(Exception error, Uri url, NameValueCollection requestHeaders, TimeSpan timeout)
+		{
+			if (error == null) throw new ArgumentNullException("error");
+			if (url == null) throw new ArgumentNullException("url");
+
+			error = new WebException(string.Format("Request to '{0}' failed due error. Timeout: '{1}'.", url, timeout), error.Unwrap(), WebExceptionStatus.UnknownError, null);
+
+			error.Data["requestUrl"] = url;
+			if (requestHeaders != null)
+				error.Data["requestHeaders"] = requestHeaders;
+			error.Data["timeout"] = timeout;
+
+			return error;
 		}
 	}
 }
