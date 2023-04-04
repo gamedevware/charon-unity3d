@@ -1,5 +1,8 @@
+using JetBrains.Annotations;
+
 namespace GameDevWare.Charon.Unity.Updates.Packages.Zip
 {
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal class EntryPatchData
 	{
 		public long SizePatchOffset

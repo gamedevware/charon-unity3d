@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Security.Cryptography;
+using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Unity.Updates.Packages.Zip.Compression.Streams
 {
@@ -10,6 +11,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Zip.Compression.Streams
 	/// <remarks>
 	/// The buffer supports decryption of incoming data.
 	/// </remarks>
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal class InflaterInputBuffer
 	{
 		#region Constructors

@@ -4,6 +4,7 @@ using System.IO;
 using GameDevWare.Charon.Unity.Updates.Packages.Zip.Checksum;
 using GameDevWare.Charon.Unity.Updates.Packages.Zip.Compression;
 using GameDevWare.Charon.Unity.Updates.Packages.Zip.Compression.Streams;
+using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Unity.Updates.Packages.Zip
 {
@@ -50,6 +51,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Zip
 	/// }
 	/// </code>
 	/// </example>
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal class ZipFile : IEnumerable, IDisposable
 	{
 		#region Constructors
@@ -1008,6 +1010,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Zip
 		/// <summary>
 		/// The kind of update to apply.
 		/// </summary>
+		[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 		private enum UpdateCommand
 		{
 			Copy,       // Copy original file contents.
@@ -1376,6 +1379,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Zip
 		/// <summary>
 		/// Represents a string from a <see cref="ZipFile"/> which is stored as an array of bytes.
 		/// </summary>
+		[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 		private class ZipString
 		{
 			#region Constructors

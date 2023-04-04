@@ -28,12 +28,6 @@ namespace GameDevWare.Charon.Unity.Utils
 {
 	internal static class CommandLine
 	{
-		public static Promise<RunResult> Run(string executablePath, params string[] arguments)
-		{
-			if (executablePath == null) throw new ArgumentNullException("executablePath");
-
-			return Run(new RunOptions(executablePath, arguments));
-		}
 		public static Promise<RunResult> Run(RunOptions options)
 		{
 			if (options == null) throw new ArgumentNullException("options");
@@ -63,7 +57,9 @@ namespace GameDevWare.Charon.Unity.Utils
 			if (options.RequireDotNetRuntime && isDotNetInstalled == false)
 			{
 				if (string.IsNullOrEmpty(MonoRuntimeInformation.MonoPath))
-					throw new InvalidOperationException("No .NET runtime found on machine.");
+				{
+					throw new InvalidOperationException(Resources.UI_UNITYPLUGIN_MISSING_DOTNET_RUNTIME);
+				}
 
 				options.StartInfo.Arguments = RunOptions.ConcatenateArguments(options.StartInfo.FileName) + " " + options.StartInfo.Arguments;
 				options.StartInfo.FileName = MonoRuntimeInformation.MonoPath;

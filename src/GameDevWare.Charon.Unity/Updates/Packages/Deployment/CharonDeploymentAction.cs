@@ -79,7 +79,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Deployment
 				yield break;
 			}
 
-			var extensionsToClean = new[] { ".exe", ".dll", ".config", ".xml", ".pdb", ".mdb", ".sha1" };
+			var extensionsToClean = new[] { ".exe", ".dll", ".json", ".config", ".xml", ".pdb", ".mdb", ".sha1" };
 			foreach (var fileToClean in this.baseDirectory.GetFiles().Where(file => extensionsToClean.Contains(file.Extension, StringComparer.OrdinalIgnoreCase)))
 			{
 				try
@@ -111,30 +111,17 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Deployment
 				}
 			}
 
-			// ensure config file
-			var charonConfigPath = new FileInfo(Settings.CharonExecutablePath + ".config");
-			if (charonConfigPath.Exists)
+			// ensure .config or appsettings.json file
+			if (this.versionToDeploy.Version <= CharonCli.LegacyVersion)
 			{
-				try
-				{
-					charonConfigPath.Delete();
-				}
-				catch (Exception error)
-				{
-					Debug.LogWarning(error);
-				}
+				var charonConfigPath = Settings.CharonExecutablePath + ".config";
+				CreateAppConfig(charonConfigPath);
 			}
-			var embeddedConfigStream = typeof(Menu).Assembly.GetManifestResourceStream("GameDevWare.Charon.Unity.Charon.exe.config");
-			if (embeddedConfigStream != null)
+			else
 			{
-				using (embeddedConfigStream)
-				using (var configFileStream = charonConfigPath.Create())
-				{
-					var buffer = new byte[8 * 1024];
-					var read = 0;
-					while ((read = embeddedConfigStream.Read(buffer, 0, buffer.Length)) > 0)
-						configFileStream.Write(buffer, 0, read);
-				}
+				var charonDirectoryPath = Path.GetDirectoryName(Settings.CharonExecutablePath) ?? Settings.ToolBasePath;
+				var charonAppSettingsPath = Path.Combine(charonDirectoryPath, "appsettings.json");
+				CreateAppSettings(charonAppSettingsPath);
 			}
 
 			var currentVersion = default(SemanticVersion);
@@ -150,6 +137,51 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Deployment
 			Settings.Current.EditorVersion = currentVersion != null ? currentVersion.ToString() : null;
 			Settings.Current.Save();
 		}
+
+		private static void CreateAppConfig(string charonConfigPath)
+		{
+			if (charonConfigPath == null) throw new ArgumentNullException("charonConfigPath");
+
+			CopyEmbeddedResource("GameDevWare.Charon.Unity.Charon.exe.config", new FileInfo(charonConfigPath));
+		}
+		private static void CreateAppSettings(string charonAppSettingsPath)
+		{
+			if (charonAppSettingsPath == null) throw new ArgumentNullException("charonAppSettingsPath");
+
+			CopyEmbeddedResource("GameDevWare.Charon.Unity.appsettings.json", new FileInfo(charonAppSettingsPath));
+		}
+
+		private static void CopyEmbeddedResource(string embeddedResourceName, FileInfo filePath)
+		{
+			if (embeddedResourceName == null) throw new ArgumentNullException("embeddedResourceName");
+			if (filePath == null) throw new ArgumentNullException("filePath");
+
+			if (filePath.Exists)
+			{
+				try
+				{
+					filePath.Delete();
+				}
+				catch (Exception error)
+				{
+					Debug.LogWarning(error);
+				}
+			}
+
+			var manifestResourceStream = typeof(Menu).Assembly.GetManifestResourceStream(embeddedResourceName);
+			if (manifestResourceStream == null)
+				throw new InvalidOperationException(string.Format("Unable to find embedded resource at '{0}'.", embeddedResourceName));
+
+			using (manifestResourceStream)
+			using (var fileStream = filePath.Create())
+			{
+				var buffer = new byte[8 * 1024];
+				var read = 0;
+				while ((read = manifestResourceStream.Read(buffer, 0, buffer.Length)) > 0)
+					fileStream.Write(buffer, 0, read);
+			}
+		}
+
 		/// <inheritdoc />
 		public override void CleanUp()
 		{

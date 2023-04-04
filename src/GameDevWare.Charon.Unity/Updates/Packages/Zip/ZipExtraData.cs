@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Unity.Updates.Packages.Zip
 {
@@ -9,6 +10,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Zip
 	/// <summary>
 	/// ExtraData tagged value interface.
 	/// </summary>
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal interface ITaggedData
 	{
 		/// <summary>
@@ -34,6 +36,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Zip
 	/// <summary>
 	/// A raw binary tagged value
 	/// </summary>
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal class RawTaggedData : ITaggedData
 	{
 		/// <summary>
@@ -109,12 +112,14 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Zip
 	/// <summary>
 	/// Class representing extended unix date time values.
 	/// </summary>
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal class ExtendedUnixData : ITaggedData
 	{
 		/// <summary>
 		/// Flags indicate which values are included in this instance.
 		/// </summary>
 		[Flags]
+		[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 		public enum Flags : byte
 		{
 			/// <summary>
@@ -322,6 +327,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Zip
 	/// <summary>
 	/// Class handling NT date time values.
 	/// </summary>
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal class NTTaggedData : ITaggedData
 	{
 		/// <summary>
@@ -477,6 +483,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Zip
 	/// <summary>
 	/// A factory that creates <see cref="ITaggedData">tagged data</see> instances.
 	/// </summary>
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal interface ITaggedDataFactory
 	{
 		/// <summary>
@@ -501,6 +508,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Zip
 	/// means that for extra data created by passing in data can have the values modified by the caller
 	/// in some circumstances.
 	/// </remarks>
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	sealed internal class ZipExtraData : IDisposable
 	{
 		#region Constructors

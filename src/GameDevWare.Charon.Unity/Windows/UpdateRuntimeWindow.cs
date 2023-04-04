@@ -23,6 +23,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using GameDevWare.Charon.Unity.Async;
 using GameDevWare.Charon.Unity.Utils;
+using JetBrains.Annotations;
 using UnityEditor;
 using UnityEngine;
 using Coroutine = GameDevWare.Charon.Unity.Async.Coroutine;
@@ -47,7 +48,7 @@ namespace GameDevWare.Charon.Unity.Windows
 		public UpdateRuntimeWindow()
 		{
 			this.titleContent = new GUIContent(Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_RUNTIME_TITLE);
-			this.maxSize = this.minSize = new Vector2(480, 220);
+			this.maxSize = this.minSize = new Vector2(480, 230);
 			this.position = new Rect(
 				(Screen.width - this.maxSize.x) / 2,
 				(Screen.height - this.maxSize.y) / 2,
@@ -56,14 +57,14 @@ namespace GameDevWare.Charon.Unity.Windows
 			);
 		}
 
-		[SuppressMessage("ReSharper", "InconsistentNaming")]
+		[SuppressMessage("ReSharper", "InconsistentNaming"), UsedImplicitly]
 		protected void OnGUI()
 		{
 			EditorGUILayout.HelpBox(Resources.UI_UNITYPLUGIN_WINDOW_RUNTIME_REQUIRED + "\r\n\r\n" +
 									string.Format(Resources.UI_UNITYPLUGIN_WINDOW_FIND_MONO_MANUALLY) + "\r\n" +
 									Resources.UI_UNITYPLUGIN_WINDOW_DOWNLOAD_MONO + "\r\n" +
 									(RuntimeInformation.IsWindows ? Resources.UI_UNITYPLUGIN_WINDOW_DOWNLOAD_DOTNET + "\r\n\r\n" : "") +
-									Resources.UI_UNITYPLUGIN_WINDOW_PRESS_HELP , MessageType.Info);
+									Resources.UI_UNITYPLUGIN_WINDOW_PRESS_HELP, MessageType.Info);
 
 			var checkIsRunning = this.checkRuntimeVersionCoroutine != null && this.checkRuntimeVersionCoroutine.IsCompleted == false;
 			GUI.enabled = !checkIsRunning;
@@ -71,11 +72,11 @@ namespace GameDevWare.Charon.Unity.Windows
 			EditorGUILayout.Space();
 
 			if (RuntimeInformation.IsWindows && GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_DOWNLOAD_DOTNET_BUTTON, GUILayout.Width(140)))
-				Application.OpenURL("https://www.microsoft.com/en-US/download/details.aspx?id=42643");
+				Application.OpenURL("https://dotnet.microsoft.com/en-us/download/dotnet-framework/net471");
 			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_DOWNLOAD_MONO_BUTTON, GUILayout.Width(140)))
 				Application.OpenURL("http://www.mono-project.com/download/#download-mac");
 			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_HELP_BUTTON, GUILayout.Width(40)))
-				Application.OpenURL("https://gamedevware.com/docs/pages/viewpage.action?pageId=1277984");
+				Application.OpenURL("https://github.com/deniszykov/charon-unity3d/wiki/Requirements");
 			GUILayout.EndHorizontal();
 
 			GUILayout.Space(18);
@@ -91,7 +92,7 @@ namespace GameDevWare.Charon.Unity.Windows
 				GUILayout.Space(5);
 			}
 			EditorGUILayout.EndHorizontal();
-			EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_WINDOW_RUNTIME_VERSION, this.runtimeVersion, new GUIStyle { richText = true });
+			EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_WINDOW_RUNTIME_VERSION, this.runtimeVersion, new GUIStyle(EditorStyles.label) { richText = true });
 
 			GUILayout.Space(18);
 			GUILayout.BeginHorizontal();
@@ -116,6 +117,7 @@ namespace GameDevWare.Charon.Unity.Windows
 
 		private void RunCheck()
 		{
+			this.UpdateRuntimeVersionLabel(null, "", true);
 			this.checkRuntimeVersionCoroutine = new Coroutine(this.CheckRuntimeVersionAsync());
 		}
 		private IEnumerable CheckRuntimeVersionAsync()
@@ -126,7 +128,9 @@ namespace GameDevWare.Charon.Unity.Windows
 				var dotNetRuntimeVersion = DotNetRuntimeInformation.GetVersion();
 				if (dotNetRuntimeVersion != null)
 				{
-					this.UpdateRuntimeVersionLabel(dotNetRuntimeVersion, ".NET", true);
+					yield return Promise.Delayed(TimeSpan.FromSeconds(1));
+
+					this.UpdateRuntimeVersionLabel(dotNetRuntimeVersion.ToString(), ".NET", true);
 					this.RaiseDone(monoRuntimePath: null);
 					yield break;
 				}
@@ -206,11 +210,12 @@ namespace GameDevWare.Charon.Unity.Windows
 		}
 		private void UpdateRuntimeVersionLabel(string version, string runtime, bool isValid)
 		{
-			if (isValid)
+			if (version == null)
+				this.runtimeVersion = string.Empty;
+			else if (isValid)
 				this.runtimeVersion = string.Format("{0} ({1})", version, runtime);
 			else
 				this.runtimeVersion = string.Format("<color=#ff0000ff>{0} ({1})</color>", version, runtime);
-
 			this.Repaint();
 		}
 		private void OnDestroy()
@@ -229,7 +234,9 @@ namespace GameDevWare.Charon.Unity.Windows
 			window.monoPath = string.IsNullOrEmpty(MonoRuntimeInformation.MonoPath) ? MonoRuntimeInformation.MonoDefaultLocation : MonoRuntimeInformation.MonoPath;
 			window.autoClose = autoClose;
 			if (RuntimeInformation.IsWindows)
-				window.runtimeVersion = DotNetRuntimeInformation.GetVersion();
+			{
+				window.runtimeVersion = DotNetRuntimeInformation.GetVersion().ToString();
+			}
 
 			window.RunCheck();
 			window.Focus();

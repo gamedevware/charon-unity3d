@@ -1,4 +1,5 @@
 using System;
+using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Unity.Updates.Packages.Zip.Checksum
 {
@@ -9,6 +10,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Zip.Checksum
 	/// <code>getValue</code>. The complete checksum object can also be reset
 	/// so it can be used again with new data.
 	/// </summary>
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal interface IChecksum
 	{
 		/// <summary>

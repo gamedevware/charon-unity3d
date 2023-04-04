@@ -20,9 +20,11 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Unity.Async
 {
+	[PublicAPI, UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	public partial class Promise : IAsyncResult, IDisposable
 	{
 		public static readonly Promise Fulfilled = new Promise { IsCompleted = true, cantBeDisposed = true };

@@ -25,6 +25,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using GameDevWare.Charon.Unity.Async;
 using GameDevWare.Charon.Unity.Utils;
+using JetBrains.Annotations;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEngine;
@@ -49,6 +50,7 @@ namespace GameDevWare.Charon.Unity.Windows
 			this.Padding = new Rect(3, 3, 3, 3);
 		}
 
+		[UsedImplicitly]
 		protected void Awake()
 		{
 			if (File.Exists(CharonCli.GetDefaultLockFilePath()) == false && this)
@@ -80,7 +82,7 @@ namespace GameDevWare.Charon.Unity.Windows
 			return true;
 		}
 
-		[SuppressMessage("ReSharper", "InconsistentNaming")]
+		[SuppressMessage("ReSharper", "InconsistentNaming"), UsedImplicitly]
 		protected override void OnGUI()
 		{
 			if (!this.isOffsiteBrowserLaunched)
@@ -89,19 +91,19 @@ namespace GameDevWare.Charon.Unity.Windows
 				return;
 			}
 			GUILayout.BeginVertical();
-				EditorGUILayout.Space();
-				GUILayout.BeginHorizontal();
-				EditorGUILayout.Space();
-				GUILayout.BeginVertical();
-					GUILayout.Box("The editor is open in the standard browser of your operating system. Click 'Close' when finished. ");
-					if (GUILayout.Button(Resources.UI_UNITYPLUGIN_ABOUT_CLOSE_BUTTON, EditorStyles.toolbarButton, GUILayout.Width(70), GUILayout.Height(18)))
-					{
-						FindAllAndClose();
-					}
-				GUILayout.EndVertical();
-				EditorGUILayout.Space();
-				GUILayout.EndHorizontal();
-				EditorGUILayout.Space();
+			EditorGUILayout.Space();
+			GUILayout.BeginHorizontal();
+			EditorGUILayout.Space();
+			GUILayout.BeginVertical();
+			GUILayout.Box("The editor is open in the standard browser of your operating system. Click 'Close' when finished. ");
+			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_ABOUT_CLOSE_BUTTON, EditorStyles.toolbarButton, GUILayout.Width(70), GUILayout.Height(18)))
+			{
+				FindAllAndClose();
+			}
+			GUILayout.EndVertical();
+			EditorGUILayout.Space();
+			GUILayout.EndHorizontal();
+			EditorGUILayout.Space();
 			GUILayout.EndVertical();
 		}
 
@@ -117,6 +119,7 @@ namespace GameDevWare.Charon.Unity.Windows
 			var title = Path.GetFileName(gameDataPath);
 			if (EditorUtility.DisplayCancelableProgressBar(title, Resources.UI_UNITYPLUGIN_WINDOW_EDITOR_CHECKING_RUNTIME, 0.05f))
 			{
+				EditorUtility.ClearProgressBar();
 				throw new InvalidOperationException("Interrupted by user.");
 			}
 
@@ -149,7 +152,10 @@ namespace GameDevWare.Charon.Unity.Windows
 
 
 			if (EditorUtility.DisplayCancelableProgressBar(title, Resources.UI_UNITYPLUGIN_WINDOW_EDITOR_LAUNCHING_EXECUTABLE, 0.50f))
+			{
+				EditorUtility.ClearProgressBar();
 				throw new InvalidOperationException("Interrupted by user.");
+			}
 			if (EditorApplication.isCompiling)
 				throw new InvalidOperationException("Interrupted by Unity's script compilation. Retry after Unity is finished script compilation.");
 
@@ -187,7 +193,10 @@ namespace GameDevWare.Charon.Unity.Windows
 			}
 
 			if (EditorUtility.DisplayCancelableProgressBar(title, Resources.UI_UNITYPLUGIN_WINDOW_EDITOR_LAUNCHING_EXECUTABLE, 0.80f))
+			{
+				EditorUtility.ClearProgressBar();
 				throw new InvalidOperationException("Interrupted by user.");
+			}
 			if (EditorApplication.isCompiling)
 				throw new InvalidOperationException("Interrupted by Unity's script compilation. Retry after Unity is finished script compilation.");
 
@@ -205,7 +214,10 @@ namespace GameDevWare.Charon.Unity.Windows
 					break;
 
 				if (EditorUtility.DisplayCancelableProgressBar(title, Resources.UI_UNITYPLUGIN_WINDOW_EDITOR_LAUNCHING_EXECUTABLE, 0.93f))
+				{
+					EditorUtility.ClearProgressBar();
 					throw new InvalidOperationException("Interrupted by user.");
+				}
 				if (EditorApplication.isCompiling)
 					throw new InvalidOperationException("Interrupted by Unity's script compilation. Retry after Unity is finished script compilation.");
 
@@ -222,7 +234,10 @@ namespace GameDevWare.Charon.Unity.Windows
 			startCompletePromise.TrySetCompleted();
 
 			if (EditorUtility.DisplayCancelableProgressBar(title, Resources.UI_UNITYPLUGIN_WINDOW_EDITOR_OPENING_BROWSER, 0.95f))
+			{
+				EditorUtility.ClearProgressBar();
 				throw new InvalidOperationException("Interrupted by user.");
+			}
 			if (EditorApplication.isCompiling)
 				throw new InvalidOperationException("Interrupted by Unity's script compilation. Retry after Unity is finished script compilation.");
 
@@ -268,6 +283,7 @@ namespace GameDevWare.Charon.Unity.Windows
 
 				yield return Promise.Delayed(TimeSpan.FromMilliseconds(100));
 			}
+			EditorUtility.ClearProgressBar();
 
 			yield return false;
 		}

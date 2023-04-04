@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using GameDevWare.Charon.Unity.Updates;
+using JetBrains.Annotations;
 using UnityEditor;
 using UnityEngine;
 
@@ -25,7 +26,7 @@ namespace GameDevWare.Charon.Unity.Windows
 			this.padding = new Rect(10, 10, 10, 10);
 		}
 
-		[SuppressMessage("ReSharper", "InconsistentNaming")]
+		[SuppressMessage("ReSharper", "InconsistentNaming"), UsedImplicitly]
 		protected void OnGUI()
 		{
 			// paddings
@@ -35,7 +36,7 @@ namespace GameDevWare.Charon.Unity.Windows
 			GUILayout.Space(this.padding.y);
 
 			this.scrollPosition = GUILayout.BeginScrollView(this.scrollPosition, false, true);
-			var style = new GUIStyle { richText = true };
+			var style = new GUIStyle(EditorStyles.label) { richText = true };
 			GUILayout.Label(this.ReleaseNotes ?? string.Empty, style);
 			GUILayout.EndScrollView();
 

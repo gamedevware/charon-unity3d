@@ -4,9 +4,11 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using GameDevWare.Charon.Unity.Utils;
+using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Unity.Json
 {
+	[PublicAPI, UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal class JsonPrimitive : JsonValue
 	{
 		private static readonly byte[] TrueBytes = Encoding.UTF8.GetBytes("true");

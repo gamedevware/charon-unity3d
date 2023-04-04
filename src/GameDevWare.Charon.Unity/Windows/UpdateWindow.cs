@@ -27,6 +27,7 @@ using GameDevWare.Charon.Unity.Async;
 using GameDevWare.Charon.Unity.Updates;
 using GameDevWare.Charon.Unity.Updates.Packages.Deployment;
 using GameDevWare.Charon.Unity.Utils;
+using JetBrains.Annotations;
 using UnityEditor;
 using UnityEngine;
 using PackageInfo = GameDevWare.Charon.Unity.Utils.PackageInfo;
@@ -151,7 +152,7 @@ namespace GameDevWare.Charon.Unity.Windows
 			}
 		}
 
-		[SuppressMessage("ReSharper", "InconsistentNaming")]
+		[SuppressMessage("ReSharper", "InconsistentNaming"), UsedImplicitly]
 		protected void OnGUI()
 		{
 			if (this.columns == null) return;
@@ -161,7 +162,7 @@ namespace GameDevWare.Charon.Unity.Windows
 
 			GUI.enabled = this.updatePromise == null && EditorApplication.isCompiling == false;
 
-			var headerStyle = new GUIStyle(GUIStyle.none)
+			var headerStyle = new GUIStyle(EditorStyles.label)
 			{
 				clipping = TextClipping.Clip,
 				fontStyle = FontStyle.Bold,
@@ -169,7 +170,7 @@ namespace GameDevWare.Charon.Unity.Windows
 			};
 
 
-			var cellStyle = new GUIStyle(GUIStyle.none)
+			var cellStyle = new GUIStyle(EditorStyles.label)
 			{
 				clipping = TextClipping.Clip,
 				normal = EditorStyles.whiteLabel.normal

@@ -1,4 +1,5 @@
 using System;
+using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Unity.Updates.Packages.Zip
 {
@@ -8,6 +9,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Zip
 	/// </summary>
 	/// <remarks>NOTE: Not all exceptions thrown will be derived from this class.
 	/// A variety of other exceptions are possible for example <see cref="ArgumentNullException"></see></remarks>
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal class SharpZipBaseException : Exception
 	{
 		/// <summary>

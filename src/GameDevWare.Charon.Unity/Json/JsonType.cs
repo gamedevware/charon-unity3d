@@ -1,5 +1,8 @@
-﻿namespace GameDevWare.Charon.Unity.Json
+﻿using JetBrains.Annotations;
+
+namespace GameDevWare.Charon.Unity.Json
 {
+	[PublicAPI, UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal enum JsonType
 	{
 		String,

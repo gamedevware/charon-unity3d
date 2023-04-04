@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Unity.Updates.Packages.Zip.Compression.Streams
 {
@@ -12,6 +13,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Zip.Compression.Streams
 	///
 	/// Author of the original java version : John Leuner.
 	/// </summary>
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal class InflaterInputStream : Stream
 	{
 		#region Constructors

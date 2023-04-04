@@ -37,11 +37,13 @@ using FileMode = System.IO.FileMode;
 
 namespace GameDevWare.Charon.Unity.Utils
 {
-	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
+	[PublicAPI, UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	public static class CharonCli
 	{
 		internal static readonly Regex MonoVersionRegex = new Regex(@"version (?<v>[0-9]+\.[0-9]+\.[0-9]+)", RegexOptions.Multiline | RegexOptions.IgnoreCase);
-		internal static readonly Version MinimalMonoVersion = new Version(4, 8, 1);
+		internal static readonly Version MinimalMonoVersion = new Version(5, 0, 0);
+		internal static readonly Version MinimalDotNetVersion = new Version(4, 7, 2);
+		internal static readonly Version LegacyVersion = new Version(2020, 1, 1);
 		public static readonly string CharonLogsDirectory = Path.Combine(Settings.ToolBasePath, "Logs");
 
 		internal static Promise<RequirementsCheckResult> CheckRequirementsAsync()
@@ -52,9 +54,15 @@ namespace GameDevWare.Charon.Unity.Utils
 			var additionalChecks = new List<Promise<RequirementsCheckResult>>();
 			if (RuntimeInformation.IsWindows)
 			{
-				if (DotNetRuntimeInformation.GetVersion() == null && (string.IsNullOrEmpty(MonoRuntimeInformation.MonoPath) ||
-																	File.Exists(MonoRuntimeInformation.MonoPath) == false))
+				if (DotNetRuntimeInformation.GetVersion() == null &&
+					(string.IsNullOrEmpty(MonoRuntimeInformation.MonoPath) || File.Exists(MonoRuntimeInformation.MonoPath) == false))
+				{
 					return Promise.FromResult(RequirementsCheckResult.MissingRuntime);
+				}
+				else if (DotNetRuntimeInformation.GetVersion() < MinimalDotNetVersion)
+				{
+					return Promise.FromResult(RequirementsCheckResult.MissingRuntime);
+				}
 			}
 			else
 			{
@@ -103,6 +111,7 @@ namespace GameDevWare.Charon.Unity.Utils
 			if (port <= 0 || port > ushort.MaxValue) throw new ArgumentOutOfRangeException("port");
 
 			var charonPath = Path.GetFullPath(Settings.CharonExecutablePath);
+			var charonDirectory = Path.GetDirectoryName(charonPath) ?? Settings.ToolBasePath;
 
 			if (File.Exists(gameDataPath) == false) throw new IOException(string.Format("File '{0}' doesn't exists.", gameDataPath));
 			if (File.Exists(charonPath) == false) throw new IOException(string.Format("File '{0}' doesn't exists.", charonPath));
@@ -125,12 +134,21 @@ namespace GameDevWare.Charon.Unity.Utils
 
 					var configPath = charonPath + ".config";
 					var configShadowPath = shadowCharonPath + ".config";
+					var appSettingsPath = Path.Combine(charonDirectory, "appsettings.json");
+					var appSettingsShadowPath = Path.Combine(shadowDirectory, "appsettings.json");
 					if (File.Exists(configPath))
 					{
 						if (Settings.Current.Verbose)
 							Debug.Log("Making shadow copy of '" + Path.GetFileName(configPath) + "' to '" + shadowDirectory + "'.");
 
 						File.Copy(configPath, configShadowPath);
+					}
+					else if (File.Exists(appSettingsPath))
+					{
+						if (Settings.Current.Verbose)
+							Debug.Log("Making shadow copy of '" + Path.GetFileName(appSettingsPath) + "' to '" + shadowDirectory + "'.");
+
+						File.Copy(appSettingsPath, appSettingsShadowPath);
 					}
 					else
 					{
@@ -153,13 +171,13 @@ namespace GameDevWare.Charon.Unity.Utils
 					charonPath,
 
 					RunOptions.FlattenArguments(
-						"SERVE", 
+						"SERVE",
 						"--dataBase", Path.GetFullPath(gameDataPath),
 						"--port", port.ToString(),
 						"--watchPid", unityPid.ToString(),
 						"--lockFile", Path.GetFullPath(lockFilePath),
-						// "--environment", "Unity",
-						// "--extensions", Settings.SupportedExtensions,
+						"--environment", "Unity", // unused on >v2020.1.1
+						"--extensions", Settings.SupportedExtensions, // unused on >v2020.1.1
 						"--scriptAssemblies", scriptingAssemblies,
 						"--log", "out",
 						Settings.Current.Verbose ? "--verbose" : ""
@@ -175,9 +193,12 @@ namespace GameDevWare.Charon.Unity.Utils
 					{
 						EnvironmentVariables =
 						{
-							{ "CHARON_APP_DATA", Settings.GetLocalUserDataPath() },
-							{ "CHARON_SERVER", Settings.Current.ServerAddress },
-							{ "BASE_DIRECTORY_PATH", Settings.ToolBasePath },
+							{ "CHARON_APP_DATA", Settings.GetLocalUserDataPath() }, // unused on >v2020.1.1
+							{ "CHARON_API_SERVER", Settings.Current.ServerAddress }, 
+							{ "CHARON_API_KEY", "" }, 
+							{ "BASE_DIRECTORY_PATH", Settings.ToolBasePath }, // unused on >v2020.1.1
+							{ "SERILOG__WRITETO__0__NAME", "File" },
+							{ "SERILOG__WRITETO__0__ARGS__PATH", Path.GetFullPath(Path.Combine(Settings.ToolBasePath, string.Format("Logs/{0:yyyyMMdd}.charon.unity.log", DateTime.UtcNow)))  },
 						}
 					}
 				}
@@ -319,7 +340,7 @@ namespace GameDevWare.Charon.Unity.Utils
 			var deployAction = new CharonDeploymentAction(versionToDeploy, progressCallback);
 			var prepareAsync = deployAction.Prepare();
 			yield return prepareAsync.IgnoreFault();
-			
+
 			if (prepareAsync.HasErrors)
 			{
 				if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESS_DONE, 1.0f);
@@ -338,7 +359,7 @@ namespace GameDevWare.Charon.Unity.Utils
 				if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESS_DONE, 1.0f);
 
 				Debug.LogError(string.Format("Failed to deploy package of {0} with version '{1}'.{2}{3}", toolName, versionToDeploy, Environment.NewLine, deployAsync.Error.Unwrap()));
-				
+
 				deployAction.Complete();
 				yield break;
 			}
@@ -583,7 +604,7 @@ namespace GameDevWare.Charon.Unity.Utils
 			input.StickWith(runTask);
 			return runTask;
 		}
-		
+
 		public static Promise<RunResult> BackupAsync(string gameDataPath, CommandOutput output)
 		{
 			if (gameDataPath == null) throw new ArgumentNullException("gameDataPath");
@@ -660,38 +681,6 @@ namespace GameDevWare.Charon.Unity.Utils
 				RunOptions.FlattenArguments
 				(
 					"GENERATE", "CSHARPCODE", gameDataPath,
-					"--documentClassName", documentClassName,
-					"--apiClassName", apiClassName,
-					"--namespace", @namespace,
-					"--options", ((int)options).ToString(),
-					"--output", outputFilePath,
-					"--outputEncoding", outputEncoding
-				)
-			);
-			return runTask;
-		}
-
-		[Obsolete("Deprecated. Will be removed in next version.", true)]
-		public static Promise<RunResult> GenerateUnityCSharpCodeAsync(string gameDataPath, string outputFilePath,
-			CodeGenerationOptions options = CodeGenerationOptions.HideReferences | CodeGenerationOptions.HideLocalizedStrings,
-			string documentClassName = "Document", string apiClassName = "GameData",
-			string @namespace = "GameParameters",
-			string outputEncoding = "utf-8")
-		{
-			if (gameDataPath == null) throw new ArgumentNullException("gameDataPath");
-			if (outputFilePath == null) throw new ArgumentNullException("outputFilePath");
-			if (documentClassName == null) throw new ArgumentNullException("documentClassName");
-			if (apiClassName == null) throw new ArgumentNullException("apiClassName");
-			if (@namespace == null) throw new ArgumentNullException("namespace");
-			if (outputEncoding == null) throw new ArgumentNullException("outputEncoding");
-
-			if (File.Exists(gameDataPath) == false) throw new IOException(string.Format("GameData file '{0}' doesn't exists.", gameDataPath));
-
-			var runTask = RunInternal
-			(
-				RunOptions.FlattenArguments
-				(
-					"GENERATE", "UNITYCSHARPCODE", gameDataPath,
 					"--documentClassName", documentClassName,
 					"--apiClassName", apiClassName,
 					"--namespace", @namespace,
@@ -848,9 +837,12 @@ namespace GameDevWare.Charon.Unity.Utils
 					Schedule = CoroutineScheduler.CurrentId == null,
 					StartInfo = {
 						EnvironmentVariables = {
-							{ "CHARON_APP_DATA", Settings.GetLocalUserDataPath() },
-							{ "CHARON_SERVER", Settings.Current.ServerAddress },
-							{ "BASE_DIRECTORY_PATH", Settings.ToolBasePath },
+							{ "CHARON_APP_DATA", Settings.GetLocalUserDataPath() }, // unused on >v2020.1.1
+							{ "CHARON_API_SERVER", Settings.Current.ServerAddress }, 
+							{ "CHARON_API_KEY", "" }, 
+							{ "BASE_DIRECTORY_PATH", Settings.ToolBasePath }, // unused on >v2020.1.1
+							{ "SERILOG__WRITETO__0__NAME", "File" },
+							{ "SERILOG__WRITETO__0__ARGS__PATH", Path.GetFullPath(Path.Combine(Settings.ToolBasePath, string.Format("Logs/{0:yyyyMMdd}.charon.unity.log", DateTime.UtcNow)))  },
 						}
 					}
 				});

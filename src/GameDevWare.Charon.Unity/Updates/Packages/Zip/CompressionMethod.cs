@@ -1,8 +1,11 @@
+using JetBrains.Annotations;
+
 namespace GameDevWare.Charon.Unity.Updates.Packages.Zip
 {
 	/// <summary>
 	/// The kind of compression used for an entry in an archive
 	/// </summary>
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal enum CompressionMethod
 	{
 		/// <summary>

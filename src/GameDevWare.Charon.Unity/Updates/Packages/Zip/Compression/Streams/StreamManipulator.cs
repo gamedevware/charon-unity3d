@@ -1,4 +1,5 @@
 using System;
+using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Unity.Updates.Packages.Zip.Compression.Streams
 {
@@ -17,6 +18,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Zip.Compression.Streams
 	///
 	/// authors of the original java version : John Leuner, Jochen Hoenicke
 	/// </summary>
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal class StreamManipulator
 	{
 		/// <summary>

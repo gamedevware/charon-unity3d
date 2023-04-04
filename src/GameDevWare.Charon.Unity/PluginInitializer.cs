@@ -1,12 +1,13 @@
 ﻿using System;
 using GameDevWare.Charon.Unity.Utils;
 using GameDevWare.Charon.Unity.Windows;
+using JetBrains.Annotations;
 using UnityEditor;
 using UnityEngine;
 
 namespace GameDevWare.Charon.Unity
 {
-	[InitializeOnLoad]
+	[InitializeOnLoad, UsedImplicitly]
 	internal static class PluginInitializer
 	{
 		private static readonly EditorApplication.CallbackFunction InitializeCallback = Initialize;

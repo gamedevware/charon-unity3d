@@ -18,10 +18,12 @@
 */
 
 using System;
+using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Unity.Utils
 {
 	[Flags]
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	public enum CodeGenerationOptions
 	{
 		LazyReferences = 0x1 << 0,

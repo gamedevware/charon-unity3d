@@ -15,7 +15,7 @@
 https://github.com/deniszykov/charon-unity3d/wiki
 		</Description>
 		<PackageReleaseNotes>No release notes specified.</PackageReleaseNotes>
-		<PackageProjectUrl>https://gamedevware.com/w/view/product/charon</PackageProjectUrl>
+		<PackageProjectUrl>https://gamedevware.com/charon</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/deniszykov/charon-unity3d</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageLicenseUrl>https://github.com/deniszykov/charon-unity3d/blob/master/LICENSE.md</PackageLicenseUrl>
@@ -29,12 +29,14 @@ https://github.com/deniszykov/charon-unity3d/wiki
 		<DefineConstants>DEBUG;TRACE</DefineConstants>
 	</PropertyGroup>
 	<ItemGroup>
+		<None Remove="appsettings.json" />
 		<None Remove="Charon.exe.config" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="..\..\ReleaseNotes.txt" Link="ReleaseNotes.txt" />
 	</ItemGroup>
 	<ItemGroup>
+		<EmbeddedResource Include="appsettings.json" />
 		<EmbeddedResource Include="Charon.exe.config" />
 	</ItemGroup>
 	<ItemGroup>

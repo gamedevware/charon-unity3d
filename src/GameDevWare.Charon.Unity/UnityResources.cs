@@ -45,7 +45,7 @@ namespace GameDevWare.Charon {
 		public const string UI_UNITYPLUGIN_FEEDBACK_THANKS_MESSAGE = "Thank you for your feedback!";
 		public const string UI_UNITYPLUGIN_FEEDBACK_TYPE_LABEL = "Type";
 		public const string UI_UNITYPLUGIN_FEEDBACK_WINDOW_TITLE = "Send feedback";
-		public const string UI_UNITYPLUGIN_GENERATE_ASSET_CANT_FIND_GAMEDATA_CLASS = "Asset generation failed: unable to find GameData's type in CSharp assemblies. Make sure there are no compilation errors.";
+		public const string UI_UNITYPLUGIN_GENERATE_ASSET_CANT_FIND_GAMEDATA_CLASS = "Asset generation failed: unable to find Game's Data type in CSharp assemblies. Make sure there are no compilation errors.";
 		public const string UI_UNITYPLUGIN_GENERATE_CODE_FOR = "Running source code generator for {0}";
 		public const string UI_UNITYPLUGIN_GENERATE_FAILED_DUE_ERRORS = "Source code generation for '{0}' failed due to errors: {1}.";
 		public const string UI_UNITYPLUGIN_GENERATE_REFORMAT_CODE = "Re-formatting generated source code for {0}";
@@ -94,7 +94,7 @@ namespace GameDevWare.Charon {
 		public const string UI_UNITYPLUGIN_MENU_TROUBLESHOOTING = "Troubleshooting";
 		public const string UI_UNITYPLUGIN_MENU_VALIDATE_ASSETS = "Validate Assets";
 		public const string UI_UNITYPLUGIN_MENU_VERBOSE_LOGS = "Verbose Logs";
-		public const string UI_UNITYPLUGIN_MENU_USE_BETA_FEED = "Use Beta Packages";
+		public const string UI_UNITYPLUGIN_MENU_USE_BETA_FEED = "Use Beta Updates";
 		public const string UI_UNITYPLUGIN_OPERATION_CANCELLED = "Operation was cancelled by the user.";
 		public const string UI_UNITYPLUGIN_PROGRESS_CHECKING_TOOLS_VERSION = "Checking current tools version...";
 		public const string UI_UNITYPLUGIN_PROGRESS_CURRENT_TARGET_IS = "Current target is {0}";
@@ -122,8 +122,8 @@ namespace GameDevWare.Charon {
 		public const string UI_UNITYPLUGIN_WINDOW_CHECKING_MONO = "Checking Mono...";
 		public const string UI_UNITYPLUGIN_WINDOW_CHECKING_MONO_FAILED = "No version information returned from Mono.";
 		public const string UI_UNITYPLUGIN_WINDOW_CHECKING_VERSION = "Checking...";
-		public const string UI_UNITYPLUGIN_WINDOW_DOWNLOAD_DOTNET = "c) Alternatively you can download .NET 4.5 by clicking 'Download .NET 4.5'.";
-		public const string UI_UNITYPLUGIN_WINDOW_DOWNLOAD_DOTNET_BUTTON = "Download .NET 4.5";
+		public const string UI_UNITYPLUGIN_WINDOW_DOWNLOAD_DOTNET = "c) Alternatively you can download .NET 4.7.1 by clicking 'Download .NET 4.7.1'.";
+		public const string UI_UNITYPLUGIN_WINDOW_DOWNLOAD_DOTNET_BUTTON = "Download .NET 4.7.1";
 		public const string UI_UNITYPLUGIN_WINDOW_DOWNLOAD_MONO = "b) If it doesn't exist, click 'Download Mono' below and try again.";
 		public const string UI_UNITYPLUGIN_WINDOW_DOWNLOAD_MONO_BUTTON = "Download Mono";
 		public const string UI_UNITYPLUGIN_WINDOW_EDITOR_CHECKING_RUNTIME = "Checking runtime and application version...";
@@ -142,6 +142,7 @@ namespace GameDevWare.Charon {
 		public const string UI_UNITYPLUGIN_WINDOW_RE_CHECK_BUTTON = "Recheck";
 		public const string UI_UNITYPLUGIN_WINDOW_RELOAD_BUTTON = "Reload";
 		public const string UI_UNITYPLUGIN_WINDOW_RUNTIME_REQUIRED = "You need to have either .NET Runtime or Mono Runtime installed on your system to use Game Data Editor and its related tools.";
+		public const string UI_UNITYPLUGIN_MISSING_DOTNET_RUNTIME = "Mono or .NET runtime found on machine. Please use 'Tools -> Charon -> Troubleshooting -> Check Runtime...' to setup proper runtime.";
 		public const string UI_UNITYPLUGIN_WINDOW_RUNTIME_VERSION = "Runtime Version";
 		public const string UI_UNITYPLUGIN_WINDOW_RUNTIME_VERSION_ERROR = "Error";
 		public const string UI_UNITYPLUGIN_WINDOW_RUNTIME_VERSION_UNKNOWN = "Unknown";

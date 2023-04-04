@@ -1,11 +1,13 @@
 using System;
 using System.IO;
+using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Unity.Updates.Packages.Zip
 {
 	/// <summary>
 	/// Defines known values for the <see cref="HostSystemID"/> property.
 	/// </summary>
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal enum HostSystemID
 	{
 		/// <summary>
@@ -123,9 +125,11 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Zip
 	/// <br/>
 	/// <br/>Author of the original java version : Jochen Hoenicke
 	/// </summary>
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal class ZipEntry
 	{
 		[Flags]
+		[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 		private enum Known : byte
 		{
 			None = 0,
@@ -1133,7 +1137,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Zip
 			{
 				// Set version and flag for Zipfile.CreateAndInitDecryptionStream
 				this.versionToExtract = ZipConstants.VERSION_AES;            // Ver 5.1 = AES see "Version" getter
-																		// Set StrongEncryption flag for ZipFile.CreateAndInitDecryptionStream
+																			 // Set StrongEncryption flag for ZipFile.CreateAndInitDecryptionStream
 				this.Flags = this.Flags | (int)GeneralBitFlags.StrongEncryption;
 				//
 				// Unpack AES extra data field see http://www.winzip.com/aes_info.htm

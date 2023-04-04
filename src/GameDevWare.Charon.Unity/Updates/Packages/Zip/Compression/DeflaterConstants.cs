@@ -1,8 +1,11 @@
+using JetBrains.Annotations;
+
 namespace GameDevWare.Charon.Unity.Updates.Packages.Zip.Compression
 {
 	/// <summary>
 	/// This class contains constants used for deflation.
 	/// </summary>
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal static class DeflaterConstants
 	{
 		/// <summary>

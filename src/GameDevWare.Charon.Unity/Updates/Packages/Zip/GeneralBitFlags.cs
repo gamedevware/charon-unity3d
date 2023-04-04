@@ -1,4 +1,5 @@
 using System;
+using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Unity.Updates.Packages.Zip
 {
@@ -6,6 +7,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Zip
 	/// Defines the contents of the general bit flags field for an archive entry.
 	/// </summary>
 	[Flags]
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal enum GeneralBitFlags
 	{
 		/// <summary>

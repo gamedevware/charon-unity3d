@@ -5,11 +5,13 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using JetBrains.Annotations;
 using JsonPair = System.Collections.Generic.KeyValuePair<string, GameDevWare.Charon.Unity.Json.JsonValue>;
 using JsonPairEnumerable = System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, GameDevWare.Charon.Unity.Json.JsonValue>>;
 
 namespace GameDevWare.Charon.Unity.Json
 {
+	[PublicAPI, UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal class JsonObject : JsonValue, IDictionary<string, JsonValue>, ICollection<KeyValuePair<string, JsonValue>>
 	{
 		private static readonly Dictionary<Type, Dictionary<string, MemberInfo>> TypeMembers = new Dictionary<Type, Dictionary<string, MemberInfo>>();

@@ -1,4 +1,5 @@
 using System;
+using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Unity.Updates.Packages.Zip.Checksum
 {
@@ -29,6 +30,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Zip.Checksum
 	/// the information needed to generate CRC's on data a byte at a time for all
 	/// combinations of CRC register values and incoming bytes.
 	/// </remarks>
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal sealed class Crc32 : IChecksum
 	{
 		#region Instance Fields

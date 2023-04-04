@@ -1,4 +1,6 @@
 using System;
+using GameDevWare.Charon.Unity.Updates.Packages.Zip.Compression.Streams;
+using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Unity.Updates.Packages.Zip.Checksum
 {
@@ -47,7 +49,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Zip.Checksum
 	///    checksum of zero.)"
 	/// </summary>
 	/// <see cref="InflaterInputStream"/>
-	/// <see cref="DeflaterOutputStream"/>
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal sealed class Adler32 : IChecksum
 	{
 		#region Instance Fields

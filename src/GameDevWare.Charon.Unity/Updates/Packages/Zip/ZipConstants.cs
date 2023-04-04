@@ -1,4 +1,5 @@
 using System;
+using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Unity.Updates.Packages.Zip
 {
@@ -9,6 +10,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Zip
 	/// <summary>
 	/// This class contains constants used for Zip format files
 	/// </summary>
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal static class ZipConstants
 	{
 		#region Versions

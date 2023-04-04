@@ -1,9 +1,12 @@
+using JetBrains.Annotations;
+
 namespace GameDevWare.Charon.Unity.Updates.Packages.Zip
 {
 	/// <summary>
 	/// Status returned returned by <see cref="ZipTestResultHandler"/> during testing.
 	/// </summary>
 	/// <seealso cref="ZipFile.TestArchive(bool)">TestArchive</seealso>
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal class TestStatus
 	{
 		#region Constructors

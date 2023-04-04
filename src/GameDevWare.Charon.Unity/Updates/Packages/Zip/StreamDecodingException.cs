@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Unity.Updates.Packages.Zip
 {
@@ -6,6 +7,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Zip
 	/// Indicates that an error occured during decoding of a input stream due to corrupt
 	/// data or (unintentional) library incompability.
 	/// </summary>
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal class StreamDecodingException : SharpZipBaseException
 	{
 		private const string GenericMessage = "Input stream could not be decoded";

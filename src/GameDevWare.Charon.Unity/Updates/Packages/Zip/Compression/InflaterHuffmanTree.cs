@@ -1,11 +1,13 @@
 using System;
 using GameDevWare.Charon.Unity.Updates.Packages.Zip.Compression.Streams;
+using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Unity.Updates.Packages.Zip.Compression
 {
 	/// <summary>
 	/// Huffman tree used for inflation
 	/// </summary>
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal class InflaterHuffmanTree
 	{
 		#region Constants

@@ -23,11 +23,13 @@ using System.IO;
 using System.Linq;
 using GameDevWare.Charon.Unity.Async;
 using GameDevWare.Charon.Unity.Utils;
+using JetBrains.Annotations;
 using UnityEditor;
 using UnityEngine;
 
 namespace GameDevWare.Charon.Unity
 {
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal class ChangeHooks : AssetPostprocessor
 	{
 		private static readonly Dictionary<string, FileSystemWatcher> Watchers = new Dictionary<string, FileSystemWatcher>(StringComparer.Ordinal);

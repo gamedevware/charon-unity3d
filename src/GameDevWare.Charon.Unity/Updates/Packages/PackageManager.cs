@@ -7,10 +7,12 @@ using GameDevWare.Charon.Unity.Async;
 using GameDevWare.Charon.Unity.Json;
 using GameDevWare.Charon.Unity.Updates.Packages.Nuget;
 using GameDevWare.Charon.Unity.Utils;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace GameDevWare.Charon.Unity.Updates.Packages
 {
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal static class PackageManager
 	{
 		public const string NUGET_FEED_URL = "https://api.nuget.org/v3/index.json";

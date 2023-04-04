@@ -1,6 +1,7 @@
 using System;
 using GameDevWare.Charon.Unity.Updates.Packages.Zip.Checksum;
 using GameDevWare.Charon.Unity.Updates.Packages.Zip.Compression.Streams;
+using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Unity.Updates.Packages.Zip.Compression
 {
@@ -29,6 +30,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Zip.Compression
 	///
 	/// author of the original java version : John Leuner, Jochen Hoenicke
 	/// </summary>
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal class Inflater
 	{
 		#region Constants/Readonly

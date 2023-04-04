@@ -22,6 +22,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using GameDevWare.Charon.Unity.Async;
 using GameDevWare.Charon.Unity.Utils;
+using JetBrains.Annotations;
 using UnityEditor;
 using UnityEngine;
 
@@ -52,7 +53,7 @@ namespace GameDevWare.Charon.Unity.Windows
 				DestroyImmediate(this.webView);
 			this.webView = null;
 		}
-		[SuppressMessage("ReSharper", "InconsistentNaming")]
+		[SuppressMessage("ReSharper", "InconsistentNaming"), UsedImplicitly]
 		protected virtual void OnGUI()
 		{
 			if (!this.WebViewExists)
@@ -75,14 +76,17 @@ namespace GameDevWare.Charon.Unity.Windows
 			}
 		}
 
+		[SuppressMessage("ReSharper", "InconsistentNaming"), UsedImplicitly]
 		protected void OnFocus()
 		{
 			this.SetFocus(true);
 		}
+		[SuppressMessage("ReSharper", "InconsistentNaming"), UsedImplicitly]
 		protected void OnLostFocus()
 		{
 			this.SetFocus(false);
 		}
+		[UsedImplicitly]
 		protected void OnBecameInvisible()
 		{
 			if (!this.WebViewExists) return;
@@ -157,6 +161,7 @@ namespace GameDevWare.Charon.Unity.Windows
 
 			this.webView.Invoke("Reload");
 		}
+		[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 		protected void ShowDevTools()
 		{
 			if (!this.WebViewExists)

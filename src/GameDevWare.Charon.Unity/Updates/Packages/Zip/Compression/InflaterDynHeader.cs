@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using GameDevWare.Charon.Unity.Updates.Packages.Zip.Compression.Streams;
+using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Unity.Updates.Packages.Zip.Compression
 {
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal class InflaterDynHeader
 	{
 		#region Constants

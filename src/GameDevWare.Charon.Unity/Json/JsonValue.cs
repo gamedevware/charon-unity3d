@@ -5,10 +5,12 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using JetBrains.Annotations;
 using JsonPair = System.Collections.Generic.KeyValuePair<string, GameDevWare.Charon.Unity.Json.JsonValue>;
 
 namespace GameDevWare.Charon.Unity.Json
 {
+	[PublicAPI, UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal abstract class JsonValue : IEnumerable
 	{
 		public virtual int Count

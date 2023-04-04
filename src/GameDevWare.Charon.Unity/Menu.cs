@@ -164,13 +164,13 @@ namespace GameDevWare.Charon.Unity
 		[MenuItem(TROUBLESHOOTING_PREFIX + Resources.UI_UNITYPLUGIN_MENU_CHECK_RUNTIME, false, 22)]
 		private static void CheckRuntime()
 		{
-			UpdateRuntimeWindow.ShowAsync(autoClose: false);
+			CheckoutGameDataWindow.ShowAsync(autoClose: false);
 		}
 
 		[MenuItem(TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENU_DOCUMENTATION, false, 25)]
 		private static void ShowDocumentation()
 		{
-			Application.OpenURL("https://gamedevware.com/docs/");
+			Application.OpenURL("https://github.com/deniszykov/charon-unity3d/wiki");
 		}
 
 		[MenuItem(TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENU_CHECK_UPDATES, false, 28)]
@@ -224,38 +224,6 @@ namespace GameDevWare.Charon.Unity
 		}
 		[MenuItem("Assets/Create/" + Resources.UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA + "/" + Resources.UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA_JSON, true)]
 		private static bool CreateGameDataAssetJsonCheck()
-		{
-			if (Selection.activeObject == null)
-				return false;
-
-			return !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling;
-		}
-
-		[MenuItem("Assets/Create/" + Resources.UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA + "/" + Resources.UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA_BSON)]
-		private static void CreateGameDataBsonAsset()
-		{
-			if (!CreateGameDataAssetBsonCheck()) return;
-
-			CreateGameData("gdbs");
-		}
-		[MenuItem("Assets/Create/" + Resources.UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA + "/" + Resources.UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA_BSON, true)]
-		private static bool CreateGameDataAssetBsonCheck()
-		{
-			if (Selection.activeObject == null)
-				return false;
-
-			return !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling;
-		}
-
-		[MenuItem("Assets/Create/" + Resources.UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA + "/" + Resources.UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA_XML)]
-		private static void CreateGameDataXmlAsset()
-		{
-			if (!CreateGameDataAssetXmlCheck()) return;
-
-			CreateGameData("gdml");
-		}
-		[MenuItem("Assets/Create/" + Resources.UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA + "/" + Resources.UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA_XML, true)]
-		private static bool CreateGameDataAssetXmlCheck()
 		{
 			if (Selection.activeObject == null)
 				return false;

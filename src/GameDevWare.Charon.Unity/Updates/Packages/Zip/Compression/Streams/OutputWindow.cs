@@ -1,4 +1,5 @@
 using System;
+using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Unity.Updates.Packages.Zip.Compression.Streams
 {
@@ -8,6 +9,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Zip.Compression.Streams
 	/// to repeat stuff.<br/>
 	/// Author of the original java version : John Leuner
 	/// </summary>
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal class OutputWindow
 	{
 		#region Constants

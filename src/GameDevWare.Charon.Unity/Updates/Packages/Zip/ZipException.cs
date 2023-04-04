@@ -1,10 +1,12 @@
 using System;
+using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Unity.Updates.Packages.Zip
 {
 	/// <summary>
 	/// ZipException represents exceptions specific to Zip classes and code.
 	/// </summary>
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal class ZipException : SharpZipBaseException
 	{
 		/// <summary>

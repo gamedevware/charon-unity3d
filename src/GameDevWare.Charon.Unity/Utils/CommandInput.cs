@@ -21,11 +21,13 @@ using System;
 using System.IO;
 using GameDevWare.Charon.Unity.Async;
 using GameDevWare.Charon.Unity.Json;
+using JetBrains.Annotations;
 using UnityEngine;
 using IOFile = System.IO.File;
 
 namespace GameDevWare.Charon.Unity.Utils
 {
+	[PublicAPI, UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	public class CommandInput : IDisposable
 	{
 		public const string FORMAT_JSON = CommandOutput.FORMAT_JSON;

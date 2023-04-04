@@ -25,6 +25,7 @@ using System.IO;
 using System.Linq;
 using GameDevWare.Charon.Unity.Async;
 using GameDevWare.Charon.Unity.Utils;
+using JetBrains.Annotations;
 using UnityEditor;
 using UnityEngine;
 
@@ -71,6 +72,7 @@ namespace GameDevWare.Charon.Unity.Windows
 			);
 		}
 
+		[UsedImplicitly]
 		protected void OnEnable()
 		{
 			this.LastError = null;
@@ -94,7 +96,7 @@ namespace GameDevWare.Charon.Unity.Windows
 			}
 		}
 
-		[SuppressMessage("ReSharper", "InconsistentNaming")]
+		[SuppressMessage("ReSharper", "InconsistentNaming"), UsedImplicitly]
 		protected void OnGUI()
 		{
 			GUILayout.Space(5);

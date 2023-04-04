@@ -3,6 +3,7 @@ using System.IO;
 using GameDevWare.Charon.Unity.Updates.Packages.Zip.Checksum;
 using GameDevWare.Charon.Unity.Updates.Packages.Zip.Compression;
 using GameDevWare.Charon.Unity.Updates.Packages.Zip.Compression.Streams;
+using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Unity.Updates.Packages.Zip
 {
@@ -54,6 +55,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Zip
 	/// }
 	/// </code>
 	/// </example>
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal class ZipInputStream : InflaterInputStream
 	{
 		#region Instance Fields

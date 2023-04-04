@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Text;
+using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Unity.Updates.Packages.Zip
 {
 	/// <summary>
 	/// This static class contains functions for encoding and decoding zip file strings
 	/// </summary>
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal static class ZipStrings
 	{
 		static ZipStrings()

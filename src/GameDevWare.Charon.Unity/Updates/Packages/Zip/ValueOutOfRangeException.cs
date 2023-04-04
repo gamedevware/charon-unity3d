@@ -1,10 +1,12 @@
 ﻿using System;
+using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Unity.Updates.Packages.Zip
 {
 	/// <summary>
 	/// Indicates that a value was outside of the expected range when decoding an input stream
 	/// </summary>
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal class ValueOutOfRangeException : StreamDecodingException
 	{
 		/// <summary>

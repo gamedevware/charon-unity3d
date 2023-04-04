@@ -1,8 +1,11 @@
+using JetBrains.Annotations;
+
 namespace GameDevWare.Charon.Unity.Updates.Packages.Zip
 {
 	/// <summary>
 	/// Determines how entries are tested to see if they should use Zip64 extensions or not.
 	/// </summary>
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal enum UseZip64
 	{
 		/// <summary>

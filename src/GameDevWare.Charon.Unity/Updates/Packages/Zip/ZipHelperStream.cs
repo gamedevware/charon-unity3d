@@ -1,11 +1,13 @@
 using System;
 using System.IO;
+using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Unity.Updates.Packages.Zip
 {
 	/// <summary>
 	/// This class assists with writing/reading from Zip files.
 	/// </summary>
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal class ZipHelperStream : Stream
 	{
 		#region Constructors

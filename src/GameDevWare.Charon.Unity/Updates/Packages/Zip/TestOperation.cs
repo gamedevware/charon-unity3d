@@ -1,9 +1,12 @@
+using JetBrains.Annotations;
+
 namespace GameDevWare.Charon.Unity.Updates.Packages.Zip
 {
 	/// <summary>
 	/// The operation in progress reported by a <see cref="ZipTestResultHandler"/> during testing.
 	/// </summary>
 	/// <seealso cref="ZipFile.TestArchive(bool)">TestArchive</seealso>
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal enum TestOperation
 	{
 		/// <summary>

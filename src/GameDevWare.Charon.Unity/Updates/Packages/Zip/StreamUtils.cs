@@ -1,11 +1,13 @@
 using System;
 using System.IO;
+using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Unity.Updates.Packages.Zip
 {
 	/// <summary>
 	/// Provides simple <see cref="Stream"/>" utilities.
 	/// </summary>
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal static class StreamUtils
 	{
 		/// <summary>

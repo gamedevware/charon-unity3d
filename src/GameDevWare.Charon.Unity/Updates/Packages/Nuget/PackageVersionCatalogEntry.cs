@@ -1,9 +1,11 @@
 ﻿using System;
 using GameDevWare.Charon.Unity.Json;
 using GameDevWare.Charon.Unity.Utils;
+using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Unity.Updates.Packages.Nuget
 {
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal sealed class PackageVersionCatalogEntry
 	{
 		[JsonMember("title")]

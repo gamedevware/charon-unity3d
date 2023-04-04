@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Unity.Json
 {
+	[PublicAPI, UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal class JsonArray : JsonValue, IList<JsonValue>
 	{
 		private readonly List<JsonValue> list;

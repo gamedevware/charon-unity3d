@@ -18,10 +18,12 @@
 */
 
 using System;
+using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Unity.Utils
 {
 	[Flags]
+	[PublicAPI, UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	public enum ValidationOptions
 	{
 		None = 0x0,

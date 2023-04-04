@@ -20,9 +20,11 @@
 using System;
 using System.Diagnostics;
 using System.Threading;
+using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Unity.Utils
 {
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal static class ProcessExtensions
 	{
 		public static void EndGracefully(int processId)

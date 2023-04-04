@@ -8,9 +8,11 @@ using System.Xml.Serialization;
 using GameDevWare.Charon.Unity.Async;
 using GameDevWare.Charon.Unity.Updates.Packages.Zip;
 using GameDevWare.Charon.Unity.Utils;
+using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Unity.Updates.Packages.Nuget
 {
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal sealed class NugetFeed
 	{
 		private readonly Uri feedUri;

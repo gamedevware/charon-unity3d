@@ -22,9 +22,11 @@ using System.IO;
 using System.Text;
 using GameDevWare.Charon.Unity.Async;
 using GameDevWare.Charon.Unity.Json;
+using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Unity.Utils
 {
+	[PublicAPI, UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	public class CommandOutput
 	{
 		public const string FORMAT_JSON = "json";

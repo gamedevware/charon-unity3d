@@ -2,11 +2,13 @@
 using GameDevWare.Charon.Unity.Async;
 using GameDevWare.Charon.Unity.Updates;
 using GameDevWare.Charon.Unity.Utils;
+using JetBrains.Annotations;
 using UnityEditor;
 using UnityEngine;
 
 namespace GameDevWare.Charon.Unity.Windows
 {
+	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	public sealed class CharonSettingsWindow
 	{
 		private static string editorVersion = Resources.UI_UNITYPLUGIN_WINDOW_CHECKING_VERSION;
@@ -30,6 +32,7 @@ namespace GameDevWare.Charon.Unity.Windows
 		}
 
 		[PreferenceItem("Charon")]
+		[UsedImplicitly]
 		public static void PreferencesGUI()
 		{
 			if (!isUpdateSubscribed)
