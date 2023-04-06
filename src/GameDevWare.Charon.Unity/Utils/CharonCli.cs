@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (c) 2017 Denis Zykov
+	Copyright (c) 2023 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
@@ -43,7 +43,8 @@ namespace GameDevWare.Charon.Unity.Utils
 		internal static readonly Regex MonoVersionRegex = new Regex(@"version (?<v>[0-9]+\.[0-9]+\.[0-9]+)", RegexOptions.Multiline | RegexOptions.IgnoreCase);
 		internal static readonly Version MinimalMonoVersion = new Version(5, 0, 0);
 		internal static readonly Version MinimalDotNetVersion = new Version(4, 7, 2);
-		internal static readonly Version LegacyVersion = new Version(2020, 1, 1);
+		internal static readonly Version LegacyToolsVersion = new Version(2020, 1, 1);
+		internal static readonly Version LegacyPluginVersion = new Version(2021, 3, 0);
 		public static readonly string CharonLogsDirectory = Path.Combine(Settings.ToolBasePath, "Logs");
 
 		internal static Promise<RequirementsCheckResult> CheckRequirementsAsync()
@@ -120,7 +121,7 @@ namespace GameDevWare.Charon.Unity.Utils
 			{
 				if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_WINDOW_EDITOR_COPYING_EXECUTABLE, 0.10f);
 
-				var charonMd5 = FileAndPathUtils.ComputeHash(charonPath);
+				var charonMd5 = FileHelper.ComputeHash(charonPath);
 				var shadowDirectory = Path.GetFullPath(Path.Combine(Settings.TempPath, charonMd5));
 				if (Directory.Exists(shadowDirectory) == false)
 				{
@@ -194,11 +195,11 @@ namespace GameDevWare.Charon.Unity.Utils
 						EnvironmentVariables =
 						{
 							{ "CHARON_APP_DATA", Settings.GetLocalUserDataPath() }, // unused on >v2020.1.1
-							{ "CHARON_API_SERVER", Settings.Current.ServerAddress }, 
-							{ "CHARON_API_KEY", "" }, 
+							{ "CHARON_API_SERVER", Settings.Current.GetServerAddressUrl().OriginalString },
+							{ "CHARON_API_KEY", "" },
 							{ "BASE_DIRECTORY_PATH", Settings.ToolBasePath }, // unused on >v2020.1.1
 							{ "SERILOG__WRITETO__0__NAME", "File" },
-							{ "SERILOG__WRITETO__0__ARGS__PATH", Path.GetFullPath(Path.Combine(Settings.ToolBasePath, string.Format("Logs/{0:yyyyMMdd}.charon.unity.log", DateTime.UtcNow)))  },
+							{ "SERILOG__WRITETO__0__ARGS__PATH", Path.GetFullPath(Path.Combine(Settings.ToolBasePath, string.Format("Logs/{0:yyyy_MM_dd_hh}.charon.unity.log", DateTime.UtcNow)))  },
 						}
 					}
 				}
@@ -312,7 +313,7 @@ namespace GameDevWare.Charon.Unity.Utils
 			var lastVersion = lastBuild.Version;
 			var isMissing = File.Exists(charonPath);
 			var hashFileName = currentBuild == null ? null : Path.Combine(Path.Combine(Settings.ToolBasePath, currentVersion.ToString()), Path.GetFileName(charonPath) + ".sha1");
-			var actualHash = isMissing || currentBuild == null ? null : FileAndPathUtils.ComputeHash(charonPath, "SHA1");
+			var actualHash = isMissing || currentBuild == null ? null : FileHelper.ComputeHash(charonPath, "SHA1");
 			var expectedHash = isMissing || hashFileName == null || File.Exists(hashFileName) == false ? null : File.ReadAllText(hashFileName);
 			var isCorrupted = currentBuild != null && string.Equals(expectedHash, actualHash, StringComparison.OrdinalIgnoreCase) == false;
 			var expectedVersion = string.IsNullOrEmpty(Settings.Current.EditorVersion) ? default(SemanticVersion) : new SemanticVersion(Settings.Current.EditorVersion);
@@ -661,32 +662,42 @@ namespace GameDevWare.Charon.Unity.Utils
 			return output.Capture(runTask);
 		}
 
-		public static Promise<RunResult> GenerateCSharpCodeAsync(string gameDataPath, string outputFilePath,
-			CodeGenerationOptions options = CodeGenerationOptions.HideReferences | CodeGenerationOptions.HideLocalizedStrings,
-			string documentClassName = "Document", string apiClassName = "GameData",
-			string @namespace = "GameParameters",
-			string outputEncoding = "utf-8")
+		public static Promise<RunResult> GenerateCSharpCodeAsync(string gameDataPath, string outputDirectory,
+			SourceCodeGenerationOptimizations optimizations = 0,
+			string documentClassName = "Document", string gameDataClassName = "GameData",
+			string @namespace = "GameParameters", SourceCodeIndentation sourceCodeIndentation = SourceCodeIndentation.Tabs,
+			SourceCodeLineEndings sourceCodeLineEndings = SourceCodeLineEndings.Windows, bool splitFiles = false)
 		{
 			if (gameDataPath == null) throw new ArgumentNullException("gameDataPath");
-			if (outputFilePath == null) throw new ArgumentNullException("outputFilePath");
+			if (outputDirectory == null) throw new ArgumentNullException("outputDirectory");
 			if (documentClassName == null) throw new ArgumentNullException("documentClassName");
-			if (apiClassName == null) throw new ArgumentNullException("apiClassName");
+			if (gameDataClassName == null) throw new ArgumentNullException("gameDataClassName");
 			if (@namespace == null) throw new ArgumentNullException("namespace");
-			if (outputEncoding == null) throw new ArgumentNullException("outputEncoding");
 
 			if (File.Exists(gameDataPath) == false) throw new IOException(string.Format("GameData file '{0}' doesn't exists.", gameDataPath));
+
+			var optimizationsList = new List<string>();
+			foreach (SourceCodeGenerationOptimizations optimization in Enum.GetValues(typeof(SourceCodeGenerationOptimizations)))
+			{
+				if ((optimizations & optimization) != 0)
+				{
+					optimizationsList.Add(optimization.ToString());
+				}
+			}
 
 			var runTask = RunInternal
 			(
 				RunOptions.FlattenArguments
 				(
 					"GENERATE", "CSHARPCODE", gameDataPath,
+					"--outputDirectory", outputDirectory,
 					"--documentClassName", documentClassName,
-					"--apiClassName", apiClassName,
+					"--gameDataClassName", gameDataClassName,
 					"--namespace", @namespace,
-					"--options", ((int)options).ToString(),
-					"--output", outputFilePath,
-					"--outputEncoding", outputEncoding
+					"--indentation", sourceCodeIndentation.ToString(),
+					"--lineEndings", sourceCodeLineEndings.ToString(),
+					"--optimizations", optimizationsList,
+					splitFiles ? "--splitFiles" : null
 				)
 			);
 			return runTask;
@@ -751,7 +762,14 @@ namespace GameDevWare.Charon.Unity.Utils
 			return runTask.ContinueWith(r =>
 			{
 				using (var result = r.GetResult())
-					return new SemanticVersion(result.GetOutputData());
+				{
+					var versionString = result.GetOutputData();
+					if (string.IsNullOrEmpty(versionString))
+						return new SemanticVersion(0, 0, 0, 0);
+					else
+						return new SemanticVersion(versionString);
+
+				}
 			});
 		}
 
@@ -838,11 +856,11 @@ namespace GameDevWare.Charon.Unity.Utils
 					StartInfo = {
 						EnvironmentVariables = {
 							{ "CHARON_APP_DATA", Settings.GetLocalUserDataPath() }, // unused on >v2020.1.1
-							{ "CHARON_API_SERVER", Settings.Current.ServerAddress }, 
-							{ "CHARON_API_KEY", "" }, 
+							{ "CHARON_API_SERVER", Settings.Current.GetServerAddressUrl().OriginalString },
+							{ "CHARON_API_KEY", "" },
 							{ "BASE_DIRECTORY_PATH", Settings.ToolBasePath }, // unused on >v2020.1.1
 							{ "SERILOG__WRITETO__0__NAME", "File" },
-							{ "SERILOG__WRITETO__0__ARGS__PATH", Path.GetFullPath(Path.Combine(Settings.ToolBasePath, string.Format("Logs/{0:yyyyMMdd}.charon.unity.log", DateTime.UtcNow)))  },
+							{ "SERILOG__WRITETO__0__ARGS__PATH", Path.GetFullPath(Path.Combine(Settings.ToolBasePath, string.Format("Logs/{0:yyyy_MM_dd_hh}.charon.unity.log", DateTime.UtcNow)))  },
 						}
 					}
 				});
