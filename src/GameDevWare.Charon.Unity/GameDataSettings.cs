@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (c) 2017 Denis Zykov
+	Copyright (c) 2023 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
@@ -35,19 +35,6 @@ namespace GameDevWare.Charon.Unity
 			CSharpCodeAndAsset
 		}
 
-		public enum LineEndings
-		{
-			Windows = 0,
-			Unix
-		}
-
-		public enum Indentations
-		{
-			Tab = 0,
-			TwoSpaces,
-			FourSpaces
-		}
-
 		// ReSharper disable once EmptyConstructor
 		public GameDataSettings()
 		{
@@ -61,9 +48,34 @@ namespace GameDevWare.Charon.Unity
 		public string Namespace;
 		public string DocumentClassName;
 		public string[] ScriptingAssemblies;
-		public int Options;
+		public int Optimizations;
 		public int LineEnding;
 		public int Indentation;
+		public bool SplitSourceCodeFiles;
+		public string ServerAddress;
+		public string ProjectId;
+		public string ProjectName;
+		public string BranchName;
+		public string BranchId;
+		public long LastSynchronization;
+		public bool AutoSynchronization;
+
+		public bool IsSyncTooSoon
+		{
+			get
+			{
+				return DateTime.UtcNow - new DateTime(this.LastSynchronization, DateTimeKind.Utc) < TimeSpan.FromMinutes(2);
+			}
+		}
+		public bool IsConnected
+		{
+			get
+			{
+				return string.IsNullOrEmpty(this.ServerAddress) == false &&
+					string.IsNullOrEmpty(this.ProjectId) == false &&
+					string.IsNullOrEmpty(this.BranchId) == false;
+			}
+		}
 
 		public static GameDataSettings CreateDefault(string gameDataPath)
 		{
@@ -72,14 +84,14 @@ namespace GameDevWare.Charon.Unity
 			var settings = new GameDataSettings();
 			settings.Generator = (int)CodeGenerator.CSharp;
 			settings.AutoGeneration = true;
-			settings.LineEnding = (int)LineEndings.Windows;
-			settings.Indentation = (int)Indentations.Tab;
-			settings.AssetGenerationPath = Path.ChangeExtension(gameDataPath, ".asset");
-			settings.CodeGenerationPath = Path.ChangeExtension(gameDataPath, ".cs");
-			settings.GameDataClassName = Path.GetFileNameWithoutExtension(gameDataPath);
+			settings.LineEnding = (int)SourceCodeLineEndings.Windows;
+			settings.Indentation = (int)Unity.SourceCodeIndentation.Tabs;
+			settings.AssetGenerationPath = Path.ChangeExtension(gameDataPath, "asset");
+			settings.CodeGenerationPath = Path.GetDirectoryName(gameDataPath) ?? ".";
+			settings.GameDataClassName = Path.GetFileNameWithoutExtension(gameDataPath).Trim('.', '_');
 			settings.Namespace = (Path.GetDirectoryName(gameDataPath) ?? "").Replace("\\", ".").Replace("/", ".");
 			settings.DocumentClassName = "Document";
-			settings.Options = (int)(CodeGenerationOptions.HideLocalizedStrings | CodeGenerationOptions.HideReferences | CodeGenerationOptions.SuppressDataContractAttributes);
+			settings.Optimizations = 0;
 			return settings;
 		}
 
@@ -103,15 +115,23 @@ namespace GameDevWare.Charon.Unity
 
 				if (gameDataSettings != null)
 				{
-					gameDataSettings.CodeGenerationPath = FileAndPathUtils.MakeProjectRelative(gameDataSettings.CodeGenerationPath);
-					gameDataSettings.AssetGenerationPath = FileAndPathUtils.MakeProjectRelative(gameDataSettings.AssetGenerationPath);
-					if (string.IsNullOrEmpty(gameDataSettings.CodeGenerationPath))
-						gameDataSettings.CodeGenerationPath = Path.ChangeExtension(gameDataPath, "cs");
+					gameDataSettings.CodeGenerationPath = FileHelper.MakeProjectRelative(gameDataSettings.CodeGenerationPath);
+					gameDataSettings.AssetGenerationPath = FileHelper.MakeProjectRelative(gameDataSettings.AssetGenerationPath);
+					if (string.IsNullOrEmpty(gameDataSettings.CodeGenerationPath) ||
+						gameDataSettings.CodeGenerationPath.EndsWith(".cs"))
+					{
+						gameDataSettings.CodeGenerationPath = Path.GetDirectoryName(gameDataSettings.CodeGenerationPath ?? gameDataPath) ?? ".";
+					}
+
 					gameDataSettings.Validate();
 				}
 
 			}
-			catch (Exception e) { Debug.LogError("Failed to deserialize gamedata's settings: " + e); }
+			catch (Exception loadError)
+			{
+				Debug.LogError(string.Format("Failed to read game's data settings from '{0}': {1}", gameDataPath, loadError.Unwrap().Message));
+				Debug.LogError(loadError.Unwrap());
+			}
 
 			if (gameDataSettings == null)
 				gameDataSettings = CreateDefault(gameDataPath);
@@ -133,7 +153,11 @@ namespace GameDevWare.Charon.Unity
 				EditorUtility.SetDirty(gameDataObj);
 				importer.SaveAndReimport();
 			}
-			catch (Exception e) { Debug.LogError("Failed to save gamedata's settings: " + e); }
+			catch (Exception saveError)
+			{
+				Debug.LogError(string.Format("Failed to write game's data settings to '{0}': {1}", gameDataPath, saveError.Unwrap().Message));
+				Debug.LogError(saveError.Unwrap());
+			}
 		}
 
 		public void Validate()
@@ -146,12 +170,12 @@ namespace GameDevWare.Charon.Unity
 				this.GameDataClassName = "GameData";
 			if (string.IsNullOrEmpty(this.DocumentClassName))
 				this.DocumentClassName = "Document";
-			if (Enum.IsDefined(typeof(Indentations), (Indentations)this.Indentation) == false)
-				this.Indentation = (int)Indentations.Tab;
+			if (Enum.IsDefined(typeof(SourceCodeIndentation), (SourceCodeIndentation)this.Indentation) == false)
+				this.Indentation = (int)Unity.SourceCodeIndentation.Tabs;
 			if (Enum.IsDefined(typeof(CodeGenerator), (CodeGenerator)this.Generator) == false)
 				this.Generator = (int)CodeGenerator.None;
-			if (Enum.IsDefined(typeof(LineEndings), (LineEndings)this.LineEnding) == false)
-				this.LineEnding = (int)LineEndings.Windows;
+			if (Enum.IsDefined(typeof(SourceCodeLineEndings), (SourceCodeLineEndings)this.LineEnding) == false)
+				this.LineEnding = (int)SourceCodeLineEndings.Windows;
 		}
 	}
 }
