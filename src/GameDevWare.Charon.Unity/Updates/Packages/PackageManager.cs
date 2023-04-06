@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using GameDevWare.Charon.Unity.Async;
-using GameDevWare.Charon.Unity.Json;
 using GameDevWare.Charon.Unity.Updates.Packages.Nuget;
 using GameDevWare.Charon.Unity.Utils;
 using JetBrains.Annotations;
@@ -229,7 +228,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages
 				}
 
 				var targetPathHash = targetPath + ".sha1";
-				File.WriteAllText(targetPathHash, FileAndPathUtils.ComputeHash(targetPath, "SHA1"));
+				File.WriteAllText(targetPathHash, FileHelper.ComputeHash(targetPath, "SHA1"));
 			}
 			return new FileInfo(targetPath);
 		}

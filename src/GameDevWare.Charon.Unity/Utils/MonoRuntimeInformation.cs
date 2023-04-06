@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (c) 2017 Denis Zykov
+	Copyright (c) 2023 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
@@ -36,7 +36,7 @@ namespace GameDevWare.Charon.Unity.Utils
 			if (RuntimeInformation.IsWindows)
 			{
 				MonoExecutableName = "mono.exe";
-				MonoDefaultLocation = Path.Combine(FileAndPathUtils.GetProgramFilesx86(), @"Mono\bin");
+				MonoDefaultLocation = Path.Combine(FileHelper.GetProgramFilesx86(), @"Mono\bin");
 			}
 			else if (RuntimeInformation.IsOsx)
 			{

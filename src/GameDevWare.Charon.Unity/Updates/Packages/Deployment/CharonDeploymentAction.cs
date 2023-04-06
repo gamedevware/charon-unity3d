@@ -112,7 +112,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Deployment
 			}
 
 			// ensure .config or appsettings.json file
-			if (this.versionToDeploy.Version <= CharonCli.LegacyVersion)
+			if (this.versionToDeploy.Version <= CharonCli.LegacyToolsVersion)
 			{
 				var charonConfigPath = Settings.CharonExecutablePath + ".config";
 				CreateAppConfig(charonConfigPath);

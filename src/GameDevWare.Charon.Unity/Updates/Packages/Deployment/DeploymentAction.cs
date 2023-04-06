@@ -41,7 +41,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Deployment
 				}
 				
 				var expectedHashValue = File.ReadAllText(hashFilePath.FullName).Trim();
-				var actualHashValue = FileAndPathUtils.ComputeHash(file.FullName, "SHA1");
+				var actualHashValue = FileHelper.ComputeHash(file.FullName, "SHA1");
 
 				if (string.Equals(expectedHashValue, actualHashValue, StringComparison.OrdinalIgnoreCase) == false)
 				{

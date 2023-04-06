@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (c) 2017 Denis Zykov
+	Copyright (c) 2023 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
@@ -25,5 +25,10 @@ namespace GameDevWare.Charon.Unity.Utils
 	{
 		public static bool IsWindows { get { return Application.platform == RuntimePlatform.WindowsEditor; } }
 		public static bool IsOsx { get { return Application.platform == RuntimePlatform.OSXEditor; } }
+		public static bool IsLinux { get { return Application.platform == RuntimePlatform.LinuxEditor; } }
+
+		public static string UserAgentHeaderValue = string.Format("{0}/{1} (OS: {2}, Unity Version: {3}, Product: {4}, )",
+			typeof(RuntimeInformation).Assembly.GetName(false).Name, typeof(RuntimeInformation).Assembly.GetName(false).Version,
+			Application.platform, Application.unityVersion, Application.productName);
 	}
 }

@@ -47,7 +47,7 @@ namespace GameDevWare.Charon.Unity.Windows
 			EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_ABOUT_EDITOR_VERSION_LABEL, editorVersion);
 			if (HasNewCharonVersion)
 			{
-				if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_AVAILABLE_TITLE, EditorStyles.toolbarButton, GUILayout.Width(120), GUILayout.Height(18)))
+				if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_AVAILABLE_TITLE, EditorStyles.miniButton, GUILayout.Width(120), GUILayout.Height(18)))
 				{
 					EditorWindow.GetWindow<UpdateWindow>(utility: true);
 					GUI.changed = true;
@@ -67,7 +67,7 @@ namespace GameDevWare.Charon.Unity.Windows
 				EditorGUILayout.BeginHorizontal();
 				{
 					Settings.Current.BrowserPath = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_WINDOW_BROWSER_PATH, Settings.Current.BrowserPath);
-					if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_BROWSE_BUTTON, EditorStyles.toolbarButton, GUILayout.Width(70), GUILayout.Height(18)))
+					if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_BROWSE_BUTTON, EditorStyles.miniButton, GUILayout.Width(70), GUILayout.Height(18)))
 					{
 						Settings.Current.BrowserPath = EditorUtility.OpenFilePanel(Resources.UI_UNITYPLUGIN_WINDOW_BROWSER_PATH_TITLE, "", "");
 						GUI.changed = true;

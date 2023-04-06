@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (c) 2017 Denis Zykov
+	Copyright (c) 2023 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using GameDevWare.Charon.Unity.Async;
+using GameDevWare.Charon.Unity.Routines;
 using GameDevWare.Charon.Unity.Utils;
 using JetBrains.Annotations;
 using UnityEditor;
@@ -67,7 +67,7 @@ namespace GameDevWare.Charon.Unity
 						watcher.Changed += GameDataChanged;
 						Watchers.Add(gameDataPath, watcher);
 
-						try { GameDataHashByPath[gameDataPath] = FileAndPathUtils.ComputeHash(gameDataPath); }
+						try { GameDataHashByPath[gameDataPath] = FileHelper.ComputeHash(gameDataPath); }
 						catch
 						{
 							// ignored
@@ -119,7 +119,7 @@ namespace GameDevWare.Charon.Unity
 					var assetHash = default(string);
 					try
 					{
-						assetHash = FileAndPathUtils.ComputeHash(changedAsset);
+						assetHash = FileHelper.ComputeHash(changedAsset);
 					}
 					catch (Exception e)
 					{
@@ -138,12 +138,11 @@ namespace GameDevWare.Charon.Unity
 						Debug.Log("Asset's " + changedAsset + " hash has changed from " + (oldAssetHash ?? "<none>") + " to " + assetHash);
 
 					GameDataHashByPath[changedAsset] = assetHash;
-					CoroutineScheduler.Schedule
-					(
-						Menu.GenerateCodeAndAssetsAsync(
-							path: changedAsset,
-							progressCallback: ProgressUtils.ReportToLog("Generation(Auto): ")),
-						"generation::" + changedAsset
+
+					GenerateCodeAndAssetsRoutine.Schedule(
+						path: changedAsset,
+						progressCallback: ProgressUtils.ReportToLog("Generation (Auto): "),
+						coroutineId: "generation::" + changedAsset
 					);
 				}
 			}
@@ -169,10 +168,10 @@ namespace GameDevWare.Charon.Unity
 			}
 			for (var i = 0; i < movedAssets.Length; i++)
 			{
-				var fromPath = FileAndPathUtils.MakeProjectRelative(movedFromAssetPaths[i]);
-				var toPath = FileAndPathUtils.MakeProjectRelative(movedAssets[i]);
+				var fromPath = FileHelper.MakeProjectRelative(movedFromAssetPaths[i]);
+				var toPath = FileHelper.MakeProjectRelative(movedAssets[i]);
 				if (fromPath == null || toPath == null) continue;
-				
+
 				if (!GameDataTracker.IsTracked(fromPath))
 					continue;
 
@@ -189,7 +188,7 @@ namespace GameDevWare.Charon.Unity
 
 		private static void GameDataChanged(object sender, FileSystemEventArgs e)
 		{
-			var path = FileAndPathUtils.MakeProjectRelative(e.FullPath);
+			var path = FileHelper.MakeProjectRelative(e.FullPath);
 			lock (ChangedAssetPaths)
 				ChangedAssetPaths.Add(path);
 		}

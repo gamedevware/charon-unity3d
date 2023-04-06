@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (c) 2017 Denis Zykov
+	Copyright (c) 2023 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
@@ -20,7 +20,6 @@
 using System;
 using System.Globalization;
 using Microsoft.Win32;
-using UnityEngine;
 
 namespace GameDevWare.Charon.Unity.Utils
 {

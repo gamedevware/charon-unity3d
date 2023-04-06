@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (c) 2017 Denis Zykov
+	Copyright (c) 2023 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
@@ -45,6 +45,7 @@ namespace GameDevWare.Charon.Unity.Utils
 				return TrackedFiles;
 			}
 		}
+		
 		public static int Version { get { return TrackedFilesVersion; } }
 
 		static GameDataTracker()
@@ -91,7 +92,7 @@ namespace GameDevWare.Charon.Unity.Utils
 		private static IEnumerable<string> ScanForGameDataFiles()
 		{
 			return (from id in AssetDatabase.FindAssets("t:DefaultAsset")
-					let path = FileAndPathUtils.MakeProjectRelative(AssetDatabase.GUIDToAssetPath(id))
+					let path = FileHelper.MakeProjectRelative(AssetDatabase.GUIDToAssetPath(id))
 					where path != null && IsGameDataFile(path)
 					select path);
 		}

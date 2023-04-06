@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (c) 2017 Denis Zykov
+	Copyright (c) 2023 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
@@ -19,7 +19,6 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -75,7 +74,7 @@ namespace GameDevWare.Charon.Unity.Windows
 			if (GameDataTracker.IsGameDataFile(gameDataPath) == false)
 				return false;
 
-			var reference = ValidationException.GetReference(exceptionId);
+			var reference = ValidationError.GetReference(exceptionId);
 			loadEditorTask = new Coroutine<bool>(LoadEditor(gameDataPath, reference, loadEditorTask));
 			loadEditorTask.ContinueWith(t => EditorUtility.ClearProgressBar());
 
@@ -96,7 +95,7 @@ namespace GameDevWare.Charon.Unity.Windows
 			EditorGUILayout.Space();
 			GUILayout.BeginVertical();
 			GUILayout.Box("The editor is open in the standard browser of your operating system. Click 'Close' when finished. ");
-			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_ABOUT_CLOSE_BUTTON, EditorStyles.toolbarButton, GUILayout.Width(70), GUILayout.Height(18)))
+			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_ABOUT_CLOSE_BUTTON, EditorStyles.miniButton, GUILayout.Width(70), GUILayout.Height(18)))
 			{
 				FindAllAndClose();
 			}
@@ -148,7 +147,7 @@ namespace GameDevWare.Charon.Unity.Windows
 			CharonCli.FindAndEndGracefully(lockFilePath);
 
 			if (Settings.Current.Verbose)
-				Debug.Log("Starting gamedata editor at " + gameDataEditorUrl + "...");
+				Debug.Log("Starting game data editor at " + gameDataEditorUrl + "...");
 
 
 			if (EditorUtility.DisplayCancelableProgressBar(title, Resources.UI_UNITYPLUGIN_WINDOW_EDITOR_LAUNCHING_EXECUTABLE, 0.50f))
@@ -163,7 +162,7 @@ namespace GameDevWare.Charon.Unity.Windows
 				progressCallback: ProgressUtils.ShowCancellableProgressBar(title, 0.50f, 0.60f));
 
 			if (Settings.Current.Verbose)
-				Debug.Log("Launching gamedata editor process.");
+				Debug.Log("Launching game data editor process.");
 
 			// wait untill server process start
 			var timeoutPromise = Promise.Delayed(TimeSpan.FromSeconds(10));
@@ -249,10 +248,12 @@ namespace GameDevWare.Charon.Unity.Windows
 			{
 				browserType = BrowserType.SystemDefault;
 			}
+
+			var navigateUrl = new Uri(new Uri(gameDataEditorUrl), reference).OriginalString;
 			switch (browserType)
 			{
 				case BrowserType.UnityEmbedded:
-					editorWindow.LoadUrl(gameDataEditorUrl + reference);
+					editorWindow.LoadUrl(navigateUrl);
 					editorWindow.SetWebViewVisibility(true);
 					editorWindow.Repaint();
 					editorWindow.Focus();
@@ -260,13 +261,15 @@ namespace GameDevWare.Charon.Unity.Windows
 				case BrowserType.Custom:
 					if (string.IsNullOrEmpty(Settings.Current.BrowserPath))
 						goto case BrowserType.SystemDefault;
-					Process.Start(Settings.Current.BrowserPath, gameDataEditorUrl + reference);
+					Process.Start(Settings.Current.BrowserPath, navigateUrl);
 					editorWindow.isOffsiteBrowserLaunched = true;
 					break;
 				case BrowserType.SystemDefault:
-					EditorUtility.OpenWithDefaultApp(gameDataEditorUrl + reference);
+					EditorUtility.OpenWithDefaultApp(navigateUrl);
 					editorWindow.isOffsiteBrowserLaunched = true;
 					break;
+				default:
+					throw new ArgumentOutOfRangeException(string.Format("Unexpected value '{0}' for '{1}' enum.", browserType, typeof(BrowserType)));
 			}
 		}
 		private static IEnumerable RunCancellableProgress(string title, string message, float fromProgress, float toProgress, TimeSpan timeInterpolationWindow, Promise cancellation)

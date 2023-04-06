@@ -98,7 +98,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Deployment
 						Debug.LogWarning(error);
 					}
 				}
-				this.changedAssets.Add(FileAndPathUtils.MakeProjectRelative(targetFile.FullName));
+				this.changedAssets.Add(FileHelper.MakeProjectRelative(targetFile.FullName));
 			}
 			yield break;
 		}

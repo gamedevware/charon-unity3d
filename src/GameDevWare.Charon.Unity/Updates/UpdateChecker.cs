@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using GameDevWare.Charon.Unity.Async;
 using GameDevWare.Charon.Unity.Updates.Packages;
@@ -185,7 +184,7 @@ namespace GameDevWare.Charon.Unity.Updates
 				if (string.IsNullOrEmpty(skippedUpdateHash) || string.IsNullOrEmpty(releaseNotes))
 					return false;
 
-				return string.Equals(skippedUpdateHash, FileAndPathUtils.ComputeNameHash(releaseNotes, "SHA1"));
+				return string.Equals(skippedUpdateHash, FileHelper.ComputeNameHash(releaseNotes, "SHA1"));
 			}
 			catch
 			{
@@ -194,7 +193,7 @@ namespace GameDevWare.Charon.Unity.Updates
 		}
 		public static void SkipUpdates(string releaseNotes)
 		{
-			EditorPrefs.SetString(SKIPPED_UPDATE_PREFS_KEY, FileAndPathUtils.ComputeNameHash(releaseNotes, "SHA1"));
+			EditorPrefs.SetString(SKIPPED_UPDATE_PREFS_KEY, FileHelper.ComputeNameHash(releaseNotes, "SHA1"));
 		}
 		public static SemanticVersion GetLastCharonVersion()
 		{

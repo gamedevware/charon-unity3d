@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (c) 2017 Denis Zykov
+	Copyright (c) 2023 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
@@ -54,15 +54,15 @@ namespace GameDevWare.Charon.Unity.Async
 		{
 			return Schedule(coroutine, null);
 		}
-		public static Promise Schedule(IEnumerable coroutine, string id)
+		public static Promise Schedule(IEnumerable coroutine, string coroutineId)
 		{
-			return Schedule<object>(coroutine, id);
+			return Schedule<object>(coroutine, coroutineId);
 		}
 		public static Promise<T> Schedule<T>(IEnumerable coroutine)
 		{
 			return Schedule<T>(coroutine, Guid.NewGuid().ToString());
 		}
-		public static Promise<T> Schedule<T>(IEnumerable coroutine, string id)
+		public static Promise<T> Schedule<T>(IEnumerable coroutine, string coroutineId)
 		{
 			if (coroutine == null) throw new ArgumentNullException("coroutine");
 
@@ -70,23 +70,23 @@ namespace GameDevWare.Charon.Unity.Async
 			if (coroutineName.IndexOf('<') >= 0 && coroutineName.IndexOf('>') > coroutineName.IndexOf('<'))
 				coroutineName = coroutineName.Substring(coroutineName.IndexOf('<') + 1, coroutineName.IndexOf('>') - coroutineName.IndexOf('<') - 1);
 
-			if (string.IsNullOrEmpty(id))
-				id = coroutineName + "_" + Guid.NewGuid().ToString().Replace("-", "");
+			if (string.IsNullOrEmpty(coroutineId))
+				coroutineId = coroutineName + "_" + Guid.NewGuid().ToString().Replace("-", "");
 
 			var existingPromise = default(Promise);
-			if (CoroutineById.TryGetValue(id, out existingPromise))
+			if (CoroutineById.TryGetValue(coroutineId, out existingPromise) && !existingPromise.IsCompleted)
 				return (Promise<T>)existingPromise;
 
 			if (Settings.Current.Verbose)
-				Debug.Log("Scheduling new coroutine " + coroutineName + " with id '" + id + "'.");
+				Debug.Log("Scheduling new coroutine " + coroutineName + " with id '" + coroutineId + "'.");
 
 			var resultPromise = new Promise<T>();
 			WaitQueue.Enqueue(() =>
 			{
-				Current = new Coroutine<T>(WrapCoroutine(coroutine, id, resultPromise));
+				Current = new Coroutine<T>(WrapCoroutine(coroutine, coroutineId, resultPromise));
 			});
 
-			CoroutineById.Add(id, resultPromise);
+			CoroutineById[coroutineId] = resultPromise;
 			return resultPromise;
 		}
 

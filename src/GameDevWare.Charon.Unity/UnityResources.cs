@@ -58,8 +58,13 @@ namespace GameDevWare.Charon {
 		public const string UI_UNITYPLUGIN_INSPECTOR_ASSET_GENERATION_PATH = "Asset Generation Path";
 		public const string UI_UNITYPLUGIN_INSPECTOR_ASSET_LABEL = "Asset";
 		public const string UI_UNITYPLUGIN_INSPECTOR_AUTO_GENERATION = "Auto-Generation";
+		public const string UI_UNITYPLUGIN_INSPECTOR_SPLIT_FILES = "Split into multple files";
+		public const string UI_UNITYPLUGIN_INSPECTOR_AUTO_SYNC = "Auto-Synchonize";
+		public const string UI_UNITYPLUGIN_INSPECTOR_PROJECT_LABEL = "Project";
+		public const string UI_UNITYPLUGIN_INSPECTOR_BRANCH_LABEL = "Branch";
+		public const string UI_UNITYPLUGIN_INSPECTOR_LAST_SYNCHRONIZATION_LABEL = "Last Synchonization";
 		public const string UI_UNITYPLUGIN_INSPECTOR_BACKUP_BUTTON = "Backup";
-		public const string UI_UNITYPLUGIN_INSPECTOR_CODE_API_CLASS_NAME = "API Class";
+		public const string UI_UNITYPLUGIN_INSPECTOR_CODE_GAMEDATA_CLASS_NAME = "Game Data Class";
 		public const string UI_UNITYPLUGIN_INSPECTOR_CODE_DOCUMENT_CLASS_NAME = "Document Class";
 		public const string UI_UNITYPLUGIN_INSPECTOR_CODE_GENERATION_LABEL = "Code Generation";
 		public const string UI_UNITYPLUGIN_INSPECTOR_CODE_GENERATION_PATH = "Generation Path";
@@ -67,15 +72,21 @@ namespace GameDevWare.Charon {
 		public const string UI_UNITYPLUGIN_INSPECTOR_CODE_INDENTATION = "Indentation";
 		public const string UI_UNITYPLUGIN_INSPECTOR_CODE_LINE_ENDINGS = "Line Endings";
 		public const string UI_UNITYPLUGIN_INSPECTOR_CODE_NAMESPACE = "Namespace";
-		public const string UI_UNITYPLUGIN_INSPECTOR_CODE_OPTIONS = "Options";
+		public const string UI_UNITYPLUGIN_INSPECTOR_CODE_OPTIMIZATIONS = "Optimizations";
 		public const string UI_UNITYPLUGIN_INSPECTOR_EDIT_BUTTON = "Edit";
 		public const string UI_UNITYPLUGIN_INSPECTOR_GENERATION_PREFIX = "Generation:";
 		public const string UI_UNITYPLUGIN_INSPECTOR_NAME_LABEL = "Name";
 		public const string UI_UNITYPLUGIN_INSPECTOR_RESTORE_BUTTON = "Restore";
 		public const string UI_UNITYPLUGIN_INSPECTOR_RUN_GENERATOR_BUTTON = "Generate Source Code";
-		public const string UI_UNITYPLUGIN_INSPECTOR_SCRIPTING_ASSEMBLIES_LABEL = "Scripting Assemblies";
+		public const string UI_UNITYPLUGIN_INSPECTOR_SYNCHONIZE_BUTTON = "Synchonize";
+		public const string UI_UNITYPLUGIN_INSPECTOR_CONNECT_BUTTON = "Connect";
+		public const string UI_UNITYPLUGIN_INSPECTOR_DISCONNECT_BUTTON = "Disconnect";
+		public const string UI_UNITYPLUGIN_INSPECTOR_FORMULA_ASSEMBLIES_LABEL = "Assemblies Exposed to Formulas";
+		public const string UI_UNITYPLUGIN_INSPECTOR_CONNECTION_LABEL = "Connection";
+		public const string UI_UNITYPLUGIN_INSPECTOR_NOT_CONNECTED_LABEL = "<Not Connected>";
 		public const string UI_UNITYPLUGIN_INSPECTOR_VALIDATE_BUTTON = "Validate";
 		public const string UI_UNITYPLUGIN_INSPECTOR_VALIDATION_PREFIX = "Validation:";
+		public const string UI_UNITYPLUGIN_INSPECTOR_SYNCHONIZATION_PREFIX = "Synchonization:";
 		public const string UI_UNITYPLUGIN_MENU_SETTINGS = "Settings...";
 		public const string UI_UNITYPLUGIN_MENU_ADVANCED = "Advanced";
 		public const string UI_UNITYPLUGIN_MENU_CHECK_RUNTIME = "Check Runtime...";
@@ -88,6 +99,7 @@ namespace GameDevWare.Charon {
 		public const string UI_UNITYPLUGIN_MENU_DOCUMENTATION = "Open Documentation";
 		public const string UI_UNITYPLUGIN_MENU_EXTRACT_T4_TEMPLATES = "Extract Code Generation Templates...";
 		public const string UI_UNITYPLUGIN_MENU_GENERATE_CODE_AND_ASSETS = "Generate Code and Assets";
+		public const string UI_UNITYPLUGIN_MENU_SYNCHRONIZE_ASSETS = "Synchronize Connected Assets";
 		public const string UI_UNITYPLUGIN_MENU_OPEN_LOGS = "Open Logs...";
 		public const string UI_UNITYPLUGIN_MENU_RESET_PREFERENCES = "Reset Preferences";
 		public const string UI_UNITYPLUGIN_MENU_SEND_FEEDBACK = "Report Issue...";
@@ -168,6 +180,7 @@ namespace GameDevWare.Charon {
 		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_UPDATE_BUTTON = "Update";
 		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_REVIEW_UPDATES_BUTTON = "Update...";
 		public const string UI_UNITYPLUGIN_WINDOWCHECK_RESULT_MISSING_TOOLS = "Missing Tools!";
+		public const string UI_UNITYPLUGIN_SERVER_ERROR = "Request ended with following errors:";
 	}
 }
 

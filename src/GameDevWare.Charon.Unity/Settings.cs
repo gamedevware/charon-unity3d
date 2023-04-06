@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (c) 2017 Denis Zykov
+	Copyright (c) 2023 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
@@ -131,7 +131,7 @@ namespace GameDevWare.Charon.Unity
 				this.EditorPort = 65535;
 		}
 
-		internal Uri GetServerApiAddress()
+		internal Uri GetServerAddressUrl()
 		{
 			var serverAddress = default(Uri);
 			if (string.IsNullOrEmpty(this.ServerAddress) || this.ServerAddress.All(char.IsWhiteSpace))
@@ -144,24 +144,11 @@ namespace GameDevWare.Charon.Unity
 			}
 
 			if (serverAddress.IsAbsoluteUri == false) throw new InvalidOperationException("Server address should be absolute URL.");
-			if (serverAddress.LocalPath.EndsWith("service/api/", StringComparison.OrdinalIgnoreCase) == false)
-			{
-				if (serverAddress.LocalPath.EndsWith("service/api", StringComparison.OrdinalIgnoreCase) ||
-					serverAddress.LocalPath.EndsWith("service/", StringComparison.OrdinalIgnoreCase))
-				{
-					serverAddress = new Uri(serverAddress, "./api/");
-				}
-				else
-				{
-					serverAddress = new Uri(serverAddress, "./service/api/");
-				}
-			}
-
-			return serverAddress;
+			return serverAddress; 
 		}
 		internal static string GetLocalUserDataPath()
 		{
-			return Path.Combine(Path.Combine(ToolBasePath, "Data"), FileAndPathUtils.SanitizeFileName(Environment.UserName ?? "Default"));
+			return Path.Combine(Path.Combine(ToolBasePath, "Data"), FileHelper.SanitizeFileName(Environment.UserName ?? "Default"));
 		}
 		internal static Version GetCurrentAssetVersion()
 		{
