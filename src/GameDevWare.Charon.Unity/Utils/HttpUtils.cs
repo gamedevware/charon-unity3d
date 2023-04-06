@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (c) 2017 Denis Zykov
+	Copyright (c) 2023 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
@@ -41,6 +41,7 @@ namespace GameDevWare.Charon.Unity.Utils
 			var downloadDir = Path.GetDirectoryName(downloadToFilePath);
 			if (string.IsNullOrEmpty(downloadDir) == false && Directory.Exists(downloadDir) == false)
 				Directory.CreateDirectory(downloadDir);
+			
 
 			const bool LEAVE_OPEN = false;
 			var downloadToStream = new FileStream(downloadToFilePath, FileMode.Create, FileAccess.Write, FileShare.None, BUFFER_SIZE, FileOptions.None);
@@ -50,9 +51,9 @@ namespace GameDevWare.Charon.Unity.Utils
 				{
 					throw EnrichWebError(p.Error, url, requestHeaders, timeout);
 				}
-
+				
 				return p.GetResult();
-			})); ;
+			}));
 			return downloadCoroutine;
 		}
 		public static Promise DownloadTo(Stream downloadToStream, Uri url, NameValueCollection requestHeaders = null, Action<long, long> downloadProgressCallback = null, TimeSpan timeout = default(TimeSpan))
@@ -107,12 +108,15 @@ namespace GameDevWare.Charon.Unity.Utils
 			if (url == null) throw new ArgumentNullException("url");
 			if (downloadToStream == null) throw new ArgumentNullException("downloadToStream");
 
-			using (new NoCertificateValidationContext())
+			var noCertificateValidationContext = new NoCertificateValidationContext();
+			var written = 0L;
+			try
 			{
 				var request = (HttpWebRequest)WebRequest.Create(url);
 				request.Accept = "*/*";
 				request.UserAgent = typeof(HttpUtils).Assembly.GetName().FullName;
 				request.AutomaticDecompression = DecompressionMethods.None;
+
 				if (timeout.Ticks > 0)
 					request.Timeout = (int)timeout.TotalMilliseconds;
 
@@ -156,6 +160,11 @@ namespace GameDevWare.Charon.Unity.Utils
 					}
 				}
 
+				if (string.IsNullOrEmpty(request.UserAgent))
+				{
+					request.UserAgent = RuntimeInformation.UserAgentHeaderValue;
+				}
+
 				if (Settings.Current.Verbose)
 					UnityEngine.Debug.Log(string.Format("Staring new request to [{0}]'{1}'.", request.Method, request.RequestUri));
 
@@ -190,76 +199,74 @@ namespace GameDevWare.Charon.Unity.Utils
 
 				if (downloadProgressCallback != null) downloadProgressCallback(0, totalLength);
 				var lastReported = 0L;
-				var writen = 0L;
-				try
+
+				var buffer = new byte[BUFFER_SIZE];
+				var read = 0;
+				do
 				{
-					var buffer = new byte[BUFFER_SIZE];
-					var read = 0;
-					do
+					if (UnityEditor.EditorApplication.isCompiling)
+						throw new InvalidOperationException("Download has been canceled due pending compilation.");
+
+					var readAsync = responseStream.BeginRead(buffer, 0, buffer.Length, ar =>
 					{
-						if (UnityEditor.EditorApplication.isCompiling)
-							throw new InvalidOperationException("Download has been canceled due pending compilation.");
-
-						var readAsync = responseStream.BeginRead(buffer, 0, buffer.Length, ar =>
+						try
 						{
-							try
-							{
-								responseStream.EndRead(ar);
-							}
-							catch
-							{
-								/* ignore */
-							}
-						}, null);
-						yield return readAsync;
-
-						if (UnityEditor.EditorApplication.isCompiling)
-							throw new InvalidOperationException("Download has been canceled due pending compilation.");
-
-						read = responseStream.EndRead(readAsync);
-						if (read <= 0) continue;
-
-						var writeAsync = downloadToStream.BeginWrite(buffer, 0, read, ar =>
+							responseStream.EndRead(ar);
+						}
+						catch
 						{
-							try
-							{
-								downloadToStream.EndWrite(ar);
-							}
-							catch
-							{
-								/* ignore */
-							}
-						}, null);
-						yield return writeAsync;
+							/* ignore */
+						}
+					}, null);
+					yield return readAsync;
 
-						writen += read;
+					if (UnityEditor.EditorApplication.isCompiling)
+						throw new InvalidOperationException("Download has been canceled due pending compilation.");
 
-						if (downloadProgressCallback != null && (writen - lastReported) > (totalLength / 200.0f))
-							downloadProgressCallback(lastReported = writen, totalLength);
-					} while (read != 0);
+					read = responseStream.EndRead(readAsync);
+					if (read <= 0) continue;
 
-					downloadToStream.Flush();
-				}
-				finally
-				{
-					if (!leaveOpen)
-						downloadToStream.Dispose();
-				}
+					var writeAsync = downloadToStream.BeginWrite(buffer, 0, read, ar =>
+					{
+						try
+						{
+							downloadToStream.EndWrite(ar);
+						}
+						catch
+						{
+							/* ignore */
+						}
+					}, null);
+					yield return writeAsync;
+
+					written += read;
+
+					if (downloadProgressCallback != null && (written - lastReported) > (totalLength / 200.0f))
+						downloadProgressCallback(lastReported = written, totalLength);
+				} while (read != 0);
+
+				downloadToStream.Flush();
 
 				if (downloadProgressCallback != null) downloadProgressCallback(totalLength, totalLength);
-
-				yield return writen;
 			}
+			finally
+			{
+				noCertificateValidationContext.Dispose();
+				
+				if (!leaveOpen)
+					downloadToStream.Dispose();
+			}
+
+			yield return written;
+
 		}
 
-		private static Exception EnrichWebError(Exception error, Uri url, NameValueCollection requestHeaders, TimeSpan timeout)
+		private static Exception EnrichWebError(Exception error, Uri requestUrl, NameValueCollection requestHeaders, TimeSpan timeout)
 		{
 			if (error == null) throw new ArgumentNullException("error");
-			if (url == null) throw new ArgumentNullException("url");
+			if (requestUrl == null) throw new ArgumentNullException("requestUrl");
 
-			error = new WebException(string.Format("Request to '{0}' failed due error. Timeout: '{1}'.", url, timeout), error.Unwrap(), WebExceptionStatus.UnknownError, null);
-
-			error.Data["requestUrl"] = url;
+			error.Data["requestUrl"] = requestUrl;
 			if (requestHeaders != null)
 				error.Data["requestHeaders"] = requestHeaders;
 			error.Data["timeout"] = timeout;
