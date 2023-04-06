@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (c) 2017 Denis Zykov
+	Copyright (c) 2023 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
@@ -20,7 +20,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GameDevWare.Charon.Unity.Async;
+using GameDevWare.Charon.Unity.Routines;
+using JetBrains.Annotations;
 using UnityEditor;
 using UnityEngine;
 
@@ -28,7 +29,7 @@ using UnityEngine;
 
 namespace GameDevWare.Charon.Unity
 {
-	[InitializeOnLoad]
+	[InitializeOnLoad, UsedImplicitly]
 	internal static class AssetGenerator
 	{
 		private const string PREFS_KEY = Settings.PREF_PREFIX + "AssetGenerationList";
@@ -58,7 +59,7 @@ namespace GameDevWare.Charon.Unity
 			if (Settings.Current.Verbose)
 				Debug.Log("Scheduling " + AssetGenerationList.Count + " asset generating tasks.");
 
-			CoroutineScheduler.Schedule(Menu.GenerateAssetsAsync(AssetGenerationList.ToArray()))
+			GenerateAssetsRoutine.Schedule(AssetGenerationList.ToArray())
 				.IgnoreFault()
 				.ContinueWith(_ => EditorPrefs.DeleteKey(PREFS_KEY));
 

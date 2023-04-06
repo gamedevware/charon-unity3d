@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (c) 2017 Denis Zykov
+	Copyright (c) 2023 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
@@ -45,6 +45,7 @@ namespace GameDevWare.Charon.Unity.Windows
 			public SemanticVersion SelectedVersion;
 			public SemanticVersion[] AllVersions;
 			public SemanticVersion ExpectedVersion;
+			public SemanticVersion MinimalExclusiveVersion;
 			public Promise<PackageInfo[]> AllBuilds;
 			public string Location;
 			public string Action;
@@ -105,7 +106,8 @@ namespace GameDevWare.Charon.Unity.Windows
 				CurrentVersion = p.CurrentVersion,
 				AllBuilds = p.AllBuilds,
 				Location = p.Location,
-				ExpectedVersion = p.ExpectedVersion
+				ExpectedVersion = p.ExpectedVersion,
+				MinimalExclusiveVersion = new SemanticVersion(p.MinimalExclusiveVersion)
 			});
 
 			if (Settings.Current.Verbose)
@@ -177,10 +179,7 @@ namespace GameDevWare.Charon.Unity.Windows
 			};
 
 			// paddings
-			GUILayout.BeginHorizontal(GUILayout.Width(this.position.width - this.padding.x - this.padding.width));
-			GUILayout.Space(this.padding.x);
-			GUILayout.BeginVertical(GUILayout.Width(this.position.height - this.padding.y - this.padding.height));
-			GUILayout.Space(this.padding.y);
+			EditorLayoutUtils.BeginPaddings(this.position.size, this.padding);
 
 			// render headers
 			GUILayout.BeginHorizontal(headerStyle);
@@ -211,7 +210,7 @@ namespace GameDevWare.Charon.Unity.Windows
 			var wasEnabled = GUI.enabled;
 			GUI.enabled = wasEnabled && this.rows.All(r => r.CurrentVersion.IsCompleted && r.AllBuilds.IsCompleted) && !EditorApplication.isCompiling;
 			var actionText = this.rows.Any(r => r.Action != DeploymentAction.ACTION_SKIP) ? Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_UPDATE_BUTTON : Resources.UI_UNITYPLUGIN_ABOUT_CLOSE_BUTTON;
-			if (this.updatePromise == null && GUILayout.Button(actionText, GUILayout.Width(80)))
+			if (this.updatePromise == null && GUILayout.Button(actionText, GUILayout.Width(80), GUILayout.Height(25)))
 			{
 				if (actionText == Resources.UI_UNITYPLUGIN_ABOUT_CLOSE_BUTTON)
 				{
@@ -234,18 +233,10 @@ namespace GameDevWare.Charon.Unity.Windows
 			GUI.enabled = wasEnabled;
 			GUILayout.EndHorizontal();
 
-			// paddings
-			GUILayout.EndVertical();
-			GUILayout.EndHorizontal();
+			// padding
+			EditorLayoutUtils.EndPaddings();
 
-			GUILayoutUtility.GetRect(1, 1, 1, 1);
-			if (Event.current.type == EventType.Repaint && GUILayoutUtility.GetLastRect().y > 0)
-			{
-				var newRect = GUILayoutUtility.GetLastRect();
-				this.position = new Rect(this.position.position, new Vector2(this.position.width, newRect.y + 7));
-				this.minSize = new Vector2(this.minSize.x, this.position.height);
-				this.maxSize = new Vector2(this.maxSize.x, this.position.height);
-			}
+			EditorLayoutUtils.AutoSize(this);
 
 			GUI.enabled = true;
 		}
@@ -298,7 +289,7 @@ namespace GameDevWare.Charon.Unity.Windows
 			{
 				if ((row.Action == DeploymentAction.ACTION_DOWNLOAD || row.Action == DeploymentAction.ACTION_UPDATE) && row.AllVersions != null)
 				{
-					var versionNames = Array.ConvertAll(row.AllVersions, v => v.ToString());
+					var versionNames = row.AllVersions.Where(v => v > row.MinimalExclusiveVersion).Select(v => v.ToString()).ToArray();
 					var selectedVersion = Array.IndexOf(row.AllVersions, row.SelectedVersion);
 					if (selectedVersion < 0)
 						selectedVersion = 0;
@@ -389,7 +380,7 @@ namespace GameDevWare.Charon.Unity.Windows
 				var hashAlgorithm = "SHA1";
 				var expectedHashFile = row.Location + ".sha1";
 				var expectedHash = File.Exists(expectedHashFile) == false ? null : File.ReadAllText(expectedHashFile);
-				var actualHash = FileAndPathUtils.ComputeHash(row.Location, hashAlgorithm);
+				var actualHash = FileHelper.ComputeHash(row.Location, hashAlgorithm);
 				if (expectedHash != null && string.Equals(expectedHash, actualHash, StringComparison.OrdinalIgnoreCase) == false)
 				{
 					if (Settings.Current.Verbose)

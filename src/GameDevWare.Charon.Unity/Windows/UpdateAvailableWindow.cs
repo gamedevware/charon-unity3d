@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using GameDevWare.Charon.Unity.Updates;
+using GameDevWare.Charon.Unity.Utils;
 using JetBrains.Annotations;
 using UnityEditor;
 using UnityEngine;
@@ -40,16 +41,16 @@ namespace GameDevWare.Charon.Unity.Windows
 			GUILayout.Label(this.ReleaseNotes ?? string.Empty, style);
 			GUILayout.EndScrollView();
 
-			
+
 			GUILayout.Space(5);
 			GUILayout.BeginHorizontal();
 			EditorGUILayout.Space();
-			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_SKIP_BUTTON, GUILayout.Width(80)))
+			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_SKIP_BUTTON, GUILayout.Width(80), GUILayout.Height(25)))
 			{
 				UpdateChecker.SkipUpdates(this.ReleaseNotes);
 				this.Close();
 			}
-			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_REVIEW_UPDATES_BUTTON, GUILayout.Width(120)))
+			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_REVIEW_UPDATES_BUTTON, GUILayout.Width(120), GUILayout.Height(25)))
 			{
 				EditorWindow.GetWindow<UpdateWindow>(utility: true);
 				this.Close();
@@ -59,6 +60,8 @@ namespace GameDevWare.Charon.Unity.Windows
 			// paddings
 			GUILayout.EndVertical();
 			GUILayout.EndHorizontal();
+
+			EditorLayoutUtils.AutoSize(this);
 		}
 	}
 }

@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (c) 2017 Denis Zykov
+	Copyright (c) 2023 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
@@ -83,7 +83,7 @@ namespace GameDevWare.Charon.Unity.Windows
 			EditorGUILayout.BeginHorizontal();
 			{
 				this.monoPath = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_WINDOW_PATH_TO_MONO, this.monoPath);
-				if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_BROWSE_BUTTON, EditorStyles.toolbarButton, GUILayout.Width(70), GUILayout.Height(18)))
+				if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_BROWSE_BUTTON, EditorStyles.miniButton, GUILayout.Width(70), GUILayout.Height(18)))
 				{
 					this.monoPath = EditorUtility.OpenFolderPanel(Resources.UI_UNITYPLUGIN_WINDOW_PATH_TO_MONO, "", "");
 					GUI.changed = true;
@@ -97,11 +97,11 @@ namespace GameDevWare.Charon.Unity.Windows
 			GUILayout.Space(18);
 			GUILayout.BeginHorizontal();
 			EditorGUILayout.Space();
-			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_RE_CHECK_BUTTON, GUILayout.Width(80)))
+			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_RE_CHECK_BUTTON, GUILayout.Width(80), GUILayout.Height(25)))
 				this.RunCheck();
 
 			GUI.enabled = true;
-			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_CANCEL_BUTTON, GUILayout.Width(80)))
+			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_CANCEL_BUTTON, GUILayout.Width(80), GUILayout.Height(25)))
 				this.Close();
 			GUILayout.EndHorizontal();
 
@@ -113,6 +113,8 @@ namespace GameDevWare.Charon.Unity.Windows
 			// ReSharper disable once ConditionIsAlwaysTrueOrFalse
 			if (!checkIsRunning && canCheckMono)
 				this.RunCheck();
+
+			EditorLayoutUtils.AutoSize(this);
 		}
 
 		private void RunCheck()
@@ -215,7 +217,7 @@ namespace GameDevWare.Charon.Unity.Windows
 			else if (isValid)
 				this.runtimeVersion = string.Format("{0} ({1})", version, runtime);
 			else
-				this.runtimeVersion = string.Format("<color=#ff0000ff>{0} ({1})</color>", version, runtime);
+				this.runtimeVersion = string.Format("<color=#f44336ff>{0} ({1})</color>", version, runtime);
 			this.Repaint();
 		}
 		private void OnDestroy()
