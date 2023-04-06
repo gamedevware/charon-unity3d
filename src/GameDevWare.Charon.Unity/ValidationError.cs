@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (c) 2017 Denis Zykov
+	Copyright (c) 2023 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
@@ -23,20 +23,26 @@ using System.Reflection;
 
 namespace GameDevWare.Charon.Unity
 {
-	internal class ValidationException : Exception
+	internal class ValidationError : Exception
 	{
-		private static readonly FieldInfo StackTraceField = typeof(Exception).GetField("stack_trace", BindingFlags.NonPublic | BindingFlags.Instance);
+		private static readonly FieldInfo StackTraceField = typeof(Exception).GetField("stack_trace", BindingFlags.NonPublic | BindingFlags.Instance) ??
+			typeof(Exception).GetField("_stackTraceString", BindingFlags.NonPublic | BindingFlags.Instance);
+
 		private static readonly Dictionary<int, string> ReferenceByExceptionId = new Dictionary<int, string>();
 		private static int LastExceptionId = 1;
 
-		public ValidationException(string gameDataPath, string id, string entityName, string path, string msg)
-			: base(string.Format("{0}:{1} {2}", entityName, id, msg))
+		public ValidationError(string gameDataPath, string projectId, string branchId, string id, string entityName, string path, string errorMessage)
+			: base(string.Format("{0}->{1}, {2}", entityName, id, errorMessage))
 		{
 
 			var exceptionId = LastExceptionId++;
-			StackTraceField.SetValue(this, path + "() (at " + gameDataPath + ":" + exceptionId + ")");
 
-			var reference = "#edit/" + entityName + "/" + id;
+			if (StackTraceField != null) // Trick Unity into thinking that error inside game data file by replacing StackTrace of this Exception
+				StackTraceField.SetValue(this, path + " (<double-click to open>) (at " + gameDataPath + ":" + exceptionId + ")");
+
+
+
+			var reference = string.Format("view/data/{0}/{1}/form/{2}/{3}", projectId, branchId, entityName, id);
 			ReferenceByExceptionId.Add(exceptionId, reference);
 		}
 
