@@ -35,10 +35,12 @@ namespace GameDevWare.Charon.Unity
 		public const string DEFAULT_SERVER_ADDRESS = "http://charon.live/";
 
 		public static readonly string TempPath;
-		public static readonly string ToolBasePath;
+		public static readonly string LibraryCharonPath;
+		public static readonly string LibraryCharonLogsPath;
+		public static readonly string UserDataPath;
 		public static readonly string PluginBasePath;
 		public static readonly string SettingsPath;
-		public static readonly string CharonExecutablePath;
+		public static readonly string CharonExePath;
 
 		public const string EXTENSION_FORMULAS = "Formulas";
 
@@ -62,10 +64,12 @@ namespace GameDevWare.Charon.Unity
 			if (PluginBasePath == null)
 				PluginBasePath = Path.GetFullPath("Assets/Editor/GameDevWare.Charon");
 
-			ToolBasePath = Path.GetFullPath("./Library/Charon/");
+			LibraryCharonPath = Path.GetFullPath("./Library/Charon/");
 			TempPath = Path.GetFullPath("./Temp/");
 			SettingsPath = Path.Combine(PluginBasePath, "GameDevWare.Charon.Unity.Settings.json");
-			CharonExecutablePath = Path.Combine(ToolBasePath, "Charon.exe");
+			CharonExePath = Path.Combine(LibraryCharonPath, "Charon.exe");
+			UserDataPath = Path.Combine(Path.Combine(LibraryCharonPath, "Data"), FileHelper.SanitizeFileName(Environment.UserName ?? "Default"));
+			LibraryCharonLogsPath = Path.Combine(LibraryCharonPath, "Logs");
 
 			// migrate to 2019.1.4
 			var oldSettingsPath = Path.Combine(PluginBasePath, "GameDevWare.Charon.Settings.json");
@@ -145,10 +149,6 @@ namespace GameDevWare.Charon.Unity
 
 			if (serverAddress.IsAbsoluteUri == false) throw new InvalidOperationException("Server address should be absolute URL.");
 			return serverAddress; 
-		}
-		internal static string GetLocalUserDataPath()
-		{
-			return Path.Combine(Path.Combine(ToolBasePath, "Data"), FileHelper.SanitizeFileName(Environment.UserName ?? "Default"));
 		}
 		internal static Version GetCurrentAssetVersion()
 		{

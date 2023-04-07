@@ -128,10 +128,10 @@ namespace GameDevWare.Charon.Unity.Utils
 				{
 					if (Settings.Current.Verbose)
 						UnityEngine.Debug.LogWarning("Attempt #" + attempt + " to read " + path + " file has failed with IO error: " + Environment.NewLine + openError);
-
-					if (fileStream != null)
-						fileStream.Dispose();
 				}
+				if (fileStream != null)
+					fileStream.Dispose();
+
 				yield return Promise.Delayed(TimeSpan.FromSeconds(1));
 			}
 			yield return fileStream;

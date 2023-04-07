@@ -60,10 +60,10 @@ namespace GameDevWare.Charon.Unity.Windows
 		[SuppressMessage("ReSharper", "InconsistentNaming"), UsedImplicitly]
 		protected void OnGUI()
 		{
-			EditorGUILayout.HelpBox(Resources.UI_UNITYPLUGIN_WINDOW_RUNTIME_REQUIRED + "\r\n\r\n" +
+			EditorGUILayout.HelpBox(string.Format(Resources.UI_UNITYPLUGIN_WINDOW_RUNTIME_REQUIRED, CharonCli.MinimalDotNetVersion, CharonCli.MinimalMonoVersion) + "\r\n\r\n" +
 									string.Format(Resources.UI_UNITYPLUGIN_WINDOW_FIND_MONO_MANUALLY) + "\r\n" +
 									Resources.UI_UNITYPLUGIN_WINDOW_DOWNLOAD_MONO + "\r\n" +
-									(RuntimeInformation.IsWindows ? Resources.UI_UNITYPLUGIN_WINDOW_DOWNLOAD_DOTNET + "\r\n\r\n" : "") +
+									(RuntimeInformation.IsWindows ? string.Format(Resources.UI_UNITYPLUGIN_WINDOW_DOWNLOAD_DOTNET, CharonCli.MinimalDotNetVersion) + "\r\n\r\n" : "") +
 									Resources.UI_UNITYPLUGIN_WINDOW_PRESS_HELP, MessageType.Info);
 
 			var checkIsRunning = this.checkRuntimeVersionCoroutine != null && this.checkRuntimeVersionCoroutine.IsCompleted == false;
@@ -71,8 +71,8 @@ namespace GameDevWare.Charon.Unity.Windows
 			GUILayout.BeginHorizontal();
 			EditorGUILayout.Space();
 
-			if (RuntimeInformation.IsWindows && GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_DOWNLOAD_DOTNET_BUTTON, GUILayout.Width(140)))
-				Application.OpenURL("https://dotnet.microsoft.com/en-us/download/dotnet-framework/net471");
+			if (RuntimeInformation.IsWindows && GUILayout.Button(string.Format(Resources.UI_UNITYPLUGIN_WINDOW_DOWNLOAD_DOTNET_BUTTON, CharonCli.MinimalDotNetVersion), GUILayout.Width(140)))
+				Application.OpenURL("https://dotnet.microsoft.com/en-us/download/dotnet-framework/net472");
 			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_DOWNLOAD_MONO_BUTTON, GUILayout.Width(140)))
 				Application.OpenURL("http://www.mono-project.com/download/#download-mac");
 			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_HELP_BUTTON, GUILayout.Width(40)))

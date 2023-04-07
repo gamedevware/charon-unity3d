@@ -40,8 +40,6 @@ namespace GameDevWare.Charon.Unity
 			if (StackTraceField != null) // Trick Unity into thinking that error inside game data file by replacing StackTrace of this Exception
 				StackTraceField.SetValue(this, path + " (<double-click to open>) (at " + gameDataPath + ":" + exceptionId + ")");
 
-
-
 			var reference = string.Format("view/data/{0}/{1}/form/{2}/{3}", projectId, branchId, entityName, id);
 			ReferenceByExceptionId.Add(exceptionId, reference);
 		}

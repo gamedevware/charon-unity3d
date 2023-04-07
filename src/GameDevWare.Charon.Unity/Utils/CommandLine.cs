@@ -31,19 +31,10 @@ namespace GameDevWare.Charon.Unity.Utils
 		public static Promise<RunResult> Run(RunOptions options)
 		{
 			if (options == null) throw new ArgumentNullException("options");
-
-			if (options.Schedule)
-				return Schedule<RunResult>(RunAsync(options));
-			else
-				return new Coroutine<RunResult>(RunAsync(options));
+			return new Coroutine<RunResult>(RunTool(options));
 		}
 
-		private static Promise<T> Schedule<T>(IEnumerable coroutine)
-		{
-			return CoroutineScheduler.Schedule<T>(coroutine);
-		}
-
-		private static IEnumerable RunAsync(RunOptions options)
+		private static IEnumerable RunTool(RunOptions options)
 		{
 			yield return null;
 
@@ -71,7 +62,7 @@ namespace GameDevWare.Charon.Unity.Utils
 				options.StartInfo.RedirectStandardOutput = true;
 
 			if (Settings.Current.Verbose)
-				UnityEngine.Debug.Log(string.Format("Starting process '{0}' at '{1}' with arguments '{2}' and environment variables '{3}'.", options.StartInfo.FileName, options.StartInfo.WorkingDirectory, options.StartInfo.Arguments, ConcatenateDictionaryValues(options.StartInfo.EnvironmentVariables)));
+				UnityEngine.Debug.Log(string.Format("Starting process '{0}' at '{1}' with arguments '{2}'.", options.StartInfo.FileName, options.StartInfo.WorkingDirectory, options.StartInfo.Arguments));
 
 			var processStarted = DateTime.UtcNow;
 			var timeout = options.ExecutionTimeout;

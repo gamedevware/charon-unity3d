@@ -59,23 +59,25 @@ namespace GameDevWare.Charon.Unity.Updates
 			if (EditorApplication.isCompiling)
 				return;
 
-			if (LastCheckTime == default(DateTime))
-			{
-				LastCheckTime = LoadLastCheckTime();
-			}
+			//if (LastCheckTime == default(DateTime))
+			//{
+			//	LastCheckTime = LoadLastCheckTime();
+			//}
+			
+			//if (DateTime.UtcNow - LastCheckTime > UpdateCheckPeriod &&
+			//	DateTime.UtcNow > CheckCooldownTime &&
+			//	(CheckPromise == null || CheckPromise.IsCompleted))
+			//{
+			//	CheckPromise = new Coroutine(CheckForUpdates());
+			//}
 
-			if (DateTime.UtcNow - LastCheckTime > UpdateCheckPeriod &&
-				DateTime.UtcNow > CheckCooldownTime &&
-				(CheckPromise == null || CheckPromise.IsCompleted))
-			{
-				CheckPromise = new Coroutine(CheckForUpdates());
-			}
+			CheckPromise = CheckPromise ?? new Coroutine(CheckForUpdates());
 		}
 		private static IEnumerable CheckForUpdates()
 		{
 			if (Settings.Current.Verbose)
 			{
-				Debug.Log("Checking for product updates.");
+				Debug.LogError("Checking for product updates.");
 			}
 
 			SaveLastCheckTime(LastCheckTime = DateTime.UtcNow);

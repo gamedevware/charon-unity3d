@@ -28,6 +28,7 @@ using System.Diagnostics;
 using System.Linq;
 using GameDevWare.Charon.Unity.Async;
 using GameDevWare.Charon.Unity.ServerApi;
+using GameDevWare.Charon.Unity.ServerApi.KeyStorage;
 using JetBrains.Annotations;
 using UnityEditor;
 
@@ -68,7 +69,7 @@ namespace GameDevWare.Charon.Unity.Routines
 				if (File.Exists(gameDataPath) == false)
 					continue;
 
-				if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_PROGRESS_CURRENT_TARGET_IS, gameDataPath), (float)i / total);
+				if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_PROGRESS_PROCESSING_GAMEDATA, gameDataPath), (float)i / total);
 
 				var gameDataObj = AssetDatabase.LoadAssetAtPath(gameDataPath, typeof(UnityEngine.Object));
 				var assetImport = AssetImporter.GetAtPath(gameDataPath);
@@ -79,14 +80,45 @@ namespace GameDevWare.Charon.Unity.Routines
 
 				var gameDataSettings = GameDataSettings.Load(gameDataObj);
 
+				var apiKey = default(string);
+				var gameDataLocation = default(GameDataLocation);
+				if (gameDataSettings.IsConnected)
+				{
+					var serverAddress = new Uri(gameDataSettings.ServerAddress);
+					var apiKeyPath = new Uri(serverAddress, "/" + gameDataSettings.ProjectId);
+					apiKey = KeyCryptoStorage.GetKey(apiKeyPath);
+					if (string.IsNullOrEmpty(apiKey))
+					{
+						var apiKeyPromptTask = ApiKeyPromptWindow.ShowAsync(gameDataSettings.ProjectId, gameDataSettings.ProjectName);
+						yield return apiKeyPromptTask;
+						apiKey = KeyCryptoStorage.GetKey(apiKeyPath);
+
+						if (string.IsNullOrEmpty(apiKey))
+						{
+							if (Settings.Current.Verbose)
+							{
+								UnityEngine.Debug.LogWarning(string.Format("Unable to validate game data at '{0}' because there is API Key associated with it. ", gameDataPath) +
+									"Find this asset in Project window and click 'Synchronize' button in Inspector window.");
+							}
+							continue; // no key
+						}
+					}
+
+					gameDataLocation = new GameDataLocation(gameDataSettings.MakeDataSourceUrl(), apiKey);
+				}
+				else
+				{
+					gameDataLocation = new GameDataLocation(gameDataPath);
+				}
+
 				var startTime = Stopwatch.StartNew();
 				if (Settings.Current.Verbose)
-					UnityEngine.Debug.Log(string.Format("Validating game data '{0}'.", gameDataPath));
+					UnityEngine.Debug.Log(string.Format("Validating game data '{0}'.", gameDataLocation));
 
-				if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_VALIDATE_RUN_FOR, gameDataPath), (float)i / total);
+				if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_VALIDATE_RUN_FOR, gameDataLocation), (float)i / total);
 
 				var output = CommandOutput.CaptureJson();
-				var validateProcess = CharonCli.ValidateAsync(Path.GetFullPath(gameDataPath), ValidationOptions.AllIntegrityChecks, output);
+				var validateProcess = CharonCli.ValidateAsync(gameDataLocation, ValidationOptions.AllIntegrityChecks, output);
 				yield return validateProcess;
 
 				using (var validateResult = validateProcess.GetResult())
@@ -97,7 +129,7 @@ namespace GameDevWare.Charon.Unity.Routines
 					{
 						reports.Add(new GameDataValidationReport(gameDataPath, ValidationReport.CreateErrorReport(validateProcess.GetResult().GetErrorData())));
 
-						UnityEngine.Debug.LogWarning(string.Format(Resources.UI_UNITYPLUGIN_VALIDATE_FAILED_DUE_ERRORS, gameDataPath, validateResult.GetErrorData()));
+						UnityEngine.Debug.LogWarning(string.Format(Resources.UI_UNITYPLUGIN_VALIDATE_FAILED_DUE_ERRORS, gameDataLocation, validateResult.GetErrorData()));
 					}
 					else
 					{
@@ -122,7 +154,10 @@ namespace GameDevWare.Charon.Unity.Routines
 
 		private static void PushValidationErrorsToUnityLog(ValidationReport report, string gameDataPath, GameDataSettings gameDataSettings)
 		{
+			const int MAX_LOGGED_ERRORS = 20;
+
 			var totalErrors = 0;
+			var loggedErrors = 0;
 			if (report.HasErrors)
 			{
 				var projectId = "current";
@@ -142,6 +177,12 @@ namespace GameDevWare.Charon.Unity.Routines
 					foreach (var error in errors)
 					{
 						errorCount++;
+
+						if (loggedErrors++ > MAX_LOGGED_ERRORS)
+						{
+							continue;
+						}
+
 						var id = record.Id is JsonPrimitive ? Convert.ToString(((JsonPrimitive)record.Id).Value) : Convert.ToString(record.Id);
 						var entityName = record.EntityName;
 

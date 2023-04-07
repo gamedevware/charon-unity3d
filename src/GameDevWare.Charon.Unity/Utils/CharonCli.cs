@@ -41,15 +41,14 @@ namespace GameDevWare.Charon.Unity.Utils
 	public static class CharonCli
 	{
 		internal static readonly Regex MonoVersionRegex = new Regex(@"version (?<v>[0-9]+\.[0-9]+\.[0-9]+)", RegexOptions.Multiline | RegexOptions.IgnoreCase);
-		internal static readonly Version MinimalMonoVersion = new Version(5, 0, 0);
+		internal static readonly Version MinimalMonoVersion = new Version(5, 18, 0);
 		internal static readonly Version MinimalDotNetVersion = new Version(4, 7, 2);
 		internal static readonly Version LegacyToolsVersion = new Version(2020, 1, 1);
 		internal static readonly Version LegacyPluginVersion = new Version(2021, 3, 0);
-		public static readonly string CharonLogsDirectory = Path.Combine(Settings.ToolBasePath, "Logs");
 
 		internal static Promise<RequirementsCheckResult> CheckRequirementsAsync()
 		{
-			if (string.IsNullOrEmpty(Settings.CharonExecutablePath) || !File.Exists(Settings.CharonExecutablePath))
+			if (string.IsNullOrEmpty(Settings.CharonExePath) || !File.Exists(Settings.CharonExePath))
 				return Promise.FromResult(RequirementsCheckResult.MissingExecutable);
 
 			var additionalChecks = new List<Promise<RequirementsCheckResult>>();
@@ -100,8 +99,8 @@ namespace GameDevWare.Charon.Unity.Utils
 
 		internal static string GetDefaultLockFilePath()
 		{
-			var charonDir = Path.GetDirectoryName(Settings.CharonExecutablePath);
-			var lockFileName = Path.GetFileNameWithoutExtension(Settings.CharonExecutablePath) + ".lock";
+			var charonDir = Path.GetDirectoryName(Settings.CharonExePath);
+			var lockFileName = Path.GetFileNameWithoutExtension(Settings.CharonExePath) + ".lock";
 			// ReSharper disable once AssignNullToNotNullAttribute
 			return Path.GetFullPath(Path.Combine(charonDir, lockFileName));
 		}
@@ -111,8 +110,8 @@ namespace GameDevWare.Charon.Unity.Utils
 			if (string.IsNullOrEmpty(lockFilePath)) throw new ArgumentException("Value cannot be null or empty.", "lockFilePath");
 			if (port <= 0 || port > ushort.MaxValue) throw new ArgumentOutOfRangeException("port");
 
-			var charonPath = Path.GetFullPath(Settings.CharonExecutablePath);
-			var charonDirectory = Path.GetDirectoryName(charonPath) ?? Settings.ToolBasePath;
+			var charonPath = Path.GetFullPath(Settings.CharonExePath);
+			var charonDirectory = Path.GetDirectoryName(charonPath) ?? Settings.LibraryCharonPath;
 
 			if (File.Exists(gameDataPath) == false) throw new IOException(string.Format("File '{0}' doesn't exists.", gameDataPath));
 			if (File.Exists(charonPath) == false) throw new IOException(string.Format("File '{0}' doesn't exists.", charonPath));
@@ -172,13 +171,11 @@ namespace GameDevWare.Charon.Unity.Utils
 					charonPath,
 
 					RunOptions.FlattenArguments(
-						"SERVE",
+						"SERVER START",
 						"--dataBase", Path.GetFullPath(gameDataPath),
 						"--port", port.ToString(),
 						"--watchPid", unityPid.ToString(),
 						"--lockFile", Path.GetFullPath(lockFilePath),
-						"--environment", "Unity", // unused on >v2020.1.1
-						"--extensions", Settings.SupportedExtensions, // unused on >v2020.1.1
 						"--scriptAssemblies", scriptingAssemblies,
 						"--log", "out",
 						Settings.Current.Verbose ? "--verbose" : ""
@@ -194,12 +191,12 @@ namespace GameDevWare.Charon.Unity.Utils
 					{
 						EnvironmentVariables =
 						{
-							{ "CHARON_APP_DATA", Settings.GetLocalUserDataPath() }, // unused on >v2020.1.1
 							{ "CHARON_API_SERVER", Settings.Current.GetServerAddressUrl().OriginalString },
 							{ "CHARON_API_KEY", "" },
-							{ "BASE_DIRECTORY_PATH", Settings.ToolBasePath }, // unused on >v2020.1.1
+							{ "STANDALONE_APPLICATIONDATAPATH", Settings.UserDataPath },
+							{ "STANDALONE_APPLICATIONTEMPPATH", Settings.TempPath },
 							{ "SERILOG__WRITETO__0__NAME", "File" },
-							{ "SERILOG__WRITETO__0__ARGS__PATH", Path.GetFullPath(Path.Combine(Settings.ToolBasePath, string.Format("Logs/{0:yyyy_MM_dd_hh}.charon.unity.log", DateTime.UtcNow)))  },
+							{ "SERILOG__WRITETO__0__ARGS__PATH", Path.GetFullPath(Path.Combine(Settings.LibraryCharonLogsPath, string.Format("{0:yyyy_MM_dd_hh}.charon.unity.log", DateTime.UtcNow)))  },
 						}
 					}
 				}
@@ -271,7 +268,7 @@ namespace GameDevWare.Charon.Unity.Utils
 				yield return UpdateRuntimeWindow.ShowAsync();
 
 			var currentVersion = default(SemanticVersion);
-			var charonPath = Path.GetFullPath(Settings.CharonExecutablePath);
+			var charonPath = Path.GetFullPath(Settings.CharonExePath);
 			var toolName = Path.GetFileNameWithoutExtension(Path.GetFileName(charonPath));
 
 			if (File.Exists(charonPath))
@@ -312,7 +309,7 @@ namespace GameDevWare.Charon.Unity.Utils
 			var currentBuild = currentVersion != null ? builds.FirstOrDefault(b => b.Version == currentVersion) : null;
 			var lastVersion = lastBuild.Version;
 			var isMissing = File.Exists(charonPath);
-			var hashFileName = currentBuild == null ? null : Path.Combine(Path.Combine(Settings.ToolBasePath, currentVersion.ToString()), Path.GetFileName(charonPath) + ".sha1");
+			var hashFileName = currentBuild == null ? null : Path.Combine(Path.Combine(Settings.LibraryCharonPath, currentVersion.ToString()), Path.GetFileName(charonPath) + ".sha1");
 			var actualHash = isMissing || currentBuild == null ? null : FileHelper.ComputeHash(charonPath, "SHA1");
 			var expectedHash = isMissing || hashFileName == null || File.Exists(hashFileName) == false ? null : File.ReadAllText(hashFileName);
 			var isCorrupted = currentBuild != null && string.Equals(expectedHash, actualHash, StringComparison.OrdinalIgnoreCase) == false;
@@ -385,19 +382,20 @@ namespace GameDevWare.Charon.Unity.Utils
 			if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESS_DONE, 1.0f);
 		}
 
-		public static Promise<RunResult> CreateDocumentAsync(string gameDataPath, string entity, CommandInput input, CommandOutput output)
+		public static Promise<RunResult> CreateDocumentAsync(GameDataLocation gameDataLocation, string entity, CommandInput input, CommandOutput output)
 		{
-			if (gameDataPath == null) throw new ArgumentNullException("gameDataPath");
+			if (gameDataLocation.Location == null) throw new ArgumentNullException("gameDataLocation");
 			if (entity == null) throw new ArgumentNullException("entity");
 			if (input == null) throw new ArgumentNullException("input");
 			if (output == null) throw new ArgumentNullException("output");
 
-			if (File.Exists(gameDataPath) == false) throw new IOException(string.Format("GameData file '{0}' doesn't exists.", gameDataPath));
+			gameDataLocation.ThrowIfFileNotExists();
 
 			var runTask = RunInternal
 			(
+				gameDataLocation.ApiKey,
 				RunOptions.FlattenArguments(
-					"DATA", "CREATE", gameDataPath,
+					"DATA", "CREATE", gameDataLocation,
 					"--entity", entity,
 					"--input", input.Source,
 					"--inputFormat", input.Format,
@@ -411,24 +409,25 @@ namespace GameDevWare.Charon.Unity.Utils
 			return output.Capture(runTask);
 		}
 
-		public static Promise<RunResult> UpdateDocumentAsync(string gameDataPath, string entity, CommandInput input, CommandOutput output)
+		public static Promise<RunResult> UpdateDocumentAsync(GameDataLocation gameDataLocation, string entity, CommandInput input, CommandOutput output)
 		{
-			return UpdateDocumentAsync(gameDataPath, entity, string.Empty, input, output);
+			return UpdateDocumentAsync(gameDataLocation, entity, string.Empty, input, output);
 		}
-		public static Promise<RunResult> UpdateDocumentAsync(string gameDataPath, string entity, string id, CommandInput input, CommandOutput output)
+		public static Promise<RunResult> UpdateDocumentAsync(GameDataLocation gameDataLocation, string entity, string id, CommandInput input, CommandOutput output)
 		{
-			if (gameDataPath == null) throw new ArgumentNullException("gameDataPath");
+			if (gameDataLocation.Location == null) throw new ArgumentNullException("gameDataLocation");
 			if (entity == null) throw new ArgumentNullException("entity");
 			if (id == null) throw new ArgumentNullException("id");
 			if (input == null) throw new ArgumentNullException("input");
 			if (output == null) throw new ArgumentNullException("output");
 
-			if (File.Exists(gameDataPath) == false) throw new IOException(string.Format("GameData file '{0}' doesn't exists.", gameDataPath));
+			gameDataLocation.ThrowIfFileNotExists();
 
 			var runTask = RunInternal
 			(
+				gameDataLocation.ApiKey,
 				RunOptions.FlattenArguments(
-					"DATA", "UPDATE", gameDataPath,
+					"DATA", "UPDATE", gameDataLocation,
 					"--entity", entity,
 					"--id", id,
 					"--input", input.Source,
@@ -444,24 +443,25 @@ namespace GameDevWare.Charon.Unity.Utils
 			return output.Capture(runTask);
 		}
 
-		public static Promise<RunResult> DeleteDocumentAsync(string gameDataPath, string entity, CommandInput input, CommandOutput output)
+		public static Promise<RunResult> DeleteDocumentAsync(GameDataLocation gameDataLocation, string entity, CommandInput input, CommandOutput output)
 		{
-			return DeleteDocumentAsync(gameDataPath, entity, string.Empty, input, output);
+			return DeleteDocumentAsync(gameDataLocation, entity, string.Empty, input, output);
 		}
-		public static Promise<RunResult> DeleteDocumentAsync(string gameDataPath, string entity, string id, CommandInput input, CommandOutput output)
+		public static Promise<RunResult> DeleteDocumentAsync(GameDataLocation gameDataLocation, string entity, string id, CommandInput input, CommandOutput output)
 		{
-			if (gameDataPath == null) throw new ArgumentNullException("gameDataPath");
+			if (gameDataLocation.Location == null) throw new ArgumentNullException("gameDataLocation");
 			if (entity == null) throw new ArgumentNullException("entity");
 			if (id == null) throw new ArgumentNullException("id");
 			if (input == null) throw new ArgumentNullException("input");
 			if (output == null) throw new ArgumentNullException("output");
 
-			if (File.Exists(gameDataPath) == false) throw new IOException(string.Format("GameData file '{0}' doesn't exists.", gameDataPath));
+			gameDataLocation.ThrowIfFileNotExists();
 
 			var runTask = RunInternal
 			(
+				gameDataLocation.ApiKey,
 				RunOptions.FlattenArguments(
-					"DATA", "DELETE", gameDataPath,
+					"DATA", "DELETE", gameDataLocation,
 					"--entity", entity,
 					"--id", id,
 					"--input", input.Source,
@@ -476,19 +476,20 @@ namespace GameDevWare.Charon.Unity.Utils
 			return output.Capture(runTask);
 		}
 
-		public static Promise<RunResult> GetDocumentAsync(string gameDataPath, string entity, string id, CommandOutput output)
+		public static Promise<RunResult> GetDocumentAsync(GameDataLocation gameDataLocation, string entity, string id, CommandOutput output)
 		{
-			if (gameDataPath == null) throw new ArgumentNullException("gameDataPath");
+			if (gameDataLocation.Location == null) throw new ArgumentNullException("gameDataLocation");
 			if (entity == null) throw new ArgumentNullException("entity");
 			if (id == null) throw new ArgumentNullException("id");
 			if (output == null) throw new ArgumentNullException("output");
 
-			if (File.Exists(gameDataPath) == false) throw new IOException(string.Format("GameData file '{0}' doesn't exists.", gameDataPath));
+			gameDataLocation.ThrowIfFileNotExists();
 
 			var runTask = RunInternal
 			(
+				gameDataLocation.ApiKey,
 				RunOptions.FlattenArguments(
-					"DATA", "FIND", gameDataPath,
+					"DATA", "FIND", gameDataLocation,
 					"--entity", entity,
 					"--id", id,
 					"--output", output.Target,
@@ -499,23 +500,24 @@ namespace GameDevWare.Charon.Unity.Utils
 			return output.Capture(runTask);
 		}
 
-		public static Promise<RunResult> ImportAsync(string gameDataPath, CommandInput input, ImportMode mode)
+		public static Promise<RunResult> ImportAsync(GameDataLocation gameDataLocation, CommandInput input, ImportMode mode)
 		{
-			return ImportAsync(gameDataPath, new string[0], input, mode);
+			return ImportAsync(gameDataLocation, new string[0], input, mode);
 		}
-		public static Promise<RunResult> ImportAsync(string gameDataPath, string[] entities, CommandInput input, ImportMode mode)
+		public static Promise<RunResult> ImportAsync(GameDataLocation gameDataLocation, string[] entities, CommandInput input, ImportMode mode)
 		{
-			if (gameDataPath == null) throw new ArgumentNullException("gameDataPath");
+			if (gameDataLocation.Location == null) throw new ArgumentNullException("gameDataLocation");
 			if (entities == null) throw new ArgumentNullException("entities");
 			if (input == null) throw new ArgumentNullException("input");
 
 			if (Enum.IsDefined(typeof(ImportMode), mode) == false) throw new ArgumentException("Unknown import mode.", "mode");
-			if (File.Exists(gameDataPath) == false) throw new IOException(string.Format("GameData file '{0}' doesn't exists.", gameDataPath));
+			gameDataLocation.ThrowIfFileNotExists();
 
 			var runTask = RunInternal
 			(
+				gameDataLocation.ApiKey,
 				RunOptions.FlattenArguments(
-					"DATA", "IMPORT", gameDataPath,
+					"DATA", "IMPORT", gameDataLocation,
 					"--entities", entities,
 					"--mode", mode,
 					"--input", input.Source,
@@ -527,33 +529,34 @@ namespace GameDevWare.Charon.Unity.Utils
 			return runTask;
 		}
 
-		public static Promise<RunResult> ExportAsync(string gameDataPath, CommandOutput output, ExportMode mode)
+		public static Promise<RunResult> ExportAsync(GameDataLocation gameDataLocation, CommandOutput output, ExportMode mode)
 		{
-			return ExportAsync(gameDataPath, new string[0], output, mode);
+			return ExportAsync(gameDataLocation, new string[0], output, mode);
 		}
-		public static Promise<RunResult> ExportAsync(string gameDataPath, string[] entities, CommandOutput output, ExportMode mode)
+		public static Promise<RunResult> ExportAsync(GameDataLocation gameDataLocation, string[] entities, CommandOutput output, ExportMode mode)
 		{
-			return ExportAsync(gameDataPath, entities, new string[0], output, mode);
+			return ExportAsync(gameDataLocation, entities, new string[0], output, mode);
 		}
-		public static Promise<RunResult> ExportAsync(string gameDataPath, string[] entities, string[] attributes, CommandOutput output, ExportMode mode)
+		public static Promise<RunResult> ExportAsync(GameDataLocation gameDataLocation, string[] entities, string[] attributes, CommandOutput output, ExportMode mode)
 		{
-			return ExportAsync(gameDataPath, entities, attributes, new CultureInfo[0], output, mode);
+			return ExportAsync(gameDataLocation, entities, attributes, new CultureInfo[0], output, mode);
 		}
-		public static Promise<RunResult> ExportAsync(string gameDataPath, string[] entities, string[] attributes, CultureInfo[] languages, CommandOutput output, ExportMode mode)
+		public static Promise<RunResult> ExportAsync(GameDataLocation gameDataLocation, string[] entities, string[] attributes, CultureInfo[] languages, CommandOutput output, ExportMode mode)
 		{
-			if (gameDataPath == null) throw new ArgumentNullException("gameDataPath");
+			if (gameDataLocation.Location == null) throw new ArgumentNullException("gameDataLocation");
 			if (entities == null) throw new ArgumentNullException("entities");
 			if (attributes == null) throw new ArgumentNullException("attributes");
 			if (languages == null) throw new ArgumentNullException("languages");
 			if (output == null) throw new ArgumentNullException("output");
 
 			if (Enum.IsDefined(typeof(ExportMode), mode) == false) throw new ArgumentException("Unknown export mode.", "mode");
-			if (File.Exists(gameDataPath) == false) throw new IOException(string.Format("GameData file '{0}' doesn't exists.", gameDataPath));
+			gameDataLocation.ThrowIfFileNotExists();
 
 			var runTask = RunInternal
 			(
+				gameDataLocation.ApiKey,
 				RunOptions.FlattenArguments(
-					"DATA", "EXPORT", gameDataPath,
+					"DATA", "EXPORT", gameDataLocation,
 					"--entities", entities,
 					"--attributes", attributes,
 					"--languages", Array.ConvertAll(languages, l => l.Name),
@@ -566,19 +569,22 @@ namespace GameDevWare.Charon.Unity.Utils
 			return runTask;
 		}
 
-		public static Promise<RunResult> CreatePatchAsync(string gameDataPath1, string gameDataPath2, CommandOutput output)
+		public static Promise<RunResult> CreatePatchAsync(GameDataLocation gameDataLocation, GameDataLocation gameDataPath2, CommandOutput output)
 		{
-			if (gameDataPath1 == null) throw new ArgumentNullException("gameDataPath1");
-			if (gameDataPath2 == null) throw new ArgumentNullException("gameDataPath2");
+			if (gameDataLocation.Location == null) throw new ArgumentNullException("gameDataPath");
+			if (gameDataPath2.Location == null) throw new ArgumentNullException("gameDataPath");
 			if (output == null) throw new ArgumentNullException("output");
 
-			if (File.Exists(gameDataPath1) == false) throw new IOException(string.Format("GameData file '{0}' doesn't exists.", gameDataPath1));
-			if (File.Exists(gameDataPath2) == false) throw new IOException(string.Format("GameData file '{0}' doesn't exists.", gameDataPath2));
+			gameDataLocation.ThrowIfRemote();
+			gameDataPath2.ThrowIfRemote();
+			gameDataLocation.ThrowIfFileNotExists();
+			gameDataPath2.ThrowIfFileNotExists();
 
 			var runTask = RunInternal
 			(
-				RunOptions.FlattenArguments(
-					"DATA", "CREATEPATCH", gameDataPath1, gameDataPath2,
+				apiKey: null,
+				arguments: RunOptions.FlattenArguments(
+					"DATA", "CREATEPATCH", gameDataLocation, gameDataPath2,
 					"--output", output.Target,
 					"--outputFormat", output.Format,
 					"--outputFormattingOptions", output.FormattingOptions
@@ -586,17 +592,18 @@ namespace GameDevWare.Charon.Unity.Utils
 			);
 			return runTask;
 		}
-		public static Promise<RunResult> ApplyPatchAsync(string gameDataPath, CommandInput input)
+		public static Promise<RunResult> ApplyPatchAsync(GameDataLocation gameDataLocation, CommandInput input)
 		{
-			if (gameDataPath == null) throw new ArgumentNullException("gameDataPath");
+			if (gameDataLocation.Location == null) throw new ArgumentNullException("gameDataLocation");
 			if (input == null) throw new ArgumentNullException("input");
 
-			if (File.Exists(gameDataPath) == false) throw new IOException(string.Format("GameData file '{0}' doesn't exists.", gameDataPath));
+			gameDataLocation.ThrowIfFileNotExists();
 
 			var runTask = RunInternal
 			(
+				gameDataLocation.ApiKey,
 				RunOptions.FlattenArguments(
-					"DATA", "APPLYPATCH", gameDataPath,
+					"DATA", "APPLYPATCH", gameDataLocation,
 					"--input", input.Source,
 					"--inputFormat", input.Format,
 					"--inputFormattingOptions", input.FormattingOptions
@@ -606,17 +613,18 @@ namespace GameDevWare.Charon.Unity.Utils
 			return runTask;
 		}
 
-		public static Promise<RunResult> BackupAsync(string gameDataPath, CommandOutput output)
+		public static Promise<RunResult> BackupAsync(GameDataLocation gameDataLocation, CommandOutput output)
 		{
-			if (gameDataPath == null) throw new ArgumentNullException("gameDataPath");
+			if (gameDataLocation.Location == null) throw new ArgumentNullException("gameDataLocation");
 			if (output == null) throw new ArgumentNullException("output");
 
-			if (File.Exists(gameDataPath) == false) throw new IOException(string.Format("GameData file '{0}' doesn't exists.", gameDataPath));
+			gameDataLocation.ThrowIfFileNotExists();
 
 			var runTask = RunInternal
 			(
+				gameDataLocation.ApiKey,
 				RunOptions.FlattenArguments(
-					"DATA", "Backup", gameDataPath,
+					"DATA", "Backup", gameDataLocation,
 					"--output", output.Target,
 					"--outputFormat", output.Format,
 					"--outputFormattingOptions", output.FormattingOptions
@@ -624,15 +632,16 @@ namespace GameDevWare.Charon.Unity.Utils
 			);
 			return output.Capture(runTask);
 		}
-		public static Promise<RunResult> RestoreAsync(string gameDataPath, CommandInput input)
+		public static Promise<RunResult> RestoreAsync(GameDataLocation gameDataLocation, CommandInput input)
 		{
-			if (gameDataPath == null) throw new ArgumentNullException("gameDataPath");
+			if (gameDataLocation.Location == null) throw new ArgumentNullException("gameDataLocation");
 			if (input == null) throw new ArgumentNullException("input");
 
 			var runTask = RunInternal
 			(
+				gameDataLocation.ApiKey,
 				RunOptions.FlattenArguments(
-					"DATA", "RESTORE", gameDataPath,
+					"DATA", "RESTORE", gameDataLocation,
 					"--input", input.Source,
 					"--inputFormat", input.Format,
 					"--inputFormattingOptions", input.FormattingOptions
@@ -642,17 +651,18 @@ namespace GameDevWare.Charon.Unity.Utils
 			return runTask;
 		}
 
-		public static Promise<RunResult> ValidateAsync(string gameDataPath, ValidationOptions validationOptions, CommandOutput output)
+		public static Promise<RunResult> ValidateAsync(GameDataLocation gameDataLocation, ValidationOptions validationOptions, CommandOutput output)
 		{
-			if (gameDataPath == null) throw new ArgumentNullException("gameDataPath");
+			if (gameDataLocation.Location == null) throw new ArgumentNullException("gameDataLocation");
 			if (output == null) throw new ArgumentNullException("output");
 
-			if (File.Exists(gameDataPath) == false) throw new IOException(string.Format("GameData file '{0}' doesn't exists.", gameDataPath));
+			gameDataLocation.ThrowIfFileNotExists();
 
 			var runTask = RunInternal
 			(
+				gameDataLocation.ApiKey,
 				RunOptions.FlattenArguments(
-					"DATA", "VALIDATE", gameDataPath,
+					"DATA", "VALIDATE", gameDataLocation,
 					"--validationOptions", ((int)validationOptions).ToString(),
 					"--output", output.Target,
 					"--outputFormat", output.Format,
@@ -662,19 +672,19 @@ namespace GameDevWare.Charon.Unity.Utils
 			return output.Capture(runTask);
 		}
 
-		public static Promise<RunResult> GenerateCSharpCodeAsync(string gameDataPath, string outputDirectory,
+		public static Promise<RunResult> GenerateCSharpCodeAsync(GameDataLocation gameDataLocation, string outputDirectory,
 			SourceCodeGenerationOptimizations optimizations = 0,
 			string documentClassName = "Document", string gameDataClassName = "GameData",
 			string @namespace = "GameParameters", SourceCodeIndentation sourceCodeIndentation = SourceCodeIndentation.Tabs,
 			SourceCodeLineEndings sourceCodeLineEndings = SourceCodeLineEndings.Windows, bool splitFiles = false)
 		{
-			if (gameDataPath == null) throw new ArgumentNullException("gameDataPath");
+			if (gameDataLocation.Location == null) throw new ArgumentNullException("gameDataLocation");
 			if (outputDirectory == null) throw new ArgumentNullException("outputDirectory");
 			if (documentClassName == null) throw new ArgumentNullException("documentClassName");
 			if (gameDataClassName == null) throw new ArgumentNullException("gameDataClassName");
 			if (@namespace == null) throw new ArgumentNullException("namespace");
 
-			if (File.Exists(gameDataPath) == false) throw new IOException(string.Format("GameData file '{0}' doesn't exists.", gameDataPath));
+			gameDataLocation.ThrowIfFileNotExists();
 
 			var optimizationsList = new List<string>();
 			foreach (SourceCodeGenerationOptimizations optimization in Enum.GetValues(typeof(SourceCodeGenerationOptimizations)))
@@ -687,9 +697,10 @@ namespace GameDevWare.Charon.Unity.Utils
 
 			var runTask = RunInternal
 			(
+				gameDataLocation.ApiKey,
 				RunOptions.FlattenArguments
 				(
-					"GENERATE", "CSHARPCODE", gameDataPath,
+					"GENERATE", "CSHARPCODE", gameDataLocation,
 					"--outputDirectory", outputDirectory,
 					"--documentClassName", documentClassName,
 					"--gameDataClassName", gameDataClassName,
@@ -711,44 +722,30 @@ namespace GameDevWare.Charon.Unity.Utils
 
 			var runTask = RunInternal
 			(
-				"GENERATE", "TEMPLATES",
-				"--outputDirectory", outputDirectory
-			);
-			return runTask;
-
-		}
-
-		internal static Promise<RunResult> ReportIssueAsync(string reporter, IssueType type, string description)
-		{
-			return ReportIssueAsync(reporter, type, description, new string[0]);
-		}
-		internal static Promise<RunResult> ReportIssueAsync(string reporter, IssueType type, string description, string[] attachments)
-		{
-			if (string.IsNullOrEmpty(reporter)) throw new ArgumentException("Value cannot be null or empty.", "reporter");
-			if (description == null) throw new ArgumentNullException("description");
-			if (attachments == null) throw new ArgumentNullException("attachments");
-
-			var runTask = RunInternal
-			(
-				RunOptions.FlattenArguments
+				apiKey: default(string),
+				arguments: RunOptions.FlattenArguments
 				(
-					"SERVER", "REPORTISSUE",
-					"--reporter", reporter,
-					"--type", type,
-					"--description", description,
-					"--attachments", attachments
+					"GENERATE", "TEMPLATES",
+					"--outputDirectory", outputDirectory
 				)
 			);
 			return runTask;
+
 		}
 
-		public static Promise<Version> GetGameDataVersionAsync(string gameDataPath)
+		public static Promise<Version> GetGameDataVersionAsync(GameDataLocation gameDataLocation)
 		{
-			if (string.IsNullOrEmpty(gameDataPath)) throw new ArgumentException("Value cannot be null or empty.", "gameDataPath");
+			if (gameDataLocation.Location == null) throw new ArgumentNullException("gameDataLocation");
 
-			if (File.Exists(gameDataPath) == false) throw new IOException(string.Format("GameData file '{0}' doesn't exists.", gameDataPath));
+			gameDataLocation.ThrowIfFileNotExists();
 
-			var runTask = RunInternal("DATA", "VERSION", gameDataPath);
+			var runTask = RunInternal(
+				apiKey: gameDataLocation.ApiKey,
+				arguments: RunOptions.FlattenArguments
+				(
+					"DATA", "VERSION", gameDataLocation
+				));
+
 			return runTask.ContinueWith(r =>
 			{
 				using (var result = r.GetResult())
@@ -758,7 +755,7 @@ namespace GameDevWare.Charon.Unity.Utils
 
 		internal static Promise<SemanticVersion> GetVersionAsync()
 		{
-			var runTask = RunInternal("VERSION");
+			var runTask = RunInternal(null, new[] { "VERSION" });
 			return runTask.ContinueWith(r =>
 			{
 				using (var result = r.GetResult())
@@ -780,7 +777,6 @@ namespace GameDevWare.Charon.Unity.Utils
 				CaptureStandardOutput = true,
 				CaptureStandardError = true,
 				ExecutionTimeout = TimeSpan.FromSeconds(5),
-				Schedule = CoroutineScheduler.CurrentId == null
 			});
 			return checkMonoRuntimeVersion.ContinueWith(runTask =>
 			{
@@ -806,40 +802,43 @@ namespace GameDevWare.Charon.Unity.Utils
 
 		internal static void CleanUpLogsDirectory()
 		{
-			if (string.IsNullOrEmpty(CharonLogsDirectory) || Directory.Exists(CharonLogsDirectory) == false)
+			if (string.IsNullOrEmpty(Settings.LibraryCharonLogsPath) || Directory.Exists(Settings.LibraryCharonLogsPath) == false)
 			{
 				return;
 			}
 
-			foreach (var logFile in Directory.GetFiles(CharonLogsDirectory))
+			var logsRetentionTime = TimeSpan.FromDays(2);
+			foreach (var logFile in Directory.GetFiles(Settings.LibraryCharonLogsPath))
 			{
-				if (DateTime.UtcNow - File.GetLastWriteTimeUtc(logFile) > TimeSpan.FromDays(2))
+				if (DateTime.UtcNow - File.GetLastWriteTimeUtc(logFile) <= logsRetentionTime)
 				{
-					try
+					continue; // not old enough
+				}
+
+				try
+				{
+					if (Settings.Current.Verbose)
 					{
-						if (Settings.Current.Verbose)
-						{
-							Debug.Log(string.Format("Deleting old log file at '{0}'.", logFile));
-						}
-						File.Delete(logFile);
+						Debug.Log(string.Format("Deleting old log file at '{0}'.", logFile));
 					}
-					catch (Exception deleteError)
+					File.Delete(logFile);
+				}
+				catch (Exception deleteError)
+				{
+					if (Settings.Current.Verbose)
 					{
-						if (Settings.Current.Verbose)
-						{
-							Debug.LogWarning(string.Format("Failed to delete log file at '{0}'.", logFile));
-							Debug.LogWarning(deleteError);
-						}
+						Debug.LogWarning(string.Format("Failed to delete log file at '{0}'.", logFile));
+						Debug.LogWarning(deleteError);
 					}
 				}
 			}
 		}
 
-		private static Promise<RunResult> RunInternal(params string[] arguments)
+		private static Promise<RunResult> RunInternal(string apiKey, string[] arguments)
 		{
 			try
 			{
-				var charonPath = Settings.CharonExecutablePath;
+				var charonPath = Settings.CharonExePath;
 
 				if (File.Exists(charonPath) == false) throw new IOException(string.Format("File '{0}' doesn't exists.", charonPath));
 
@@ -852,15 +851,14 @@ namespace GameDevWare.Charon.Unity.Utils
 					ExecutionTimeout = TimeSpan.FromSeconds(30),
 					RequireDotNetRuntime = true,
 					WaitForExit = true,
-					Schedule = CoroutineScheduler.CurrentId == null,
 					StartInfo = {
 						EnvironmentVariables = {
-							{ "CHARON_APP_DATA", Settings.GetLocalUserDataPath() }, // unused on >v2020.1.1
 							{ "CHARON_API_SERVER", Settings.Current.GetServerAddressUrl().OriginalString },
-							{ "CHARON_API_KEY", "" },
-							{ "BASE_DIRECTORY_PATH", Settings.ToolBasePath }, // unused on >v2020.1.1
+							{ "CHARON_API_KEY", apiKey ?? string.Empty },
+							{ "STANDALONE_APPLICATIONDATAPATH", Settings.UserDataPath },
+							{ "STANDALONE_APPLICATIONTEMPPATH", Settings.TempPath },
 							{ "SERILOG__WRITETO__0__NAME", "File" },
-							{ "SERILOG__WRITETO__0__ARGS__PATH", Path.GetFullPath(Path.Combine(Settings.ToolBasePath, string.Format("Logs/{0:yyyy_MM_dd_hh}.charon.unity.log", DateTime.UtcNow)))  },
+							{ "SERILOG__WRITETO__0__ARGS__PATH", Path.GetFullPath(Path.Combine(Settings.LibraryCharonLogsPath, string.Format("{0:yyyy_MM_dd_hh}.charon.unity.log", DateTime.UtcNow)))  },
 						}
 					}
 				});

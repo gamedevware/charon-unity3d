@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using GameDevWare.Charon.Unity.ServerApi.KeyStorage;
 using JetBrains.Annotations;
 using UnityEditor;
 using Debug = UnityEngine.Debug;
@@ -68,7 +69,7 @@ namespace GameDevWare.Charon.Unity.Routines
 				{
 					continue;
 				}
-				if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_PROGRESS_CURRENT_TARGET_IS, gameDataPath), (float)i / total);
+				if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_PROGRESS_PROCESSING_GAMEDATA, gameDataPath), (float)i / total);
 
 				var gameDataObj = AssetDatabase.LoadAssetAtPath(gameDataPath, typeof(UnityEngine.Object));
 				var assetImport = AssetImporter.GetAtPath(gameDataPath);
@@ -90,14 +91,16 @@ namespace GameDevWare.Charon.Unity.Routines
 				// trying to touch gamedata file
 				var readGameDataTask = FileHelper.ReadFileAsync(gameDataPath, 5);
 				yield return readGameDataTask;
-
-				if (readGameDataTask.GetResult().Length == 0)
+				using (var file = readGameDataTask.GetResult())
 				{
-					if (Settings.Current.Verbose)
-						Debug.LogWarning(string.Format("Code generation was skipped for an empty file '{0}'.", gameDataPath));
-					continue;
+					if (file.Length == 0)
+					{
+						if (Settings.Current.Verbose)
+							Debug.LogWarning(string.Format("Code generation was skipped for an empty file '{0}'.", gameDataPath));
+						continue;
+					}
 				}
-				readGameDataTask.GetResult().Dispose(); // release touched file
+
 
 				var generator = (GameDataSettings.CodeGenerator)gameDataSettings.Generator;
 				switch (generator)
@@ -125,16 +128,48 @@ namespace GameDevWare.Charon.Unity.Routines
 
 					case GameDataSettings.CodeGenerator.CSharp:
 						generateCSharpCode:
+
+						var apiKey = default(string);
+						var gameDataLocation = default(GameDataLocation);
+						if (gameDataSettings.IsConnected)
+						{
+							var serverAddress = new Uri(gameDataSettings.ServerAddress);
+							var apiKeyPath = new Uri(serverAddress, "/" + gameDataSettings.ProjectId);
+							apiKey = KeyCryptoStorage.GetKey(apiKeyPath);
+							if (string.IsNullOrEmpty(apiKey))
+							{
+								var apiKeyPromptTask = ApiKeyPromptWindow.ShowAsync(gameDataSettings.ProjectId, gameDataSettings.ProjectName);
+								yield return apiKeyPromptTask;
+								apiKey = KeyCryptoStorage.GetKey(apiKeyPath);
+
+								if (string.IsNullOrEmpty(apiKey))
+								{
+									if (Settings.Current.Verbose)
+									{
+										UnityEngine.Debug.LogWarning(string.Format("Unable to validate game data at '{0}' because there is API Key associated with it. ", gameDataPath) +
+											"Find this asset in Project window and click 'Synchronize' button in Inspector window.");
+									}
+									continue; // no key
+								}
+							}
+
+							gameDataLocation = new GameDataLocation(gameDataSettings.MakeDataSourceUrl(), apiKey);
+						}
+						else
+						{
+							gameDataLocation = new GameDataLocation(gameDataPath);
+						}
+
 						var startTime = Stopwatch.StartNew();
 						if (Settings.Current.Verbose)
-							Debug.Log(string.Format("Staring C# code generation for game data '{0}'.", gameDataPath));
+							Debug.Log(string.Format("Staring C# code generation for game data '{0}'.", gameDataLocation));
 
 						if (progressCallback != null)
-							progressCallback(string.Format(Resources.UI_UNITYPLUGIN_GENERATE_CODE_FOR, gameDataPath), (float)i / total);
+							progressCallback(string.Format(Resources.UI_UNITYPLUGIN_GENERATE_CODE_FOR, gameDataLocation), (float)i / total);
 
 						var generateProcess = CharonCli.GenerateCSharpCodeAsync
 						(
-							gameDataPath,
+							gameDataLocation,
 							Path.GetFullPath(codeGenerationPath),
 							(SourceCodeGenerationOptimizations)optimizations,
 							gameDataSettings.DocumentClassName,

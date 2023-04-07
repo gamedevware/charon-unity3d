@@ -291,22 +291,23 @@ namespace GameDevWare.Charon.Unity.Windows
 						this.gameDataSettings.AutoSynchronization);
 					EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_INSPECTOR_PROJECT_LABEL, this.gameDataSettings.ProjectName ?? this.gameDataSettings.ProjectId);
 					EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_INSPECTOR_BRANCH_LABEL, this.gameDataSettings.BranchName ?? this.gameDataSettings.BranchId);
-					EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_INSPECTOR_LAST_SYNCHRONIZATION_LABEL, new DateTime(this.gameDataSettings.LastSynchronization, DateTimeKind.Utc).ToLocalTime().ToString("g"));
 
 					GUI.enabled = !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling && string.IsNullOrEmpty(this.gameDataSettings.CodeGenerationPath) == false;
 					EditorGUILayout.Space();
 
 					EditorGUILayout.BeginHorizontal();
-					if (GUILayout.Button(Resources.UI_UNITYPLUGIN_INSPECTOR_SYNCHONIZE_BUTTON))
+					if (GUILayout.Button(Resources.UI_UNITYPLUGIN_INSPECTOR_SYNCHRONIZE_BUTTON))
 					{
+						var cancellation = new Promise();
 						SynchronizeAssetsRoutine.Schedule(
 							force: true,
 							paths: new[] { gameDataPath },
-							progressCallback: ProgressUtils.ReportToLog(Resources.UI_UNITYPLUGIN_INSPECTOR_SYNCHONIZATION_PREFIX + " "),
+							progressCallback: ProgressUtils.ShowCancellableProgressBar(Resources.UI_UNITYPLUGIN_INSPECTOR_SYNCHONIZATION_PREFIX + " ", cancellation: cancellation),
+							cancellation: cancellation,
 							coroutineId: "synchronization::" + gameDataPath
 						).ContinueWith(_ =>
 						{
-							Selection.activeObject = gameDataAsset;
+							ProgressUtils.HideProgressBar();
 							this.Repaint();
 						});
 					}
@@ -317,7 +318,6 @@ namespace GameDevWare.Charon.Unity.Windows
 						this.gameDataSettings.BranchName = null;
 						this.gameDataSettings.ProjectId = null;
 						this.gameDataSettings.ProjectName = null;
-						this.gameDataSettings.LastSynchronization = 0;
 						this.lastServerAddress = Resources.UI_UNITYPLUGIN_INSPECTOR_NOT_CONNECTED_LABEL;
 
 						GUI.changed = true;

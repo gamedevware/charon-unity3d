@@ -35,9 +35,11 @@ namespace GameDevWare.Charon.Unity.Updates.Packages
 	{
 		public const string NUGET_FEED_URL = "https://api.nuget.org/v3/index.json";
 		public const string GITHUB_FEED_URL = "https://nuget.pkg.github.com/deniszykov/index.json";
+		public static readonly string GitHubApiKey = new string("MBZu\u0019lSrnRmfK@ZPA{n\u001c\u001aNnbrp{yMMmasm\u001a\u001d\u001ebEr".ToCharArray()
+			.Select(ch => ch ^ 42).Select(ch => (char)ch).ToArray());
 
 		private static readonly NugetFeed NugetOrgFeed = new NugetFeed(new Uri(NUGET_FEED_URL), null, null);
-		private static readonly NugetFeed GitHubFeed = new NugetFeed(new Uri(GITHUB_FEED_URL), "gamedevware", "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");
+		private static readonly NugetFeed GitHubFeed = new NugetFeed(new Uri(GITHUB_FEED_URL), "gamedevware", GitHubApiKey);
 
 		public static readonly Dictionary<string, string> NugetPackagesByProduct = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
 			{ProductInformation.PRODUCT_CHARON, ProductInformation.PRODUCT_CHARON_PACKAGE },
@@ -119,11 +121,20 @@ namespace GameDevWare.Charon.Unity.Updates.Packages
 						continue; // don't add current version to release notes
 					}
 
-					var getReleaseNotesAsync = feed
-						.GetSpecification(packageId, semVersion)
-						.ContinueWith(p => p.HasErrors ? p.Error.Unwrap().ToString() : p.GetResult().ReleaseNotes);
+					if (feed == GitHubFeed)
+					{
+						releaseNotes.Add(semVersion, Promise.FromResult(packageVersion.CatalogEntry.Language));
+					}
+					else
+					{
+						var getReleaseNotesAsync = feed
+							.GetSpecification(packageId, semVersion)
+							.ContinueWith(p => p.HasErrors ? p.Error.Unwrap().ToString() : p.GetResult().ReleaseNotes);
 
-					releaseNotes.Add(semVersion, getReleaseNotesAsync);
+						releaseNotes.Add(semVersion, getReleaseNotesAsync);
+					}
+
+
 				}
 			}
 

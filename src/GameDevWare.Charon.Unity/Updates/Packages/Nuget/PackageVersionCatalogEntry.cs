@@ -33,6 +33,8 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Nuget
 		public string Summary;
 		[JsonMember("description")]
 		public string Description;
+		[JsonMember("language")]
+		public string Language;
 		[JsonMember("listed")]
 		public bool IsListed = true; // github doesn't have this parameter, so all packages are listed
 		[JsonMember("version")]

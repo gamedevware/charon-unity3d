@@ -29,7 +29,7 @@ namespace GameDevWare.Charon.Unity.Windows
 	internal class UpdateAvailableWindow : EditorWindow
 	{
 		private readonly Rect padding;
-		private Vector2 scrollPosition;
+		private Vector2 scrollPosition; 
 
 		public string ReleaseNotes;
 
@@ -79,8 +79,6 @@ namespace GameDevWare.Charon.Unity.Windows
 			// paddings
 			GUILayout.EndVertical();
 			GUILayout.EndHorizontal();
-
-			EditorLayoutUtils.AutoSize(this);
 		}
 	}
 }

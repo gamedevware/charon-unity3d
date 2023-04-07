@@ -17,6 +17,7 @@
     along with this program.  If not, see http://www.gnu.org/licenses.
 */
 
+using GameDevWare.Charon.Unity.Async;
 using System;
 using UnityEditor;
 using UnityEngine;
@@ -29,11 +30,18 @@ namespace GameDevWare.Charon.Unity.Utils
 		{
 			return (t, p) => EditorUtility.DisplayProgressBar(title, t, Mathf.Clamp(from + (to - from) * Mathf.Clamp(p, 0.0f, 1.0f), 0.0f, 1.0f));
 		}
-		public static Action<string, float> ShowCancellableProgressBar(string title, float from = 0.0f, float to = 1.0f)
+		public static Action<string, float> ShowCancellableProgressBar(string title, float from = 0.0f, float to = 1.0f, Promise cancellation = null)
 		{
-			return (t, p) => EditorUtility.DisplayCancelableProgressBar(title, t, Mathf.Clamp(from + (to - from) * Mathf.Clamp(p, 0.0f, 1.0f), 0.0f, 1.0f));
+			return (t, p) =>
+			{
+				var isCancelled = EditorUtility.DisplayCancelableProgressBar(title, t, Mathf.Clamp(from + (to - from) * Mathf.Clamp(p, 0.0f, 1.0f), 0.0f, 1.0f));
+				if (isCancelled && cancellation != null)
+				{
+					cancellation.TrySetCompleted();
+				}
+			};
 		}
-		public static void HideProgressBar(object state)
+		public static void HideProgressBar(object state = null)
 		{
 			EditorUtility.ClearProgressBar();
 		}
@@ -58,7 +66,7 @@ namespace GameDevWare.Charon.Unity.Utils
 							Resources.UI_UNITYPLUGIN_PROGRESS_DOWNLOADING,
 							(float)read / 1024 / 1024,
 							(float)total / 1024 / 1024,
-							fileName ?? ""), 
+							fileName ?? ""),
 					Mathf.Clamp01((float)read / total));
 			};
 		}

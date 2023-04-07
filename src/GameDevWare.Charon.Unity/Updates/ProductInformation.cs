@@ -54,7 +54,7 @@ namespace GameDevWare.Charon.Unity.Updates
 			return new[] {
 				new ProductInformation(PRODUCT_CHARON, Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_CHARON_NAME, disabled: false) {
 					CurrentVersion = CharonCli.GetVersionAsync().IgnoreFault(),
-					Location = Path.GetFullPath(Settings.CharonExecutablePath),
+					Location = Path.GetFullPath(Settings.CharonExePath),
 					ExpectedVersion = String.IsNullOrEmpty(Settings.Current.EditorVersion) ? default(SemanticVersion) : new SemanticVersion(Settings.Current.EditorVersion),
 					MinimalExclusiveVersion = CharonCli.LegacyToolsVersion
 				},

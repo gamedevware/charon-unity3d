@@ -377,7 +377,6 @@ namespace GameDevWare.Charon.Unity.Windows
 			gameDataSettings.BranchName = branch.Name;
 			gameDataSettings.BranchId = branch.Id;
 			gameDataSettings.AutoSynchronization = true;
-			gameDataSettings.LastSynchronization = DateTime.UtcNow.Ticks;
 			gameDataSettings.Save(assetPath);
 
 			this.progressStatus = string.Empty;

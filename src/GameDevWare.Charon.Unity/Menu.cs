@@ -17,6 +17,7 @@
     along with this program.  If not, see http://www.gnu.org/licenses.
 */
 
+using System;
 using System.IO;
 using GameDevWare.Charon.Unity.Async;
 using GameDevWare.Charon.Unity.Routines;
@@ -56,10 +57,13 @@ namespace GameDevWare.Charon.Unity
 		{
 			if (!SynchronizeAssetsCheck()) return;
 
+			var cancellation = new Promise();
 			var generateCoroutine = SynchronizeAssetsRoutine.Schedule(
 				force: true,
-				progressCallback: ProgressUtils.ShowProgressBar(Resources.UI_UNITYPLUGIN_GENERATING_CODE_AND_ASSETS));
+				progressCallback: ProgressUtils.ShowCancellableProgressBar(Resources.UI_UNITYPLUGIN_GENERATING_CODE_AND_ASSETS, cancellation: cancellation),
+				cancellation: cancellation);
 			generateCoroutine.ContinueWith(ProgressUtils.HideProgressBar);
+
 			FocusConsoleWindow();
 		}
 		[MenuItem(TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENU_SYNCHRONIZE_ASSETS, true, 2)]
@@ -127,7 +131,7 @@ namespace GameDevWare.Charon.Unity
 		[MenuItem(TROUBLESHOOTING_PREFIX + Resources.UI_UNITYPLUGIN_MENU_RESET_PREFERENCES, false, 14)]
 		private static void ResetPreferences()
 		{
-			var userDataDirectory = Settings.GetLocalUserDataPath();
+			var userDataDirectory = Settings.UserDataPath;
 			if (Directory.Exists(userDataDirectory) == false)
 				return;
 
@@ -139,15 +143,15 @@ namespace GameDevWare.Charon.Unity
 		[MenuItem(TROUBLESHOOTING_PREFIX + Resources.UI_UNITYPLUGIN_MENU_OPEN_LOGS, false, 17)]
 		private static void OpenLogs()
 		{
-			if (string.IsNullOrEmpty(CharonCli.CharonLogsDirectory) == false)
+			if (string.IsNullOrEmpty(Settings.LibraryCharonLogsPath) == false)
 			{
-				EditorUtility.OpenWithDefaultApp(CharonCli.CharonLogsDirectory);
+				EditorUtility.OpenWithDefaultApp(Settings.LibraryCharonLogsPath);
 			}
 		}
 		[MenuItem(TROUBLESHOOTING_PREFIX + Resources.UI_UNITYPLUGIN_MENU_OPEN_LOGS, true, 17)]
 		private static bool OpenLogsCheck()
 		{
-			return string.IsNullOrEmpty(CharonCli.CharonLogsDirectory) == false && Directory.Exists(CharonCli.CharonLogsDirectory) && Directory.GetFiles(CharonCli.CharonLogsDirectory).Length > 0;
+			return string.IsNullOrEmpty(Settings.LibraryCharonLogsPath) == false && Directory.Exists(Settings.LibraryCharonLogsPath) && Directory.GetFiles(Settings.LibraryCharonLogsPath).Length > 0;
 		}
 
 		[MenuItem(TROUBLESHOOTING_PREFIX + Resources.UI_UNITYPLUGIN_MENU_VERBOSE_LOGS, false, 20)]

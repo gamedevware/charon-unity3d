@@ -35,7 +35,7 @@ namespace GameDevWare.Charon.Unity.ServerApi.KeyStorage
 
 		static KeyCryptoStorage()
 		{
-			BaseDirectory = Path.Combine(Settings.ToolBasePath, "Keys");
+			BaseDirectory = Path.Combine(Settings.LibraryCharonPath, "Keys");
 
 			MasterKey = InitializeMasterKey();
 			InitializationVector = Convert.FromBase64String("Much//LiKEs=");

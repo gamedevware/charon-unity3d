@@ -55,7 +55,7 @@ namespace GameDevWare.Charon.Unity.ServerApi
 			var getMyProjectsAsync = HttpUtils.GetJson<ApiResponse<Project[]>>(getMyProjectsAddress, this.requestHeaders);
 			return getMyProjectsAsync.ContinueWith(result => result.GetResult().GetResponseResultOrError());
 		}
-		public Promise DownloadDataSourceAsync(string branchId, GameDataStoreFormat storeFormat, string downloadPath, Action<long, long> downloadProgressCallback)
+		public Promise DownloadDataSourceAsync(string branchId, GameDataStoreFormat storeFormat, string downloadPath, Action<long, long> downloadProgressCallback, Promise cancellation = null)
 		{
 			if (branchId == null) throw new ArgumentNullException("branchId");
 			if (downloadPath == null) throw new ArgumentNullException("downloadPath");
@@ -86,8 +86,13 @@ namespace GameDevWare.Charon.Unity.ServerApi
 				downloadDataSourceAddress,
 				downloadPath,
 				requestHeaders,
-				downloadProgressCallback);
+				downloadProgressCallback,
+				cancellation: cancellation);
 			return downloadDataSourceAsync;
+		}
+		public Promise<string> GetLoginLink()
+		{
+			return Promise<string>.DefaultFulfilled;
 		}
 	}
 }

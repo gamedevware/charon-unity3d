@@ -45,7 +45,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Deployment
 			this.versionToDeploy = versionToDeploy;
 			this.progressCallback = progressCallback;
 			this.changedAssets = NoChangedAssets;
-			this.baseDirectory = new DirectoryInfo(Settings.ToolBasePath);
+			this.baseDirectory = new DirectoryInfo(Settings.LibraryCharonPath);
 			this.versionDirectory = new DirectoryInfo(Path.Combine(this.baseDirectory.FullName, this.versionToDeploy.ToNormalizedString().ToLowerInvariant()));
 			this.downloadDirectory = new DirectoryInfo(Path.Combine(Settings.TempPath, Path.GetRandomFileName()));
 		}
@@ -122,7 +122,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Deployment
 
 				try
 				{
-					file.CopyTo(Path.Combine(Settings.ToolBasePath, file.Name), overwrite: true);
+					file.CopyTo(Path.Combine(Settings.LibraryCharonPath, file.Name), overwrite: true);
 				}
 				catch (Exception error)
 				{
@@ -133,18 +133,18 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Deployment
 			// ensure .config or appsettings.json file
 			if (this.versionToDeploy.Version <= CharonCli.LegacyToolsVersion)
 			{
-				var charonConfigPath = Settings.CharonExecutablePath + ".config";
+				var charonConfigPath = Settings.CharonExePath + ".config";
 				CreateAppConfig(charonConfigPath);
 			}
 			else
 			{
-				var charonDirectoryPath = Path.GetDirectoryName(Settings.CharonExecutablePath) ?? Settings.ToolBasePath;
+				var charonDirectoryPath = Path.GetDirectoryName(Settings.CharonExePath) ?? Settings.LibraryCharonPath;
 				var charonAppSettingsPath = Path.Combine(charonDirectoryPath, "appsettings.json");
 				CreateAppSettings(charonAppSettingsPath);
 			}
 
 			var currentVersion = default(SemanticVersion);
-			if (File.Exists(Settings.CharonExecutablePath))
+			if (File.Exists(Settings.CharonExePath))
 			{
 				if (this.progressCallback != null) this.progressCallback(Resources.UI_UNITYPLUGIN_PROGRESS_CHECKING_TOOLS_VERSION, 0.95f);
 

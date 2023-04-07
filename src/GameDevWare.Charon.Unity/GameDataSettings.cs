@@ -57,16 +57,8 @@ namespace GameDevWare.Charon.Unity
 		public string ProjectName;
 		public string BranchName;
 		public string BranchId;
-		public long LastSynchronization;
 		public bool AutoSynchronization;
 
-		public bool IsSyncTooSoon
-		{
-			get
-			{
-				return DateTime.UtcNow - new DateTime(this.LastSynchronization, DateTimeKind.Utc) < TimeSpan.FromMinutes(2);
-			}
-		}
 		public bool IsConnected
 		{
 			get
@@ -176,6 +168,16 @@ namespace GameDevWare.Charon.Unity
 				this.Generator = (int)CodeGenerator.None;
 			if (Enum.IsDefined(typeof(SourceCodeLineEndings), (SourceCodeLineEndings)this.LineEnding) == false)
 				this.LineEnding = (int)SourceCodeLineEndings.Windows;
+		}
+
+		public Uri MakeDataSourceUrl()
+		{
+			if (!this.IsConnected)
+			{
+				throw new InvalidOperationException("Data source URL could be created only for connected game data.");
+			}
+
+			return new Uri(new Uri(this.ServerAddress), string.Format("view/data/{0}/{1}/", this.ProjectId, this.BranchId));
 		}
 	}
 }

@@ -36,29 +36,31 @@ namespace GameDevWare.Charon.Unity.Routines
 	[PublicAPI, UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal class SynchronizeAssetsRoutine
 	{
-		public static Promise Run(bool force, string[] paths = null, Action<string, float> progressCallback = null)
+		public static Promise Run(bool force, string[] paths = null, Action<string, float> progressCallback = null, Promise cancellation = null)
 		{
-			return new Async.Coroutine(SynchronizeAssets(force, paths, progressCallback));
+			return new Async.Coroutine(SynchronizeAssets(force, paths, progressCallback, cancellation));
 		}
-		public static Promise Schedule(bool force, string[] paths = null, Action<string, float> progressCallback = null, string coroutineId = null)
+		public static Promise Schedule(bool force, string[] paths = null, Action<string, float> progressCallback = null, string coroutineId = null, Promise cancellation = null)
 		{
-			return CoroutineScheduler.Schedule<Dictionary<string, object>>(SynchronizeAssets(force, paths, progressCallback), coroutineId);
+			return CoroutineScheduler.Schedule<Dictionary<string, object>>(SynchronizeAssets(force, paths, progressCallback, cancellation), coroutineId);
 		}
 
-		private static IEnumerable SynchronizeAssets(bool force, string[] paths = null, Action<string, float> progressCallback = null)
+		private static IEnumerable SynchronizeAssets(bool force, string[] paths = null, Action<string, float> progressCallback = null, Promise cancellation = null)
 		{
 			if (paths == null) paths = GameDataTracker.All.ToArray();
 
 			var total = paths.Length;
 			for (var i = 0; i < paths.Length; i++)
 			{
+				cancellation.ThrowIfCancellationRequested();
+
 				var gameDataPath = paths[i];
 
 				if (File.Exists(gameDataPath) == false)
 					continue;
 
 
-				if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_PROGRESS_CURRENT_TARGET_IS, gameDataPath), (float)i / total);
+				if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_PROGRESS_PROCESSING_GAMEDATA, gameDataPath), (float)i / total);
 
 
 				var gameDataObj = AssetDatabase.LoadAssetAtPath(gameDataPath, typeof(UnityEngine.Object));
@@ -73,7 +75,8 @@ namespace GameDevWare.Charon.Unity.Routines
 					continue; // no sync required
 				}
 
-				if (gameDataSettings.IsSyncTooSoon && !force)
+				var isSyncTooSoon = (DateTime.UtcNow - File.GetLastWriteTimeUtc(gameDataPath)) < TimeSpan.FromMinutes(2);
+				if (isSyncTooSoon && !force)
 				{
 					if (Settings.Current.Verbose)
 					{
@@ -92,7 +95,7 @@ namespace GameDevWare.Charon.Unity.Routines
 				var serverAddress = new Uri(gameDataSettings.ServerAddress);
 				var apiKeyPath = new Uri(serverAddress, "/" + gameDataSettings.ProjectId);
 				var apiKey = KeyCryptoStorage.GetKey(apiKeyPath);
-				if (apiKey == null)
+				if (string.IsNullOrEmpty(apiKey))
 				{
 					if (force)
 					{
@@ -100,7 +103,8 @@ namespace GameDevWare.Charon.Unity.Routines
 						yield return apiKeyPromptTask;
 						apiKey = KeyCryptoStorage.GetKey(apiKeyPath);
 					}
-					else
+
+					if (string.IsNullOrEmpty(apiKey))
 					{
 						if (Settings.Current.Verbose)
 						{
@@ -110,6 +114,8 @@ namespace GameDevWare.Charon.Unity.Routines
 						continue; // no key
 					}
 				}
+
+				cancellation.ThrowIfCancellationRequested();
 
 				// trying to touch gamedata file
 				var readGameDataTask = FileHelper.ReadFileAsync(gameDataPath, 5);
@@ -129,23 +135,13 @@ namespace GameDevWare.Charon.Unity.Routines
 
 				var subProgressCallback = progressCallback != null ? progressCallback.Sub(i + 0.0f / total, i + 1.0f / total) : null;
 				var downloadDataSourceAsync = serverApiClient.DownloadDataSourceAsync(gameDataSettings.BranchId, storeFormat.Value, downloadTempPath,
-					subProgressCallback.ToDownloadProgress(Path.GetFileName(downloadTempPath)));
+					subProgressCallback.ToDownloadProgress(Path.GetFileName(downloadTempPath)), cancellation: cancellation);
 				yield return downloadDataSourceAsync;
 
 				File.Replace(downloadTempPath, gameDataPath, gameDataPathBak);
 
 				FileHelper.SafeFileDelete(gameDataPathBak);
 				FileHelper.SafeDirectoryDelete(Path.GetDirectoryName(downloadTempPath));
-
-				// de-select updated asset to prevent inspector from overwriting settings
-				if (Selection.activeObject != null &&
-					string.Equals(AssetDatabase.GetAssetPath(Selection.activeObject), gameDataPath))
-				{
-					Selection.activeObject = null;
-				}
-
-				gameDataSettings.LastSynchronization = DateTime.UtcNow.Ticks;
-				gameDataSettings.Save(gameDataPath);
 
 				if (Settings.Current.Verbose)
 				{

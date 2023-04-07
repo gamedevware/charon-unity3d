@@ -66,6 +66,8 @@ namespace GameDevWare.Charon.Unity.Async
 		{
 			if (coroutine == null) throw new ArgumentNullException("coroutine");
 
+
+
 			var coroutineName = coroutine.GetType().Name;
 			if (coroutineName.IndexOf('<') >= 0 && coroutineName.IndexOf('>') > coroutineName.IndexOf('<'))
 				coroutineName = coroutineName.Substring(coroutineName.IndexOf('<') + 1, coroutineName.IndexOf('>') - coroutineName.IndexOf('<') - 1);
@@ -75,7 +77,9 @@ namespace GameDevWare.Charon.Unity.Async
 
 			var existingPromise = default(Promise);
 			if (CoroutineById.TryGetValue(coroutineId, out existingPromise) && !existingPromise.IsCompleted)
+			{
 				return (Promise<T>)existingPromise;
+			}
 
 			if (Settings.Current.Verbose)
 				Debug.Log("Scheduling new coroutine " + coroutineName + " with id '" + coroutineId + "'.");
@@ -83,51 +87,19 @@ namespace GameDevWare.Charon.Unity.Async
 			var resultPromise = new Promise<T>();
 			WaitQueue.Enqueue(() =>
 			{
-				Current = new Coroutine<T>(WrapCoroutine(coroutine, coroutineId, resultPromise));
+				var originalId = CurrentId;
+
+				Current = new Coroutine<T>(coroutine).ContinueWith(completed =>
+				{
+					completed.PropagateTo(resultPromise);
+					CurrentId = originalId;
+					CoroutineById.Remove(coroutineId);
+				});
 			});
 
 			CoroutineById[coroutineId] = resultPromise;
 			return resultPromise;
 		}
 
-		private static IEnumerable WrapCoroutine<T>(IEnumerable coroutine, string id, Promise<T> resultPromise)
-		{
-			if (coroutine == null) throw new ArgumentNullException("coroutine");
-			if (id == null) throw new ArgumentNullException("id");
-			if (resultPromise == null) throw new ArgumentNullException("resultPromise");
-
-			var result = default(T);
-			var enumerator = coroutine.GetEnumerator();
-			var hasNext = default(bool);
-			var originalId = CurrentId;
-			CurrentId = id;
-			do
-			{
-				try
-				{
-					hasNext = enumerator.MoveNext();
-				}
-				catch (Exception executionError)
-				{
-					CurrentId = originalId;
-					CoroutineById.Remove(id);
-					resultPromise.TrySetFailed(executionError);
-					throw;
-				}
-
-				if (hasNext)
-				{
-					if (enumerator.Current is T)
-						result = (T)enumerator.Current;
-
-					yield return enumerator.Current;
-				}
-
-			} while (hasNext);
-
-			CurrentId = originalId;
-			CoroutineById.Remove(id);
-			resultPromise.TrySetResult(result);
-		}
 	}
 }

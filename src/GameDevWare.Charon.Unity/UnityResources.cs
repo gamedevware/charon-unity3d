@@ -22,6 +22,8 @@
 namespace GameDevWare.Charon {
 	internal static class Resources
 	{
+		public const string UI_UNITYPLUGIN_ERROR_SCRIPTS_COMPILING = "Interrupted by Unity's script compilation. Retry after Unity is finished script compilation.";
+		public const string UI_UNITYPLUGIN_ERROR_CANCELLED = "Operation has been cancelled.";
 		public const string UI_UNITYPLUGIN_ABOUT_CHARON_TITLE = "Charon: Game Data Editor";
 		public const string UI_UNITYPLUGIN_ABOUT_CLOSE_BUTTON = "Close";
 		public const string UI_UNITYPLUGIN_ABOUT_EDITOR_PORT = "Editor TCP Port";
@@ -51,10 +53,10 @@ namespace GameDevWare.Charon {
 		public const string UI_UNITYPLUGIN_INSPECTOR_ASSET_LABEL = "Asset";
 		public const string UI_UNITYPLUGIN_INSPECTOR_AUTO_GENERATION = "Auto-Generation";
 		public const string UI_UNITYPLUGIN_INSPECTOR_SPLIT_FILES = "Split into multple files";
-		public const string UI_UNITYPLUGIN_INSPECTOR_AUTO_SYNC = "Auto-Synchonize";
+		public const string UI_UNITYPLUGIN_INSPECTOR_AUTO_SYNC = "Auto-Synchronize";
 		public const string UI_UNITYPLUGIN_INSPECTOR_PROJECT_LABEL = "Project";
 		public const string UI_UNITYPLUGIN_INSPECTOR_BRANCH_LABEL = "Branch";
-		public const string UI_UNITYPLUGIN_INSPECTOR_LAST_SYNCHRONIZATION_LABEL = "Last Synchonization";
+		public const string UI_UNITYPLUGIN_INSPECTOR_LAST_SYNCHRONIZATION_LABEL = "Last Synchronization";
 		public const string UI_UNITYPLUGIN_INSPECTOR_BACKUP_BUTTON = "Backup";
 		public const string UI_UNITYPLUGIN_INSPECTOR_CODE_GAMEDATA_CLASS_NAME = "Game Data Class";
 		public const string UI_UNITYPLUGIN_INSPECTOR_CODE_DOCUMENT_CLASS_NAME = "Document Class";
@@ -70,7 +72,7 @@ namespace GameDevWare.Charon {
 		public const string UI_UNITYPLUGIN_INSPECTOR_NAME_LABEL = "Name";
 		public const string UI_UNITYPLUGIN_INSPECTOR_RESTORE_BUTTON = "Restore";
 		public const string UI_UNITYPLUGIN_INSPECTOR_RUN_GENERATOR_BUTTON = "Generate Source Code";
-		public const string UI_UNITYPLUGIN_INSPECTOR_SYNCHONIZE_BUTTON = "Synchonize";
+		public const string UI_UNITYPLUGIN_INSPECTOR_SYNCHRONIZE_BUTTON = "Synchronize";
 		public const string UI_UNITYPLUGIN_INSPECTOR_CONNECT_BUTTON = "Connect";
 		public const string UI_UNITYPLUGIN_INSPECTOR_DISCONNECT_BUTTON = "Disconnect";
 		public const string UI_UNITYPLUGIN_INSPECTOR_FORMULA_ASSEMBLIES_LABEL = "Assemblies Exposed to Formulas";
@@ -78,7 +80,8 @@ namespace GameDevWare.Charon {
 		public const string UI_UNITYPLUGIN_INSPECTOR_NOT_CONNECTED_LABEL = "<Not Connected>";
 		public const string UI_UNITYPLUGIN_INSPECTOR_VALIDATE_BUTTON = "Validate";
 		public const string UI_UNITYPLUGIN_INSPECTOR_VALIDATION_PREFIX = "Validation:";
-		public const string UI_UNITYPLUGIN_INSPECTOR_SYNCHONIZATION_PREFIX = "Synchonization:";
+		public const string UI_UNITYPLUGIN_INSPECTOR_SYNCHONIZATION_PREFIX = "Synchronization:";
+		public const string UI_UNITYPLUGIN_INSPECTOR_LAUNCHING_EDITOR_PREFIX = "Launching Editor:";
 		public const string UI_UNITYPLUGIN_MENU_SETTINGS = "Settings...";
 		public const string UI_UNITYPLUGIN_MENU_ADVANCED = "Advanced";
 		public const string UI_UNITYPLUGIN_MENU_CHECK_RUNTIME = "Check Runtime...";
@@ -101,7 +104,8 @@ namespace GameDevWare.Charon {
 		public const string UI_UNITYPLUGIN_MENU_USE_BETA_FEED = "Use Beta Updates";
 		public const string UI_UNITYPLUGIN_OPERATION_CANCELLED = "Operation was cancelled by the user.";
 		public const string UI_UNITYPLUGIN_PROGRESS_CHECKING_TOOLS_VERSION = "Checking current tools version...";
-		public const string UI_UNITYPLUGIN_PROGRESS_CURRENT_TARGET_IS = "Current target is {0}";
+		public const string UI_UNITYPLUGIN_PROGRESS_PROCESSING_GAMEDATA = "Processing game data at {0}";
+		public const string UI_UNITYPLUGIN_PROGRESS_AUTHENTICATING = "Authenticating";
 		public const string UI_UNITYPLUGIN_PROGRESS_DONE = "Done";
 		public const string UI_UNITYPLUGIN_PROGRESS_DOWNLOADING = "Downloading '{2}' ({0:F2}/{1:F2}MiB)...";
 		public const string UI_UNITYPLUGIN_PROGRESS_GETTING_AVAILABLE_BUILDS = "Getting list of public releases...";
@@ -126,8 +130,8 @@ namespace GameDevWare.Charon {
 		public const string UI_UNITYPLUGIN_WINDOW_CHECKING_MONO = "Checking Mono...";
 		public const string UI_UNITYPLUGIN_WINDOW_CHECKING_MONO_FAILED = "No version information returned from Mono.";
 		public const string UI_UNITYPLUGIN_WINDOW_CHECKING_VERSION = "Checking...";
-		public const string UI_UNITYPLUGIN_WINDOW_DOWNLOAD_DOTNET = "c) Alternatively you can download .NET 4.7.1 by clicking 'Download .NET 4.7.1'.";
-		public const string UI_UNITYPLUGIN_WINDOW_DOWNLOAD_DOTNET_BUTTON = "Download .NET 4.7.1";
+		public const string UI_UNITYPLUGIN_WINDOW_DOWNLOAD_DOTNET = "c) Alternatively you can download .NET {0} by clicking 'Download .NET {0}'.";
+		public const string UI_UNITYPLUGIN_WINDOW_DOWNLOAD_DOTNET_BUTTON = "Download .NET {0}";
 		public const string UI_UNITYPLUGIN_WINDOW_DOWNLOAD_MONO = "b) If it doesn't exist, click 'Download Mono' below and try again.";
 		public const string UI_UNITYPLUGIN_WINDOW_DOWNLOAD_MONO_BUTTON = "Download Mono";
 		public const string UI_UNITYPLUGIN_WINDOW_EDITOR_CHECKING_RUNTIME = "Checking runtime and application version...";
@@ -145,7 +149,7 @@ namespace GameDevWare.Charon {
 		public const string UI_UNITYPLUGIN_WINDOW_PRESS_HELP = "If you require a help with .NET Runtime installation click 'Help'.";
 		public const string UI_UNITYPLUGIN_WINDOW_RE_CHECK_BUTTON = "Recheck";
 		public const string UI_UNITYPLUGIN_WINDOW_RELOAD_BUTTON = "Reload";
-		public const string UI_UNITYPLUGIN_WINDOW_RUNTIME_REQUIRED = "You need to have either .NET Runtime or Mono Runtime installed on your system to use Game Data Editor and its related tools.";
+		public const string UI_UNITYPLUGIN_WINDOW_RUNTIME_REQUIRED = "You need to have either .NET Runtime {0} or Mono Runtime {1} installed on your system to use Game Data Editor and its related tools.";
 		public const string UI_UNITYPLUGIN_MISSING_DOTNET_RUNTIME = "Mono or .NET runtime found on machine. Please use 'Tools -> Charon -> Troubleshooting -> Check Runtime...' to setup proper runtime.";
 		public const string UI_UNITYPLUGIN_WINDOW_RUNTIME_VERSION = "Runtime Version";
 		public const string UI_UNITYPLUGIN_WINDOW_RUNTIME_VERSION_ERROR = "Error";

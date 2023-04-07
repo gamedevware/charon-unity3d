@@ -50,7 +50,7 @@ namespace GameDevWare.Charon.Unity.Routines
 				if (File.Exists(gameDataPath) == false)
 					continue;
 
-				if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_PROGRESS_CURRENT_TARGET_IS, gameDataPath), (float)i / total);
+				if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_PROGRESS_PROCESSING_GAMEDATA, gameDataPath), (float)i / total);
 
 
 				var gameDataObj = AssetDatabase.LoadAssetAtPath(gameDataPath, typeof(UnityEngine.Object));
@@ -70,47 +70,49 @@ namespace GameDevWare.Charon.Unity.Routines
 				// trying to touch gamedata file
 				var readGameDataTask = FileHelper.ReadFileAsync(gameDataPath, 5);
 				yield return readGameDataTask;
-				if (readGameDataTask.GetResult().Length == 0)
-					continue;
 
 				var startTime = Stopwatch.StartNew();
-				if (Settings.Current.Verbose)
-				{
-					UnityEngine.Debug.Log(string.Format("Starting asset generation of game data at '{0}'.", gameDataPath));
-				}
-
+				var gameDataBytes = default(byte[]);
 				using (var file = readGameDataTask.GetResult())
 				{
-					var gameDataBytes = new byte[file.Length];
-					int read, offset = 0;
-					while ((read = file.Read(gameDataBytes, offset, gameDataBytes.Length - offset)) > 0)
-						offset += read;
-
-					var gameDataAssetType = Type.GetType(gameDataSettings.Namespace + "." + gameDataSettings.GameDataClassName + "Asset, Assembly-CSharp", throwOnError: false) ??
-						Type.GetType(gameDataSettings.Namespace + "." + gameDataSettings.GameDataClassName + "Asset, Assembly-CSharp-firstpass", throwOnError: false) ??
-						Type.GetType(gameDataSettings.Namespace + "." + gameDataSettings.GameDataClassName + "Asset, Assembly-CSharp-Editor", throwOnError: false);
-					if (gameDataAssetType == null)
-					{
-						UnityEngine.Debug.LogError(Resources.UI_UNITYPLUGIN_GENERATE_ASSET_CANT_FIND_GAMEDATA_CLASS);
+					if (file.Length == 0)
 						continue;
-					}
-
-					var assetDirectory = Path.GetDirectoryName(assetGenerationPath);
-					if (assetDirectory != null && !Directory.Exists(assetDirectory))
-					{
-						Directory.CreateDirectory(assetDirectory);
-					}
-
-					var gameDataAsset = UnityEngine.ScriptableObject.CreateInstance(gameDataAssetType);
-					gameDataAsset.SetFieldValue("dataBytes", gameDataBytes);
-					gameDataAsset.SetFieldValue("extension", Path.GetExtension(gameDataPath));
-					AssetDatabase.CreateAsset(gameDataAsset, assetGenerationPath);
-					AssetDatabase.SaveAssets();
 
 					if (Settings.Current.Verbose)
 					{
-						UnityEngine.Debug.Log(string.Format("Asset generation of game data at '{0}' is finished successfully in '{1}'.", gameDataPath, startTime.Elapsed));
+						UnityEngine.Debug.Log(string.Format("Starting asset generation of game data at '{0}'.", gameDataPath));
 					}
+
+					gameDataBytes = new byte[file.Length];
+					int read, offset = 0;
+					while ((read = file.Read(gameDataBytes, offset, gameDataBytes.Length - offset)) > 0)
+						offset += read;
+				}
+
+				var gameDataAssetType = Type.GetType(gameDataSettings.Namespace + "." + gameDataSettings.GameDataClassName + "Asset, Assembly-CSharp", throwOnError: false) ??
+					Type.GetType(gameDataSettings.Namespace + "." + gameDataSettings.GameDataClassName + "Asset, Assembly-CSharp-firstpass", throwOnError: false) ??
+					Type.GetType(gameDataSettings.Namespace + "." + gameDataSettings.GameDataClassName + "Asset, Assembly-CSharp-Editor", throwOnError: false);
+				if (gameDataAssetType == null)
+				{
+					UnityEngine.Debug.LogError(Resources.UI_UNITYPLUGIN_GENERATE_ASSET_CANT_FIND_GAMEDATA_CLASS);
+					continue;
+				}
+
+				var assetDirectory = Path.GetDirectoryName(assetGenerationPath);
+				if (assetDirectory != null && !Directory.Exists(assetDirectory))
+				{
+					Directory.CreateDirectory(assetDirectory);
+				}
+
+				var gameDataAsset = UnityEngine.ScriptableObject.CreateInstance(gameDataAssetType);
+				gameDataAsset.SetFieldValue("dataBytes", gameDataBytes);
+				gameDataAsset.SetFieldValue("extension", Path.GetExtension(gameDataPath));
+				AssetDatabase.CreateAsset(gameDataAsset, assetGenerationPath);
+				AssetDatabase.SaveAssets();
+
+				if (Settings.Current.Verbose)
+				{
+					UnityEngine.Debug.Log(string.Format("Asset generation of game data at '{0}' is finished successfully in '{1}'.", gameDataPath, startTime.Elapsed));
 				}
 			}
 			if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_GENERATE_REFRESHING_ASSETS, 0.99f);
@@ -120,8 +122,7 @@ namespace GameDevWare.Charon.Unity.Routines
 		private static IEnumerable SynchronizeAssetIfNeeded(string gameDataPath, GameDataSettings gameDataSettings, Action<string, float> progressCallback)
 		{
 			if (!gameDataSettings.AutoSynchronization ||
-				!gameDataSettings.IsConnected ||
-				gameDataSettings.IsSyncTooSoon)
+				!gameDataSettings.IsConnected)
 			{
 				yield break; // no sync required
 			}

@@ -33,7 +33,7 @@ namespace GameDevWare.Charon.Unity.Utils
 	{
 		private const int BUFFER_SIZE = 32 * 1024;
 
-		public static Promise DownloadToFile(Uri url, string downloadToFilePath, NameValueCollection requestHeaders = null, Action<long, long> downloadProgressCallback = null, TimeSpan timeout = default(TimeSpan))
+		public static Promise DownloadToFile(Uri url, string downloadToFilePath, NameValueCollection requestHeaders = null, Action<long, long> downloadProgressCallback = null, TimeSpan timeout = default(TimeSpan), Promise cancellation = null)
 		{
 			if (url == null) throw new ArgumentNullException("url");
 			if (downloadToFilePath == null) throw new ArgumentNullException("downloadToFilePath");
@@ -41,24 +41,11 @@ namespace GameDevWare.Charon.Unity.Utils
 			var downloadDir = Path.GetDirectoryName(downloadToFilePath);
 			if (string.IsNullOrEmpty(downloadDir) == false && Directory.Exists(downloadDir) == false)
 				Directory.CreateDirectory(downloadDir);
-			
+
 
 			const bool LEAVE_OPEN = false;
 			var downloadToStream = new FileStream(downloadToFilePath, FileMode.Create, FileAccess.Write, FileShare.None, BUFFER_SIZE, FileOptions.None);
-			var downloadCoroutine = new Coroutine<long>(DownloadToAsync(url, downloadToStream, LEAVE_OPEN, requestHeaders, downloadProgressCallback, timeout)).ContinueWith(new FuncContinuation<long, long>(p =>
-			{
-				if (p.HasErrors)
-				{
-					throw EnrichWebError(p.Error, url, requestHeaders, timeout);
-				}
-				
-				return p.GetResult();
-			}));
-			return downloadCoroutine;
-		}
-		public static Promise DownloadTo(Stream downloadToStream, Uri url, NameValueCollection requestHeaders = null, Action<long, long> downloadProgressCallback = null, TimeSpan timeout = default(TimeSpan))
-		{
-			var downloadCoroutine = new Coroutine<long>(DownloadToAsync(url, downloadToStream, true, requestHeaders, downloadProgressCallback, timeout)).ContinueWith(new FuncContinuation<long, long>(p =>
+			var downloadCoroutine = new Coroutine<long>(DownloadToAsync(url, downloadToStream, LEAVE_OPEN, requestHeaders, downloadProgressCallback, timeout, cancellation)).ContinueWith(new FuncContinuation<long, long>(p =>
 			{
 				if (p.HasErrors)
 				{
@@ -69,11 +56,24 @@ namespace GameDevWare.Charon.Unity.Utils
 			}));
 			return downloadCoroutine;
 		}
-		public static Promise<T> GetJson<T>(Uri url, NameValueCollection requestHeaders = null, Action<long, long> downloadProgressCallback = null, TimeSpan timeout = default(TimeSpan))
+		public static Promise DownloadTo(Stream downloadToStream, Uri url, NameValueCollection requestHeaders = null, Action<long, long> downloadProgressCallback = null, TimeSpan timeout = default(TimeSpan), Promise cancellation = null)
+		{
+			var downloadCoroutine = new Coroutine<long>(DownloadToAsync(url, downloadToStream, true, requestHeaders, downloadProgressCallback, timeout, cancellation)).ContinueWith(new FuncContinuation<long, long>(p =>
+			{
+				if (p.HasErrors)
+				{
+					throw EnrichWebError(p.Error, url, requestHeaders, timeout);
+				}
+
+				return p.GetResult();
+			}));
+			return downloadCoroutine;
+		}
+		public static Promise<T> GetJson<T>(Uri url, NameValueCollection requestHeaders = null, Action<long, long> downloadProgressCallback = null, TimeSpan timeout = default(TimeSpan), Promise cancellation = null)
 		{
 			var memoryStream = new MemoryStream();
 			const bool LEAVE_OPEN = true;
-			return new Coroutine<long>(DownloadToAsync(url, memoryStream, LEAVE_OPEN, requestHeaders, downloadProgressCallback, timeout)).ContinueWith(new FuncContinuation<T>(p =>
+			return new Coroutine<long>(DownloadToAsync(url, memoryStream, LEAVE_OPEN, requestHeaders, downloadProgressCallback, timeout, cancellation)).ContinueWith(new FuncContinuation<T>(p =>
 			{
 				if (p.HasErrors)
 				{
@@ -88,10 +88,10 @@ namespace GameDevWare.Charon.Unity.Utils
 			}));
 		}
 
-		public static Promise<MemoryStream> GetStream(Uri url, NameValueCollection requestHeaders = null, Action<long, long> downloadProgressCallback = null, TimeSpan timeout = default(TimeSpan))
+		public static Promise<MemoryStream> GetStream(Uri url, NameValueCollection requestHeaders = null, Action<long, long> downloadProgressCallback = null, TimeSpan timeout = default(TimeSpan), Promise cancellation = null)
 		{
 			var memoryStream = new MemoryStream();
-			return DownloadTo(memoryStream, url, requestHeaders, downloadProgressCallback).ContinueWith(p =>
+			return DownloadTo(memoryStream, url, requestHeaders, downloadProgressCallback, cancellation: cancellation).ContinueWith(p =>
 			{
 				if (p.HasErrors)
 				{
@@ -103,16 +103,20 @@ namespace GameDevWare.Charon.Unity.Utils
 			});
 		}
 
-		private static IEnumerable DownloadToAsync(Uri url, Stream downloadToStream, bool leaveOpen, NameValueCollection requestHeaders, Action<long, long> downloadProgressCallback, TimeSpan timeout)
+		private static IEnumerable DownloadToAsync(Uri url, Stream downloadToStream, bool leaveOpen, NameValueCollection requestHeaders, Action<long, long> downloadProgressCallback, TimeSpan timeout, Promise cancellation)
 		{
 			if (url == null) throw new ArgumentNullException("url");
 			if (downloadToStream == null) throw new ArgumentNullException("downloadToStream");
 
 			var noCertificateValidationContext = new NoCertificateValidationContext();
 			var written = 0L;
+			var request = default(HttpWebRequest);
+			var responseStream = default(Stream);
 			try
 			{
-				var request = (HttpWebRequest)WebRequest.Create(url);
+				cancellation.ThrowIfCancellationRequested();
+
+				request = (HttpWebRequest)WebRequest.Create(url);
 				request.Accept = "*/*";
 				request.UserAgent = typeof(HttpUtils).Assembly.GetName().FullName;
 				request.AutomaticDecompression = DecompressionMethods.None;
@@ -182,7 +186,10 @@ namespace GameDevWare.Charon.Unity.Utils
 				yield return getResponseAsync;
 
 				var response = (HttpWebResponse)request.EndGetResponse(getResponseAsync);
-				var responseStream = response.GetResponseStream();
+				responseStream = response.GetResponseStream();
+
+				cancellation.ThrowIfCancellationRequested();
+
 				if (Settings.Current.Verbose)
 					UnityEngine.Debug.Log(string.Format("Got '{2}' response for [{0}]'{1}' request.", request.Method, request.RequestUri, response.StatusCode));
 
@@ -207,6 +214,8 @@ namespace GameDevWare.Charon.Unity.Utils
 					if (UnityEditor.EditorApplication.isCompiling)
 						throw new InvalidOperationException("Download has been canceled due pending compilation.");
 
+					cancellation.ThrowIfCancellationRequested();
+					
 					var readAsync = responseStream.BeginRead(buffer, 0, buffer.Length, ar =>
 					{
 						try
@@ -252,9 +261,15 @@ namespace GameDevWare.Charon.Unity.Utils
 			finally
 			{
 				noCertificateValidationContext.Dispose();
-				
+
 				if (!leaveOpen)
 					downloadToStream.Dispose();
+
+				if (responseStream != null)
+					responseStream.Dispose();
+				
+				if (request != null)
+					request.Abort();
 			}
 
 			yield return written;
