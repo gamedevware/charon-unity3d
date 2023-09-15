@@ -46,6 +46,7 @@ namespace GameDevWare.Charon.Unity.Utils
 		internal static readonly Version LegacyToolsVersion = new Version(2020, 1, 1);
 		internal static readonly Version LegacyPluginVersion = new Version(2021, 3, 0);
 
+
 		internal static Promise<RequirementsCheckResult> CheckRequirementsAsync()
 		{
 			if (string.IsNullOrEmpty(Settings.CharonExePath) || !File.Exists(Settings.CharonExePath))
@@ -171,13 +172,22 @@ namespace GameDevWare.Charon.Unity.Utils
 					charonPath,
 
 					RunOptions.FlattenArguments(
-						"SERVER START",
+						IsToolsLegacy() ? "SERVE" : "SERVER START",
 						"--dataBase", Path.GetFullPath(gameDataPath),
 						"--port", port.ToString(),
 						"--watchPid", unityPid.ToString(),
 						"--lockFile", Path.GetFullPath(lockFilePath),
 						"--scriptAssemblies", scriptingAssemblies,
-						"--log", "out",
+
+						// v2020.1.1
+						IsToolsLegacy() ? new object[] {
+							"--environment", "Unity",
+							"--extensions", Settings.SupportedExtensions,
+						} :
+						//
+						new object[] {
+							"--log", "out",
+						},
 						Settings.Current.Verbose ? "--verbose" : ""
 					)
 				)
@@ -191,6 +201,10 @@ namespace GameDevWare.Charon.Unity.Utils
 					{
 						EnvironmentVariables =
 						{
+							// v2020.1.1
+							{ "CHARON_APP_DATA", Settings.UserDataPath },
+							{ "BASE_DIRECTORY_PATH", Settings.LibraryCharonPath },
+							//
 							{ "CHARON_API_SERVER", Settings.Current.GetServerAddressUrl().OriginalString },
 							{ "CHARON_API_KEY", "" },
 							{ "STANDALONE_APPLICATIONDATAPATH", Settings.UserDataPath },
@@ -382,10 +396,10 @@ namespace GameDevWare.Charon.Unity.Utils
 			if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESS_DONE, 1.0f);
 		}
 
-		public static Promise<RunResult> CreateDocumentAsync(GameDataLocation gameDataLocation, string entity, CommandInput input, CommandOutput output)
+		public static Promise<RunResult> CreateDocumentAsync(GameDataLocation gameDataLocation, string schema, CommandInput input, CommandOutput output)
 		{
 			if (gameDataLocation.Location == null) throw new ArgumentNullException("gameDataLocation");
-			if (entity == null) throw new ArgumentNullException("entity");
+			if (schema == null) throw new ArgumentNullException("schema");
 			if (input == null) throw new ArgumentNullException("input");
 			if (output == null) throw new ArgumentNullException("output");
 
@@ -396,7 +410,7 @@ namespace GameDevWare.Charon.Unity.Utils
 				gameDataLocation.ApiKey,
 				RunOptions.FlattenArguments(
 					"DATA", "CREATE", gameDataLocation,
-					"--entity", entity,
+					IsToolsLegacy() ? "--entity" : "--schema", schema,
 					"--input", input.Source,
 					"--inputFormat", input.Format,
 					"--inputFormattingOptions", input.FormattingOptions,
@@ -409,14 +423,14 @@ namespace GameDevWare.Charon.Unity.Utils
 			return output.Capture(runTask);
 		}
 
-		public static Promise<RunResult> UpdateDocumentAsync(GameDataLocation gameDataLocation, string entity, CommandInput input, CommandOutput output)
+		public static Promise<RunResult> UpdateDocumentAsync(GameDataLocation gameDataLocation, string schema, CommandInput input, CommandOutput output)
 		{
-			return UpdateDocumentAsync(gameDataLocation, entity, string.Empty, input, output);
+			return UpdateDocumentAsync(gameDataLocation, schema, string.Empty, input, output);
 		}
-		public static Promise<RunResult> UpdateDocumentAsync(GameDataLocation gameDataLocation, string entity, string id, CommandInput input, CommandOutput output)
+		public static Promise<RunResult> UpdateDocumentAsync(GameDataLocation gameDataLocation, string schema, string id, CommandInput input, CommandOutput output)
 		{
 			if (gameDataLocation.Location == null) throw new ArgumentNullException("gameDataLocation");
-			if (entity == null) throw new ArgumentNullException("entity");
+			if (schema == null) throw new ArgumentNullException("schema");
 			if (id == null) throw new ArgumentNullException("id");
 			if (input == null) throw new ArgumentNullException("input");
 			if (output == null) throw new ArgumentNullException("output");
@@ -428,7 +442,7 @@ namespace GameDevWare.Charon.Unity.Utils
 				gameDataLocation.ApiKey,
 				RunOptions.FlattenArguments(
 					"DATA", "UPDATE", gameDataLocation,
-					"--entity", entity,
+					IsToolsLegacy() ? "--entity" : "--schema", schema,
 					"--id", id,
 					"--input", input.Source,
 					"--inputFormat", input.Format,
@@ -443,14 +457,14 @@ namespace GameDevWare.Charon.Unity.Utils
 			return output.Capture(runTask);
 		}
 
-		public static Promise<RunResult> DeleteDocumentAsync(GameDataLocation gameDataLocation, string entity, CommandInput input, CommandOutput output)
+		public static Promise<RunResult> DeleteDocumentAsync(GameDataLocation gameDataLocation, string schema, CommandInput input, CommandOutput output)
 		{
-			return DeleteDocumentAsync(gameDataLocation, entity, string.Empty, input, output);
+			return DeleteDocumentAsync(gameDataLocation, schema, string.Empty, input, output);
 		}
-		public static Promise<RunResult> DeleteDocumentAsync(GameDataLocation gameDataLocation, string entity, string id, CommandInput input, CommandOutput output)
+		public static Promise<RunResult> DeleteDocumentAsync(GameDataLocation gameDataLocation, string schema, string id, CommandInput input, CommandOutput output)
 		{
 			if (gameDataLocation.Location == null) throw new ArgumentNullException("gameDataLocation");
-			if (entity == null) throw new ArgumentNullException("entity");
+			if (schema == null) throw new ArgumentNullException("schema");
 			if (id == null) throw new ArgumentNullException("id");
 			if (input == null) throw new ArgumentNullException("input");
 			if (output == null) throw new ArgumentNullException("output");
@@ -462,7 +476,7 @@ namespace GameDevWare.Charon.Unity.Utils
 				gameDataLocation.ApiKey,
 				RunOptions.FlattenArguments(
 					"DATA", "DELETE", gameDataLocation,
-					"--entity", entity,
+					IsToolsLegacy() ? "--entity" : "--schema", schema,
 					"--id", id,
 					"--input", input.Source,
 					"--inputFormat", input.Format,
@@ -476,10 +490,10 @@ namespace GameDevWare.Charon.Unity.Utils
 			return output.Capture(runTask);
 		}
 
-		public static Promise<RunResult> GetDocumentAsync(GameDataLocation gameDataLocation, string entity, string id, CommandOutput output)
+		public static Promise<RunResult> GetDocumentAsync(GameDataLocation gameDataLocation, string schema, string id, CommandOutput output)
 		{
 			if (gameDataLocation.Location == null) throw new ArgumentNullException("gameDataLocation");
-			if (entity == null) throw new ArgumentNullException("entity");
+			if (schema == null) throw new ArgumentNullException("schema");
 			if (id == null) throw new ArgumentNullException("id");
 			if (output == null) throw new ArgumentNullException("output");
 
@@ -490,7 +504,7 @@ namespace GameDevWare.Charon.Unity.Utils
 				gameDataLocation.ApiKey,
 				RunOptions.FlattenArguments(
 					"DATA", "FIND", gameDataLocation,
-					"--entity", entity,
+					IsToolsLegacy() ? "--entity" : "--schema", schema,
 					"--id", id,
 					"--output", output.Target,
 					"--outputFormat", output.Format,
@@ -504,10 +518,10 @@ namespace GameDevWare.Charon.Unity.Utils
 		{
 			return ImportAsync(gameDataLocation, new string[0], input, mode);
 		}
-		public static Promise<RunResult> ImportAsync(GameDataLocation gameDataLocation, string[] entities, CommandInput input, ImportMode mode)
+		public static Promise<RunResult> ImportAsync(GameDataLocation gameDataLocation, string[] schemas, CommandInput input, ImportMode mode)
 		{
 			if (gameDataLocation.Location == null) throw new ArgumentNullException("gameDataLocation");
-			if (entities == null) throw new ArgumentNullException("entities");
+			if (schemas == null) throw new ArgumentNullException("schemas");
 			if (input == null) throw new ArgumentNullException("input");
 
 			if (Enum.IsDefined(typeof(ImportMode), mode) == false) throw new ArgumentException("Unknown import mode.", "mode");
@@ -518,7 +532,7 @@ namespace GameDevWare.Charon.Unity.Utils
 				gameDataLocation.ApiKey,
 				RunOptions.FlattenArguments(
 					"DATA", "IMPORT", gameDataLocation,
-					"--entities", entities,
+					IsToolsLegacy() ? "--entities" : "--schemas", schemas,
 					"--mode", mode,
 					"--input", input.Source,
 					"--inputFormat", input.Format,
@@ -533,19 +547,19 @@ namespace GameDevWare.Charon.Unity.Utils
 		{
 			return ExportAsync(gameDataLocation, new string[0], output, mode);
 		}
-		public static Promise<RunResult> ExportAsync(GameDataLocation gameDataLocation, string[] entities, CommandOutput output, ExportMode mode)
+		public static Promise<RunResult> ExportAsync(GameDataLocation gameDataLocation, string[] schemas, CommandOutput output, ExportMode mode)
 		{
-			return ExportAsync(gameDataLocation, entities, new string[0], output, mode);
+			return ExportAsync(gameDataLocation, schemas, new string[0], output, mode);
 		}
-		public static Promise<RunResult> ExportAsync(GameDataLocation gameDataLocation, string[] entities, string[] attributes, CommandOutput output, ExportMode mode)
+		public static Promise<RunResult> ExportAsync(GameDataLocation gameDataLocation, string[] schemas, string[] properties, CommandOutput output, ExportMode mode)
 		{
-			return ExportAsync(gameDataLocation, entities, attributes, new CultureInfo[0], output, mode);
+			return ExportAsync(gameDataLocation, schemas, properties, new CultureInfo[0], output, mode);
 		}
-		public static Promise<RunResult> ExportAsync(GameDataLocation gameDataLocation, string[] entities, string[] attributes, CultureInfo[] languages, CommandOutput output, ExportMode mode)
+		public static Promise<RunResult> ExportAsync(GameDataLocation gameDataLocation, string[] schemas, string[] properties, CultureInfo[] languages, CommandOutput output, ExportMode mode)
 		{
 			if (gameDataLocation.Location == null) throw new ArgumentNullException("gameDataLocation");
-			if (entities == null) throw new ArgumentNullException("entities");
-			if (attributes == null) throw new ArgumentNullException("attributes");
+			if (schemas == null) throw new ArgumentNullException("schemas");
+			if (properties == null) throw new ArgumentNullException("properties");
 			if (languages == null) throw new ArgumentNullException("languages");
 			if (output == null) throw new ArgumentNullException("output");
 
@@ -557,8 +571,8 @@ namespace GameDevWare.Charon.Unity.Utils
 				gameDataLocation.ApiKey,
 				RunOptions.FlattenArguments(
 					"DATA", "EXPORT", gameDataLocation,
-					"--entities", entities,
-					"--attributes", attributes,
+					IsToolsLegacy() ? "--entities" : "--schemas", schemas,
+					IsToolsLegacy() ? "--attributes" : "--properties", properties,
 					"--languages", Array.ConvertAll(languages, l => l.Name),
 					"--mode", mode,
 					"--output", output.Target,
@@ -930,6 +944,20 @@ namespace GameDevWare.Charon.Unity.Utils
 			}
 
 			return foundScriptingAssemblies.ToArray();
+		}
+		internal static bool IsToolsLegacy()
+		{
+			var toolsVersion = default(SemanticVersion);
+			try
+			{
+				toolsVersion = new SemanticVersion(Settings.Current.EditorVersion);
+			}
+			catch
+			{
+				/* ignore parsing errors */
+			}
+
+			return toolsVersion == null || toolsVersion.Version <= LegacyToolsVersion;
 		}
 	}
 }

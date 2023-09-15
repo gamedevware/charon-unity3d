@@ -76,8 +76,8 @@ namespace GameDevWare.Charon.Unity.ServerApi
 
 			var downloadParams = "?" +
 				"exportMode=publication&" +
-				"entities=%2A&" +
-				"attributes=%2A&" +
+				"schemas=%2A&" +
+				"properties=%2A&" +
 				"languages=%2A&" +
 				"download=true";
 

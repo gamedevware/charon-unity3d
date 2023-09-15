@@ -22,26 +22,18 @@
 namespace GameDevWare.Charon {
 	internal static class Resources
 	{
-		public const string UI_UNITYPLUGIN_ERROR_SCRIPTS_COMPILING = "Interrupted by Unity's script compilation. Retry after Unity is finished script compilation.";
+		public const string UI_UNITYPLUGIN_ERROR_SCRIPTS_COMPILING = "Interrupted by Unity's script compilation. Please retry after Unity has finished script compilation.";
 		public const string UI_UNITYPLUGIN_ERROR_CANCELLED = "Operation has been cancelled.";
 		public const string UI_UNITYPLUGIN_ABOUT_CHARON_TITLE = "Charon: Game Data Editor";
 		public const string UI_UNITYPLUGIN_ABOUT_CLOSE_BUTTON = "Close";
 		public const string UI_UNITYPLUGIN_ABOUT_EDITOR_PORT = "Editor TCP Port";
 		public const string UI_UNITYPLUGIN_ABOUT_EDITOR_VERSION_LABEL = "Editor Version";
-		public const string UI_UNITYPLUGIN_COMPILING_WARNING = "No action could be made while Unity Editor is compiling scripts.";
-		public const string UI_UNITYPLUGIN_COROUTINE_IS_RUNNIG_WARNING = "No action could be made while another routine is running.";
+		public const string UI_UNITYPLUGIN_COMPILING_WARNING = "No actions can be taken while the Unity Editor is compiling scripts.";
+		public const string UI_UNITYPLUGIN_COROUTINE_IS_RUNNIG_WARNING = "No actions can be performed while another action is running.";
 		public const string UI_UNITYPLUGIN_DOWNLOAD_BUTTON = "Update (~{0:F1} MiB)";
-		public const string UI_UNITYPLUGIN_FEEDBACK_ATTACH_FILE_BUTTON = "Attach...";
-		public const string UI_UNITYPLUGIN_FEEDBACK_ATTACH_FILE_CHECKBOX = "Attach '{0}' file ({1:F2}MiB)";
-		public const string UI_UNITYPLUGIN_FEEDBACK_EMAIL_LABEL = "E-Mail";
-		public const string UI_UNITYPLUGIN_FEEDBACK_NAME_LABEL = "Name";
-		public const string UI_UNITYPLUGIN_FEEDBACK_SEND_BUTTON = "Send";
-		public const string UI_UNITYPLUGIN_FEEDBACK_THANKS_MESSAGE = "Thank you for your feedback!";
-		public const string UI_UNITYPLUGIN_FEEDBACK_TYPE_LABEL = "Type";
-		public const string UI_UNITYPLUGIN_FEEDBACK_WINDOW_TITLE = "Send feedback";
-		public const string UI_UNITYPLUGIN_GENERATE_ASSET_CANT_FIND_GAMEDATA_CLASS = "Asset generation failed: unable to find Game's Data type in CSharp assemblies. Make sure there are no compilation errors.";
+		public const string UI_UNITYPLUGIN_GENERATE_ASSET_CANT_FIND_GAMEDATA_CLASS = "Asset generation failed: unable to find the game's data type in C# assemblies. Please ensure there are no compilation errors.";
 		public const string UI_UNITYPLUGIN_GENERATE_CODE_FOR = "Running source code generator for {0}";
-		public const string UI_UNITYPLUGIN_GENERATE_FAILED_DUE_ERRORS = "Source code generation for '{0}' failed due to errors: {1}.";
+		public const string UI_UNITYPLUGIN_GENERATE_FAILED_DUE_ERRORS = "Source code generation for '{0}' has failed due to errors: {1}.";
 		public const string UI_UNITYPLUGIN_GENERATE_REFORMAT_CODE = "Re-formatting generated source code for {0}";
 		public const string UI_UNITYPLUGIN_GENERATE_REFRESHING_ASSETS = "Refreshing assets";
 		public const string UI_UNITYPLUGIN_GENERATING_CODE_AND_ASSETS = "Generating Code and Assets...";
@@ -87,10 +79,8 @@ namespace GameDevWare.Charon {
 		public const string UI_UNITYPLUGIN_MENU_CHECK_RUNTIME = "Check Runtime...";
 		public const string UI_UNITYPLUGIN_MENU_CHECK_UPDATES = "Check for Updates...";
 		public const string UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA = "Game Data";
-		public const string UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA_BSON = "Game Data (BSON)";
 		public const string UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA_JSON = "Game Data (JSON)";
 		public const string UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA_MESSAGEPACK = "Game Data (Message Pack)";
-		public const string UI_UNITYPLUGIN_MENU_CREATE_GAMEDATA_XML = "Game Data (XML)";
 		public const string UI_UNITYPLUGIN_MENU_DOCUMENTATION = "Open Documentation";
 		public const string UI_UNITYPLUGIN_MENU_EXTRACT_T4_TEMPLATES = "Extract Code Generation Templates...";
 		public const string UI_UNITYPLUGIN_MENU_GENERATE_CODE_AND_ASSETS = "Generate Code and Assets";
@@ -112,9 +102,9 @@ namespace GameDevWare.Charon {
 		public const string UI_UNITYPLUGIN_PROGRESS_UNPACKING = "Unpacking '{0}'...";
 		public const string UI_UNITYPLUGIN_SELECT_FILE_TO_ATTACH_TITLE = "Select file to attach";
 		public const string UI_UNITYPLUGIN_SPECIFY_EXTRACTION_LOC_TITLE = "Specify extraction location...";
-		public const string UI_UNITYPLUGIN_T4_EXTRACTION_COMPLETE = "T4 Template extracted successfully.";
-		public const string UI_UNITYPLUGIN_T4_EXTRACTION_FAILED = "T4 Template extraction failed due to errors: {0}";
-		public const string UI_UNITYPLUGIN_UPDATE_AVAILABLE_MESSAGE = "A new version '{1}' of {2} is available. Current version is '{0}'.";
+		public const string UI_UNITYPLUGIN_T4_EXTRACTION_COMPLETE = "T4 Template has been extracted successfully.";
+		public const string UI_UNITYPLUGIN_T4_EXTRACTION_FAILED = "T4 Template extraction failed due to errors: {0}.";
+		public const string UI_UNITYPLUGIN_UPDATE_AVAILABLE_MESSAGE = "A new version '{1}' of {2} is available. The current version is '{0}'.";
 		public const string UI_UNITYPLUGIN_UPDATE_AVAILABLE_TITLE = "Update Available";
 		public const string UI_UNITYPLUGIN_VALIDATE_COMPLETE = "Validation of '{0}' is complete. Result: {1}, errors: {2}.";
 		public const string UI_UNITYPLUGIN_VALIDATE_FAILED_DUE_ERRORS = "Validation of '{0}' has failed due to errors: {1}.";
@@ -140,17 +130,17 @@ namespace GameDevWare.Charon {
 		public const string UI_UNITYPLUGIN_WINDOW_EDITOR_OPENING_BROWSER = "Opening web browser window...";
 		public const string UI_UNITYPLUGIN_WINDOW_EDITOR_TITLE = "Editor";
 		public const string UI_UNITYPLUGIN_WINDOW_EXTENSIONS_LABEL = "Extensions";
-		public const string UI_UNITYPLUGIN_WINDOW_FAILED_TO_START_EDITOR_TIMEOUT = "Failed to start Game Data editor due errors: Aborted by timeout.";
-		public const string UI_UNITYPLUGIN_WINDOW_FIND_MONO_MANUALLY = "a) You can manually locate Mono Runtime by clicking 'Browse...'.";
+		public const string UI_UNITYPLUGIN_WINDOW_FAILED_TO_START_EDITOR_TIMEOUT = "Failed to start the Game Data editor due to errors: Aborted by timeout.";
+		public const string UI_UNITYPLUGIN_WINDOW_FIND_MONO_MANUALLY = "a) You can manually locate Mono Runtime by clicking 'Browse...' button.";
 		public const string UI_UNITYPLUGIN_WINDOW_HELP_BUTTON = "Help";
 		public const string UI_UNITYPLUGIN_WINDOW_INFO_GROUP = "Info:";
 		public const string UI_UNITYPLUGIN_WINDOW_KILL_PROCESS_BUTTON = "Kill Process";
 		public const string UI_UNITYPLUGIN_WINDOW_PATH_TO_MONO = "Path to Mono (bin)";
-		public const string UI_UNITYPLUGIN_WINDOW_PRESS_HELP = "If you require a help with .NET Runtime installation click 'Help'.";
+		public const string UI_UNITYPLUGIN_WINDOW_PRESS_HELP = "If you require help with .NET Runtime installation, click 'Help'.";
 		public const string UI_UNITYPLUGIN_WINDOW_RE_CHECK_BUTTON = "Recheck";
 		public const string UI_UNITYPLUGIN_WINDOW_RELOAD_BUTTON = "Reload";
 		public const string UI_UNITYPLUGIN_WINDOW_RUNTIME_REQUIRED = "You need to have either .NET Runtime {0} or Mono Runtime {1} installed on your system to use Game Data Editor and its related tools.";
-		public const string UI_UNITYPLUGIN_MISSING_DOTNET_RUNTIME = "Mono or .NET runtime found on machine. Please use 'Tools -> Charon -> Troubleshooting -> Check Runtime...' to setup proper runtime.";
+		public const string UI_UNITYPLUGIN_MISSING_DOTNET_RUNTIME = "Mono or .NET runtime found on the machine. Please use 'Tools -> Charon -> Troubleshooting -> Check Runtime...' to set up the proper runtime.";
 		public const string UI_UNITYPLUGIN_WINDOW_RUNTIME_VERSION = "Runtime Version";
 		public const string UI_UNITYPLUGIN_WINDOW_RUNTIME_VERSION_ERROR = "Error";
 		public const string UI_UNITYPLUGIN_WINDOW_RUNTIME_VERSION_UNKNOWN = "Unknown";
@@ -176,7 +166,7 @@ namespace GameDevWare.Charon {
 		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_UPDATE_BUTTON = "Update";
 		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_REVIEW_UPDATES_BUTTON = "Update...";
 		public const string UI_UNITYPLUGIN_WINDOWCHECK_RESULT_MISSING_TOOLS = "Missing Tools!";
-		public const string UI_UNITYPLUGIN_SERVER_ERROR = "Request ended with following errors:";
+		public const string UI_UNITYPLUGIN_SERVER_ERROR = "The request ended with the following errors:";
 	}
 }
 

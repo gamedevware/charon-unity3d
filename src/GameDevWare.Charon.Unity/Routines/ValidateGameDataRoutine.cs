@@ -184,9 +184,11 @@ namespace GameDevWare.Charon.Unity.Routines
 						}
 
 						var id = record.Id is JsonPrimitive ? Convert.ToString(((JsonPrimitive)record.Id).Value) : Convert.ToString(record.Id);
-						var entityName = record.EntityName;
+#pragma warning disable CS0612
+						var schemaName = record.EntityName ?? record.SchemaName;
+#pragma warning restore CS0612
 
-						var validationException = new ValidationError(gameDataPath, projectId, branchId, id, entityName, error.Path, error.Message);
+						var validationException = new ValidationError(gameDataPath, projectId, branchId, id, schemaName, error.Path, error.Message);
 
 						var log = (Action<Exception>)UnityEngine.Debug.LogException;
 						log.BeginInvoke(validationException, null, null);

@@ -28,10 +28,14 @@ namespace GameDevWare.Charon.Unity.ServerApi
 	{
 		[JsonMember("id")]
 		public object Id;
-		[JsonMember("entityName")]
+		[JsonMember("entityName"), Obsolete]
 		public string EntityName;
-		[JsonMember("entityId")]
+		[JsonMember("entityId"), Obsolete]
 		public string EntityId;
+		[JsonMember("schemaName")]
+		public string SchemaName;
+		[JsonMember("schemaId")]
+		public string SchemaId;
 		[JsonMember("errors")]
 		public ValidationError[] Errors;
 

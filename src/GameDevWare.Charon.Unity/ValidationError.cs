@@ -31,8 +31,8 @@ namespace GameDevWare.Charon.Unity
 		private static readonly Dictionary<int, string> ReferenceByExceptionId = new Dictionary<int, string>();
 		private static int LastExceptionId = 1;
 
-		public ValidationError(string gameDataPath, string projectId, string branchId, string id, string entityName, string path, string errorMessage)
-			: base(string.Format("{0}->{1}, {2}", entityName, id, errorMessage))
+		public ValidationError(string gameDataPath, string projectId, string branchId, string id, string schemaName, string path, string errorMessage)
+			: base(string.Format("{0}->{1}, {2}", schemaName, id, errorMessage))
 		{
 
 			var exceptionId = LastExceptionId++;
@@ -40,7 +40,7 @@ namespace GameDevWare.Charon.Unity
 			if (StackTraceField != null) // Trick Unity into thinking that error inside game data file by replacing StackTrace of this Exception
 				StackTraceField.SetValue(this, path + " (<double-click to open>) (at " + gameDataPath + ":" + exceptionId + ")");
 
-			var reference = string.Format("view/data/{0}/{1}/form/{2}/{3}", projectId, branchId, entityName, id);
+			var reference = string.Format("view/data/{0}/{1}/form/{2}/{3}", projectId, branchId, schemaName, id);
 			ReferenceByExceptionId.Add(exceptionId, reference);
 		}
 
