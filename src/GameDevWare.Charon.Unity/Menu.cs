@@ -125,7 +125,7 @@ namespace GameDevWare.Charon.Unity
 		[MenuItem(TROUBLESHOOTING_PREFIX + Resources.UI_UNITYPLUGIN_MENU_SEND_FEEDBACK, false, 11)]
 		private static void SendFeedback()
 		{
-			Application.OpenURL("https://github.com/deniszykov/charon-unity3d/issues");
+			Application.OpenURL("https://github.com/gamedevware/charon/issues");
 		}
 
 		[MenuItem(TROUBLESHOOTING_PREFIX + Resources.UI_UNITYPLUGIN_MENU_RESET_PREFERENCES, false, 14)]
@@ -177,7 +177,7 @@ namespace GameDevWare.Charon.Unity
 		[MenuItem(TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENU_DOCUMENTATION, false, 25)]
 		private static void ShowDocumentation()
 		{
-			Application.OpenURL("https://github.com/deniszykov/charon-unity3d/wiki");
+			Application.OpenURL("https://gamedevware.github.io/charon/");
 		}
 
 		[MenuItem(TOOLS_PREFIX + Resources.UI_UNITYPLUGIN_MENU_CHECK_UPDATES, false, 28)]

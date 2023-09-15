@@ -76,7 +76,7 @@ namespace GameDevWare.Charon.Unity.Windows
 			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_DOWNLOAD_MONO_BUTTON, GUILayout.Width(140)))
 				Application.OpenURL("http://www.mono-project.com/download/#download-mac");
 			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_HELP_BUTTON, GUILayout.Width(40)))
-				Application.OpenURL("https://github.com/deniszykov/charon-unity3d/wiki/Requirements");
+				Application.OpenURL("https://gamedevware.github.io/charon/unity/requirements.html");
 			GUILayout.EndHorizontal();
 
 			GUILayout.Space(18);

@@ -12,13 +12,13 @@
 		<Description>Charon is a software for managing game's data. It is used for creating data structure, editing data and accessing this data in the code.
 
 # Documentation
-https://github.com/deniszykov/charon-unity3d/wiki
+https://gamedevware.github.io/charon/
 		</Description>
 		<PackageReleaseNotes>No release notes specified.</PackageReleaseNotes>
-		<PackageProjectUrl>https://gamedevware.com/charon</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/deniszykov/charon-unity3d</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/gamedevware/charon</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/gamedevware/charon</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<PackageLicenseUrl>https://github.com/deniszykov/charon-unity3d/blob/master/LICENSE.md</PackageLicenseUrl>
+		<PackageLicenseUrl>https://github.com/gamedevware/charon/blob/master/LICENSE.md</PackageLicenseUrl>
 		<DocumentationFile>$(TargetDir)\$(AssemblyName).xml</DocumentationFile>
 		<AssemblyVersion>2021.1.2.0</AssemblyVersion>
 	</PropertyGroup>
