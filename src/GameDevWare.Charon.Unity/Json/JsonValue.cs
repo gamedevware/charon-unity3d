@@ -152,56 +152,69 @@ namespace GameDevWare.Charon.Unity.Json
 			if (stream == null)
 				throw new ArgumentNullException("stream");
 
-			this.Save(new StreamWriter(stream, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false)));
+			this.Save(new StreamWriter(stream, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false)), false);
 		}
-		public virtual void Save(TextWriter textWriter)
+		public virtual void Save(TextWriter textWriter, bool pretty)
 		{
 			if (textWriter == null)
 				throw new ArgumentNullException("textWriter");
 
-			this.SaveInternal(textWriter);
+			this.SaveInternal(textWriter, 0, pretty);
 		}
-		public string Stringify()
+		public string Stringify(bool pretty)
 		{
 			var stringWriter = new StringWriter(CultureInfo.InvariantCulture);
-			this.Save(stringWriter);
+			this.Save(stringWriter, pretty);
 			return stringWriter.ToString();
 		}
-		private void SaveInternal(TextWriter w)
+		private void SaveInternal(TextWriter w, int indentation, bool pretty)
 		{
 			switch (this.JsonType)
 			{
 				case JsonType.Object:
-					w.Write('{');
+					indentation++;
+					this.WriteIndentation(pretty, w, indentation);
+					w.WriteLine('{');
 					var following = false;
 					foreach (var pair in ((JsonObject)this))
 					{
 						if (following)
 							w.Write(", ");
+
+						this.WriteIndentation(pretty, w, indentation);
+
 						w.Write('\"');
 						w.Write(this.EscapeString(pair.Key));
 						w.Write("\": ");
 						if (pair.Value == null)
 							w.Write("null");
 						else
-							pair.Value.SaveInternal(w);
+							pair.Value.SaveInternal(w, indentation + 1, pretty);
 						following = true;
 					}
+					indentation--;
+					this.WriteIndentation(pretty, w, indentation);
 					w.Write('}');
 					break;
 				case JsonType.Array:
+					indentation++;
+					this.WriteIndentation(pretty, w, indentation);
 					w.Write('[');
 					following = false;
-					foreach (JsonValue v in ((JsonArray)this))
+					foreach (var v in ((JsonArray)this))
 					{
 						if (following)
 							w.Write(", ");
+						this.WriteIndentation(pretty, w, indentation);
+
 						if (v != null)
-							v.SaveInternal(w);
+							v.SaveInternal(w, indentation + 1, pretty);
 						else
 							w.Write("null");
 						following = true;
 					}
+					indentation--;
+					this.WriteIndentation(pretty, w, indentation);
 					w.Write(']');
 					break;
 				case JsonType.Boolean:
@@ -212,11 +225,26 @@ namespace GameDevWare.Charon.Unity.Json
 					w.Write(this.EscapeString(((JsonPrimitive)this).GetFormattedString()));
 					w.Write('"');
 					break;
+				case JsonType.Number:
 				default:
 					w.Write(((JsonPrimitive)this).GetFormattedString());
 					break;
 			}
 		}
+		private void WriteIndentation(bool pretty, TextWriter textWriter, int indentation)
+		{
+			if (!pretty)
+			{
+				return;
+			}
+
+			textWriter.WriteLine();
+			for (var i = 0; i < indentation; i++)
+			{
+				textWriter.Write("\t");
+			}
+		}
+
 		public abstract object As(Type type);
 		public T As<T>()
 		{
@@ -225,7 +253,7 @@ namespace GameDevWare.Charon.Unity.Json
 		public override string ToString()
 		{
 			var sw = new StringWriter();
-			this.Save(sw);
+			this.Save(sw, pretty: false);
 			return sw.ToString();
 		}
 		// Characters which have to be escaped:

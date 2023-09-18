@@ -132,6 +132,19 @@ namespace GameDevWare.Charon.Unity.Json
 					case TypeCode.DateTime:
 					case TypeCode.Object: // DateTimeOffset || Guid || TimeSpan || Uri
 						return JsonType.String;
+					case TypeCode.Empty:
+					case TypeCode.DBNull:
+					case TypeCode.SByte:
+					case TypeCode.Byte:
+					case TypeCode.Int16:
+					case TypeCode.UInt16:
+					case TypeCode.Int32:
+					case TypeCode.UInt32:
+					case TypeCode.Int64:
+					case TypeCode.UInt64:
+					case TypeCode.Single:
+					case TypeCode.Double:
+					case TypeCode.Decimal:
 					default:
 						return JsonType.Number;
 				}
@@ -153,6 +166,9 @@ namespace GameDevWare.Charon.Unity.Json
 					stream.Write(bytes, 0, bytes.Length);
 					stream.WriteByte((byte)'\"');
 					break;
+				case JsonType.Number:
+				case JsonType.Object:
+				case JsonType.Array:
 				default:
 					bytes = Encoding.UTF8.GetBytes(this.GetFormattedString());
 					stream.Write(bytes, 0, bytes.Length);
@@ -181,6 +197,9 @@ namespace GameDevWare.Charon.Unity.Json
 					if (s == "NaN" || s == "Infinity" || s == "-Infinity")
 						return "\"" + s + "\"";
 					return s;
+				case JsonType.Object:
+				case JsonType.Array:
+				case JsonType.Boolean:
 				default:
 					throw new InvalidOperationException();
 			}
