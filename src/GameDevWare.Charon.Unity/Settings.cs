@@ -99,7 +99,7 @@ namespace GameDevWare.Charon.Unity
 					UseBetaFeed = false
 				};
 
-				try { File.WriteAllText(SettingsPath, JsonObject.From(settings).Stringify(), DefaultEncoding); }
+				try { File.WriteAllText(SettingsPath, JsonObject.From(settings).Stringify(pretty: true), DefaultEncoding); }
 				catch { /* ignore */ }
 			}
 			settings.Validate();
@@ -113,7 +113,7 @@ namespace GameDevWare.Charon.Unity
 
 			try
 			{
-				var content = JsonObject.From(this).Stringify();
+				var content = JsonObject.From(this).Stringify(pretty: true);
 				var currentContent = File.Exists(SettingsPath) ? File.ReadAllText(SettingsPath, DefaultEncoding) : null;
 				if (string.Equals(content, currentContent, StringComparison.OrdinalIgnoreCase))
 					return; // no changes

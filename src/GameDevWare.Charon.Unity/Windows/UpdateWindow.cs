@@ -45,7 +45,7 @@ namespace GameDevWare.Charon.Unity.Windows
 			public SemanticVersion SelectedVersion;
 			public SemanticVersion[] AllVersions;
 			public SemanticVersion ExpectedVersion;
-			public SemanticVersion MinimalExclusiveVersion;
+			public SemanticVersion MinimalInclusiveVersion;
 			public Promise<PackageInfo[]> AllBuilds;
 			public string Location;
 			public string Action;
@@ -107,7 +107,7 @@ namespace GameDevWare.Charon.Unity.Windows
 				AllBuilds = p.AllBuilds,
 				Location = p.Location,
 				ExpectedVersion = p.ExpectedVersion,
-				MinimalExclusiveVersion = new SemanticVersion(p.MinimalExclusiveVersion)
+				MinimalInclusiveVersion = new SemanticVersion(p.MinimalInclusiveVersion)
 			});
 
 			if (Settings.Current.Verbose)
@@ -289,7 +289,7 @@ namespace GameDevWare.Charon.Unity.Windows
 			{
 				if ((row.Action == DeploymentAction.ACTION_DOWNLOAD || row.Action == DeploymentAction.ACTION_UPDATE) && row.AllVersions != null)
 				{
-					var versionNames = row.AllVersions.Where(v => v > row.MinimalExclusiveVersion).Select(v => v.ToString()).ToArray();
+					var versionNames = row.AllVersions.Where(v => v >= row.MinimalInclusiveVersion).Select(v => v.ToString()).ToArray();
 					var selectedVersion = Array.IndexOf(row.AllVersions, row.SelectedVersion);
 					if (selectedVersion < 0)
 						selectedVersion = 0;

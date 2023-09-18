@@ -160,8 +160,8 @@ namespace GameDevWare.Charon.Unity.Routines
 			var loggedErrors = 0;
 			if (report.HasErrors)
 			{
-				var projectId = "current";
-				var branchId = "master";
+				var projectId = FileHelper.SanitizeFileName(Path.GetFileNameWithoutExtension(gameDataPath));
+				var branchId = "development";
 
 				if (gameDataSettings.IsConnected)
 				{

@@ -32,7 +32,7 @@ namespace GameDevWare.Charon.Unity.Updates
 		public readonly bool Disabled;
 		public Promise<SemanticVersion> CurrentVersion;
 		public SemanticVersion ExpectedVersion;
-		public Version MinimalExclusiveVersion;
+		public SemanticVersion MinimalInclusiveVersion;
 		public Promise<PackageInfo[]> AllBuilds;
 		public string Location;
 
@@ -46,7 +46,7 @@ namespace GameDevWare.Charon.Unity.Updates
 			this.Disabled = disabled;
 			this.CurrentVersion = Promise.FromResult<SemanticVersion>(null);
 			this.AllBuilds = disabled ? Promise.FromResult(new PackageInfo[0]) : PackageManager.GetVersions(id);
-			this.MinimalExclusiveVersion = new Version(0, 0, 0);
+			this.MinimalInclusiveVersion = new SemanticVersion("0.0.0");
 		}
 
 		public static ProductInformation[] GetKnownProducts()
@@ -55,13 +55,13 @@ namespace GameDevWare.Charon.Unity.Updates
 				new ProductInformation(PRODUCT_CHARON, Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_CHARON_NAME, disabled: false) {
 					CurrentVersion = CharonCli.GetVersionAsync().IgnoreFault(),
 					Location = Path.GetFullPath(Settings.CharonExePath),
-					ExpectedVersion = String.IsNullOrEmpty(Settings.Current.EditorVersion) ? default(SemanticVersion) : new SemanticVersion(Settings.Current.EditorVersion),
-					MinimalExclusiveVersion = CharonCli.LegacyToolsVersion
+					ExpectedVersion = string.IsNullOrEmpty(Settings.Current.EditorVersion) ? default(SemanticVersion) : new SemanticVersion(Settings.Current.EditorVersion),
+					MinimalInclusiveVersion = CharonCli.LegacyToolsVersion
 				},
 				new ProductInformation(PRODUCT_CHARON_UNITY, Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_CHARON_UNITY_PLUGIN_NAME, disabled: !IsAssemblyLoaded(PRODUCT_CHARON_UNITY_ASSEMBLY)) {
 					CurrentVersion = Promise.FromResult(GetAssemblyVersion(PRODUCT_CHARON_UNITY_ASSEMBLY)),
 					Location = GetAssemblyLocation(PRODUCT_CHARON_UNITY_ASSEMBLY),
-					MinimalExclusiveVersion = CharonCli.LegacyPluginVersion
+					MinimalInclusiveVersion = CharonCli.LegacyPluginVersion
 				},
 				new ProductInformation(PRODUCT_EXPRESSIONS, Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_EXPRESSIONS_PLUGIN_NAME, disabled: !IsAssemblyLoaded(PRODUCT_EXPRESSIONS_ASSEMBLY)) {
 					CurrentVersion = Promise.FromResult(GetAssemblyVersion(PRODUCT_EXPRESSIONS_ASSEMBLY)),

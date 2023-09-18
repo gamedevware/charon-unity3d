@@ -81,25 +81,22 @@ namespace ");
             this.Write(this.ToStringHelper.ToStringWithCulture(this.GameDataClassName));
             this.Write("(data, ");
             this.Write(this.ToStringHelper.ToStringWithCulture(this.GameDataClassName));
-            this.Write(".Format.Json, null, encoding, leaveOpen);\r\n\t\t\t\t\tbreak;\r\n\t\t\t\tcase \"gdbs\":\r\n\t\t\t\tcas" +
-                    "e \"bson\":\r\n\t\t\t\t\tthis.GameData = new ");
-            this.Write(this.ToStringHelper.ToStringWithCulture(this.GameDataClassName));
-            this.Write("(data, ");
-            this.Write(this.ToStringHelper.ToStringWithCulture(this.GameDataClassName));
-            this.Write(".Format.Bson, null, encoding, leaveOpen);\r\n\t\t\t\t\tbreak;\r\n\t\t\t\tcase \"gdmp\":\r\n\t\t\t\tcas" +
+            this.Write(".Format.Json, null, encoding, leaveOpen);\r\n\t\t\t\t\tbreak;\r\n\t\t\t\tcase \"gdmp\":\r\n\t\t\t\tcas" +
                     "e \"msgpack\":\r\n\t\t\t\tcase \"msgpck\":\r\n\t\t\t\t\tthis.GameData = new ");
             this.Write(this.ToStringHelper.ToStringWithCulture(this.GameDataClassName));
             this.Write("(data, ");
             this.Write(this.ToStringHelper.ToStringWithCulture(this.GameDataClassName));
-            this.Write(".Format.MessagePack, null, encoding, leaveOpen);\r\n\t\t\t\t\tbreak;\r\n\t\t\t\tcase \"gdml\":\r\n" +
-                    "\t\t\t\tcase \"xml\":\r\n\t\t\t\t\tthis.GameData = new ");
-            this.Write(this.ToStringHelper.ToStringWithCulture(this.GameDataClassName));
-            this.Write("(data, ");
-            this.Write(this.ToStringHelper.ToStringWithCulture(this.GameDataClassName));
-            this.Write(".Format.Xml, null, encoding, leaveOpen);\r\n\t\t\t\t\tbreak;\r\n\t\t\t\tdefault:\r\n\t\t\t\t\tthrow n" +
-                    "ew InvalidOperationException(string.Format(\"Unknown file extension \'{0}\'. Unable" +
-                    " to determine file format by extension.\",\r\n\t\t\t\t\t\tthis.extension));\r\n\t\t\t}\r\n\t\t}\r\n\t" +
-                    "}\r\n}\r\n\r\n");
+            this.Write(@".Format.MessagePack, null, encoding, leaveOpen);
+					break;
+				default:
+					throw new InvalidOperationException(string.Format(""Unknown file extension '{0}'. Unable to determine file format by extension."",
+						this.extension));
+			}
+		}
+	}
+}
+
+");
             return this.GenerationEnvironment.ToString();
         }
  

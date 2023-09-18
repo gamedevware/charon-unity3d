@@ -172,9 +172,9 @@ namespace GameDevWare.Charon.Unity.Json
 			switch (this.JsonType)
 			{
 				case JsonType.Object:
-					indentation++;
 					this.WriteIndentation(pretty, w, indentation);
 					w.WriteLine('{');
+					indentation++;
 					var following = false;
 					foreach (var pair in ((JsonObject)this))
 					{
@@ -197,9 +197,9 @@ namespace GameDevWare.Charon.Unity.Json
 					w.Write('}');
 					break;
 				case JsonType.Array:
-					indentation++;
 					this.WriteIndentation(pretty, w, indentation);
 					w.Write('[');
+					indentation++;
 					following = false;
 					foreach (var v in ((JsonArray)this))
 					{

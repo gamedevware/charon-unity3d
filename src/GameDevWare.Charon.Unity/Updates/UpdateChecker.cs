@@ -77,7 +77,7 @@ namespace GameDevWare.Charon.Unity.Updates
 		{
 			if (Settings.Current.Verbose)
 			{
-				Debug.LogError("Checking for product updates.");
+				Debug.Log("Checking for product updates.");
 			}
 
 			SaveLastCheckTime(LastCheckTime = DateTime.UtcNow);

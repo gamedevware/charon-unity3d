@@ -55,18 +55,10 @@ namespace <#= this.Namespace #>
 				case "json":
 					this.GameData = new <#= this.GameDataClassName #>(data, <#= this.GameDataClassName #>.Format.Json, null, encoding, leaveOpen);
 					break;
-				case "gdbs":
-				case "bson":
-					this.GameData = new <#= this.GameDataClassName #>(data, <#= this.GameDataClassName #>.Format.Bson, null, encoding, leaveOpen);
-					break;
 				case "gdmp":
 				case "msgpack":
 				case "msgpck":
 					this.GameData = new <#= this.GameDataClassName #>(data, <#= this.GameDataClassName #>.Format.MessagePack, null, encoding, leaveOpen);
-					break;
-				case "gdml":
-				case "xml":
-					this.GameData = new <#= this.GameDataClassName #>(data, <#= this.GameDataClassName #>.Format.Xml, null, encoding, leaveOpen);
 					break;
 				default:
 					throw new InvalidOperationException(string.Format("Unknown file extension '{0}'. Unable to determine file format by extension.",

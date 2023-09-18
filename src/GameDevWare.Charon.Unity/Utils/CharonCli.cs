@@ -43,8 +43,8 @@ namespace GameDevWare.Charon.Unity.Utils
 		internal static readonly Regex MonoVersionRegex = new Regex(@"version (?<v>[0-9]+\.[0-9]+\.[0-9]+)", RegexOptions.Multiline | RegexOptions.IgnoreCase);
 		internal static readonly Version MinimalMonoVersion = new Version(5, 18, 0);
 		internal static readonly Version MinimalDotNetVersion = new Version(4, 7, 2);
-		internal static readonly Version LegacyToolsVersion = new Version(2020, 1, 1);
-		internal static readonly Version LegacyPluginVersion = new Version(2021, 3, 0);
+		internal static readonly SemanticVersion LegacyToolsVersion = new SemanticVersion("2020.1.1");
+		internal static readonly SemanticVersion LegacyPluginVersion = new SemanticVersion("2021.3.0");
 
 
 		internal static Promise<RequirementsCheckResult> CheckRequirementsAsync()
@@ -172,7 +172,7 @@ namespace GameDevWare.Charon.Unity.Utils
 					charonPath,
 
 					RunOptions.FlattenArguments(
-						IsToolsLegacy() ? "SERVE" : "SERVER START",
+						IsToolsLegacy() ? new object[] { "SERVE" } : new object[] { "SERVER", "START" },
 						"--dataBase", Path.GetFullPath(gameDataPath),
 						"--port", port.ToString(),
 						"--watchPid", unityPid.ToString(),
@@ -186,6 +186,7 @@ namespace GameDevWare.Charon.Unity.Utils
 						} :
 						//
 						new object[] {
+							"--maxIdleTime", "00:00:30", // auto-close idle editor
 							"--log", "out",
 						},
 						Settings.Current.Verbose ? "--verbose" : ""
@@ -706,26 +707,73 @@ namespace GameDevWare.Charon.Unity.Utils
 				if ((optimizations & optimization) != 0)
 				{
 					optimizationsList.Add(optimization.ToString());
-				}
+				} 
 			}
 
-			var runTask = RunInternal
-			(
-				gameDataLocation.ApiKey,
-				RunOptions.FlattenArguments
+			if (IsToolsLegacy())
+			{
+				var options = default(LegacySourceCodeGenerationOptimizations);
+				if ((optimizations & SourceCodeGenerationOptimizations.DisableJsonSerialization) != 0)
+				{
+					options |= LegacySourceCodeGenerationOptimizations.DisableJsonSerialization;
+				}
+				if ((optimizations & SourceCodeGenerationOptimizations.DisableMessagePackSerialization) != 0)
+				{
+					options |= LegacySourceCodeGenerationOptimizations.DisableMessagePackSerialization;
+				}
+				if ((optimizations & SourceCodeGenerationOptimizations.DisablePatching) != 0)
+				{
+					options |= LegacySourceCodeGenerationOptimizations.DisablePatching;
+				}
+				if ((optimizations & SourceCodeGenerationOptimizations.EagerReferenceResolution) == 0)
+				{
+					options |= LegacySourceCodeGenerationOptimizations.LazyReferences;
+				}
+				if ((optimizations & SourceCodeGenerationOptimizations.RawLocalizedStrings) == 0)
+				{
+					options |= LegacySourceCodeGenerationOptimizations.HideLocalizedStrings;
+				}
+				if ((optimizations & SourceCodeGenerationOptimizations.RawReferences) == 0)
+				{
+					options |= LegacySourceCodeGenerationOptimizations.HideReferences;
+				}
+
+				var runTask = RunInternal
 				(
-					"GENERATE", "CSHARPCODE", gameDataLocation,
-					"--outputDirectory", outputDirectory,
-					"--documentClassName", documentClassName,
-					"--gameDataClassName", gameDataClassName,
-					"--namespace", @namespace,
-					"--indentation", sourceCodeIndentation.ToString(),
-					"--lineEndings", sourceCodeLineEndings.ToString(),
-					"--optimizations", optimizationsList,
-					splitFiles ? "--splitFiles" : null
-				)
-			);
-			return runTask;
+					gameDataLocation.ApiKey,
+					RunOptions.FlattenArguments
+					(
+						"GENERATE", "CSHARPCODE", gameDataLocation,
+						"--documentClassName", documentClassName,
+						"--apiClassName", gameDataClassName,
+						"--namespace", @namespace,
+						"--options", ((int)options).ToString(),
+						"--output", Path.Combine(outputDirectory, Path.ChangeExtension(Path.GetFileName(gameDataLocation.Location.LocalPath), ".cs")),
+						"--outputEncoding", "utf-8"
+					)
+				);
+				return runTask;
+			}
+			else
+			{
+				var runTask = RunInternal
+				(
+					gameDataLocation.ApiKey,
+					RunOptions.FlattenArguments
+					(
+						"GENERATE", "CSHARPCODE", gameDataLocation,
+						"--outputDirectory", outputDirectory,
+						"--documentClassName", documentClassName,
+						"--gameDataClassName", gameDataClassName,
+						"--namespace", @namespace,
+						"--indentation", sourceCodeIndentation.ToString(),
+						"--lineEndings", sourceCodeLineEndings.ToString(),
+						"--optimizations", optimizationsList,
+						splitFiles ? "--splitFiles" : null
+					)
+				);
+				return runTask;
+			}
 		}
 
 		internal static Promise<RunResult> DumpTemplatesAsync(string outputDirectory)
@@ -957,7 +1005,7 @@ namespace GameDevWare.Charon.Unity.Utils
 				/* ignore parsing errors */
 			}
 
-			return toolsVersion == null || toolsVersion.Version <= LegacyToolsVersion;
+			return toolsVersion == null || toolsVersion <= LegacyToolsVersion;
 		}
 	}
 }

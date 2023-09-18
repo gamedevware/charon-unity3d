@@ -100,7 +100,7 @@ namespace GameDevWare.Charon.Unity.Routines
 				var getLoginLinkTask = serverApiClient.GetLoginLink();
 				yield return getLoginLinkTask.IgnoreFault();
 
-				if (!getLoginLinkTask.HasErrors)
+				if (!getLoginLinkTask.HasErrors && getLoginLinkTask.GetResult() != null)
 				{
 					var loginParameters = string.Format("?loginLink={0}&returnUrl={1}", Uri.EscapeDataString(getLoginLinkTask.GetResult()), Uri.EscapeDataString(reference));
 					navigateUrl = new Uri(gameDataEditorUrl, "view/sign-in" + loginParameters);
