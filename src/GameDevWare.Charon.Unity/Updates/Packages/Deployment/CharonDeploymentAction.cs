@@ -57,9 +57,20 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Deployment
 		private IEnumerable PrepareAsync()
 		{
 			this.versionDirectory.Refresh();
+
+			if (Settings.Current.Verbose)
+			{
+				Debug.Log(string.Format("Preparing version '{0}' of '{1}' from directory '{2}'.", this.versionToDeploy, ProductInformation.PRODUCT_CHARON, this.downloadDirectory));
+			}
+
 			if (this.versionDirectory.Exists && HasValidExecutableFiles(this.versionDirectory))
 			{
 				yield break;
+			}
+
+			if (Settings.Current.Verbose)
+			{
+				Debug.Log(string.Format("Downloading '{0}' of version '{1}' into temporary directory '{2}'.", ProductInformation.PRODUCT_CHARON, this.versionToDeploy, this.downloadDirectory));
 			}
 
 			var downloadAsync = PackageManager.DownloadAndUnpack(ProductInformation.PRODUCT_CHARON, this.versionToDeploy, ArtifactKind.Tool, this.downloadDirectory, this.progressCallback);
@@ -73,14 +84,27 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Deployment
 				yield break;
 			}
 
+			if (Settings.Current.Verbose)
+			{
+				Debug.Log(string.Format("Cleaning directory '{2}' for '{1}' version of '{0}'.", ProductInformation.PRODUCT_CHARON, this.versionToDeploy, this.downloadDirectory));
+			}
+
 			this.versionDirectory.Refresh();
 			if (this.versionDirectory.Exists == false)
 			{
 				this.versionDirectory.Create();
 			}
-			this.versionDirectory.Delete();
+			this.versionDirectory.Delete(recursive: true);
 
-			this.downloadDirectory.MoveTo(this.versionDirectory.FullName);
+			if (Settings.Current.Verbose)
+			{
+				Debug.Log(string.Format("Moving temporary directory '{3}' into '{2}' for '{1}' version of '{0}'.", ProductInformation.PRODUCT_CHARON, this.versionToDeploy, this.versionDirectory, this.downloadDirectory));
+			}
+
+			Directory.Move(this.downloadDirectory.FullName, this.versionDirectory.FullName);
+
+			this.downloadDirectory.Refresh();
+			this.versionDirectory.Refresh();
 		}
 		/// <inheritdoc />
 		public override Promise Complete()
@@ -104,7 +128,9 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Deployment
 				try
 				{
 					if (Settings.Current.Verbose)
+					{
 						Debug.Log(string.Format("Removing old file '{0}' of '{1}' product.", fileToClean.FullName, ProductInformation.PRODUCT_CHARON));
+					}
 
 					fileToClean.Delete();
 				}
@@ -118,7 +144,9 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Deployment
 			foreach (var file in this.versionDirectory.GetFiles())
 			{
 				if (Settings.Current.Verbose)
-					Debug.Log(string.Format("Copying target file '{0}' for product '{1}'.", file, ProductInformation.PRODUCT_CHARON));
+				{
+					Debug.Log(string.Format("Copying target file '{0}' into '{2}' for product '{1}'.", file.FullName, ProductInformation.PRODUCT_CHARON, Settings.LibraryCharonPath));
+				}
 
 				try
 				{
@@ -131,16 +159,26 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Deployment
 			}
 
 			// ensure .config or appsettings.json file
-			if (this.versionToDeploy.Version <= CharonCli.LegacyToolsVersion)
+			if (this.versionToDeploy <= CharonCli.LegacyToolsVersion)
 			{
 				var charonConfigPath = Settings.CharonExePath + ".config";
 				CreateAppConfig(charonConfigPath);
+
+				if (Settings.Current.Verbose)
+				{
+					Debug.Log(string.Format("Copying configuration file '{0}' into '{2}' for product '{1}'.", charonConfigPath, ProductInformation.PRODUCT_CHARON, Settings.LibraryCharonPath));
+				}
 			}
 			else
 			{
 				var charonDirectoryPath = Path.GetDirectoryName(Settings.CharonExePath) ?? Settings.LibraryCharonPath;
 				var charonAppSettingsPath = Path.Combine(charonDirectoryPath, "appsettings.json");
 				CreateAppSettings(charonAppSettingsPath);
+
+				if (Settings.Current.Verbose)
+				{
+					Debug.Log(string.Format("Copying appsettings file '{0}' into '{2}' for product '{1}'.", charonAppSettingsPath, ProductInformation.PRODUCT_CHARON, Settings.LibraryCharonPath));
+				}
 			}
 
 			var currentVersion = default(SemanticVersion);
@@ -151,6 +189,11 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Deployment
 				var checkToolsVersion = CharonCli.GetVersionAsync();
 				yield return checkToolsVersion.IgnoreFault();
 				currentVersion = checkToolsVersion.HasErrors ? default(SemanticVersion) : checkToolsVersion.GetResult();
+
+				if (Settings.Current.Verbose)
+				{
+					Debug.Log(string.Format("Current deployed version of '{0}' is {1}.", ProductInformation.PRODUCT_CHARON, checkToolsVersion.GetResult()));
+				}
 			}
 
 			Settings.Current.EditorVersion = currentVersion != null ? currentVersion.ToString() : null;
@@ -207,6 +250,11 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Deployment
 			this.downloadDirectory.Refresh();
 			if (this.downloadDirectory.Exists)
 			{
+				if (Settings.Current.Verbose)
+				{
+					Debug.Log(string.Format("Deleting temporary download directory '{0}'.", this.downloadDirectory));
+				}
+
 				try { this.downloadDirectory.Delete(recursive: true); }
 				catch (Exception error)
 				{
