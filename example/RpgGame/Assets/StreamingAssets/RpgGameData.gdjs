@@ -1,17 +1,18 @@
 {
-	"ToolsVersion": "2019.3.4.0",
-	"ChangeNumber": 23,
+	"ToolsVersion": "2023.3.33.0",
+	"RevisionHash": "651b2bc1983a366fc0ab025c",
+	"ChangeNumber": 4,
 	"Collections": {
-		"Entity": [
+		"Schema": [
 			{
 				"Id": "18d4bf318f3c49688087dbed",
-				"Name": "Entity",
-				"DisplayName": "Entity",
-				"Group": "Design",
+				"Name": "Schema",
+				"DisplayName": "Schemas",
+				"Type": 0,
 				"Description": null,
 				"IdGenerator": 1,
-				"Specifications": "classgen=skip&icon=blueprint",
-				"Attributes": [
+				"Specification": "classgen=skip&icon=blueprint&group=Metadata",
+				"Properties": [
 					{
 						"Id": "53bd34a376a21229219cb156",
 						"Name": "Id",
@@ -20,10 +21,10 @@
 						"DataType": 0,
 						"DefaultValue": null,
 						"Uniqueness": 1,
-						"Requirement": 2,
+						"Requirement": 3,
 						"ReferenceType": null,
-						"Size": 12,
-						"Specifications": null
+						"Size": 24,
+						"Specification": null
 					},
 					{
 						"Id": "3ad672c130f6192149605540",
@@ -33,10 +34,10 @@
 						"DataType": 0,
 						"DefaultValue": null,
 						"Uniqueness": 2,
-						"Requirement": 2,
+						"Requirement": 3,
 						"ReferenceType": null,
-						"Size": 8000,
-						"Specifications": null
+						"Size": 128,
+						"Specification": null
 					},
 					{
 						"Id": "16e2300bf6a23c488629e69d",
@@ -46,23 +47,23 @@
 						"DataType": 0,
 						"DefaultValue": null,
 						"Uniqueness": 0,
-						"Requirement": 2,
-						"ReferenceType": null,
-						"Size": 8000,
-						"Specifications": null
-					},
-					{
-						"Id": "59088257983a362690093cf2",
-						"Name": "Group",
-						"DisplayName": "Group",
-						"Description": null,
-						"DataType": 0,
-						"DefaultValue": null,
-						"Uniqueness": 0,
-						"Requirement": 0,
+						"Requirement": 3,
 						"ReferenceType": null,
 						"Size": 128,
-						"Specifications": "editor=combobox"
+						"Specification": null
+					},
+					{
+						"Id": "59f9e7dc923a364298db5e34",
+						"Name": "Type",
+						"DisplayName": "Type",
+						"Description": null,
+						"DataType": 18,
+						"DefaultValue": null,
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specification": "pick.Normal=0&pick.Component=1&pick.Settings=2"
 					},
 					{
 						"Id": "59088257983a362690093cf4",
@@ -74,8 +75,8 @@
 						"Uniqueness": 0,
 						"Requirement": 0,
 						"ReferenceType": null,
-						"Size": 8000,
-						"Specifications": "editor=textareafield&editor.grow=true"
+						"Size": 2048,
+						"Specification": "editor=textareafield&editor.grow=true"
 					},
 					{
 						"Id": "41a0a2dd9519fbb5e32c5932",
@@ -88,25 +89,25 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": "pick.None=0&pick.ObjectId=1&pick.Guid=2&pick.Sequence=3&pick.GlobalSequence=4"
+						"Specification": "pick.None=0&pick.ObjectId=1&pick.Guid=2&pick.Sequence=3&pick.GlobalSequence=4"
 					},
 					{
 						"Id": "356560097834457153bb7b64",
-						"Name": "Specifications",
-						"DisplayName": "Specifications",
+						"Name": "Specification",
+						"DisplayName": "Specification",
 						"Description": null,
 						"DataType": 0,
 						"DefaultValue": null,
 						"Uniqueness": 0,
 						"Requirement": 0,
 						"ReferenceType": null,
-						"Size": 8000,
-						"Specifications": null
+						"Size": 10240,
+						"Specification": null
 					},
 					{
 						"Id": "cec3d153d20fdb588c1161c9",
-						"Name": "Attributes",
-						"DisplayName": "Attributes",
+						"Name": "Properties",
+						"DisplayName": "Properties",
 						"Description": null,
 						"DataType": 23,
 						"DefaultValue": null,
@@ -114,10 +115,10 @@
 						"Requirement": 2,
 						"ReferenceType": {
 							"Id": "d40d8eb1a23248b69b252eea",
-							"DisplayName": "Attribute"
+							"DisplayName": "Properties"
 						},
 						"Size": 0,
-						"Specifications": null
+						"Specification": null
 					}
 				]
 			},
@@ -125,11 +126,12 @@
 				"Id": "55a4f32faca22e191098f3d9",
 				"Name": "ProjectSettings",
 				"DisplayName": "Project Settings",
-				"Group": "Settings",
+				"Type": 2,
+				"Group": "Metadata",
 				"Description": null,
 				"IdGenerator": 1,
-				"Specifications": "classgen=skip&icon=gear&type=settings",
-				"Attributes": [
+				"Specification": "classgen=skip&icon=gear&type=settings&group=Settings",
+				"Properties": [
 					{
 						"Id": "59088258983a362690093d00",
 						"Name": "Id",
@@ -138,10 +140,10 @@
 						"DataType": 0,
 						"DefaultValue": null,
 						"Uniqueness": 1,
-						"Requirement": 2,
+						"Requirement": 3,
 						"ReferenceType": null,
 						"Size": 24,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59088258983a362690093d01",
@@ -154,7 +156,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 128,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59088259983a362690093d0f",
@@ -167,7 +169,7 @@
 						"Requirement": 0,
 						"ReferenceType": null,
 						"Size": 32,
-						"Specifications": "editor=languagefield"
+						"Specification": "editor=languagefield"
 					},
 					{
 						"Id": "59088259983a362690093d0d",
@@ -180,7 +182,7 @@
 						"Requirement": 0,
 						"ReferenceType": null,
 						"Size": 8000,
-						"Specifications": "editor=languagelistfield"
+						"Specification": "editor=languagelistfield"
 					},
 					{
 						"Id": "59088259983a362690093d0b",
@@ -193,7 +195,20 @@
 						"Requirement": 0,
 						"ReferenceType": null,
 						"Size": 512,
-						"Specifications": null
+						"Specification": null
+					},
+					{
+						"Id": "59f9e7dc923a364298db5e33",
+						"Name": "Version",
+						"DisplayName": "Version",
+						"Description": null,
+						"DataType": 0,
+						"DefaultValue": "0.0.0.0",
+						"Uniqueness": 0,
+						"Requirement": 3,
+						"ReferenceType": null,
+						"Size": 16,
+						"Specification": ""
 					}
 				]
 			},
@@ -201,23 +216,24 @@
 				"Id": "59f5b0a730bb84165c06b547",
 				"Name": "Parameter",
 				"DisplayName": "Parameter",
+				"Type": 0,
 				"Group": "Settings",
-				"Description": null,
+				"Description": "",
 				"IdGenerator": 0,
-				"Specifications": "icon=tag-hash",
-				"Attributes": [
+				"Specification": "icon=tag-hash&group=Settings",
+				"Properties": [
 					{
 						"Id": "59f5b0a730bb84165c06b548",
 						"Name": "Id",
 						"DisplayName": "Id",
-						"Description": null,
+						"Description": "",
 						"DataType": 18,
-						"DefaultValue": "0",
+						"DefaultValue": null,
 						"Uniqueness": 1,
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": "pick.Position=80&pick.VirtueChance=74&pick.KnockbackChance=73&pick.MarkChance=71&pick.StunChance=70&pick.BleedHealChance=60&pick.StressHealPercent=59&pick.StressHealTo=58&pick.StressHealFrom=57&pick.HealPercent=56&pick.HealMultiplier=55&pick.HealTo=54&pick.HealFrom=53&pick.DamagePercent=52&pick.DamageTo=51&pick.DamageFrom=50&pick.StressHealAplification=31&pick.HealAmplification=30&pick.StressResistance=29&pick.TrapResistance=28&pick.DebuffResistance=27&pick.BleedResistance=26&pick.MoveResistance=25&pick.DeathBlowResistance=24&pick.DiseaseResistance=23&pick.BlightResistance=22&pick.StunResistance=21&pick.HealResistance=20&pick.FoodConsumationMultiplier=11&pick.ScoutingChance=10&pick.Protection=9&pick.Dodge=8&pick.Stress=7&pick.CrtiticalStrikeChance=6&pick.Accuracy=5&pick.Speed=4&pick.MaxHitPointsPercent=3&pick.MaxHitPoints=2&pick.HitPoints=1"
+						"Specification": "pick.Position=80&pick.VirtueChance=74&pick.KnockbackChance=73&pick.MarkChance=71&pick.StunChance=70&pick.BleedHealChance=60&pick.StressHealPercent=59&pick.StressHealTo=58&pick.StressHealFrom=57&pick.HealPercent=56&pick.HealMultiplier=55&pick.HealTo=54&pick.HealFrom=53&pick.DamagePercent=52&pick.DamageTo=51&pick.DamageFrom=50&pick.StressHealAplification=31&pick.HealAmplification=30&pick.StressResistance=29&pick.TrapResistance=28&pick.DebuffResistance=27&pick.BleedResistance=26&pick.MoveResistance=25&pick.DeathBlowResistance=24&pick.DiseaseResistance=23&pick.BlightResistance=22&pick.StunResistance=21&pick.HealResistance=20&pick.FoodConsumationMultiplier=11&pick.ScoutingChance=10&pick.Protection=9&pick.Dodge=8&pick.Stress=7&pick.CrtiticalStrikeChance=6&pick.Accuracy=5&pick.Speed=4&pick.MaxHitPointsPercent=3&pick.MaxHitPoints=2&pick.HitPoints=1"
 					},
 					{
 						"Id": "59f5b0a730bb84165c06b549",
@@ -230,7 +246,7 @@
 						"Requirement": 0,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": "displayPrecision=2"
+						"Specification": "displayPrecision=2"
 					},
 					{
 						"Id": "59f5b0a730bb84165c06b54a",
@@ -243,13 +259,13 @@
 						"Requirement": 0,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": "displayPrecision=2"
+						"Specification": "displayPrecision=2"
 					},
 					{
 						"Id": "59f5be2030bb84165c06b5da",
 						"Name": "MinValueParameter",
 						"DisplayName": "Min Value Parameter",
-						"Description": null,
+						"Description": "",
 						"DataType": 28,
 						"DefaultValue": null,
 						"Uniqueness": 0,
@@ -258,14 +274,14 @@
 							"Id": "59f5b0a730bb84165c06b547",
 							"DisplayName": "Parameter"
 						},
-						"Size": 8000,
-						"Specifications": null
+						"Size": 0,
+						"Specification": null
 					},
 					{
 						"Id": "59f5bcec30bb84165c06b5bb",
 						"Name": "MaxValueParameter",
 						"DisplayName": "Max Value Parameter",
-						"Description": null,
+						"Description": "",
 						"DataType": 28,
 						"DefaultValue": null,
 						"Uniqueness": 0,
@@ -274,21 +290,21 @@
 							"Id": "59f5b0a730bb84165c06b547",
 							"DisplayName": "Parameter"
 						},
-						"Size": 8000,
-						"Specifications": null
+						"Size": 0,
+						"Specification": null
 					},
 					{
 						"Id": "59f5beb730bb84165c06b5e2",
 						"Name": "ValueKind",
 						"DisplayName": "Value Kind",
-						"Description": null,
+						"Description": "",
 						"DataType": 18,
-						"DefaultValue": "0",
+						"DefaultValue": "1",
 						"Uniqueness": 0,
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": "pick.Integer=1&pick.Number=2&pick.Percent=3"
+						"Specification": "pick.Integer=1&pick.Number=2&pick.Percent=3"
 					}
 				]
 			},
@@ -296,11 +312,12 @@
 				"Id": "59f5b11030bb84165c06b54e",
 				"Name": "ParameterValue",
 				"DisplayName": "Parameter Value",
-				"Group": null,
-				"Description": null,
+				"Type": 1,
+				"Group": "",
+				"Description": "",
 				"IdGenerator": 3,
-				"Specifications": "icon=edit-symbol&type=component",
-				"Attributes": [
+				"Specification": "icon=edit-symbol&type=component&displayTextTemplate=%7BParameter%7D%3A%20%7BValue%7D%2C%20Condition%3A%20%7BCondition%7D&group=",
+				"Properties": [
 					{
 						"Id": "59f5b11030bb84165c06b54f",
 						"Name": "Id",
@@ -312,7 +329,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f5b11030bb84165c06b550",
@@ -327,8 +344,8 @@
 							"Id": "59f5b0a730bb84165c06b547",
 							"DisplayName": "Parameter"
 						},
-						"Size": 8000,
-						"Specifications": null
+						"Size": 0,
+						"Specification": null
 					},
 					{
 						"Id": "59f5b11030bb84165c06b551",
@@ -341,7 +358,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": "displayPrecision=2"
+						"Specification": "displayPrecision=2"
 					},
 					{
 						"Id": "59f5dfea983a36197000369d",
@@ -357,7 +374,7 @@
 							"DisplayName": "Conditions"
 						},
 						"Size": 0,
-						"Specifications": null
+						"Specification": null
 					}
 				]
 			},
@@ -365,23 +382,24 @@
 				"Id": "59f5b1c830bb84165c06b556",
 				"Name": "Provision",
 				"DisplayName": "Provisions",
+				"Type": 0,
 				"Group": "Dungeons",
-				"Description": null,
+				"Description": "",
 				"IdGenerator": 0,
-				"Specifications": "icon=box",
-				"Attributes": [
+				"Specification": "icon=box&group=Dungeons",
+				"Properties": [
 					{
 						"Id": "59f5b1c830bb84165c06b557",
 						"Name": "Id",
 						"DisplayName": "Id",
-						"Description": null,
+						"Description": "",
 						"DataType": 0,
 						"DefaultValue": null,
 						"Uniqueness": 1,
-						"Requirement": 2,
+						"Requirement": 3,
 						"ReferenceType": null,
 						"Size": 256,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f5b1c830bb84165c06b559",
@@ -389,18 +407,18 @@
 						"DisplayName": "Cost",
 						"Description": "Cost of provision in gold",
 						"DataType": 13,
-						"DefaultValue": "0.00",
+						"DefaultValue": "0",
 						"Uniqueness": 0,
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": "displayPrecision=2"
+						"Specification": "displayPrecision=2"
 					},
 					{
 						"Id": "59f5b40530bb84165c06b571",
 						"Name": "Item",
 						"DisplayName": "Item",
-						"Description": null,
+						"Description": "",
 						"DataType": 22,
 						"DefaultValue": null,
 						"Uniqueness": 0,
@@ -409,8 +427,8 @@
 							"Id": "59f5b3f130bb84165c06b56b",
 							"DisplayName": "Item"
 						},
-						"Size": 8000,
-						"Specifications": null
+						"Size": 0,
+						"Specification": null
 					}
 				]
 			},
@@ -418,11 +436,12 @@
 				"Id": "59f5b29330bb84165c06b55c",
 				"Name": "Hero",
 				"DisplayName": "Heroes",
+				"Type": 0,
 				"Group": "Heroes and Stuff",
 				"Description": null,
 				"IdGenerator": 0,
-				"Specifications": "icon=user-gray",
-				"Attributes": [
+				"Specification": "icon=user-gray&group=Heroes%20and%20Stuff",
+				"Properties": [
 					{
 						"Id": "59f5b29330bb84165c06b55d",
 						"Name": "Id",
@@ -431,10 +450,10 @@
 						"DataType": 0,
 						"DefaultValue": null,
 						"Uniqueness": 1,
-						"Requirement": 2,
+						"Requirement": 3,
 						"ReferenceType": null,
 						"Size": 256,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f5b29330bb84165c06b55e",
@@ -447,7 +466,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 120,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f5b29330bb84165c06b55f",
@@ -460,7 +479,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 1000,
-						"Specifications": "editor=localizedtextareafield"
+						"Specification": "editor=localizedtextareafield"
 					},
 					{
 						"Id": "59f5b29330bb84165c06b560",
@@ -472,8 +491,8 @@
 						"Uniqueness": 0,
 						"Requirement": 2,
 						"ReferenceType": null,
-						"Size": 8000,
-						"Specifications": null
+						"Size": 0,
+						"Specification": null
 					},
 					{
 						"Id": "59f9e7dd983a364298db5e3e",
@@ -483,13 +502,13 @@
 						"DataType": 29,
 						"DefaultValue": null,
 						"Uniqueness": 0,
-						"Requirement": 0,
+						"Requirement": 2,
 						"ReferenceType": {
 							"Id": "59f5b29330bb84165c06b55c",
 							"DisplayName": "Heroes"
 						},
 						"Size": 0,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f5b29330bb84165c06b561",
@@ -504,8 +523,8 @@
 							"Id": "59f5b1c830bb84165c06b556",
 							"DisplayName": "Provisions"
 						},
-						"Size": 8000,
-						"Specifications": null
+						"Size": 0,
+						"Specification": null
 					},
 					{
 						"Id": "59f9e7dd983a364298db5e3c",
@@ -518,7 +537,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f5b29330bb84165c06b562",
@@ -531,7 +550,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f5b29330bb84165c06b563",
@@ -544,7 +563,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f9e586983a364298db5e1f",
@@ -557,7 +576,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f9e7dd983a364298db5e3b",
@@ -570,7 +589,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f9e7dd983a364298db5e3a",
@@ -583,7 +602,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": "displayPrecision=2"
+						"Specification": "displayPrecision=2"
 					},
 					{
 						"Id": "59f9e7dd983a364298db5e39",
@@ -596,7 +615,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": "displayPrecision=2"
+						"Specification": "displayPrecision=2"
 					},
 					{
 						"Id": "59f9e7dd983a364298db5e38",
@@ -609,7 +628,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": "displayPrecision=2"
+						"Specification": "displayPrecision=2"
 					},
 					{
 						"Id": "59f9e7dd983a364298db5e37",
@@ -622,7 +641,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": "displayPrecision=2"
+						"Specification": "displayPrecision=2"
 					},
 					{
 						"Id": "59f9e7dd983a364298db5e36",
@@ -635,7 +654,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": "displayPrecision=2"
+						"Specification": "displayPrecision=2"
 					},
 					{
 						"Id": "59f9e7dd983a364298db5e35",
@@ -648,7 +667,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": "displayPrecision=2"
+						"Specification": "displayPrecision=2"
 					},
 					{
 						"Id": "59f9e7dc983a364298db5e34",
@@ -661,7 +680,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": "displayPrecision=2"
+						"Specification": "displayPrecision=2"
 					},
 					{
 						"Id": "59f9e7dc983a364298db5e33",
@@ -674,7 +693,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": "displayPrecision=2"
+						"Specification": "displayPrecision=2"
 					},
 					{
 						"Id": "59f9e7dc983a364298db5e32",
@@ -690,7 +709,7 @@
 							"DisplayName": "Armor"
 						},
 						"Size": 0,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f9e7dd983a364298db5e3d",
@@ -703,10 +722,10 @@
 						"Requirement": 2,
 						"ReferenceType": {
 							"Id": "59f9e745983a364298db5e22",
-							"DisplayName": "Weapon"
+							"DisplayName": "Weapon1"
 						},
 						"Size": 0,
-						"Specifications": null
+						"Specification": null
 					}
 				]
 			},
@@ -714,49 +733,50 @@
 				"Id": "59f5b3f130bb84165c06b56b",
 				"Name": "Item",
 				"DisplayName": "Item",
+				"Type": 0,
 				"Group": "Dungeons",
-				"Description": null,
+				"Description": "",
 				"IdGenerator": 0,
-				"Specifications": "icon=medal-bronze",
-				"Attributes": [
+				"Specification": "icon=medal-bronze&group=Dungeons",
+				"Properties": [
 					{
 						"Id": "59f5b3f130bb84165c06b56c",
 						"Name": "Id",
 						"DisplayName": "Id",
-						"Description": null,
+						"Description": "",
 						"DataType": 0,
 						"DefaultValue": null,
 						"Uniqueness": 1,
-						"Requirement": 2,
+						"Requirement": 3,
 						"ReferenceType": null,
 						"Size": 256,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f5b48d30bb84165c06b575",
 						"Name": "Name",
 						"DisplayName": "Name",
-						"Description": null,
+						"Description": "",
 						"DataType": 1,
 						"DefaultValue": "Translate Me!",
 						"Uniqueness": 0,
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 120,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f5c37c30bb84165c06b638",
 						"Name": "Description",
 						"DisplayName": "Description",
-						"Description": null,
+						"Description": "",
 						"DataType": 1,
 						"DefaultValue": "Translate Me!",
 						"Uniqueness": 0,
 						"Requirement": 0,
 						"ReferenceType": null,
 						"Size": 8000,
-						"Specifications": "editor=localizedtextareafield&editor.grow=true"
+						"Specification": "editor=localizedtextareafield&editor.grow=true"
 					},
 					{
 						"Id": "59f5b3f130bb84165c06b56d",
@@ -769,7 +789,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f5b3f130bb84165c06b56f",
@@ -782,23 +802,23 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f5f573983a361970003701",
 						"Name": "ActivationEffects",
 						"DisplayName": "Activation Effects",
-						"Description": null,
+						"Description": "",
 						"DataType": 23,
 						"DefaultValue": null,
 						"Uniqueness": 0,
-						"Requirement": 0,
+						"Requirement": 2,
 						"ReferenceType": {
 							"Id": "59f5b11030bb84165c06b54e",
 							"DisplayName": "Parameter Value"
 						},
 						"Size": 0,
-						"Specifications": null
+						"Specification": null
 					}
 				]
 			},
@@ -806,11 +826,12 @@
 				"Id": "59f5b57530bb84165c06b579",
 				"Name": "Location",
 				"DisplayName": "Locations",
+				"Type": 0,
 				"Group": "Dungeons",
 				"Description": null,
 				"IdGenerator": 0,
-				"Specifications": "icon=ui-slider-vertical",
-				"Attributes": [
+				"Specification": "icon=ui-slider-vertical&group=Dungeons",
+				"Properties": [
 					{
 						"Id": "59f5b57530bb84165c06b57a",
 						"Name": "Id",
@@ -819,10 +840,10 @@
 						"DataType": 0,
 						"DefaultValue": null,
 						"Uniqueness": 1,
-						"Requirement": 2,
+						"Requirement": 3,
 						"ReferenceType": null,
 						"Size": 256,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f5b57530bb84165c06b57b",
@@ -835,7 +856,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 120,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f5d286983a361970003657",
@@ -848,7 +869,7 @@
 						"Requirement": 0,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": "pick.None=0&pick.Home=1&pick.Tutorial=2"
+						"Specification": "pick.None=0&pick.Home=1&pick.Tutorial=2"
 					}
 				]
 			},
@@ -856,42 +877,43 @@
 				"Id": "59f5b61630bb84165c06b57f",
 				"Name": "Trinket",
 				"DisplayName": "Trinkets",
+				"Type": 0,
 				"Group": "Heroes and Stuff",
-				"Description": null,
+				"Description": "",
 				"IdGenerator": 0,
-				"Specifications": "icon=lollipop",
-				"Attributes": [
+				"Specification": "icon=lollipop&displayTextTemplate=%7BItem%7D&group=Heroes%20and%20Stuff",
+				"Properties": [
 					{
 						"Id": "59f5b61630bb84165c06b580",
 						"Name": "Id",
 						"DisplayName": "Id",
-						"Description": null,
+						"Description": "",
 						"DataType": 0,
 						"DefaultValue": null,
 						"Uniqueness": 1,
-						"Requirement": 2,
+						"Requirement": 3,
 						"ReferenceType": null,
 						"Size": 256,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f5b61630bb84165c06b581",
 						"Name": "Rarity",
 						"DisplayName": "Rarity",
-						"Description": null,
+						"Description": "",
 						"DataType": 18,
-						"DefaultValue": "0",
+						"DefaultValue": "1",
 						"Uniqueness": 0,
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": "pick.Common=1&pick.Uncommon=2&pick.Rare=3&pick.VeryRare=4&pick.Shrieker=5&pick.Ancestral=6&pick.CrimsonCourt=7&pick.DarkestDungeon=8&pick.Trophy=9&pick.Backer=10"
+						"Specification": "pick.Common=1&pick.Uncommon=2&pick.Rare=3&pick.VeryRare=4&pick.Shrieker=5&pick.Ancestral=6&pick.CrimsonCourt=7&pick.DarkestDungeon=8&pick.Trophy=9&pick.Backer=10"
 					},
 					{
 						"Id": "59f5b61630bb84165c06b582",
 						"Name": "OriginDungeon",
 						"DisplayName": "Origin Dungeon",
-						"Description": null,
+						"Description": "",
 						"DataType": 28,
 						"DefaultValue": null,
 						"Uniqueness": 0,
@@ -900,14 +922,14 @@
 							"Id": "59f5b57530bb84165c06b579",
 							"DisplayName": "Locations"
 						},
-						"Size": 8000,
-						"Specifications": null
+						"Size": 0,
+						"Specification": null
 					},
 					{
 						"Id": "59f5b61630bb84165c06b583",
 						"Name": "HeroRestriction",
 						"DisplayName": "Hero Restriction",
-						"Description": null,
+						"Description": "",
 						"DataType": 28,
 						"DefaultValue": null,
 						"Uniqueness": 0,
@@ -916,14 +938,14 @@
 							"Id": "59f5b29330bb84165c06b55c",
 							"DisplayName": "Heroes"
 						},
-						"Size": 8000,
-						"Specifications": null
+						"Size": 0,
+						"Specification": null
 					},
 					{
 						"Id": "59f5b65c30bb84165c06b586",
 						"Name": "Item",
 						"DisplayName": "Item",
-						"Description": null,
+						"Description": "",
 						"DataType": 22,
 						"DefaultValue": null,
 						"Uniqueness": 0,
@@ -932,14 +954,14 @@
 							"Id": "59f5b3f130bb84165c06b56b",
 							"DisplayName": "Item"
 						},
-						"Size": 8000,
-						"Specifications": null
+						"Size": 0,
+						"Specification": null
 					},
 					{
 						"Id": "59f5ea78983a3619700036cf",
 						"Name": "Effects",
 						"DisplayName": "Effects",
-						"Description": null,
+						"Description": "",
 						"DataType": 23,
 						"DefaultValue": null,
 						"Uniqueness": 0,
@@ -949,7 +971,7 @@
 							"DisplayName": "Parameter Value"
 						},
 						"Size": 0,
-						"Specifications": null
+						"Specification": null
 					}
 				]
 			},
@@ -957,68 +979,69 @@
 				"Id": "59f5b7f330bb84165c06b58a",
 				"Name": "Monster",
 				"DisplayName": "Monsters",
+				"Type": 0,
 				"Group": "Dungeons",
-				"Description": null,
+				"Description": "",
 				"IdGenerator": 0,
-				"Specifications": "icon=skull-mad",
-				"Attributes": [
+				"Specification": "icon=skull-mad&group=Dungeons",
+				"Properties": [
 					{
 						"Id": "59f5b7f330bb84165c06b58b",
 						"Name": "Id",
 						"DisplayName": "Id",
-						"Description": null,
+						"Description": "",
 						"DataType": 0,
 						"DefaultValue": null,
 						"Uniqueness": 1,
-						"Requirement": 2,
+						"Requirement": 3,
 						"ReferenceType": null,
 						"Size": 256,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f5b7f330bb84165c06b58c",
 						"Name": "Name",
 						"DisplayName": "Name",
-						"Description": null,
+						"Description": "",
 						"DataType": 1,
 						"DefaultValue": "Translate Me!",
 						"Uniqueness": 0,
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 120,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f5b7f330bb84165c06b58d",
 						"Name": "Type",
 						"DisplayName": "Type",
-						"Description": null,
+						"Description": "",
 						"DataType": 18,
-						"DefaultValue": "0",
+						"DefaultValue": "1",
 						"Uniqueness": 0,
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": "typeName=MonsterType&pick.Cosmic=10&pick.Thatchery=9&pick.Ironwork=8&pick.Crockery=7&pick.Carpentry=6&pick.Corpse=5&pick.Eldritch=4&pick.Unholy=3&pick.Beast=2&pick.Human=1"
+						"Specification": "typeName=MonsterType&pick.Cosmic=10&pick.Thatchery=9&pick.Ironwork=8&pick.Crockery=7&pick.Carpentry=6&pick.Corpse=5&pick.Eldritch=4&pick.Unholy=3&pick.Beast=2&pick.Human=1"
 					},
 					{
 						"Id": "59f60de7983a3609c836dfcb",
 						"Name": "SecondType",
 						"DisplayName": "Second Type",
-						"Description": null,
+						"Description": "",
 						"DataType": 18,
-						"DefaultValue": "0",
+						"DefaultValue": "1",
 						"Uniqueness": 0,
 						"Requirement": 0,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": "typeName=MonsterType&pick.Human=1&pick.Beast=2&pick.Unholy=3&pick.Eldritch=4&pick.Corpse=5&pick.Carpentry=6&pick.Crockery=7&pick.Ironwork=8&pick.Thatchery=9&pick.Cosmic=10"
+						"Specification": "typeName=MonsterType&pick.Human=1&pick.Beast=2&pick.Unholy=3&pick.Eldritch=4&pick.Corpse=5&pick.Carpentry=6&pick.Crockery=7&pick.Ironwork=8&pick.Thatchery=9&pick.Cosmic=10"
 					},
 					{
 						"Id": "59f5b81230bb84165c06b592",
 						"Name": "Parameters",
 						"DisplayName": "Parameters",
-						"Description": null,
+						"Description": "",
 						"DataType": 23,
 						"DefaultValue": null,
 						"Uniqueness": 0,
@@ -1028,13 +1051,13 @@
 							"DisplayName": "Parameter Value"
 						},
 						"Size": 8000,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f5c19930bb84165c06b629",
 						"Name": "Locations",
 						"DisplayName": "Locations",
-						"Description": null,
+						"Description": "",
 						"DataType": 29,
 						"DefaultValue": null,
 						"Uniqueness": 0,
@@ -1044,7 +1067,7 @@
 							"DisplayName": "Locations"
 						},
 						"Size": 8000,
-						"Specifications": null
+						"Specification": null
 					}
 				]
 			},
@@ -1052,13 +1075,65 @@
 				"Id": "59f5b9dd30bb84165c06b59a",
 				"Name": "Loot",
 				"DisplayName": "Loot",
-				"Group": null,
-				"Description": null,
+				"Type": 1,
+				"Group": "",
+				"Description": "",
 				"IdGenerator": 3,
-				"Specifications": "icon=box-share&type=component",
-				"Attributes": [
+				"Specification": "icon=box-share&type=component&displayTextTemplate=%7BType%7D%20x%7BAmount%7D&group=",
+				"Properties": [
 					{
 						"Id": "59f5b9dd30bb84165c06b59b",
+						"Name": "Id",
+						"DisplayName": "Id",
+						"Description": "",
+						"DataType": 13,
+						"DefaultValue": null,
+						"Uniqueness": 1,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specification": null
+					},
+					{
+						"Id": "59f5f304983a3619700036f2",
+						"Name": "Type",
+						"DisplayName": "Type",
+						"Description": "",
+						"DataType": 18,
+						"DefaultValue": "1",
+						"Uniqueness": 0,
+						"Requirement": 2,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specification": "pick.Gold=6&pick.Torch=5&pick.Supplies=4&pick.Trinket=3&pick.Heirloom=2&pick.Any=1&pick.Food=7"
+					},
+					{
+						"Id": "59f5f304983a3619700036f3",
+						"Name": "Amount",
+						"DisplayName": "Amount",
+						"Description": "",
+						"DataType": 13,
+						"DefaultValue": "0",
+						"Uniqueness": 0,
+						"Requirement": 0,
+						"ReferenceType": null,
+						"Size": 4,
+						"Specification": null
+					}
+				]
+			},
+			{
+				"Id": "59f5baaa30bb84165c06b5a0",
+				"Name": "CombatEffect",
+				"DisplayName": "Combat Effect",
+				"Type": 1,
+				"Group": "",
+				"Description": "",
+				"IdGenerator": 3,
+				"Specification": "icon=table-draw&type=component&displayTextTemplate=Changes%3A%20%7BChanges%7D%2C%20Duration%3A%20%7BDuration%7D%20%7BDurationUnit%7D&group=",
+				"Properties": [
+					{
+						"Id": "59f5baaa30bb84165c06b5a1",
 						"Name": "Id",
 						"DisplayName": "Id",
 						"Description": null,
@@ -1068,57 +1143,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": null
-					},
-					{
-						"Id": "59f5f304983a3619700036f2",
-						"Name": "Type",
-						"DisplayName": "Type",
-						"Description": null,
-						"DataType": 18,
-						"DefaultValue": "0",
-						"Uniqueness": 0,
-						"Requirement": 2,
-						"ReferenceType": null,
-						"Size": 4,
-						"Specifications": "pick.Gold=6&pick.Torch=5&pick.Supplies=4&pick.Trinket=3&pick.Heirloom=2&pick.Any=1&pick.Food=7"
-					},
-					{
-						"Id": "59f5f304983a3619700036f3",
-						"Name": "Amount",
-						"DisplayName": "Amount",
-						"Description": null,
-						"DataType": 13,
-						"DefaultValue": "0",
-						"Uniqueness": 0,
-						"Requirement": 0,
-						"ReferenceType": null,
-						"Size": 4,
-						"Specifications": null
-					}
-				]
-			},
-			{
-				"Id": "59f5baaa30bb84165c06b5a0",
-				"Name": "CombatEffect",
-				"DisplayName": "Combat Effect",
-				"Group": null,
-				"Description": null,
-				"IdGenerator": 3,
-				"Specifications": "icon=table-draw&type=component",
-				"Attributes": [
-					{
-						"Id": "59f5baaa30bb84165c06b5a1",
-						"Name": "Id",
-						"DisplayName": "Id",
-						"Description": null,
-						"DataType": 13,
-						"DefaultValue": "0",
-						"Uniqueness": 1,
-						"Requirement": 2,
-						"ReferenceType": null,
-						"Size": 4,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f5d5cc983a361970003673",
@@ -1128,13 +1153,13 @@
 						"DataType": 23,
 						"DefaultValue": null,
 						"Uniqueness": 0,
-						"Requirement": 0,
+						"Requirement": 2,
 						"ReferenceType": {
 							"Id": "59f5b11030bb84165c06b54e",
 							"DisplayName": "Parameter Value"
 						},
 						"Size": 0,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f5e09e983a36197000369f",
@@ -1147,7 +1172,7 @@
 						"Requirement": 0,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f5e09e983a3619700036a0",
@@ -1160,7 +1185,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": "typeName=DurationUnit&pick.Rounds=1&pick.Camps=2&pick.Missions=3"
+						"Specification": "typeName=DurationUnit&pick.Rounds=1&pick.Camps=2&pick.Missions=3"
 					}
 				]
 			},
@@ -1168,11 +1193,12 @@
 				"Id": "59f5bac130bb84165c06b5a4",
 				"Name": "CurioCleansingOption",
 				"DisplayName": "Curio Cleansing Option",
-				"Group": null,
-				"Description": null,
+				"Type": 1,
+				"Group": "",
+				"Description": "",
 				"IdGenerator": 3,
-				"Specifications": "icon=shovel&type=component",
-				"Attributes": [
+				"Specification": "icon=shovel&type=component&displayTextTemplate=%7BItem%7D%2C%20Chance%3A%20%7BChance%20%2A%20100%7D%25%2C%20Loot%3A%20%7BLoot%7D%2C%20%7BEffects%7D&group=",
+				"Properties": [
 					{
 						"Id": "59f5bac130bb84165c06b5a5",
 						"Name": "Id",
@@ -1184,7 +1210,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f5bb6130bb84165c06b5ab",
@@ -1197,7 +1223,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": "displayPrecision=2"
+						"Specification": "displayPrecision=2"
 					},
 					{
 						"Id": "59f5bac130bb84165c06b5a6",
@@ -1212,8 +1238,8 @@
 							"Id": "59f5b3f130bb84165c06b56b",
 							"DisplayName": "Item"
 						},
-						"Size": 8000,
-						"Specifications": null
+						"Size": 0,
+						"Specification": null
 					},
 					{
 						"Id": "59f5bac130bb84165c06b5a7",
@@ -1223,13 +1249,13 @@
 						"DataType": 23,
 						"DefaultValue": null,
 						"Uniqueness": 0,
-						"Requirement": 0,
+						"Requirement": 2,
 						"ReferenceType": {
 							"Id": "59f5b9dd30bb84165c06b59a",
 							"DisplayName": "Loot"
 						},
 						"Size": 8000,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f5f121983a3619700036e8",
@@ -1242,7 +1268,7 @@
 						"Requirement": 0,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": "displayPrecision=2"
+						"Specification": "displayPrecision=2"
 					},
 					{
 						"Id": "59f5f121983a3619700036e9",
@@ -1255,7 +1281,7 @@
 						"Requirement": 0,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": "displayPrecision=2"
+						"Specification": "displayPrecision=2"
 					},
 					{
 						"Id": "59f5f121983a3619700036ea",
@@ -1265,13 +1291,13 @@
 						"DataType": 23,
 						"DefaultValue": null,
 						"Uniqueness": 0,
-						"Requirement": 0,
+						"Requirement": 2,
 						"ReferenceType": {
 							"Id": "59f5b11030bb84165c06b54e",
 							"DisplayName": "Parameter Value"
 						},
 						"Size": 0,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f5bac130bb84165c06b5a9",
@@ -1283,8 +1309,8 @@
 						"Uniqueness": 0,
 						"Requirement": 2,
 						"ReferenceType": null,
-						"Size": 8000,
-						"Specifications": null
+						"Size": 0,
+						"Specification": null
 					}
 				]
 			},
@@ -1292,11 +1318,12 @@
 				"Id": "59f5bbc230bb84165c06b5ae",
 				"Name": "Curio",
 				"DisplayName": "Curios",
+				"Type": 0,
 				"Group": "Dungeons",
 				"Description": null,
 				"IdGenerator": 0,
-				"Specifications": "icon=spectacle",
-				"Attributes": [
+				"Specification": "icon=spectacle&group=Dungeons",
+				"Properties": [
 					{
 						"Id": "59f5bbc230bb84165c06b5af",
 						"Name": "Id",
@@ -1305,10 +1332,10 @@
 						"DataType": 0,
 						"DefaultValue": null,
 						"Uniqueness": 1,
-						"Requirement": 2,
+						"Requirement": 3,
 						"ReferenceType": null,
 						"Size": 256,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f5bbc230bb84165c06b5b0",
@@ -1321,7 +1348,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": "pick.None=0&pick.Reflective=1&pick.Worship=2&pick.Knowledge=4&pick.Haunted=8&pick.Scrounging=16&pick.Fountain=32&pick.Torture=64&pick.Treasure=128&pick.Body=256&pick.Unholy=512&pick.Drink=1024&pick.Food=2048"
+						"Specification": "pick.None=0&pick.Reflective=1&pick.Worship=2&pick.Knowledge=4&pick.Haunted=8&pick.Scrounging=16&pick.Fountain=32&pick.Torture=64&pick.Treasure=128&pick.Body=256&pick.Unholy=512&pick.Drink=1024&pick.Food=2048"
 					},
 					{
 						"Id": "59f5bbc230bb84165c06b5b1",
@@ -1334,7 +1361,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 8000,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f5f25f983a3619700036ee",
@@ -1347,7 +1374,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 512,
-						"Specifications": "editor=localizedtextareafield&editor.grow=true"
+						"Specification": "editor=localizedtextareafield&editor.grow=true"
 					},
 					{
 						"Id": "59f5bbc230bb84165c06b5b2",
@@ -1357,13 +1384,13 @@
 						"DataType": 23,
 						"DefaultValue": null,
 						"Uniqueness": 0,
-						"Requirement": 0,
+						"Requirement": 2,
 						"ReferenceType": {
 							"Id": "59f5bac130bb84165c06b5a4",
 							"DisplayName": "Curio Cleansing Option"
 						},
 						"Size": 8000,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f5bbc230bb84165c06b5b3",
@@ -1376,7 +1403,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": "pick.None=0&pick.Room=1&pick.Corridor=2"
+						"Specification": "pick.None=0&pick.Room=1&pick.Corridor=2"
 					},
 					{
 						"Id": "59f5c18430bb84165c06b627",
@@ -1392,7 +1419,7 @@
 							"DisplayName": "Locations"
 						},
 						"Size": 8000,
-						"Specifications": null
+						"Specification": null
 					}
 				]
 			},
@@ -1400,11 +1427,12 @@
 				"Id": "59f5d3a7983a361970003662",
 				"Name": "Disease",
 				"DisplayName": "Diseases",
+				"Type": 0,
 				"Group": "Heroes and Stuff",
 				"Description": null,
 				"IdGenerator": 0,
-				"Specifications": "icon=microformats",
-				"Attributes": [
+				"Specification": "icon=microformats&group=Heroes%20and%20Stuff",
+				"Properties": [
 					{
 						"Id": "59f5d3a7983a361970003663",
 						"Name": "Id",
@@ -1413,10 +1441,10 @@
 						"DataType": 0,
 						"DefaultValue": null,
 						"Uniqueness": 1,
-						"Requirement": 2,
+						"Requirement": 3,
 						"ReferenceType": null,
 						"Size": 256,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f5d3a7983a361970003664",
@@ -1429,7 +1457,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 120,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f5e825983a3619700036bc",
@@ -1445,7 +1473,7 @@
 							"DisplayName": "Parameter Value"
 						},
 						"Size": 0,
-						"Specifications": null
+						"Specification": null
 					}
 				]
 			},
@@ -1453,11 +1481,12 @@
 				"Id": "59f5d728983a361970003684",
 				"Name": "Quirk",
 				"DisplayName": "Quirks",
+				"Type": 0,
 				"Group": "Heroes and Stuff",
-				"Description": null,
+				"Description": "",
 				"IdGenerator": 0,
-				"Specifications": "icon=spectacle-3d",
-				"Attributes": [
+				"Specification": "icon=spectacle-3d&group=Heroes%20and%20Stuff",
+				"Properties": [
 					{
 						"Id": "59f5d728983a361970003685",
 						"Name": "Id",
@@ -1466,10 +1495,10 @@
 						"DataType": 0,
 						"DefaultValue": null,
 						"Uniqueness": 1,
-						"Requirement": 2,
+						"Requirement": 3,
 						"ReferenceType": null,
 						"Size": 256,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f5d728983a361970003686",
@@ -1482,7 +1511,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 120,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f5d728983a361970003687",
@@ -1494,8 +1523,8 @@
 						"Uniqueness": 0,
 						"Requirement": 2,
 						"ReferenceType": null,
-						"Size": 8000,
-						"Specifications": null
+						"Size": 0,
+						"Specification": null
 					},
 					{
 						"Id": "59f5e48f983a3619700036b2",
@@ -1511,7 +1540,7 @@
 							"DisplayName": "Parameter Value"
 						},
 						"Size": 0,
-						"Specifications": null
+						"Specification": null
 					}
 				]
 			},
@@ -1519,11 +1548,12 @@
 				"Id": "59f5dedf983a361970003697",
 				"Name": "Conditions",
 				"DisplayName": "Conditions",
+				"Type": 0,
 				"Group": "Settings",
 				"Description": null,
 				"IdGenerator": 0,
-				"Specifications": "icon=quill",
-				"Attributes": [
+				"Specification": "icon=quill&group=Settings",
+				"Properties": [
 					{
 						"Id": "59f5dedf983a361970003698",
 						"Name": "Id",
@@ -1532,10 +1562,10 @@
 						"DataType": 0,
 						"DefaultValue": null,
 						"Uniqueness": 1,
-						"Requirement": 2,
+						"Requirement": 3,
 						"ReferenceType": null,
 						"Size": 256,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f5dedf983a361970003699",
@@ -1548,7 +1578,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 120,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f5dedf983a36197000369a",
@@ -1560,8 +1590,8 @@
 						"Uniqueness": 0,
 						"Requirement": 2,
 						"ReferenceType": null,
-						"Size": 8000,
-						"Specifications": "result=System.Boolean&knownType=Assets.Scripts.AttackType&param.context=Assets.Scripts.CheckContext"
+						"Size": 0,
+						"Specification": "resultType=System.Boolean&knownType=AttackType&param.context=CheckContext"
 					},
 					{
 						"Id": "8268c35b36363a980100001c",
@@ -1574,70 +1604,71 @@
 						"Requirement": 0,
 						"ReferenceType": null,
 						"Size": 0,
-						"Specifications": null
+						"Specification": null
 					}
 				]
 			},
 			{
 				"Id": "59f9e745983a364298db5e22",
 				"Name": "Weapon",
-				"DisplayName": "Weapon",
+				"DisplayName": "Weapon1",
+				"Type": 1,
 				"Group": "Heroes and Stuff",
-				"Description": null,
+				"Description": "",
 				"IdGenerator": 0,
-				"Specifications": "type=component",
-				"Attributes": [
+				"Specification": "type=component&group=Heroes%20and%20Stuff",
+				"Properties": [
 					{
 						"Id": "59f9e745983a364298db5e23",
 						"Name": "Id",
 						"DisplayName": "Id",
-						"Description": null,
+						"Description": "",
 						"DataType": 0,
 						"DefaultValue": null,
 						"Uniqueness": 1,
-						"Requirement": 2,
+						"Requirement": 3,
 						"ReferenceType": null,
 						"Size": 256,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f9e745983a364298db5e24",
 						"Name": "Name",
 						"DisplayName": "Name",
-						"Description": null,
+						"Description": "",
 						"DataType": 1,
 						"DefaultValue": "Translate Me!",
 						"Uniqueness": 0,
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 120,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f9e745983a364298db5e25",
 						"Name": "DamageFrom",
 						"DisplayName": "Damage From",
-						"Description": null,
+						"Description": "",
 						"DataType": 13,
 						"DefaultValue": "0",
 						"Uniqueness": 0,
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f9e745983a364298db5e26",
 						"Name": "DamageTo",
 						"DisplayName": "Damage To",
-						"Description": null,
+						"Description": "",
 						"DataType": 13,
 						"DefaultValue": "0",
 						"Uniqueness": 0,
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f9e745983a364298db5e27",
@@ -1650,20 +1681,20 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f9e745983a364298db5e28",
 						"Name": "Speed",
 						"DisplayName": "Speed",
-						"Description": null,
+						"Description": "",
 						"DataType": 13,
 						"DefaultValue": "0",
 						"Uniqueness": 0,
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": null
+						"Specification": null
 					}
 				]
 			},
@@ -1671,11 +1702,12 @@
 				"Id": "59f9e7b6983a364298db5e2c",
 				"Name": "Armor",
 				"DisplayName": "Armor",
+				"Type": 1,
 				"Group": "Heroes and Stuff",
 				"Description": null,
 				"IdGenerator": 0,
-				"Specifications": "type=component",
-				"Attributes": [
+				"Specification": "type=component&group=Heroes%20and%20Stuff",
+				"Properties": [
 					{
 						"Id": "59f9e7b6983a364298db5e2d",
 						"Name": "Id",
@@ -1684,10 +1716,10 @@
 						"DataType": 0,
 						"DefaultValue": null,
 						"Uniqueness": 1,
-						"Requirement": 2,
+						"Requirement": 3,
 						"ReferenceType": null,
 						"Size": 256,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f9e7b6983a364298db5e2e",
@@ -1700,7 +1732,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 8000,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "59f9e7b6983a364298db5e2f",
@@ -1713,7 +1745,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": "displayPrecision=2"
+						"Specification": "displayPrecision=2"
 					},
 					{
 						"Id": "59f9e7b6983a364298db5e30",
@@ -1726,7 +1758,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": null
+						"Specification": null
 					}
 				]
 			},
@@ -1734,29 +1766,30 @@
 				"Id": "5a1d78d107ff9a7b889cba7d",
 				"Name": "ItemWithCount",
 				"DisplayName": "Item With Count",
-				"Group": "Dungeons",
-				"Description": null,
+				"Type": 1,
+				"Group": "",
+				"Description": "",
 				"IdGenerator": 3,
-				"Specifications": "icon=blue-document-sub&type=component",
-				"Attributes": [
+				"Specification": "type=component&displayTextTemplate=%7BItem%7D%2C%20Count%3A%20%7BCount%7D&icon=fugue16%2Flayers-stack&group=",
+				"Properties": [
 					{
 						"Id": "5a1d78d107ff9a7b889cba7e",
 						"Name": "Id",
 						"DisplayName": "Id",
-						"Description": null,
+						"Description": "",
 						"DataType": 13,
 						"DefaultValue": null,
 						"Uniqueness": 1,
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "5a1d78d107ff9a7b889cba7f",
 						"Name": "Item",
 						"DisplayName": "Item",
-						"Description": null,
+						"Description": "",
 						"DataType": 28,
 						"DefaultValue": null,
 						"Uniqueness": 0,
@@ -1765,21 +1798,21 @@
 							"Id": "59f5b3f130bb84165c06b56b",
 							"DisplayName": "Item"
 						},
-						"Size": 8000,
-						"Specifications": null
+						"Size": 0,
+						"Specification": null
 					},
 					{
 						"Id": "5a1d78d107ff9a7b889cba80",
 						"Name": "Count",
 						"DisplayName": "Count",
-						"Description": null,
+						"Description": "",
 						"DataType": 13,
 						"DefaultValue": "0",
 						"Uniqueness": 0,
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": null
+						"Specification": null
 					}
 				]
 			},
@@ -1787,11 +1820,12 @@
 				"Id": "5a1d78de07ff9a7b889cba83",
 				"Name": "StartingSet",
 				"DisplayName": "Starting Set",
+				"Type": 2,
 				"Group": "Settings",
 				"Description": null,
 				"IdGenerator": 3,
-				"Specifications": "icon=asterisk&type=settings",
-				"Attributes": [
+				"Specification": "icon=asterisk&type=settings&group=Settings",
+				"Properties": [
 					{
 						"Id": "5a1d78de07ff9a7b889cba84",
 						"Name": "Id",
@@ -1803,7 +1837,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "5a1d78de07ff9a7b889cba85",
@@ -1819,7 +1853,7 @@
 							"DisplayName": "Item With Count"
 						},
 						"Size": 8000,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "5a1d794107ff9a7b889cba88",
@@ -1835,7 +1869,7 @@
 							"DisplayName": "Heroes"
 						},
 						"Size": 0,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "5a1d797407ff9a7b889cba8b",
@@ -1851,19 +1885,20 @@
 							"DisplayName": "Locations"
 						},
 						"Size": 0,
-						"Specifications": null
+						"Specification": null
 					}
 				]
 			},
 			{
 				"Id": "d40d8eb1a23248b69b252eea",
-				"Name": "Attribute",
-				"DisplayName": "Attribute",
-				"Group": "Design",
+				"Name": "SchemaProperty",
+				"DisplayName": "Properties",
+				"Type": 1,
+				"Group": "Metadata",
 				"Description": null,
 				"IdGenerator": 1,
-				"Specifications": "classgen=skip&type=component",
-				"Attributes": [
+				"Specification": "classgen=skip&type=component&group=Design",
+				"Properties": [
 					{
 						"Id": "dfd84fc9957e94f02f9f60cc",
 						"Name": "Id",
@@ -1872,10 +1907,10 @@
 						"DataType": 0,
 						"DefaultValue": null,
 						"Uniqueness": 1,
-						"Requirement": 2,
+						"Requirement": 3,
 						"ReferenceType": null,
-						"Size": 12,
-						"Specifications": null
+						"Size": 24,
+						"Specification": null
 					},
 					{
 						"Id": "bd453e1e7f1543a7133d7fb1",
@@ -1885,10 +1920,10 @@
 						"DataType": 0,
 						"DefaultValue": null,
 						"Uniqueness": 2,
-						"Requirement": 2,
+						"Requirement": 3,
 						"ReferenceType": null,
-						"Size": 8000,
-						"Specifications": null
+						"Size": 128,
+						"Specification": null
 					},
 					{
 						"Id": "993520ecbe361cf06d060f2a",
@@ -1898,10 +1933,10 @@
 						"DataType": 0,
 						"DefaultValue": null,
 						"Uniqueness": 0,
-						"Requirement": 2,
+						"Requirement": 3,
 						"ReferenceType": null,
-						"Size": 8000,
-						"Specifications": null
+						"Size": 128,
+						"Specification": null
 					},
 					{
 						"Id": "59088257983a362690093cf6",
@@ -1913,8 +1948,8 @@
 						"Uniqueness": 0,
 						"Requirement": 0,
 						"ReferenceType": null,
-						"Size": 8000,
-						"Specifications": "editor=textareafield&editor.grow=true"
+						"Size": 2048,
+						"Specification": "editor=textareafield&editor.grow=true"
 					},
 					{
 						"Id": "7286478a63f200a094a1cdc8",
@@ -1927,7 +1962,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": "pick.Text=0&pick.LocalizedText=1&pick.Logical=5&pick.Time=8&pick.Date=9&pick.Number=12&pick.Document=22&pick.DocumentList=23&pick.Integer=13&pick.PickList=18&pick.Formula=35&pick.Flags=19&pick.Reference=28&pick.ReferenceList=29"
+						"Specification": "pick.Text=0&pick.LocalizedText=1&pick.Logical=5&pick.Time=8&pick.Date=9&pick.Number=12&pick.Document=22&pick.DocumentCollection=23&pick.Integer=13&pick.PickList=18&pick.Formula=35&pick.MultiPickList=19&pick.Reference=28&pick.ReferenceCollection=29"
 					},
 					{
 						"Id": "a15529ef753f70deed4af17e",
@@ -1939,8 +1974,8 @@
 						"Uniqueness": 0,
 						"Requirement": 0,
 						"ReferenceType": null,
-						"Size": 8000,
-						"Specifications": null
+						"Size": 2048,
+						"Specification": null
 					},
 					{
 						"Id": "caaa34c8708b5550c95004d9",
@@ -1953,7 +1988,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": "pick.None=0&pick.Unique=1&pick.UniqueInContainer=2"
+						"Specification": "pick.None=0&pick.Unique=1&pick.UniqueInCollection=2"
 					},
 					{
 						"Id": "d3e46e75b8a33b2b202f1a45",
@@ -1966,7 +2001,7 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": "pick.None=0&pick.NotDefault=1&pick.NotEmpty=2"
+						"Specification": "pick.None=0&pick.NotNull=2&pick.NotEmpty=3"
 					},
 					{
 						"Id": "e3664a130c8c9f45220f08a7",
@@ -1979,10 +2014,10 @@
 						"Requirement": 0,
 						"ReferenceType": {
 							"Id": "18d4bf318f3c49688087dbed",
-							"DisplayName": "Entity"
+							"DisplayName": "Schemas"
 						},
 						"Size": 0,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "8ddc9671536310356d553f7b",
@@ -1995,31 +2030,32 @@
 						"Requirement": 2,
 						"ReferenceType": null,
 						"Size": 4,
-						"Specifications": null
+						"Specification": null
 					},
 					{
 						"Id": "f1c2a71b2da0b365a852ae7a",
-						"Name": "Specifications",
-						"DisplayName": "Specifications",
+						"Name": "Specification",
+						"DisplayName": "Specification",
 						"Description": null,
 						"DataType": 0,
 						"DefaultValue": null,
 						"Uniqueness": 0,
 						"Requirement": 0,
 						"ReferenceType": null,
-						"Size": 8000,
-						"Specifications": null
+						"Size": 10240,
+						"Specification": null
 					}
 				]
 			}
 		],
 		"ProjectSettings": [
 			{
-				"Id": "59552913983a3636e0d79b53",
-				"Name": "Quite Dark Dungeon",
+				"Id": "049bc0604c363a980b000088",
+				"Name": "Quite Dark Cavern",
 				"PrimaryLanguage": "en-US",
 				"Languages": null,
-				"Copyright": null
+				"Copyright": "Copyright 2023 (c) GameDevWare",
+				"Version": "0.0.0.0"
 			}
 		],
 		"Parameter": [
@@ -2371,7 +2407,7 @@
 						"notes": null
 					},
 					"Description": {
-						"en-US": "Use to counter Blights, Poisons, and Toxins.",
+						"en-US": "Employed to counteract blights, poisons, and toxins.",
 						"notes": null
 					},
 					"StackSize": 6,
@@ -2390,7 +2426,7 @@
 						"notes": null
 					},
 					"Description": {
-						"en-US": "Use to staunch the flow of Bleeding.",
+						"en-US": "Employed to stem the tide of bleeding.",
 						"notes": null
 					},
 					"StackSize": 6,
@@ -2409,7 +2445,7 @@
 						"notes": null
 					},
 					"Description": {
-						"en-US": "Can be consumed in battle for:\u000A\u000A    +50% DMG\u000A    +15 ACC \u000A\u000AThe buff lasts for 3 rounds.\u000AOnly usable by a Hound Master.",
+						"en-US": "Can be used by a Hound Master for buff.",
 						"notes": null
 					},
 					"StackSize": 1,
@@ -2447,10 +2483,29 @@
 						"notes": null
 					},
 					"Description": {
-						"en-US": "Eat to restore health and stave off Hunger.",
+						"en-US": "\u0022Consume to rejuvenate health and forestall the effects of hunger.",
 						"notes": null
 					},
 					"StackSize": 12,
+					"GoldValue": 5,
+					"ActivationEffects": [
+					]
+				}
+			},
+			{
+				"Id": "HerbalRemedies",
+				"Cost": 200,
+				"Item": {
+					"Id": "HerbalRemedies",
+					"Name": {
+						"en-US": "Herbal Remedies",
+						"notes": null
+					},
+					"Description": {
+						"en-US": "Utilized to heal illnesses and afflictions.",
+						"notes": null
+					},
+					"StackSize": 6,
 					"GoldValue": 5,
 					"ActivationEffects": [
 					]
@@ -2466,26 +2521,7 @@
 						"notes": null
 					},
 					"Description": {
-						"en-US": "Use to purge evil and restore purity.",
-						"notes": null
-					},
-					"StackSize": 6,
-					"GoldValue": 5,
-					"ActivationEffects": [
-					]
-				}
-			},
-			{
-				"Id": "MedicinalHerbs",
-				"Cost": 200,
-				"Item": {
-					"Id": "MedicinalHerbs",
-					"Name": {
-						"en-US": "Medicinal Herbs",
-						"notes": null
-					},
-					"Description": {
-						"en-US": "Use to cure Diseases and Maladies.",
+						"en-US": "Employed to expunge malevolence and reinstate purity.",
 						"notes": null
 					},
 					"StackSize": 6,
@@ -2504,7 +2540,7 @@
 						"notes": null
 					},
 					"Description": {
-						"en-US": "Removes any obstacle out of the way.",
+						"en-US": "Eliminates any obstruction hindering the path.",
 						"notes": null
 					},
 					"StackSize": 4,
@@ -2523,7 +2559,7 @@
 						"notes": null
 					},
 					"Description": {
-						"en-US": "Use to unlock Strongboxes and Doors.",
+						"en-US": "Utilized to unlock sturdy chests and doors.",
 						"notes": null
 					},
 					"StackSize": 6,
@@ -2542,7 +2578,7 @@
 						"notes": null
 					},
 					"Description": {
-						"en-US": "Increases the Light level.",
+						"en-US": "Lit the way.",
 						"notes": null
 					},
 					"StackSize": 8,
@@ -2554,145 +2590,13 @@
 		],
 		"Hero": [
 			{
-				"Id": "Abomination",
+				"Id": "Crossbower",
 				"Name": {
-					"en-US": "Abomination",
+					"en-US": "Crossbower",
 					"notes": null
 				},
 				"Bio": {
-					"en-US": "Beaten, branded and imprisoned for untold decades, this furtive vagrant hides a terrible secret. The Eldritch poison coursing through his veins has given him unspeakable power, at a terrible cost. As his form changes, so too does his role in combat! ",
-					"notes": null
-				},
-				"Religious": false,
-				"DislikeHeroes": [
-				],
-				"Provisions": null,
-				"ProvisionsCount": 0,
-				"MovementForward": 1,
-				"MovementBackward": 2,
-				"Protection": 0,
-				"AccuracyModifier": 0,
-				"StunResistance": 0.4,
-				"BlightResistance": 0.6,
-				"DiseaseResistance": 0.2,
-				"DeathBlowResistance": 0.67,
-				"MoveResistance": 0.4,
-				"BleedResistance": 0.3,
-				"DebuffResistance": 0.2,
-				"TrapResistance": 0.1,
-				"Armors": [
-					{
-						"Id": "AbominationArmor1",
-						"Name": {
-							"en-US": "Rusty Chains",
-							"notes": null
-						},
-						"Dodge": 0.075,
-						"HitPoints": 26
-					},
-					{
-						"Id": "AbominationArmor2",
-						"Name": {
-							"en-US": "Iron Chains",
-							"notes": null
-						},
-						"Dodge": 0.125,
-						"HitPoints": 31
-					},
-					{
-						"Id": "AbominationArmor3",
-						"Name": {
-							"en-US": "Steel Chains",
-							"notes": null
-						},
-						"Dodge": 0.175,
-						"HitPoints": 36
-					},
-					{
-						"Id": "AbominationArmor4",
-						"Name": {
-							"en-US": "Hellforged Chains ",
-							"notes": null
-						},
-						"Dodge": 0.225,
-						"HitPoints": 41
-					},
-					{
-						"Id": "AbominationArmor5",
-						"Name": {
-							"en-US": "Inhuman Bondage",
-							"notes": null
-						},
-						"Dodge": 0.275,
-						"HitPoints": 46
-					}
-				],
-				"Weapons": [
-					{
-						"Id": "AbominationWeapon1",
-						"Name": {
-							"en-US": "Incubating Mutation ",
-							"notes": null
-						},
-						"DamageFrom": 6,
-						"DamageTo": 11,
-						"CriticalStrikeChance": 0.025,
-						"Speed": 7
-					},
-					{
-						"Id": "AbominationWeapon2",
-						"Name": {
-							"en-US": "Progressive Mutation",
-							"notes": null
-						},
-						"DamageFrom": 7,
-						"DamageTo": 13,
-						"CriticalStrikeChance": 0.03,
-						"Speed": 7
-					},
-					{
-						"Id": "AbominationWeapon3",
-						"Name": {
-							"en-US": "Aggressive Mutation ",
-							"notes": null
-						},
-						"DamageFrom": 8,
-						"DamageTo": 15,
-						"CriticalStrikeChance": 0.035,
-						"Speed": 8
-					},
-					{
-						"Id": "AbominationWeapon4",
-						"Name": {
-							"en-US": "Malignant Mutation ",
-							"notes": null
-						},
-						"DamageFrom": 10,
-						"DamageTo": 18,
-						"CriticalStrikeChance": 0.04,
-						"Speed": 8
-					},
-					{
-						"Id": "AbominationWeapon5",
-						"Name": {
-							"en-US": "Damnation's Gift",
-							"notes": null
-						},
-						"DamageFrom": 11,
-						"DamageTo": 20,
-						"CriticalStrikeChance": 0.045,
-						"Speed": 9
-					}
-				]
-			},
-			{
-				"Id": "Arbalest",
-				"Name": {
-					"en-US": "Arbalest",
-					"notes": null
-				},
-				"Bio": {
-					"en-US": "Clad in heavy armor and able to vanquish foes with her massive crossbow, she is like a living embodiment of a cannon. Her life of war has given her many skills for the battlefield such as marking down targets, raining arrows upon her foes and even firing bolas to disrupt the enemy's formation. She also learned how to dress and treat wounds, and can apply makeshift healing upon the battlefield.\u000A\u000AGiven enough time at camp, she can treat the wounds of all her allies, or even instruct them in how to be quicker than their adversaries. Or she may spend her night tending to her crossbow, her one companion since childhood. As long as she is given ample distance between herself and her quarry,",
+					"en-US": "Enveloped in weighty armor and capable of obliterating adversaries with her colossal crossbow, she is akin to a corporeal manifestation of a cannon. Her existence as a warrior has bestowed upon her numerous aptitudes for the battleground, including designating targets, unleashing a barrage of arrows upon her foes, and deploying bolas to disrupt the enemy's formation. She has also acquired the knowledge to dress and tend to wounds, and can administer makeshift remedies in the midst of battle.\u000A",
 					"notes": null
 				},
 				"Religious": false,
@@ -2717,7 +2621,7 @@
 				"TrapResistance": 0.1,
 				"Armors": [
 					{
-						"Id": "ArbalestArmor1",
+						"Id": "CrossbowerArmor1",
 						"Name": {
 							"en-US": "Second-Hand Plate",
 							"notes": null
@@ -2726,36 +2630,36 @@
 						"HitPoints": 27
 					},
 					{
-						"Id": "ArbalestArmor2",
+						"Id": "CrossbowerArmor2",
 						"Name": {
-							"en-US": "Pawned Plate ",
+							"en-US": "Patched Plate",
 							"notes": null
 						},
 						"Dodge": 5,
 						"HitPoints": 32
 					},
 					{
-						"Id": "ArbalestArmor3",
+						"Id": "CrossbowerArmor3",
 						"Name": {
-							"en-US": "Reliable Plate ",
+							"en-US": "Fine Plate",
 							"notes": null
 						},
 						"Dodge": 10,
 						"HitPoints": 37
 					},
 					{
-						"Id": "ArbalestArmor4",
+						"Id": "CrossbowerArmor4",
 						"Name": {
-							"en-US": "Refined Plate",
+							"en-US": "Masterwork Plate",
 							"notes": null
 						},
 						"Dodge": 15,
 						"HitPoints": 42
 					},
 					{
-						"Id": "ArbalestArmor5",
+						"Id": "CrossbowerArmor5",
 						"Name": {
-							"en-US": "Survivor",
+							"en-US": "Full Plate",
 							"notes": null
 						},
 						"Dodge": 20,
@@ -2764,9 +2668,9 @@
 				],
 				"Weapons": [
 					{
-						"Id": "ArbalestWeapon1",
+						"Id": "CrossbowerWeapon1",
 						"Name": {
-							"en-US": "Crude Crossbow",
+							"en-US": "Wooden Crossbow",
 							"notes": null
 						},
 						"DamageFrom": 4,
@@ -2775,9 +2679,9 @@
 						"Speed": 3
 					},
 					{
-						"Id": "ArbalestWeapon2",
+						"Id": "CrossbowerWeapon2",
 						"Name": {
-							"en-US": "Reinforced Crossbow ",
+							"en-US": "Reinforced Crossbow",
 							"notes": null
 						},
 						"DamageFrom": 5,
@@ -2786,9 +2690,9 @@
 						"Speed": 3
 					},
 					{
-						"Id": "ArbalestWeapon3",
+						"Id": "CrossbowerWeapon3",
 						"Name": {
-							"en-US": "Heavy Crossbow ",
+							"en-US": "Heavy Crossbow",
 							"notes": null
 						},
 						"DamageFrom": 6,
@@ -2797,9 +2701,9 @@
 						"Speed": 4
 					},
 					{
-						"Id": "ArbalestWeapon4",
+						"Id": "CrossbowerWeapon4",
 						"Name": {
-							"en-US": "Veteran's Crossbow ",
+							"en-US": "Steel Crossbow",
 							"notes": null
 						},
 						"DamageFrom": 6,
@@ -2808,9 +2712,9 @@
 						"Speed": 4
 					},
 					{
-						"Id": "ArbalestWeapon5",
+						"Id": "CrossbowerWeapon5",
 						"Name": {
-							"en-US": "Millicent",
+							"en-US": "Father's Crossbow",
 							"notes": null
 						},
 						"DamageFrom": 7,
@@ -2821,20 +2725,152 @@
 				]
 			},
 			{
-				"Id": "Crusader",
+				"Id": "Monstrosity",
 				"Name": {
-					"en-US": "Crusader",
+					"en-US": "Monstrosity",
 					"notes": null
 				},
 				"Bio": {
-					"en-US": "Every cause needs a champion, a hero to rally otherwise common men to a righteous cause and lead them to victory. The Crusader is that champion. With holy blade in hand he smites the wicked and sends them back to the darkness from whence they crept. While his armor restricts his movement it affords him great protection, allowing him to stand in the frontlines to take the blows that his weaker comrades cannot.\u000A\u000ANo matter the pressures he faces he will remain strong, finding strength within himself to keep fighting on while inspiring others to do the same. Even in the midst of battle he can galvanize his allies, giving them the strength to fight off madness for a little longer. When the Crusader is leading the charge, all of hell will know to fear the flame.",
+					"en-US": "Tortured, marked, and incarcerated for unfathomable aeons, this elusive wanderer conceals a harrowing truth. The Eldritch venom surging through his bloodstream has bestowed him with unimaginable might, at a dreadful price. As his physicality mutates, his position in battle alters irrevocably!",
+					"notes": null
+				},
+				"Religious": false,
+				"DislikeHeroes": [
+				],
+				"Provisions": null,
+				"ProvisionsCount": 0,
+				"MovementForward": 1,
+				"MovementBackward": 2,
+				"Protection": 0,
+				"AccuracyModifier": 0,
+				"StunResistance": 0.4,
+				"BlightResistance": 0.6,
+				"DiseaseResistance": 0.2,
+				"DeathBlowResistance": 0.67,
+				"MoveResistance": 0.4,
+				"BleedResistance": 0.3,
+				"DebuffResistance": 0.2,
+				"TrapResistance": 0.1,
+				"Armors": [
+					{
+						"Id": "MonstrosityArmor1",
+						"Name": {
+							"en-US": "Old Chains",
+							"notes": null
+						},
+						"Dodge": 0.075,
+						"HitPoints": 26
+					},
+					{
+						"Id": "MonstrosityArmor2",
+						"Name": {
+							"en-US": "Cooper Chains",
+							"notes": null
+						},
+						"Dodge": 0.125,
+						"HitPoints": 31
+					},
+					{
+						"Id": "MonstrosityArmor3",
+						"Name": {
+							"en-US": "Steel Chains",
+							"notes": null
+						},
+						"Dodge": 0.175,
+						"HitPoints": 36
+					},
+					{
+						"Id": "MonstrosityArmor4",
+						"Name": {
+							"en-US": "Devils Chains",
+							"notes": null
+						},
+						"Dodge": 0.225,
+						"HitPoints": 41
+					},
+					{
+						"Id": "MonstrosityArmor5",
+						"Name": {
+							"en-US": "Divine Bondage",
+							"notes": null
+						},
+						"Dodge": 0.275,
+						"HitPoints": 46
+					}
+				],
+				"Weapons": [
+					{
+						"Id": "MonstrosityWeapon1",
+						"Name": {
+							"en-US": "Incubating Horror",
+							"notes": null
+						},
+						"DamageFrom": 6,
+						"DamageTo": 11,
+						"CriticalStrikeChance": 0.025,
+						"Speed": 7
+					},
+					{
+						"Id": "MonstrosityWeapon2",
+						"Name": {
+							"en-US": "Progressive Horror",
+							"notes": null
+						},
+						"DamageFrom": 7,
+						"DamageTo": 13,
+						"CriticalStrikeChance": 0.03,
+						"Speed": 7
+					},
+					{
+						"Id": "MonstrosityWeapon3",
+						"Name": {
+							"en-US": "Aggressive Horror",
+							"notes": null
+						},
+						"DamageFrom": 8,
+						"DamageTo": 15,
+						"CriticalStrikeChance": 0.035,
+						"Speed": 8
+					},
+					{
+						"Id": "MonstrosityWeapon4",
+						"Name": {
+							"en-US": "Malignant Horror",
+							"notes": null
+						},
+						"DamageFrom": 10,
+						"DamageTo": 18,
+						"CriticalStrikeChance": 0.04,
+						"Speed": 8
+					},
+					{
+						"Id": "MonstrosityWeapon5",
+						"Name": {
+							"en-US": "Perfect Horror",
+							"notes": null
+						},
+						"DamageFrom": 11,
+						"DamageTo": 20,
+						"CriticalStrikeChance": 0.045,
+						"Speed": 9
+					}
+				]
+			},
+			{
+				"Id": "Zealot",
+				"Name": {
+					"en-US": "Zealot",
+					"notes": null
+				},
+				"Bio": {
+					"en-US": "In a world full of darkness and chaos, the Zealot is a zealot whose unwavering devotion to his cause borders on madness. He is a force to be reckoned with, feared by his enemies and revered by his allies. The heavy armor he dons is not just for protection, but also to hide the scars of his tormented past.\u000A\u000AWith his holy blade, he cuts down anyone who dares to stand in his way, leaving a trail of blood and carnage in his wake. His mere presence on the battlefield is enough to make his enemies tremble in fear, and his fervent speeches can rouse even the most cowardly of soldiers to fight on.\u000A\u000ABut his crusade comes at a heavy cost. The atrocities he has committed in the name of his cause weigh heavily on his conscience, and the burden of his sins has driven him to the brink of madness. Yet, he soldiers on, driven by a sense of duty that borders on obsession, and a belief that his cause is just, no matter the cost.",
 					"notes": null
 				},
 				"Religious": true,
 				"DislikeHeroes": [
 					{
-						"Id": "Abomination",
-						"DisplayName": "Abomination"
+						"Id": "Monstrosity",
+						"DisplayName": "Monstrosity"
 					}
 				],
 				"Provisions": {
@@ -2856,45 +2892,45 @@
 				"TrapResistance": 0.1,
 				"Armors": [
 					{
-						"Id": "CrusaderArmor1",
+						"Id": "ZealotArmor1",
 						"Name": {
-							"en-US": "Rusty Hauberk ",
+							"en-US": "Rusty Chainmail",
 							"notes": null
 						},
 						"Dodge": 0.05,
 						"HitPoints": 33
 					},
 					{
-						"Id": "CrusaderArmor2",
+						"Id": "ZealotArmor2",
 						"Name": {
-							"en-US": "Chainmail ",
+							"en-US": "Chainmail",
 							"notes": null
 						},
 						"Dodge": 0.1,
 						"HitPoints": 40
 					},
 					{
-						"Id": "CrusaderArmor3",
+						"Id": "ZealotArmor3",
 						"Name": {
-							"en-US": "Chain and Plate ",
+							"en-US": "Scalemail",
 							"notes": null
 						},
 						"Dodge": 0.15,
 						"HitPoints": 47
 					},
 					{
-						"Id": "CrusaderArmor4",
+						"Id": "ZealotArmor4",
 						"Name": {
-							"en-US": "Plate ",
+							"en-US": "Plate",
 							"notes": null
 						},
 						"Dodge": 0.2,
 						"HitPoints": 54
 					},
 					{
-						"Id": "CrusaderArmor5",
+						"Id": "ZealotArmor5",
 						"Name": {
-							"en-US": "Zealous Conviction",
+							"en-US": "Full Plate",
 							"notes": null
 						},
 						"Dodge": 0.25,
@@ -2903,9 +2939,9 @@
 				],
 				"Weapons": [
 					{
-						"Id": "CrusaderWeapon1",
+						"Id": "ZealotWeapon1",
 						"Name": {
-							"en-US": "Battered Longsword ",
+							"en-US": "Rusty Longsword",
 							"notes": null
 						},
 						"DamageFrom": 6,
@@ -2914,9 +2950,9 @@
 						"Speed": 1
 					},
 					{
-						"Id": "CrusaderWeapon2",
+						"Id": "ZealotWeapon2",
 						"Name": {
-							"en-US": "Longsword ",
+							"en-US": "Longsword",
 							"notes": null
 						},
 						"DamageFrom": 7,
@@ -2925,9 +2961,9 @@
 						"Speed": 1
 					},
 					{
-						"Id": "CrusaderWeapon3",
+						"Id": "ZealotWeapon3",
 						"Name": {
-							"en-US": "Questing Longsword",
+							"en-US": "Bastard sword",
 							"notes": null
 						},
 						"DamageFrom": 8,
@@ -2936,9 +2972,9 @@
 						"Speed": 2
 					},
 					{
-						"Id": "CrusaderWeapon4",
+						"Id": "ZealotWeapon4",
 						"Name": {
-							"en-US": "Greatsword ",
+							"en-US": "Greatsword",
 							"notes": null
 						},
 						"DamageFrom": 9,
@@ -2947,9 +2983,9 @@
 						"Speed": 2
 					},
 					{
-						"Id": "CrusaderWeapon5",
+						"Id": "ZealotWeapon5",
 						"Name": {
-							"en-US": "The Long Crusade",
+							"en-US": "Infinite Crusade",
 							"notes": null
 						},
 						"DamageFrom": 10,
@@ -2968,7 +3004,7 @@
 					"notes": null
 				},
 				"Description": {
-					"en-US": "Some things are better left unopened.",
+					"en-US": "There are certain things that should remain sealed, lest the consequences of unleashing their horrors be too ghastly to contemplate.",
 					"notes": null
 				},
 				"StackSize": 1,
@@ -2983,7 +3019,7 @@
 					"notes": null
 				},
 				"Description": {
-					"en-US": "A sculpted bust of a once prominent local figure.",
+					"en-US": "A chiseled bust of a formerly renowned figure from the region.",
 					"notes": null
 				},
 				"StackSize": 6,
@@ -2998,41 +3034,11 @@
 					"notes": null
 				},
 				"Description": {
-					"en-US": "Yellow like fading hope.",
+					"en-US": "A yellow reminiscent of waning hope.",
 					"notes": null
 				},
 				"StackSize": 5,
 				"GoldValue": 250,
-				"ActivationEffects": [
-				]
-			},
-			{
-				"Id": "ConsecratedEssence",
-				"Name": {
-					"en-US": "Consecrated Essence",
-					"notes": null
-				},
-				"Description": {
-					"en-US": "Used to purify the corrupted altars.",
-					"notes": null
-				},
-				"StackSize": 1,
-				"GoldValue": 0,
-				"ActivationEffects": [
-				]
-			},
-			{
-				"Id": "ConsecratedPew",
-				"Name": {
-					"en-US": "Consecrated Pew",
-					"notes": null
-				},
-				"Description": {
-					"en-US": "The shard of a wooden bench said to once hold ",
-					"notes": null
-				},
-				"StackSize": 1,
-				"GoldValue": 2500,
 				"ActivationEffects": [
 				]
 			},
@@ -3043,7 +3049,7 @@
 					"notes": null
 				},
 				"Description": {
-					"en-US": "A sigil of honor earned by family actions long since past.",
+					"en-US": "A symbol of prestige obtained through the honorable deeds of one's ancestors, long consigned to history.",
 					"notes": null
 				},
 				"StackSize": 12,
@@ -3058,7 +3064,7 @@
 					"notes": null
 				},
 				"Description": {
-					"en-US": "Scriven records of land grants in generations past.",
+					"en-US": "Old documents detailing land grants from bygone generations.",
 					"notes": null
 				},
 				"StackSize": 6,
@@ -3073,7 +3079,7 @@
 					"notes": null
 				},
 				"Description": {
-					"en-US": "Green like molten envy.",
+					"en-US": "A green that burns like molten envy.",
 					"notes": null
 				},
 				"StackSize": 5,
@@ -3088,7 +3094,7 @@
 					"notes": null
 				},
 				"Description": {
-					"en-US": "Gold greases palms, builds empires and instigates murder.",
+					"en-US": "Gold lubricates palms, constructs empires, and triggers acts of homicide.",
 					"notes": null
 				},
 				"StackSize": 1750,
@@ -3103,7 +3109,7 @@
 					"notes": null
 				},
 				"Description": {
-					"en-US": "A bag of precious unspoiled grain.",
+					"en-US": "A sack filled with valuable unsullied grains.",
 					"notes": null
 				},
 				"StackSize": 1,
@@ -3118,7 +3124,7 @@
 					"notes": null
 				},
 				"Description": {
-					"en-US": "The left hand of some malefactor who died on the gallows, made into a candle with the man's own fat.",
+					"en-US": "A candle molded from the left hand of a criminal who met his end on the gallows, cast from the culprit's own fat.",
 					"notes": null
 				},
 				"StackSize": 1,
@@ -3133,7 +3139,7 @@
 					"notes": null
 				},
 				"Description": {
-					"en-US": "A surviving trophy from a past holy war.",
+					"en-US": "A relic preserved from a prior crusade or holy war.",
 					"notes": null
 				},
 				"StackSize": 1,
@@ -3148,7 +3154,7 @@
 					"notes": null
 				},
 				"Description": {
-					"en-US": "Dull green like rotting flesh.",
+					"en-US": "A drab green akin to putrefying flesh.",
 					"notes": null
 				},
 				"StackSize": 5,
@@ -3163,7 +3169,7 @@
 					"notes": null
 				},
 				"Description": {
-					"en-US": "A coarse, time-worn weaving bearing invocations of unutterable alienage.",
+					"en-US": "A rough, weathered tapestry inscribed with incantations of unspeakable otherworldliness.",
 					"notes": null
 				},
 				"StackSize": 1,
@@ -3178,7 +3184,7 @@
 					"notes": null
 				},
 				"Description": {
-					"en-US": "Powerful medicines... worth more than gold to a beleaguered Hamlet.",
+					"en-US": "Potent remedies that hold more value than gold to a besieged hamlet.",
 					"notes": null
 				},
 				"StackSize": 1,
@@ -3193,7 +3199,7 @@
 					"notes": null
 				},
 				"Description": {
-					"en-US": "A minor collectible, worth money in bunches.",
+					"en-US": "A trifle for collectors, whose value is in its ability to fetch a hefty sum when sold in bulk.",
 					"notes": null
 				},
 				"StackSize": 20,
@@ -3208,7 +3214,7 @@
 					"notes": null
 				},
 				"Description": {
-					"en-US": "Black like endless night.",
+					"en-US": "As dark as the unfathomable expanse of an eternal night.",
 					"notes": null
 				},
 				"StackSize": 5,
@@ -3223,7 +3229,7 @@
 					"notes": null
 				},
 				"Description": {
-					"en-US": "An implement for hard labor and occasional destruction.",
+					"en-US": "A tool fashioned for arduous toil and intermittent devastation.",
 					"notes": null
 				},
 				"StackSize": 1,
@@ -3238,7 +3244,7 @@
 					"notes": null
 				},
 				"Description": {
-					"en-US": "It emits an otherworldly luminescence, used to light Protective Wards.",
+					"en-US": "It emanates an ethereal radiance, harnessed to illuminate wards that shield against supernatural forces.",
 					"notes": null
 				},
 				"StackSize": 1,
@@ -3253,7 +3259,7 @@
 					"notes": null
 				},
 				"Description": {
-					"en-US": "Though painted a hundred years ago, the resemblance to you is uncanny.",
+					"en-US": "Despite being painted a century ago, the likeness to your visage is eerie in its exactitude.",
 					"notes": null
 				},
 				"StackSize": 3,
@@ -3268,7 +3274,7 @@
 					"notes": null
 				},
 				"Description": {
-					"en-US": "A terribly strong concoction to counter the effects of disease and infection.",
+					"en-US": "A dreadfully potent mixture crafted to combat the ravages of illness and contagion.",
 					"notes": null
 				},
 				"StackSize": 1,
@@ -3283,7 +3289,7 @@
 					"notes": null
 				},
 				"Description": {
-					"en-US": "The colors shift and change with the light...",
+					"en-US": "The hues constantly fluctuate and morph, adapting to the ever-shifting illumination...",
 					"notes": null
 				},
 				"StackSize": 1,
@@ -3298,7 +3304,7 @@
 					"notes": null
 				},
 				"Description": {
-					"en-US": "A valuable find!",
+					"en-US": "What a lucrative discovery!",
 					"notes": null
 				},
 				"StackSize": 5,
@@ -3313,7 +3319,7 @@
 					"notes": null
 				},
 				"Description": {
-					"en-US": "Red like blazing lust.",
+					"en-US": "As red as an intense inferno of desire.",
 					"notes": null
 				},
 				"StackSize": 5,
@@ -3328,7 +3334,7 @@
 					"notes": null
 				},
 				"Description": {
-					"en-US": "Blue like strangled dreams",
+					"en-US": "A blue akin to dreams suffocated and extinguished.",
 					"notes": null
 				},
 				"StackSize": 5,
@@ -3339,9 +3345,17 @@
 		],
 		"Location": [
 			{
-				"Id": "Cove",
+				"Id": "Harbor",
 				"Name": {
-					"en-US": "Cove",
+					"en-US": "Harbor",
+					"notes": null
+				},
+				"Flags": 0
+			},
+			{
+				"Id": "Labyrinth",
+				"Name": {
+					"en-US": "Labyrinth",
 					"notes": null
 				},
 				"Flags": 0
@@ -3355,20 +3369,12 @@
 				"Flags": 0
 			},
 			{
-				"Id": "TheDarkestDungeon",
+				"Id": "TheDarkCavern",
 				"Name": {
-					"en-US": "The Darkest Dungeon",
+					"en-US": "The Dark Cavern",
 					"notes": null
 				},
 				"Flags": 0
-			},
-			{
-				"Id": "TheHamlet",
-				"Name": {
-					"en-US": "The Hamlet",
-					"notes": null
-				},
-				"Flags": 1
 			},
 			{
 				"Id": "TheOldRoad",
@@ -3379,17 +3385,17 @@
 				"Flags": 2
 			},
 			{
-				"Id": "Warrens",
+				"Id": "TheVillage",
 				"Name": {
-					"en-US": "Warrens",
+					"en-US": "The Village",
 					"notes": null
 				},
-				"Flags": 0
+				"Flags": 1
 			},
 			{
-				"Id": "Weald",
+				"Id": "Woodland",
 				"Name": {
-					"en-US": "Weald",
+					"en-US": "Woodland",
 					"notes": null
 				},
 				"Flags": 0
@@ -3400,8 +3406,8 @@
 				"Id": "AccuracyStone",
 				"Rarity": 1,
 				"OriginDungeon": {
-					"Id": "Warrens",
-					"DisplayName": "Warrens"
+					"Id": "Labyrinth",
+					"DisplayName": "Labyrinth"
 				},
 				"HeroRestriction": null,
 				"Item": {
@@ -3482,8 +3488,8 @@
 				"Id": "CautionCloak",
 				"Rarity": 2,
 				"OriginDungeon": {
-					"Id": "Weald",
-					"DisplayName": "Weald"
+					"Id": "Woodland",
+					"DisplayName": "Woodland"
 				},
 				"HeroRestriction": null,
 				"Item": {
@@ -3913,27 +3919,27 @@
 						"DisplayName": "Ruins"
 					},
 					{
-						"Id": "TheDarkestDungeon",
-						"DisplayName": "The Darkest Dungeon"
+						"Id": "TheDarkCavern",
+						"DisplayName": "The Dark Cavern"
 					},
 					{
-						"Id": "Warrens",
-						"DisplayName": "Warrens"
+						"Id": "Labyrinth",
+						"DisplayName": "Labyrinth"
 					},
 					{
-						"Id": "Weald",
-						"DisplayName": "Weald"
+						"Id": "Woodland",
+						"DisplayName": "Woodland"
 					},
 					{
-						"Id": "Cove",
-						"DisplayName": "Cove"
+						"Id": "Harbor",
+						"DisplayName": "Harbor"
 					}
 				]
 			},
 			{
-				"Id": "CultistBrawler",
+				"Id": "CultistFighter",
 				"Name": {
-					"en-US": "Cultist Brawler",
+					"en-US": "Cultist Fighter",
 					"notes": null
 				},
 				"Type": 1,
@@ -4009,27 +4015,27 @@
 						"DisplayName": "Ruins"
 					},
 					{
-						"Id": "TheDarkestDungeon",
-						"DisplayName": "The Darkest Dungeon"
+						"Id": "TheDarkCavern",
+						"DisplayName": "The Dark Cavern"
 					},
 					{
-						"Id": "Warrens",
-						"DisplayName": "Warrens"
+						"Id": "Labyrinth",
+						"DisplayName": "Labyrinth"
 					},
 					{
-						"Id": "Weald",
-						"DisplayName": "Weald"
+						"Id": "Woodland",
+						"DisplayName": "Woodland"
 					},
 					{
-						"Id": "Cove",
-						"DisplayName": "Cove"
+						"Id": "Harbor",
+						"DisplayName": "Harbor"
 					}
 				]
 			},
 			{
-				"Id": "SwineChopper",
+				"Id": "PorkChopper",
 				"Name": {
-					"en-US": "Swine Chopper",
+					"en-US": "Pork Chopper",
 					"notes": null
 				},
 				"Type": 2,
@@ -4110,15 +4116,15 @@
 				],
 				"Locations": [
 					{
-						"Id": "Warrens",
-						"DisplayName": "Warrens"
+						"Id": "Labyrinth",
+						"DisplayName": "Labyrinth"
 					}
 				]
 			},
 			{
-				"Id": "SwineWretch",
+				"Id": "PorkWretch",
 				"Name": {
-					"en-US": "Swine Wretch",
+					"en-US": "Pork Wretch",
 					"notes": null
 				},
 				"Type": 2,
@@ -4190,8 +4196,8 @@
 				],
 				"Locations": [
 					{
-						"Id": "Warrens",
-						"DisplayName": "Warrens"
+						"Id": "Labyrinth",
+						"DisplayName": "Labyrinth"
 					}
 				]
 			}
@@ -4205,7 +4211,7 @@
 					"notes": null
 				},
 				"Description": {
-					"en-US": "No description.",
+					"en-US": "Just a casual crate.",
 					"notes": null
 				},
 				"CleansingOptions": [
@@ -4217,7 +4223,7 @@
 							{
 								"Id": 1,
 								"Type": 2,
-								"Amount": null
+								"Amount": 1
 							}
 						],
 						"QuirkChance": null,
@@ -4235,6 +4241,15 @@
 						"QuirkChance": null,
 						"DiseaseChance": null,
 						"Effects": [
+							{
+								"Id": 173,
+								"Parameter": {
+									"Id": 2,
+									"DisplayName": "Max Hit Points"
+								},
+								"Value": -10,
+								"Condition": null
+							}
 						],
 						"ItemIsConsumed": false
 					}
@@ -4242,79 +4257,28 @@
 				"PlacementRestictions": 2,
 				"Locations": [
 					{
-						"Id": "Cove",
-						"DisplayName": "Cove"
+						"Id": "Harbor",
+						"DisplayName": "Harbor"
 					},
 					{
 						"Id": "Ruins",
 						"DisplayName": "Ruins"
 					},
 					{
-						"Id": "TheDarkestDungeon",
-						"DisplayName": "The Darkest Dungeon"
+						"Id": "TheDarkCavern",
+						"DisplayName": "The Dark Cavern"
 					},
 					{
 						"Id": "TheOldRoad",
 						"DisplayName": "The Old Road"
 					},
 					{
-						"Id": "Weald",
-						"DisplayName": "Weald"
+						"Id": "Woodland",
+						"DisplayName": "Woodland"
 					},
 					{
-						"Id": "Warrens",
-						"DisplayName": "Warrens"
-					}
-				]
-			},
-			{
-				"Id": "DinnerCart",
-				"Type": 3328,
-				"Name": {
-					"en-US": "Dinner Cart",
-					"notes": null
-				},
-				"Description": {
-					"en-US": "A cart of human remains. It looks much like a feeding trough. Disgusting.",
-					"notes": null
-				},
-				"CleansingOptions": [
-					{
-						"Id": 14,
-						"Chance": 1,
-						"Item": {
-							"Id": "MedicinalHerbs",
-							"DisplayName": "Medicinal Herbs"
-						},
-						"Loot": [
-							{
-								"Id": 9,
-								"Type": 3,
-								"Amount": 1
-							},
-							{
-								"Id": 10,
-								"Type": 6,
-								"Amount": null
-							},
-							{
-								"Id": 11,
-								"Type": 7,
-								"Amount": 2
-							}
-						],
-						"QuirkChance": null,
-						"DiseaseChance": null,
-						"Effects": [
-						],
-						"ItemIsConsumed": true
-					}
-				],
-				"PlacementRestictions": 2,
-				"Locations": [
-					{
-						"Id": "Warrens",
-						"DisplayName": "Warrens"
+						"Id": "Labyrinth",
+						"DisplayName": "Labyrinth"
 					}
 				]
 			},
@@ -4326,7 +4290,7 @@
 					"notes": null
 				},
 				"Description": {
-					"en-US": "An altar dedicated to unholy abominations. Perhaps a great power lies within. ",
+					"en-US": "Behold an altar consecrated to unspeakable atrocities, where malevolent forces may lurk in the shadows. The potential for a sinister force to be lurking within cannot be overlooked.",
 					"notes": null
 				},
 				"CleansingOptions": [
@@ -4338,6 +4302,11 @@
 							"DisplayName": "Holy Water"
 						},
 						"Loot": [
+							{
+								"Id": 12,
+								"Type": 3,
+								"Amount": 2
+							}
 						],
 						"QuirkChance": null,
 						"DiseaseChance": null,
@@ -4394,24 +4363,24 @@
 				"PlacementRestictions": 1,
 				"Locations": [
 					{
-						"Id": "Cove",
-						"DisplayName": "Cove"
+						"Id": "Harbor",
+						"DisplayName": "Harbor"
 					},
 					{
-						"Id": "TheDarkestDungeon",
-						"DisplayName": "The Darkest Dungeon"
+						"Id": "TheDarkCavern",
+						"DisplayName": "The Dark Cavern"
 					},
 					{
 						"Id": "Ruins",
 						"DisplayName": "Ruins"
 					},
 					{
-						"Id": "Warrens",
-						"DisplayName": "Warrens"
+						"Id": "Labyrinth",
+						"DisplayName": "Labyrinth"
 					},
 					{
-						"Id": "Weald",
-						"DisplayName": "Weald"
+						"Id": "Woodland",
+						"DisplayName": "Woodland"
 					}
 				]
 			},
@@ -4423,7 +4392,7 @@
 					"notes": null
 				},
 				"Description": {
-					"en-US": "An ornate sarcophagus. It's locked. ",
+					"en-US": "A lavishly decorated sarcophagus, sealed shut and inaccessible.",
 					"notes": null
 				},
 				"CleansingOptions": [
@@ -4537,6 +4506,57 @@
 				]
 			},
 			{
+				"Id": "MeatCart",
+				"Type": 3328,
+				"Name": {
+					"en-US": "Meat Cart",
+					"notes": null
+				},
+				"Description": {
+					"en-US": "A repulsive sight greets the eyes - a cart filled with human remains, resembling a trough for animals to feed from. The revulsion it evokes is indescribable.",
+					"notes": null
+				},
+				"CleansingOptions": [
+					{
+						"Id": 14,
+						"Chance": 1,
+						"Item": {
+							"Id": "DogTreats",
+							"DisplayName": "Dog Treats"
+						},
+						"Loot": [
+							{
+								"Id": 9,
+								"Type": 3,
+								"Amount": 1
+							},
+							{
+								"Id": 10,
+								"Type": 6,
+								"Amount": 50
+							},
+							{
+								"Id": 11,
+								"Type": 7,
+								"Amount": 2
+							}
+						],
+						"QuirkChance": null,
+						"DiseaseChance": null,
+						"Effects": [
+						],
+						"ItemIsConsumed": true
+					}
+				],
+				"PlacementRestictions": 2,
+				"Locations": [
+					{
+						"Id": "Labyrinth",
+						"DisplayName": "Labyrinth"
+					}
+				]
+			},
+			{
 				"Id": "Sconce",
 				"Type": 16,
 				"Name": {
@@ -4544,7 +4564,7 @@
 					"notes": null
 				},
 				"Description": {
-					"en-US": "No description. ",
+					"en-US": "A decorative sconce mounted on the wall, casting a warm glow. It appears to be firmly affixed in place.",
 					"notes": null
 				},
 				"CleansingOptions": [
@@ -4586,24 +4606,24 @@
 				"PlacementRestictions": 2,
 				"Locations": [
 					{
-						"Id": "Cove",
-						"DisplayName": "Cove"
+						"Id": "Harbor",
+						"DisplayName": "Harbor"
 					},
 					{
 						"Id": "Ruins",
 						"DisplayName": "Ruins"
 					},
 					{
-						"Id": "TheDarkestDungeon",
-						"DisplayName": "The Darkest Dungeon"
+						"Id": "TheDarkCavern",
+						"DisplayName": "The Dark Cavern"
 					},
 					{
-						"Id": "Warrens",
-						"DisplayName": "Warrens"
+						"Id": "Labyrinth",
+						"DisplayName": "Labyrinth"
 					},
 					{
-						"Id": "Weald",
-						"DisplayName": "Weald"
+						"Id": "Woodland",
+						"DisplayName": "Woodland"
 					}
 				]
 			}
@@ -4829,50 +4849,6 @@
 				]
 			},
 			{
-				"Id": "CoveAdventurer",
-				"Name": {
-					"en-US": "Cove Adventurer",
-					"notes": null
-				},
-				"IsPositive": true,
-				"Effects": [
-					{
-						"Id": 7,
-						"Parameter": {
-							"Id": 29,
-							"DisplayName": "Stress Resistance"
-						},
-						"Value": 0.2,
-						"Condition": {
-							"Id": "LocationCove",
-							"DisplayName": "LocationCove"
-						}
-					}
-				]
-			},
-			{
-				"Id": "CovePhobe",
-				"Name": {
-					"en-US": "Cove Phobe ",
-					"notes": null
-				},
-				"IsPositive": false,
-				"Effects": [
-					{
-						"Id": 126,
-						"Parameter": {
-							"Id": 29,
-							"DisplayName": "Stress Resistance"
-						},
-						"Value": -0.2,
-						"Condition": {
-							"Id": "LocationCove",
-							"DisplayName": "LocationCove"
-						}
-					}
-				]
-			},
-			{
 				"Id": "Evasive",
 				"Name": {
 					"en-US": "Evasive",
@@ -4921,6 +4897,50 @@
 						"Condition": {
 							"Id": "MonsterTypeBeast",
 							"DisplayName": "MonsterTypeBeast"
+						}
+					}
+				]
+			},
+			{
+				"Id": "HarborAdventurer",
+				"Name": {
+					"en-US": "Harbor Adventurer",
+					"notes": null
+				},
+				"IsPositive": true,
+				"Effects": [
+					{
+						"Id": 7,
+						"Parameter": {
+							"Id": 29,
+							"DisplayName": "Stress Resistance"
+						},
+						"Value": 0.2,
+						"Condition": {
+							"Id": "LocationHarbor",
+							"DisplayName": "LocationHarbor"
+						}
+					}
+				]
+			},
+			{
+				"Id": "HarborPhobe",
+				"Name": {
+					"en-US": "Harbor Phobe ",
+					"notes": null
+				},
+				"IsPositive": false,
+				"Effects": [
+					{
+						"Id": 126,
+						"Parameter": {
+							"Id": 29,
+							"DisplayName": "Stress Resistance"
+						},
+						"Value": -0.2,
+						"Condition": {
+							"Id": "LocationHarbor",
+							"DisplayName": "LocationHarbor"
 						}
 					}
 				]
@@ -5042,9 +5062,9 @@
 				"UnboundCheck": null
 			},
 			{
-				"Id": "LocationCove",
+				"Id": "LocationHarbor",
 				"Description": {
-					"en-US": "in the Cove",
+					"en-US": "in the Harbor",
 					"notes": null
 				},
 				"Check": {
@@ -5071,10 +5091,48 @@
 					"right": {
 						"expressionType": "Constant",
 						"type": "System.String",
-						"value": "Cove",
+						"value": "Harbor",
 						"_pos": "1:23+6"
 					},
-					"_cs": "context.Dungeon.Id == \u0022Cove\u0022",
+					"_cs": "context.Dungeon.Id == \u0022Harbor\u0022",
+					"_pos": "1:20+2"
+				},
+				"UnboundCheck": null
+			},
+			{
+				"Id": "LocationLabyrinth",
+				"Description": {
+					"en-US": "in the Labyrinth",
+					"notes": null
+				},
+				"Check": {
+					"expressionType": "Equal",
+					"left": {
+						"expressionType": "MemberResolve",
+						"expression": {
+							"expressionType": "MemberResolve",
+							"expression": {
+								"expressionType": "MemberResolve",
+								"expression": null,
+								"name": "context",
+								"useNullPropagation": false,
+								"_pos": "1:1+7"
+							},
+							"name": "Dungeon",
+							"useNullPropagation": false,
+							"_pos": "1:8+1"
+						},
+						"name": "Id",
+						"useNullPropagation": false,
+						"_pos": "1:16+1"
+					},
+					"right": {
+						"expressionType": "Constant",
+						"type": "System.String",
+						"value": "Labyrinth",
+						"_pos": "1:23+9"
+					},
+					"_cs": "context.Dungeon.Id == \u0022Labyrinth\u0022",
 					"_pos": "1:20+2"
 				},
 				"UnboundCheck": null
@@ -5118,9 +5176,9 @@
 				"UnboundCheck": null
 			},
 			{
-				"Id": "LocationWarrens",
+				"Id": "LocationWoodland",
 				"Description": {
-					"en-US": "in the Warrens",
+					"en-US": "in the Woodland",
 					"notes": null
 				},
 				"Check": {
@@ -5147,48 +5205,10 @@
 					"right": {
 						"expressionType": "Constant",
 						"type": "System.String",
-						"value": "Warrens",
-						"_pos": "1:23+9"
-					},
-					"_cs": "context.Dungeon.Id == \u0022Warrens\u0022",
-					"_pos": "1:20+2"
-				},
-				"UnboundCheck": null
-			},
-			{
-				"Id": "LocationWeald",
-				"Description": {
-					"en-US": "in the Weald",
-					"notes": null
-				},
-				"Check": {
-					"expressionType": "Equal",
-					"left": {
-						"expressionType": "MemberResolve",
-						"expression": {
-							"expressionType": "MemberResolve",
-							"expression": {
-								"expressionType": "MemberResolve",
-								"expression": null,
-								"name": "context",
-								"useNullPropagation": false,
-								"_pos": "1:1+7"
-							},
-							"name": "Dungeon",
-							"useNullPropagation": false,
-							"_pos": "1:8+1"
-						},
-						"name": "Id",
-						"useNullPropagation": false,
-						"_pos": "1:16+1"
-					},
-					"right": {
-						"expressionType": "Constant",
-						"type": "System.String",
-						"value": "Weald",
+						"value": "Woodland",
 						"_pos": "1:23+7"
 					},
-					"_cs": "context.Dungeon.Id == \u0022Weald\u0022",
+					"_cs": "context.Dungeon.Id == \u0022Woodland\u0022",
 					"_pos": "1:20+2"
 				},
 				"UnboundCheck": null
@@ -5745,12 +5765,12 @@
 				],
 				"Heroes": [
 					{
-						"Id": "Arbalest",
-						"DisplayName": "Arbalest"
+						"Id": "Crossbower",
+						"DisplayName": "Crossbower"
 					},
 					{
-						"Id": "Crusader",
-						"DisplayName": "Crusader"
+						"Id": "Zealot",
+						"DisplayName": "Zealot"
 					}
 				],
 				"Location": {
