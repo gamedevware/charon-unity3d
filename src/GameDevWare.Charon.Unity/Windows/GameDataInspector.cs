@@ -286,6 +286,7 @@ namespace GameDevWare.Charon.Unity.Windows
 				}
 			}
 
+	#if FALSE
 			this.connectionFold = EditorGUILayout.Foldout(this.connectionFold, this.lastServerAddress);
 			if (this.connectionFold)
 			{
@@ -343,6 +344,7 @@ namespace GameDevWare.Charon.Unity.Windows
 					}
 				}
 			}
+#endif
 
 			this.formulaAssembliesFold = EditorGUILayout.Foldout(this.formulaAssembliesFold, Resources.UI_UNITYPLUGIN_INSPECTOR_FORMULA_ASSEMBLIES_LABEL);
 			if (this.formulaAssembliesFold)
