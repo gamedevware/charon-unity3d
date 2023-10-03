@@ -109,6 +109,9 @@
             Helper to produce culture-oriented representation of an object as a string
             </summary>
         </member>
+        <member name="M:GameDevWare.Charon.Unity.Routines.GameDataValidationReport.ToString">
+            <inheritdoc />
+        </member>
         <member name="M:GameDevWare.Charon.Unity.Updates.Packages.Deployment.CharonDeploymentAction.Prepare">
             <inheritdoc />
         </member>
@@ -175,8 +178,7 @@
                 checked separately. (Any sequence of zeroes has a Fletcher
                 checksum of zero.)"
              </summary>
-             <see cref="!:InflaterInputStream"/>
-             <see cref="!:DeflaterOutputStream"/>
+             <see cref="T:GameDevWare.Charon.Unity.Updates.Packages.Zip.Compression.Streams.InflaterInputStream"/>
         </member>
         <member name="F:GameDevWare.Charon.Unity.Updates.Packages.Zip.Checksum.Adler32.BASE">
             <summary>
@@ -3987,6 +3989,60 @@
         <member name="M:GameDevWare.Charon.Unity.Utils.CommandInput.Dispose">
             <inheritdoc />
         </member>
+        <member name="T:GameDevWare.Charon.Unity.Utils.GameDataLocation">
+            <summary>
+            Game data location and optional API key for remote locations.
+            </summary>
+        </member>
+        <member name="F:GameDevWare.Charon.Unity.Utils.GameDataLocation.Location">
+            <summary>
+            Game data location on file system, or remote location in internet.
+            </summary>
+        </member>
+        <member name="F:GameDevWare.Charon.Unity.Utils.GameDataLocation.ApiKey">
+            <summary>
+            Authentication credentials for remote game data.
+            </summary>
+        </member>
+        <member name="P:GameDevWare.Charon.Unity.Utils.GameDataLocation.HasApiKey">
+            <summary>
+            Returns true if location has API key attached.
+            </summary>
+        </member>
+        <member name="P:GameDevWare.Charon.Unity.Utils.GameDataLocation.IsFile">
+            <summary>
+            Returns true if location if file path.
+            </summary>
+        </member>
+        <member name="M:GameDevWare.Charon.Unity.Utils.GameDataLocation.#ctor(System.String)">
+            <summary>
+            Constructor for location URL and optional credentials.
+            </summary>
+        </member>
+        <member name="M:GameDevWare.Charon.Unity.Utils.GameDataLocation.#ctor(System.Uri,System.String)">
+            <summary>
+            Constructor for location URL and optional credentials.
+            </summary>
+        </member>
+        <member name="M:GameDevWare.Charon.Unity.Utils.GameDataLocation.op_Implicit(System.String)~GameDevWare.Charon.Unity.Utils.GameDataLocation">
+            <summary>
+            Convert string path to <see cref="T:GameDevWare.Charon.Unity.Utils.GameDataLocation"/>
+            </summary>
+        </member>
+        <member name="M:GameDevWare.Charon.Unity.Utils.GameDataLocation.ThrowIfFileNotExists">
+            <summary>
+            Throws if location is file path and <see cref="M:System.IO.File.Exists(System.String)"/> is false.
+            </summary>
+        </member>
+        <member name="M:GameDevWare.Charon.Unity.Utils.GameDataLocation.ThrowIfRemote">
+            <summary>
+            Throws if location is remote
+            </summary>
+            <exception cref="T:System.InvalidOperationException"></exception>
+        </member>
+        <member name="M:GameDevWare.Charon.Unity.Utils.GameDataLocation.ToString">
+            <inheritdoc />
+        </member>
         <member name="M:GameDevWare.Charon.Unity.Utils.NoCertificateValidationContext.Dispose">
             <inheritdoc />
         </member>
@@ -4051,6 +4107,53 @@
                 value for <see cref="P:System.Version.Revision" />, the format is {major}.{minor}.{build}.{revision}[-{special-version}].
             </summary>
             <returns>The normalized string representation.</returns>
+        </member>
+        <member name="F:GameDevWare.Charon.Unity.Utils.SourceCodeGenerationOptimizations.EagerReferenceResolution">
+            <summary>
+            Enumeration value - eagerReferenceResolution.
+            </summary>
+        </member>
+        <member name="F:GameDevWare.Charon.Unity.Utils.SourceCodeGenerationOptimizations.RawReferences">
+            <summary>
+            Enumeration value - rawReferences.
+            </summary>
+        </member>
+        <member name="F:GameDevWare.Charon.Unity.Utils.SourceCodeGenerationOptimizations.RawLocalizedStrings">
+            <summary>
+            Enumeration value - rawLocalizedStrings.
+            </summary>
+        </member>
+        <member name="F:GameDevWare.Charon.Unity.Utils.SourceCodeGenerationOptimizations.DisableStringOptimization">
+            <summary>
+            Enumeration value - disableStringOptimization.
+            </summary>
+        </member>
+        <member name="F:GameDevWare.Charon.Unity.Utils.SourceCodeGenerationOptimizations.DisableJsonSerialization">
+            <summary>
+            Enumeration value - disableJsonSerialization.
+            </summary>
+        </member>
+        <member name="F:GameDevWare.Charon.Unity.Utils.SourceCodeGenerationOptimizations.DisableMessagePackSerialization">
+            <summary>
+            Enumeration value - disableMessagePackSerialization.
+            </summary>
+        </member>
+        <member name="F:GameDevWare.Charon.Unity.Utils.SourceCodeGenerationOptimizations.DisablePatching">
+            <summary>
+            Enumeration value - disablePatching.
+            </summary>
+        </member>
+        <member name="M:GameDevWare.Charon.Unity.Windows.ApiKeyPromptWindow.OnBeforeSerialize">
+            <inheritdoc />
+        </member>
+        <member name="M:GameDevWare.Charon.Unity.Windows.ApiKeyPromptWindow.OnAfterDeserialize">
+            <inheritdoc />
+        </member>
+        <member name="M:GameDevWare.Charon.Unity.Windows.ConnectGameDataWindow.OnBeforeSerialize">
+            <inheritdoc />
+        </member>
+        <member name="M:GameDevWare.Charon.Unity.Windows.ConnectGameDataWindow.OnAfterDeserialize">
+            <inheritdoc />
         </member>
         <member name="M:GameDevWare.Charon.Unity.Windows.GameDataEditorWindow.OnDestroy">
             <inheritdoc />
