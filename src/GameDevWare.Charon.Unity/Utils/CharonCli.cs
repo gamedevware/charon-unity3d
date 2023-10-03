@@ -208,8 +208,8 @@ namespace GameDevWare.Charon.Unity.Utils
 							//
 							{ "CHARON_API_SERVER", Settings.Current.GetServerAddressUrl().OriginalString },
 							{ "CHARON_API_KEY", "" },
-							{ "STANDALONE_APPLICATIONDATAPATH", Settings.UserDataPath },
-							{ "STANDALONE_APPLICATIONTEMPPATH", Settings.TempPath },
+							{ "STANDALONE__APPLICATIONDATAPATH", Settings.UserDataPath },
+							{ "STANDALONE__APPLICATIONTEMPPATH", Settings.TempPath },
 							{ "SERILOG__WRITETO__0__NAME", "File" },
 							{ "SERILOG__WRITETO__0__ARGS__PATH", Path.GetFullPath(Path.Combine(Settings.LibraryCharonLogsPath, string.Format("{0:yyyy_MM_dd_hh}.charon.unity.log", DateTime.UtcNow)))  },
 						}
@@ -915,10 +915,14 @@ namespace GameDevWare.Charon.Unity.Utils
 					WaitForExit = true,
 					StartInfo = {
 						EnvironmentVariables = {
+							// v2020.1.1
+							{ "CHARON_APP_DATA", Settings.UserDataPath },
+							{ "BASE_DIRECTORY_PATH", Settings.LibraryCharonPath },
+							//
 							{ "CHARON_API_SERVER", Settings.Current.GetServerAddressUrl().OriginalString },
 							{ "CHARON_API_KEY", apiKey ?? string.Empty },
-							{ "STANDALONE_APPLICATIONDATAPATH", Settings.UserDataPath },
-							{ "STANDALONE_APPLICATIONTEMPPATH", Settings.TempPath },
+							{ "STANDALONE__APPLICATIONDATAPATH", Settings.UserDataPath },
+							{ "STANDALONE__APPLICATIONTEMPPATH", Settings.TempPath },
 							{ "SERILOG__WRITETO__0__NAME", "File" },
 							{ "SERILOG__WRITETO__0__ARGS__PATH", Path.GetFullPath(Path.Combine(Settings.LibraryCharonLogsPath, string.Format("{0:yyyy_MM_dd_hh}.charon.unity.log", DateTime.UtcNow)))  },
 						}
