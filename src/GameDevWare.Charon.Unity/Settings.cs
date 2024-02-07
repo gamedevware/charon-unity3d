@@ -32,7 +32,7 @@ namespace GameDevWare.Charon.Unity
 	{
 		public const string PREF_PREFIX = "Charon_";
 
-		public const string DEFAULT_SERVER_ADDRESS = "http://charon.live/";
+		public const string DEFAULT_SERVER_ADDRESS = "https://charon.live/";
 
 		public static readonly string TempPath;
 		public static readonly string LibraryCharonPath;

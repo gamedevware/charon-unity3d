@@ -5,11 +5,9 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.CompilerServices;
 using GameDevWare.Charon.Unity.ServerApi;
 using UnityEditor;
 using UnityEditor.Callbacks;
-using UnityEngine;
 using GameDevWare.Charon.Unity.ServerApi.KeyStorage;
 
 namespace GameDevWare.Charon.Unity.Routines
@@ -28,6 +26,11 @@ namespace GameDevWare.Charon.Unity.Routines
 			var gameDataPath = AssetDatabase.GetAssetPath(instanceID);
 			if (GameDataTracker.IsGameDataFile(gameDataPath) == false)
 				return false;
+
+			if (loadEditorTask != null && !loadEditorTask.IsCompleted)
+			{
+				return false;
+			}
 
 			var reference = ValidationError.GetReference(exceptionId);
 			var cancellation = new Promise();
@@ -54,6 +57,18 @@ namespace GameDevWare.Charon.Unity.Routines
 			if (gameDataSettings == null)
 			{
 				throw new InvalidOperationException(string.Format("Unable to start editor for '{0}'. File is not a game data file.", gameDataPath));
+			}
+
+			var checkRequirements = CharonCli.CheckRequirementsAsync();
+			yield return checkRequirements;
+
+			switch (checkRequirements.GetResult())
+			{
+				case RequirementsCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
+				case RequirementsCheckResult.WrongVersion:
+				case RequirementsCheckResult.MissingExecutable: yield return CharonCli.DownloadCharon(progressCallback.Sub(0.00f, 0.50f)); break;
+				case RequirementsCheckResult.Ok: break;
+				default: throw new InvalidOperationException(string.Format("Unexpected Charon check error: {0}.", checkRequirements.GetResult()));
 			}
 
 			if (gameDataSettings.IsConnected)
@@ -262,9 +277,6 @@ namespace GameDevWare.Charon.Unity.Routines
 			}
 			switch (browserType)
 			{
-				case BrowserType.UnityEmbedded:
-					GameDataEditorWindow.ShowWebView(gameDataPath, gameDataEditorUrl, navigateUrl);
-					break;
 				case BrowserType.Custom:
 					if (string.IsNullOrEmpty(Settings.Current.BrowserPath))
 						goto case BrowserType.SystemDefault;
@@ -274,6 +286,7 @@ namespace GameDevWare.Charon.Unity.Routines
 					}
 					Process.Start(Settings.Current.BrowserPath, navigateUrl.OriginalString);
 					break;
+				case BrowserType.UnityEmbedded:
 				case BrowserType.SystemDefault:
 					if (Settings.Current.Verbose)
 					{

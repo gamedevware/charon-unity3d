@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d40655b73948345438c7c01057ad6ada
+DefaultImporter:
+  externalObjects: {}
+  userData: '{
+
+    "AssetGenerationPath": "Assets/StreamingAssets/GameData.asset",
+    "AutoGeneration": true, "AutoSynchronization": false, "BranchId": "", "BranchName":
+    "", "CodeGenerationPath": "Assets\\StreamingAssets", "DocumentClassName": "Document",
+    "GameDataClassName": "GameData", "Generator": 1, "Indentation": 0, "IsConnected":
+    "", "LanguageVersion": 1, "LineEnding": 0, "Namespace": "Assets.StreamingAssets",
+    "Optimizations": 0, "ProjectId": "", "ProjectName": "", "ScriptingAssemblies":
+    [], "ServerAddress": "", "SplitSourceCodeFiles": false}'
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1,5 +1,5 @@
 /*
-	Copyright © 2000-2018 SharpZipLib Contributors
+	Copyright Â© 2000-2018 SharpZipLib Contributors
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy of this
 	software and associated documentation files (the "Software"), to deal in the Software
@@ -564,6 +564,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Zip
 				}
 			}
 
+			// ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
 			switch (method)
 			{
 				case CompressionMethod.Stored:
@@ -1850,6 +1851,7 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Zip
 			{
 				long newPos = this.readPos_;
 
+				// ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
 				switch (origin)
 				{
 					case SeekOrigin.Begin:

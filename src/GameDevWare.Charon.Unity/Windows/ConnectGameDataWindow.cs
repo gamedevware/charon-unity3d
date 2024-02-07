@@ -4,17 +4,17 @@
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
 	Charon Game Data Editor Unity Plugin is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see http://www.gnu.org/licenses.
+	You should have received a copy of the GNU General Public License
+	along with this program.  If not, see http://www.gnu.org/licenses.
 */
 
 using System;
@@ -29,7 +29,7 @@ using GameDevWare.Charon.Unity.Utils;
 using JetBrains.Annotations;
 using UnityEditor;
 using UnityEngine;
-
+using UnityEngine.Serialization;
 using Coroutine = GameDevWare.Charon.Unity.Async.Coroutine;
 
 // ReSharper disable UnusedMember.Local
@@ -38,26 +38,47 @@ namespace GameDevWare.Charon.Unity.Windows
 	internal class ConnectGameDataWindow : EditorWindow, ISerializationCallbackReceiver
 	{
 		private static readonly Rect Padding = new Rect(10, 10, 10, 10);
+		private static readonly int NonEmptyProjectThreshold = 10 * 1024; // 10 KiB
+		
+		[NonSerialized]
+		private string lastError;
+		[NonSerialized]
+		private string progressStatus;
+		[NonSerialized]
+		private Promise projectsFetchTask;
+		[NonSerialized]
+		private Promise cloneTask;
+		[NonSerialized]
+		private ServerApiClient serverApiClient;
 
-		[NonSerialized] private string lastError;
-		[NonSerialized] private string progressStatus;
-		[NonSerialized] private Promise projectsFetchTask;
-		[NonSerialized] private Promise cloneTask;
-		[NonSerialized] private ServerApiClient serverApiClient;
-
-		[SerializeField] private bool autoClose;
-		[SerializeField] private string apiKey;
-		[SerializeField] private int selectedProjectIndex;
-		[SerializeField] private Project[] projects;
-		[SerializeField] private string[] projectNames;
-		[SerializeField] private int selectedBranchIndex;
-		[SerializeField] private Branch[] branches;
-		[SerializeField] private string[] branchNames;
-		[SerializeField] private GameDataStoreFormat storeFormat;
-		[SerializeField] private string folder;
-		[SerializeField] private string fileName;
-		[SerializeField] private bool advancedFold;
-		[SerializeField] private string originalAsset;
+		[SerializeField]
+		private bool autoClose;
+		[SerializeField]
+		private string apiKey;
+		[SerializeField]
+		private int selectedProjectIndex;
+		[SerializeField]
+		private Project[] projects;
+		[SerializeField]
+		private string[] projectNames;
+		[SerializeField]
+		private int selectedBranchIndex;
+		[SerializeField]
+		private Branch[] branches;
+		[SerializeField]
+		private string[] branchNames;
+		[SerializeField]
+		private GameDataStoreFormat storeFormat;
+		[SerializeField]
+		private string folder;
+		[SerializeField]
+		private bool upload;
+		[SerializeField]
+		private string fileName;
+		[SerializeField]
+		private bool advancedFold;
+		[SerializeField]
+		private string originalAsset;
 
 		private event EventHandler Done;
 		private event EventHandler<ErrorEventArgs> Cancel;
@@ -70,14 +91,33 @@ namespace GameDevWare.Charon.Unity.Windows
 				{
 					this.serverApiClient = new ServerApiClient(Settings.Current.GetServerAddressUrl());
 				}
+
 				return this.serverApiClient;
 			}
 		}
-
+		private string ProjectName
+		{
+			get
+			{
+				return this.projectNames != null &&
+					this.selectedProjectIndex >= 0 &&
+					this.selectedProjectIndex < this.projectNames.Length ? this.projectNames[this.selectedProjectIndex] : null;
+			}
+		}
+		private int SelectedBranchSize
+		{
+			get
+			{
+				return this.branches != null &&
+					this.selectedBranchIndex >= 0 &&
+					this.selectedBranchIndex < this.branches.Length ? this.branches[this.selectedBranchIndex].DataSize : 0;
+			}
+		}
+		
 		public ConnectGameDataWindow()
 		{
 			this.titleContent = new GUIContent("Connect Game Data");
-			this.minSize = new Vector2(480, 230);
+			this.minSize = new Vector2(480, 400);
 			this.position = new Rect(
 				(Screen.width - this.maxSize.x) / 2,
 				(Screen.height - this.maxSize.y) / 2,
@@ -122,10 +162,10 @@ namespace GameDevWare.Charon.Unity.Windows
 			// API Key
 			EditorGUILayout.BeginVertical();
 			{
-				GUILayout.Label("API Key", new GUIStyle(EditorStyles.boldLabel));
+				GUILayout.Label(Resources.UI_UNITYPLUGIN_GENERATE_API_KEY_TITLE, new GUIStyle(EditorStyles.boldLabel));
 				var newApiKey = (EditorGUILayout.TextArea(this.apiKey, new GUIStyle(EditorStyles.textArea) { fixedHeight = 38 }) ?? string.Empty).Trim();
-				if (GUILayout.Button(string.Format("To generate new API Key go to your <a href=\"{0}\">Profile -> API Keys</a>.", this.ServerApiClient.GetApiKeysUrl().OriginalString),
-						new GUIStyle(EditorStyles.label) { richText = true }))
+				if (GUILayout.Button(Resources.UI_UNITYPLUGIN_GENERATE_API_KEY_MESSAGE,
+						new GUIStyle(EditorStyles.label)))
 				{
 					EditorUtility.OpenWithDefaultApp(this.ServerApiClient.GetApiKeysUrl().OriginalString);
 				}
@@ -141,6 +181,7 @@ namespace GameDevWare.Charon.Unity.Windows
 						this.projectsFetchTask = this.FetchProjectList(newApiKey);
 					}
 				}
+
 				this.apiKey = newApiKey;
 
 				if (!string.IsNullOrEmpty(this.lastError))
@@ -158,7 +199,8 @@ namespace GameDevWare.Charon.Unity.Windows
 			// Project
 			EditorGUILayout.BeginHorizontal();
 			{
-				var newSelectedProjectIndex = EditorGUILayout.Popup("Project", this.selectedProjectIndex, this.projectNames, new GUIStyle(EditorStyles.popup));
+				var newSelectedProjectIndex = EditorGUILayout.Popup(Resources.UI_UNITYPLUGIN_GENERATE_PROJECT_LABEL, this.selectedProjectIndex, this.projectNames,
+					new GUIStyle(EditorStyles.popup));
 				if (newSelectedProjectIndex != this.selectedProjectIndex)
 				{
 					this.selectedProjectIndex = newSelectedProjectIndex;
@@ -173,13 +215,14 @@ namespace GameDevWare.Charon.Unity.Windows
 			GUILayout.Space(10);
 			EditorGUILayout.BeginVertical();
 			{
-				this.advancedFold = EditorGUILayout.Foldout(this.advancedFold, "Advanced Options");
+				this.advancedFold = EditorGUILayout.Foldout(this.advancedFold, Resources.UI_UNITYPLUGIN_GENERATE_ADVANCED_OPTIONS_LABEL);
 				if (this.advancedFold)
 				{
 					// Branch
 					EditorGUILayout.BeginHorizontal();
 					{
-						this.selectedBranchIndex = EditorGUILayout.Popup("Branch", this.selectedBranchIndex, this.branchNames, new GUIStyle(EditorStyles.popup));
+						this.selectedBranchIndex = EditorGUILayout.Popup(Resources.UI_UNITYPLUGIN_GENERATE_BRANCH_LABEL, this.selectedBranchIndex, this.branchNames,
+							new GUIStyle(EditorStyles.popup));
 						GUILayout.Space(5);
 					}
 					EditorGUILayout.EndHorizontal();
@@ -187,7 +230,7 @@ namespace GameDevWare.Charon.Unity.Windows
 					// Format
 					EditorGUILayout.BeginHorizontal();
 					{
-						this.storeFormat = (GameDataStoreFormat)EditorGUILayout.EnumPopup("Format", this.storeFormat);
+						this.storeFormat = (GameDataStoreFormat)EditorGUILayout.EnumPopup(Resources.UI_UNITYPLUGIN_GENERATE_FORMAT_LABEL, this.storeFormat);
 						GUILayout.Space(5);
 					}
 					EditorGUILayout.EndHorizontal();
@@ -197,7 +240,8 @@ namespace GameDevWare.Charon.Unity.Windows
 					{
 						var folderAsset = !string.IsNullOrEmpty(this.folder) && Directory.Exists(this.folder) ?
 							AssetDatabase.LoadAssetAtPath<DefaultAsset>(this.folder) : null;
-						this.folder = AssetDatabase.GetAssetPath(EditorGUILayout.ObjectField("Folder", folderAsset, typeof(DefaultAsset), false));
+						this.folder = AssetDatabase.GetAssetPath(EditorGUILayout.ObjectField(Resources.UI_UNITYPLUGIN_GENERATE_FOLDER_LABEL, folderAsset,
+							typeof(DefaultAsset), false));
 						GUILayout.Space(5);
 					}
 					EditorGUILayout.EndHorizontal();
@@ -217,6 +261,7 @@ namespace GameDevWare.Charon.Unity.Windows
 			GUI.enabled = true;
 
 			var assetPath = "";
+			var assetSize = 0L;
 			EditorGUILayout.BeginHorizontal();
 			{
 				if (string.IsNullOrEmpty(this.folder) == false &&
@@ -227,23 +272,41 @@ namespace GameDevWare.Charon.Unity.Windows
 					assetPath = Path.Combine(this.folder, this.fileName + extension).Replace('\\', '/');
 				}
 
-				if (File.Exists(assetPath))
+				var fileInfo = new FileInfo(assetPath);
+				if (fileInfo.Exists)
 				{
-					var existingWarning = " (exists, will be erased)";
-					EditorGUILayout.LabelField("Full Path", assetPath + existingWarning, EditorStyles.boldLabel);
+					assetSize = fileInfo.Length;
 				}
-				else
-				{
-					EditorGUILayout.LabelField("Full Path", assetPath, EditorStyles.boldLabel);
-				}
+				
+				EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_GENERATE_TARGET_PATH_LABEL, assetPath, EditorStyles.boldLabel);
 				GUILayout.Space(5);
 			}
 			EditorGUILayout.EndHorizontal();
 
 			GUILayout.Space(5);
+
+			if (assetSize > 0 && this.projects != null && this.projects.Length > 0)
+			{
+				GUI.enabled = this.SelectedBranchSize < NonEmptyProjectThreshold;
+				EditorGUILayout.BeginHorizontal();
+				var originalWidth = EditorGUIUtility.labelWidth;
+				EditorGUIUtility.labelWidth = this.position.width - (Padding.width + Padding.x) - 30;  
+				this.upload = EditorGUILayout.Toggle(string.Format(Resources.UI_UNITYPLUGIN_GENERATE_UPLOAD_LOCAL_GAME_DATA, assetSize / 1024.0), this.upload);
+				EditorGUIUtility.labelWidth = originalWidth;
+				EditorGUILayout.EndHorizontal();
+				GUILayout.Space(5);
+				GUI.enabled = true;
+				
+				if (!this.upload)
+				{
+					EditorGUILayout.HelpBox(string.Format(Resources.UI_UNITYPLUGIN_GENERATE_LOCAL_ERASED_WARNING, Path.GetFileName(assetPath)), MessageType.Warning);
+				}
+			}
+
+			GUILayout.Space(5);
 			this.HorizontalLine(1);
 			GUILayout.Space(5);
-
+			
 			EditorGUILayout.BeginHorizontal();
 			GUILayout.Label(this.progressStatus, EditorStyles.label, GUILayout.MaxWidth(360));
 			EditorGUILayout.Space();
@@ -253,13 +316,16 @@ namespace GameDevWare.Charon.Unity.Windows
 				!string.IsNullOrEmpty(assetPath) &&
 				!someOperationPending;
 
-			if (GUILayout.Button("Connect", GUI.skin.button, GUILayout.Width(80), GUILayout.Height(25)))
+			var syncButtonText = this.upload ? Resources.UI_UNITYPLUGIN_GENERATE_UPLOAD_BUTTON :
+				Resources.UI_UNITYPLUGIN_GENERATE_DOWNLOAD_BUTTON;
+			if (GUILayout.Button(syncButtonText, GUI.skin.button, GUILayout.Width(80), GUILayout.Height(25)))
 			{
 				var downloadPath = Path.GetFullPath(assetPath);
 				this.cloneTask = new Coroutine(this.CloneProjectAsync(assetPath, downloadPath));
 
 				this.Repaint();
 			}
+
 			GUILayout.Space(5);
 			EditorGUILayout.EndHorizontal();
 
@@ -283,6 +349,7 @@ namespace GameDevWare.Charon.Unity.Windows
 		{
 			this.projects = new Project[0];
 			this.projectNames = new string[0];
+			this.upload = false;
 			this.selectedProjectIndex = -1;
 			this.branches = new Branch[0];
 			this.branchNames = new string[0];
@@ -292,14 +359,15 @@ namespace GameDevWare.Charon.Unity.Windows
 		{
 			if (apiKey == null) throw new ArgumentNullException("apiKey");
 
-
 			this.lastError = string.Empty;
 			this.projects = new Project[0];
 			this.projectNames = new string[0];
+			this.upload = false;
 			this.selectedProjectIndex = -1;
 			this.branches = new Branch[0];
 			this.branchNames = new string[0];
 			this.selectedBranchIndex = -1;
+			
 			return new Coroutine(this.UpdateProjectListAsync(apiKey)).ContinueWith(promise =>
 			{
 				this.Repaint();
@@ -309,7 +377,6 @@ namespace GameDevWare.Charon.Unity.Windows
 				this.lastError = promise.Error.Unwrap().Message;
 				Debug.LogWarning(promise.Error.Unwrap());
 			});
-
 		}
 		private IEnumerable UpdateProjectListAsync(string apiKey)
 		{
@@ -356,7 +423,14 @@ namespace GameDevWare.Charon.Unity.Windows
 			KeyCryptoStorage.StoreKey(apiKeyPath, this.apiKey);
 			this.ServerApiClient.UseApiKey(this.apiKey);
 
-			var downloadDataSourceAsync = this.ServerApiClient.DownloadDataSourceAsync(branch.Id, storeFormat, downloadPath,
+			if (this.upload)
+			{
+				var uploadDataSourceAsync = this.ServerApiClient.UploadDataSourceAsync(branch.Id, storeFormat, Path.GetFullPath(assetPath),
+					this.GetProgressReport().ToUploadProgress(Path.GetFileName(assetPath)));
+				yield return uploadDataSourceAsync;
+			}
+			
+			var downloadDataSourceAsync = this.ServerApiClient.DownloadDataSourceAsync(branch.Id, storeFormat, Path.GetFullPath(downloadPath),
 				this.GetProgressReport().ToDownloadProgress(Path.GetFileName(downloadPath)));
 			yield return downloadDataSourceAsync;
 
@@ -396,6 +470,7 @@ namespace GameDevWare.Charon.Unity.Windows
 			{
 				return;
 			}
+
 			var project = this.projects[this.selectedProjectIndex];
 
 			this.branches = project.Branches;
@@ -431,6 +506,7 @@ namespace GameDevWare.Charon.Unity.Windows
 				if (Settings.Current.Verbose)
 					Debug.Log(string.Format("'{0}' window is closed by user.", this.titleContent.text));
 			}
+
 			this.Cancel = null;
 			this.Done = null;
 		}
@@ -462,7 +538,7 @@ namespace GameDevWare.Charon.Unity.Windows
 				string.IsNullOrEmpty(folder) == false)
 			{
 				window.folder = folder;
-				window.name = name;
+				window.fileName = name;
 				window.originalAsset = Path.Combine(folder, name);
 				window.storeFormat = StorageFormats.GetStoreFormat(name) ?? GameDataStoreFormat.Json;
 			}
@@ -478,7 +554,6 @@ namespace GameDevWare.Charon.Unity.Windows
 		/// <inheritdoc />
 		public void OnBeforeSerialize()
 		{
-
 		}
 		/// <inheritdoc />
 		public void OnAfterDeserialize()

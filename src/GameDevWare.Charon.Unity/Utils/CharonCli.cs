@@ -49,8 +49,12 @@ namespace GameDevWare.Charon.Unity.Utils
 
 		internal static Promise<RequirementsCheckResult> CheckRequirementsAsync()
 		{
-			if (string.IsNullOrEmpty(Settings.CharonExePath) || !File.Exists(Settings.CharonExePath))
+			if (string.IsNullOrEmpty(Settings.CharonExePath) ||
+				!File.Exists(Settings.CharonExePath) ||
+				string.IsNullOrEmpty(Settings.Current.EditorVersion))
+			{
 				return Promise.FromResult(RequirementsCheckResult.MissingExecutable);
+			}
 
 			var additionalChecks = new List<Promise<RequirementsCheckResult>>();
 			if (RuntimeInformation.IsWindows)
@@ -79,17 +83,14 @@ namespace GameDevWare.Charon.Unity.Utils
 				}));
 			}
 
-			if (!string.IsNullOrEmpty(Settings.Current.EditorVersion))
+			additionalChecks.Add(GetVersionAsync().ContinueWith(getCharonVersion =>
 			{
-				additionalChecks.Add(GetVersionAsync().ContinueWith(getCharonVersion =>
-				{
-					if (getCharonVersion.HasErrors || getCharonVersion.GetResult() == null ||
-						getCharonVersion.GetResult().ToString() != Settings.Current.EditorVersion)
-						return RequirementsCheckResult.WrongVersion;
-					else
-						return RequirementsCheckResult.Ok;
-				}));
-			}
+				if (getCharonVersion.HasErrors || getCharonVersion.GetResult() == null ||
+					getCharonVersion.GetResult().ToString() != Settings.Current.EditorVersion)
+					return RequirementsCheckResult.WrongVersion;
+				else
+					return RequirementsCheckResult.Ok;
+			}));
 
 			if (additionalChecks.Count == 0)
 				return Promise.FromResult(RequirementsCheckResult.Ok);
@@ -389,8 +390,11 @@ namespace GameDevWare.Charon.Unity.Utils
 				currentVersion = checkToolsVersion.HasErrors ? default(SemanticVersion) : checkToolsVersion.GetResult();
 			}
 
-			Settings.Current.EditorVersion = currentVersion != null ? currentVersion.ToString() : null;
-			Settings.Current.Save();
+			if (currentVersion != null)
+			{
+				Settings.Current.EditorVersion = currentVersion.ToString();
+				Settings.Current.Save();
+			}
 
 			Debug.Log(string.Format("{1} version is '{0}'. Update is completed.", currentVersion, Path.GetFileName(charonPath)));
 
@@ -457,17 +461,12 @@ namespace GameDevWare.Charon.Unity.Utils
 			input.StickWith(runTask);
 			return output.Capture(runTask);
 		}
-
-		public static Promise<RunResult> DeleteDocumentAsync(GameDataLocation gameDataLocation, string schema, CommandInput input, CommandOutput output)
-		{
-			return DeleteDocumentAsync(gameDataLocation, schema, string.Empty, input, output);
-		}
-		public static Promise<RunResult> DeleteDocumentAsync(GameDataLocation gameDataLocation, string schema, string id, CommandInput input, CommandOutput output)
+		
+		public static Promise<RunResult> DeleteDocumentAsync(GameDataLocation gameDataLocation, string schema, string id, CommandOutput output)
 		{
 			if (gameDataLocation.Location == null) throw new ArgumentNullException("gameDataLocation");
 			if (schema == null) throw new ArgumentNullException("schema");
 			if (id == null) throw new ArgumentNullException("id");
-			if (input == null) throw new ArgumentNullException("input");
 			if (output == null) throw new ArgumentNullException("output");
 
 			gameDataLocation.ThrowIfFileNotExists();
@@ -479,19 +478,15 @@ namespace GameDevWare.Charon.Unity.Utils
 					"DATA", "DELETE", gameDataLocation,
 					IsToolsLegacy() ? "--entity" : "--schema", schema,
 					"--id", id,
-					"--input", input.Source,
-					"--inputFormat", input.Format,
-					"--inputFormattingOptions", input.FormattingOptions,
 					"--output", output.Target,
 					"--outputFormat", output.Format,
 					"--outputFormattingOptions", output.FormattingOptions
 				)
 			);
-			input.StickWith(runTask);
 			return output.Capture(runTask);
 		}
 
-		public static Promise<RunResult> GetDocumentAsync(GameDataLocation gameDataLocation, string schema, string id, CommandOutput output)
+		public static Promise<RunResult> FindDocumentAsync(GameDataLocation gameDataLocation, string schema, string id, CommandOutput output)
 		{
 			if (gameDataLocation.Location == null) throw new ArgumentNullException("gameDataLocation");
 			if (schema == null) throw new ArgumentNullException("schema");
@@ -688,9 +683,9 @@ namespace GameDevWare.Charon.Unity.Utils
 		}
 
 		public static Promise<RunResult> GenerateCSharpCodeAsync(GameDataLocation gameDataLocation, string outputDirectory,
-			SourceCodeGenerationOptimizations optimizations = 0,
+			CSharpLanguageVersion languageVersion, SourceCodeGenerationOptimizations optimizations = 0,
 			string documentClassName = "Document", string gameDataClassName = "GameData",
-			string @namespace = "GameParameters", SourceCodeIndentation sourceCodeIndentation = SourceCodeIndentation.Tabs,
+			string @namespace = "GameParameters", string defineConstants = "", SourceCodeIndentation sourceCodeIndentation = SourceCodeIndentation.Tabs,
 			SourceCodeLineEndings sourceCodeLineEndings = SourceCodeLineEndings.Windows, bool splitFiles = false)
 		{
 			if (gameDataLocation.Location == null) throw new ArgumentNullException("gameDataLocation");
@@ -701,13 +696,18 @@ namespace GameDevWare.Charon.Unity.Utils
 
 			gameDataLocation.ThrowIfFileNotExists();
 
+			if (true)
+			{
+				optimizations |= SourceCodeGenerationOptimizations.DisableFormulaCompilation;
+			}
+
 			var optimizationsList = new List<string>();
 			foreach (SourceCodeGenerationOptimizations optimization in Enum.GetValues(typeof(SourceCodeGenerationOptimizations)))
 			{
 				if ((optimizations & optimization) != 0)
 				{
 					optimizationsList.Add(optimization.ToString());
-				} 
+				}
 			}
 
 			if (IsToolsLegacy())
@@ -737,7 +737,13 @@ namespace GameDevWare.Charon.Unity.Utils
 				{
 					options |= LegacySourceCodeGenerationOptimizations.HideReferences;
 				}
+				if ((optimizations & SourceCodeGenerationOptimizations.DisableFormulaCompilation) == 0)
+				{
+					options |= LegacySourceCodeGenerationOptimizations.DisableFormulas;
+				}
 
+				var generatedCodeFileName = Path.ChangeExtension(Path.GetFileName(gameDataLocation.Location.LocalPath), ".cs");
+				
 				var runTask = RunInternal
 				(
 					gameDataLocation.ApiKey,
@@ -748,7 +754,7 @@ namespace GameDevWare.Charon.Unity.Utils
 						"--apiClassName", gameDataClassName,
 						"--namespace", @namespace,
 						"--options", ((int)options).ToString(),
-						"--output", Path.Combine(outputDirectory, Path.ChangeExtension(Path.GetFileName(gameDataLocation.Location.LocalPath), ".cs")),
+						"--output", Path.Combine(outputDirectory, generatedCodeFileName),
 						"--outputEncoding", "utf-8"
 					)
 				);
@@ -766,6 +772,8 @@ namespace GameDevWare.Charon.Unity.Utils
 						"--documentClassName", documentClassName,
 						"--gameDataClassName", gameDataClassName,
 						"--namespace", @namespace,
+						"--defineConstants", defineConstants,
+						"--languageVersion", languageVersion.ToString(),
 						"--indentation", sourceCodeIndentation.ToString(),
 						"--lineEndings", sourceCodeLineEndings.ToString(),
 						"--optimizations", optimizationsList,

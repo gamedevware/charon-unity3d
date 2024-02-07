@@ -54,5 +54,9 @@ namespace GameDevWare.Charon.Unity.Utils
 		/// Enumeration value - disablePatching.
 		/// </summary>
 		DisablePatching = 1 << 6,
+		/// <summary>
+		/// Enumeration value - disableFormulas.
+		/// </summary>
+		DisableFormulaCompilation = 1 << 7,
 	}
 }

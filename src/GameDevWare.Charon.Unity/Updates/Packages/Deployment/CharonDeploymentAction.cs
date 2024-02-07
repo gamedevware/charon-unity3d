@@ -65,6 +65,11 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Deployment
 
 			if (this.versionDirectory.Exists && HasValidExecutableFiles(this.versionDirectory))
 			{
+				if (Settings.Current.Verbose)
+				{
+					Debug.Log(string.Format("Product '{0}' of version '{1}' has valid executable in '{2}'.", ProductInformation.PRODUCT_CHARON, this.versionToDeploy, this.versionDirectory));
+				}
+				SyncSettingsVersion(this.versionToDeploy);
 				yield break;
 			}
 
@@ -196,7 +201,17 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Deployment
 				}
 			}
 
-			Settings.Current.EditorVersion = currentVersion != null ? currentVersion.ToString() : null;
+			SyncSettingsVersion(currentVersion);
+		}
+
+		private static void SyncSettingsVersion(SemanticVersion currentVersion)
+		{
+			if (currentVersion == null || currentVersion.ToString() == Settings.Current.EditorVersion)
+			{
+				return;
+			}
+
+			Settings.Current.EditorVersion = currentVersion.ToString();
 			Settings.Current.Save();
 		}
 

@@ -33,13 +33,19 @@ using UnityObject = UnityEngine.Object;
 
 namespace GameDevWare.Charon.Unity.Windows
 {
+	[CustomEditor(typeof(GameDataAsset))]
 	internal class GameDataInspector : Editor
 	{
+		private static UnityObject ActiveObject;
+		private static bool SelectionChanged;
+
 		private UnityObject lastAsset;
 		private GameDataSettings gameDataSettings;
 		private UnityObject newScriptingAssembly;
 		private string newScriptingAssemblyName;
 		private string lastServerAddress;
+		[NonSerialized] private Promise generateCodeTask;
+		[NonSerialized] private Promise syncTask;
 		[SerializeField] private bool formulaAssembliesFold;
 		[SerializeField] private bool codeGenerationFold;
 		[SerializeField] private bool connectionFold;
@@ -47,139 +53,49 @@ namespace GameDevWare.Charon.Unity.Windows
 		static GameDataInspector()
 		{
 			Selection.selectionChanged += OnSelectionChanged;
+			EditorApplication.update += OnUpdate;
 		}
 
 		public static void OnSelectionChanged()
 		{
+			SelectionChanged = true;
+		}
+
+		private static void OnUpdate()
+		{
+			if (!SelectionChanged) return;
+			SelectionChanged = false;
+
 			if (Selection.activeObject == null)
+			{
+				ActiveObject = null;
 				return;
+			}
+
 			var assetPath = FileHelper.MakeProjectRelative(AssetDatabase.GetAssetPath(Selection.activeObject));
 			if (GameDataTracker.IsGameDataFile(assetPath) == false)
+			{
 				return;
-
-			try
-			{
-				var selectedAssetType = Selection.activeObject.GetType();
-				var inspectorWindowType = typeof(PopupWindow).Assembly.GetType("UnityEditor.InspectorWindow");
-				var inspectorWindow = EditorWindow.GetWindow(inspectorWindowType);
-				var activeEditorTracker = inspectorWindow.HasProperty("tracker") ?
-					inspectorWindow.GetPropertyValue("tracker") : inspectorWindow.GetFieldValue("m_Tracker");
-				var customEditorAttributesType = typeof(PopupWindow).Assembly.GetType("UnityEditor.CustomEditorAttributes");
-				var customEditorsList = customEditorAttributesType.GetFieldValue("kSCustomEditors") as IList;
-				var customEditorsDictionary = customEditorAttributesType.GetFieldValue("kSCustomEditors") as IDictionary;
-				var monoEditorType = customEditorAttributesType.GetNestedType("MonoEditorType", BindingFlags.NonPublic);
-
-				// after unity 2018.*
-				if (customEditorsDictionary != null)
-				{
-					var activeEditors = default(IEnumerable);
-					foreach (IEnumerable customEditors in customEditorsDictionary.Values)
-					{
-						foreach (var customEditor in customEditors)
-						{
-							if (customEditor == null || (Type)customEditor.GetFieldValue("m_InspectedType") != selectedAssetType)
-								continue;
-
-							var originalInspectorType = (Type)customEditor.GetFieldValue("m_InspectorType");
-
-							// override inspector
-							customEditor.SetFieldValue("m_InspectorType", typeof(GameDataInspector));
-
-							// force rebuild editor list
-							activeEditorTracker.Invoke("ForceRebuild");
-
-							activeEditors = (IEnumerable)activeEditorTracker.GetPropertyValue("activeEditors") ?? Enumerable.Empty<object>();
-							foreach (Editor activeEditor in activeEditors)
-							{
-								activeEditor.SetPropertyValue("alwaysAllowExpansion", true);
-							}
-
-							// restore original inspector
-							customEditor.SetFieldValue("m_InspectorType", originalInspectorType);
-							return;
-						}
-					}
-
-					var newMonoEditorType = Activator.CreateInstance(monoEditorType);
-					newMonoEditorType.SetFieldValue("m_InspectedType", selectedAssetType);
-					newMonoEditorType.SetFieldValue("m_InspectorType", typeof(GameDataInspector));
-					newMonoEditorType.SetFieldValue("m_EditorForChildClasses", false);
-					if (monoEditorType.HasField("m_IsFallback"))
-						newMonoEditorType.SetFieldValue("m_IsFallback", false);
-					var newMonoEditorTypeList = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(monoEditorType));
-					newMonoEditorTypeList.Add(newMonoEditorType);
-
-					// override inspector
-					customEditorsDictionary[selectedAssetType] = newMonoEditorTypeList;
-
-					// force rebuild editor list
-					activeEditorTracker.Invoke("ForceRebuild");
-
-					activeEditors = (IEnumerable)activeEditorTracker.GetPropertyValue("activeEditors") ?? Enumerable.Empty<object>();
-					foreach (Editor activeEditor in activeEditors)
-					{
-						activeEditor.SetPropertyValue("alwaysAllowExpansion", true);
-					}
-
-					// restore original inspector
-					customEditorsDictionary.Remove(selectedAssetType);
-				}
-				// prior to unity 2018.*
-				else if (customEditorsList != null)
-				{
-					var cachedCustomEditorsByType = customEditorAttributesType.HasField("kCachedEditorForType") ?
-						(IDictionary<Type, Type>)customEditorAttributesType.GetFieldValue("kCachedEditorForType") :
-						null;
-
-					foreach (var customEditor in customEditorsList)
-					{
-						if (customEditor == null || (Type)customEditor.GetFieldValue("m_InspectedType") != selectedAssetType)
-							continue;
-
-						var originalInspectorType = (Type)customEditor.GetFieldValue("m_InspectorType");
-
-						// override inspector
-						customEditor.SetFieldValue("m_InspectorType", typeof(GameDataInspector));
-						if (cachedCustomEditorsByType != null)
-							cachedCustomEditorsByType[selectedAssetType] = typeof(GameDataInspector);
-
-						// force rebuild editor list
-						activeEditorTracker.Invoke("ForceRebuild");
-						inspectorWindow.Repaint();
-
-						// restore original inspector
-						customEditor.SetFieldValue("m_InspectorType", originalInspectorType);
-						if (cachedCustomEditorsByType != null)
-							cachedCustomEditorsByType.Remove(selectedAssetType);
-						return;
-					}
-
-					var newMonoEditorType = Activator.CreateInstance(monoEditorType);
-					newMonoEditorType.SetFieldValue("m_InspectedType", selectedAssetType);
-					newMonoEditorType.SetFieldValue("m_InspectorType", typeof(GameDataInspector));
-					newMonoEditorType.SetFieldValue("m_EditorForChildClasses", false);
-					if (monoEditorType.HasField("m_IsFallback"))
-						newMonoEditorType.SetFieldValue("m_IsFallback", false);
-
-					// override inspector
-					customEditorsList.Insert(0, newMonoEditorType);
-					if (cachedCustomEditorsByType != null)
-						cachedCustomEditorsByType[selectedAssetType] = typeof(GameDataInspector);
-					// force rebuild editor list
-					activeEditorTracker.Invoke("ForceRebuild");
-					inspectorWindow.Repaint();
-
-					// restore original inspector
-					customEditorsList.Remove(newMonoEditorType);
-					if (cachedCustomEditorsByType != null)
-						cachedCustomEditorsByType.Remove(selectedAssetType);
-				}
 			}
-			catch (Exception updateEditorError)
+
+			if (Selection.activeObject == ActiveObject)
 			{
-				if (Settings.Current.Verbose)
-					Debug.LogError(updateEditorError);
+				return;
 			}
+
+			if (!(ActiveObject is GameDataAsset))
+			{
+				ActiveObject = CreateInstance<GameDataAsset>();
+				ActiveObject.hideFlags = HideFlags.DontSave;
+			}
+			((GameDataAsset)ActiveObject).FilePath = assetPath;
+
+			Selection.activeObject = ActiveObject;
+			foreach (var editor in UnityEngine.Resources.FindObjectsOfTypeAll<GameDataInspector>())
+			{
+				editor.Repaint();
+			}
+
 		}
 
 		/// <inheritdoc />
@@ -189,10 +105,13 @@ namespace GameDevWare.Charon.Unity.Windows
 			this.DrawDefaultInspector();
 
 			var gameDataAsset = this.target;
-			var gameDataPath = FileHelper.MakeProjectRelative(AssetDatabase.GetAssetPath(gameDataAsset));
+			if (gameDataAsset is GameDataAsset)
+			{
+				gameDataAsset = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(((GameDataAsset)gameDataAsset).FilePath);
+			}
 
-			var assetPath = FileHelper.MakeProjectRelative(AssetDatabase.GetAssetPath(Selection.activeObject));
-			if (GameDataTracker.IsGameDataFile(assetPath) == false)
+			var gameDataPath = FileHelper.MakeProjectRelative(AssetDatabase.GetAssetPath(gameDataAsset));
+			if (GameDataTracker.IsGameDataFile(gameDataPath) == false)
 			{
 				return;
 			}
@@ -219,33 +138,41 @@ namespace GameDevWare.Charon.Unity.Windows
 				this.gameDataSettings.Generator = (int)(GameDataSettings.CodeGenerator)EditorGUILayout.EnumPopup(Resources.UI_UNITYPLUGIN_INSPECTOR_CODE_GENERATOR,
 					(GameDataSettings.CodeGenerator)this.gameDataSettings.Generator);
 
+				this.gameDataSettings.LanguageVersion = (int)(CSharpLanguageVersion)EditorGUILayout.EnumPopup(
+					Resources.UI_UNITYPLUGIN_INSPECTOR_CODE_LANGUAGE_VERSION, (CSharpLanguageVersion)this.gameDataSettings.LanguageVersion);
+				
 				if (this.gameDataSettings.Generator != (int)GameDataSettings.CodeGenerator.None)
 				{
 
 					this.gameDataSettings.AutoGeneration = EditorGUILayout.Toggle(Resources.UI_UNITYPLUGIN_INSPECTOR_AUTO_GENERATION,
 						this.gameDataSettings.AutoGeneration);
 
-					var codeAsset = !string.IsNullOrEmpty(this.gameDataSettings.CodeGenerationPath) && File.Exists(this.gameDataSettings.CodeGenerationPath) ?
-						AssetDatabase.LoadAssetAtPath<TextAsset>(this.gameDataSettings.CodeGenerationPath) : null;
+					var folderAsset = !string.IsNullOrEmpty(this.gameDataSettings.CodeGenerationPath) && Directory.Exists(this.gameDataSettings.CodeGenerationPath) ?
+						AssetDatabase.LoadAssetAtPath<DefaultAsset>(this.gameDataSettings.CodeGenerationPath) : null;
 					var assetAsset = !string.IsNullOrEmpty(this.gameDataSettings.AssetGenerationPath) && File.Exists(this.gameDataSettings.AssetGenerationPath) ?
 						AssetDatabase.LoadAssetAtPath<ScriptableObject>(this.gameDataSettings.AssetGenerationPath) : null;
 
-					if (codeAsset != null)
+					if (folderAsset != null)
+					{
 						this.gameDataSettings.CodeGenerationPath = AssetDatabase.GetAssetPath(
-							EditorGUILayout.ObjectField(Resources.UI_UNITYPLUGIN_INSPECTOR_CODE_GENERATION_PATH, codeAsset, typeof(TextAsset), false));
+							EditorGUILayout.ObjectField(Resources.UI_UNITYPLUGIN_INSPECTOR_CODE_GENERATION_PATH, folderAsset, typeof(DefaultAsset), false));
+					}
 					else
+					{
 						this.gameDataSettings.CodeGenerationPath = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_INSPECTOR_CODE_GENERATION_PATH,
 							this.gameDataSettings.CodeGenerationPath);
+					}
 
 					if (this.gameDataSettings.Generator == (int)GameDataSettings.CodeGenerator.CSharpCodeAndAsset)
 					{
 						if (assetAsset != null)
-							this.gameDataSettings.AssetGenerationPath = AssetDatabase.GetAssetPath(
-								EditorGUILayout.ObjectField(Resources.UI_UNITYPLUGIN_INSPECTOR_ASSET_GENERATION_PATH, assetAsset, typeof(ScriptableObject),
-									false));
+						{
+							this.gameDataSettings.AssetGenerationPath = AssetDatabase.GetAssetPath(EditorGUILayout.ObjectField(Resources.UI_UNITYPLUGIN_INSPECTOR_ASSET_GENERATION_PATH, assetAsset, typeof(ScriptableObject), false));
+						}
 						else
-							this.gameDataSettings.AssetGenerationPath = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_INSPECTOR_ASSET_GENERATION_PATH,
-								this.gameDataSettings.AssetGenerationPath);
+						{
+							this.gameDataSettings.AssetGenerationPath = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_INSPECTOR_ASSET_GENERATION_PATH, this.gameDataSettings.AssetGenerationPath);
+						}
 					}
 
 					if (this.gameDataSettings.Generator == (int)GameDataSettings.CodeGenerator.CSharpCodeAndAsset &&
@@ -264,29 +191,35 @@ namespace GameDevWare.Charon.Unity.Windows
 						Resources.UI_UNITYPLUGIN_INSPECTOR_CODE_INDENTATION, (SourceCodeIndentation)this.gameDataSettings.Indentation);
 					this.gameDataSettings.Optimizations = (int)(SourceCodeGenerationOptimizations)EditorGUILayout.EnumFlagsField(
 						Resources.UI_UNITYPLUGIN_INSPECTOR_CODE_OPTIMIZATIONS, (SourceCodeGenerationOptimizations)this.gameDataSettings.Optimizations);
-					
+
 					if (!CharonCli.IsToolsLegacy())
 					{
 						this.gameDataSettings.SplitSourceCodeFiles = EditorGUILayout.Toggle(Resources.UI_UNITYPLUGIN_INSPECTOR_SPLIT_FILES,
 							this.gameDataSettings.SplitSourceCodeFiles);
 					}
-
-					GUI.enabled = !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling && string.IsNullOrEmpty(this.gameDataSettings.CodeGenerationPath) == false;
-					EditorGUILayout.Space();
-
-					if (GUILayout.Button(Resources.UI_UNITYPLUGIN_INSPECTOR_RUN_GENERATOR_BUTTON))
-					{
-						GenerateCodeAndAssetsRoutine.Schedule(
-							path: gameDataPath,
-							progressCallback: ProgressUtils.ReportToLog(Resources.UI_UNITYPLUGIN_INSPECTOR_GENERATION_PREFIX + " "),
-							coroutineId: "generation::" + gameDataPath
-						).ContinueWith(_ => this.Repaint());
-					}
 					GUI.enabled = true;
 				}
 			}
 
-	#if FALSE
+			GUI.enabled = !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling && 
+				string.IsNullOrEmpty(this.gameDataSettings.CodeGenerationPath) == false && 
+				this.gameDataSettings.Generator != (int)GameDataSettings.CodeGenerator.None;
+
+			EditorGUILayout.Space();
+
+			var hasDoneGeneration = this.generateCodeTask != null && this.generateCodeTask.IsCompleted;
+			var hasRunningGeneration = this.generateCodeTask != null && !this.generateCodeTask.IsCompleted;
+			var generationStatus = (hasDoneGeneration ? " " + Resources.UI_UNITYPLUGIN_INSPECTOR_OPERATION_DONE : 
+				hasRunningGeneration ? " " + Resources.UI_UNITYPLUGIN_INSPECTOR_OPERATION_RUNNING : "");
+			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_INSPECTOR_RUN_GENERATOR_BUTTON + generationStatus))
+			{
+				this.generateCodeTask = GenerateCodeAndAssetsRoutine.Schedule(
+					path: gameDataPath,
+					progressCallback: ProgressUtils.ReportToLog(Resources.UI_UNITYPLUGIN_INSPECTOR_GENERATION_PREFIX + " "),
+					coroutineId: "generation::" + gameDataPath
+				).ContinueWith(_ => this.Repaint());
+			}
+
 			this.connectionFold = EditorGUILayout.Foldout(this.connectionFold, this.lastServerAddress);
 			if (this.connectionFold)
 			{
@@ -297,14 +230,18 @@ namespace GameDevWare.Charon.Unity.Windows
 					EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_INSPECTOR_PROJECT_LABEL, this.gameDataSettings.ProjectName ?? this.gameDataSettings.ProjectId);
 					EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_INSPECTOR_BRANCH_LABEL, this.gameDataSettings.BranchName ?? this.gameDataSettings.BranchId);
 
-					GUI.enabled = !CoroutineScheduler.IsRunning && !EditorApplication.isCompiling && string.IsNullOrEmpty(this.gameDataSettings.CodeGenerationPath) == false;
 					EditorGUILayout.Space();
 
 					EditorGUILayout.BeginHorizontal();
-					if (GUILayout.Button(Resources.UI_UNITYPLUGIN_INSPECTOR_SYNCHRONIZE_BUTTON))
+					var hasDoneSync = this.syncTask != null && this.syncTask.IsCompleted;
+					var hasRunningSync = this.syncTask != null && !this.syncTask.IsCompleted;
+					var syncStatus = (hasDoneSync ? " " + Resources.UI_UNITYPLUGIN_INSPECTOR_OPERATION_DONE : 
+						hasRunningSync ? " " + Resources.UI_UNITYPLUGIN_INSPECTOR_OPERATION_RUNNING : "");
+					
+					if (GUILayout.Button(Resources.UI_UNITYPLUGIN_INSPECTOR_SYNCHRONIZE_BUTTON + syncStatus))
 					{
 						var cancellation = new Promise();
-						SynchronizeAssetsRoutine.Schedule(
+						this.syncTask = SynchronizeAssetsRoutine.Schedule(
 							force: true,
 							paths: new[] { gameDataPath },
 							progressCallback: ProgressUtils.ShowCancellableProgressBar(Resources.UI_UNITYPLUGIN_INSPECTOR_SYNCHONIZATION_PREFIX + " ", cancellation: cancellation),
@@ -328,62 +265,60 @@ namespace GameDevWare.Charon.Unity.Windows
 						GUI.changed = true;
 					}
 					EditorGUILayout.EndHorizontal();
-					GUI.enabled = true;
-				}
-				else
-				{
-					EditorGUILayout.Space();
-
-					if (GUILayout.Button(Resources.UI_UNITYPLUGIN_INSPECTOR_CONNECT_BUTTON))
-					{
-						ConnectGameDataWindow.ShowAsync(
-							folder: Path.GetDirectoryName(gameDataPath) ?? "./",
-							name: Path.GetFileName(gameDataPath),
-							autoClose: true
-						);
-					}
 				}
 			}
-#endif
-
-			this.formulaAssembliesFold = EditorGUILayout.Foldout(this.formulaAssembliesFold, Resources.UI_UNITYPLUGIN_INSPECTOR_FORMULA_ASSEMBLIES_LABEL);
-			if (this.formulaAssembliesFold)
+			if (!this.gameDataSettings.IsConnected)
 			{
-				for (var i = 0; i < this.gameDataSettings.ScriptingAssemblies.Length; i++)
-				{
-					var watchedAssetPath = this.gameDataSettings.ScriptingAssemblies[i];
-					var assetExists = !string.IsNullOrEmpty(watchedAssetPath) && (File.Exists(watchedAssetPath) || Directory.Exists(watchedAssetPath));
-					var watchedAsset = assetExists ? AssetDatabase.LoadMainAssetAtPath(watchedAssetPath) : null;
-					if (watchedAsset != null)
-						this.gameDataSettings.ScriptingAssemblies[i] = AssetDatabase.GetAssetPath(EditorGUILayout.ObjectField(Resources.UI_UNITYPLUGIN_INSPECTOR_ASSET_LABEL, watchedAsset, typeof(UnityObject), false));
-					else
-						this.gameDataSettings.ScriptingAssemblies[i] = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_INSPECTOR_NAME_LABEL, watchedAssetPath);
-				}
 				EditorGUILayout.Space();
-				this.newScriptingAssembly = EditorGUILayout.ObjectField("<" + Resources.UI_UNITYPLUGIN_INSPECTOR_ADD_ASSET_BUTTON + ">", this.newScriptingAssembly, typeof(UnityObject), false);
-				if (Event.current.type == EventType.Repaint && this.newScriptingAssembly != null)
+
+				if (GUILayout.Button(Resources.UI_UNITYPLUGIN_INSPECTOR_CONNECT_BUTTON))
 				{
-					var assemblies = new HashSet<string>(this.gameDataSettings.ScriptingAssemblies);
-					assemblies.Remove("");
-					assemblies.Add(AssetDatabase.GetAssetPath(this.newScriptingAssembly));
-					this.gameDataSettings.ScriptingAssemblies = assemblies.ToArray();
-					this.newScriptingAssembly = null;
-					GUI.changed = true;
+					ConnectGameDataWindow.ShowAsync(
+						folder: Path.GetDirectoryName(gameDataPath) ?? "./",
+						name: Path.GetFileNameWithoutExtension(Path.GetFileName(gameDataPath)),
+						autoClose: true
+					);
 				}
-				EditorGUILayout.BeginHorizontal();
-				this.newScriptingAssemblyName = EditorGUILayout.TextField("<" + Resources.UI_UNITYPLUGIN_INSPECTOR_ADD_NAME_BUTTON + ">", this.newScriptingAssemblyName);
-				if (GUILayout.Button(Resources.UI_UNITYPLUGIN_INSPECTOR_ADD_BUTTON, EditorStyles.miniButton, GUILayout.Width(50), GUILayout.Height(18)))
+				
+				this.formulaAssembliesFold = EditorGUILayout.Foldout(this.formulaAssembliesFold, Resources.UI_UNITYPLUGIN_INSPECTOR_FORMULA_ASSEMBLIES_LABEL);
+				if (this.formulaAssembliesFold)
 				{
-					var assemblies = new HashSet<string>(this.gameDataSettings.ScriptingAssemblies);
-					assemblies.Remove("");
-					assemblies.Add(this.newScriptingAssemblyName);
-					this.gameDataSettings.ScriptingAssemblies = assemblies.ToArray();
-					this.newScriptingAssemblyName = null;
-					GUI.changed = true;
-					this.Repaint();
+					for (var i = 0; i < this.gameDataSettings.ScriptingAssemblies.Length; i++)
+					{
+						var watchedAssetPath = this.gameDataSettings.ScriptingAssemblies[i];
+						var assetExists = !string.IsNullOrEmpty(watchedAssetPath) && (File.Exists(watchedAssetPath) || Directory.Exists(watchedAssetPath));
+						var watchedAsset = assetExists ? AssetDatabase.LoadMainAssetAtPath(watchedAssetPath) : null;
+						if (watchedAsset != null)
+							this.gameDataSettings.ScriptingAssemblies[i] = AssetDatabase.GetAssetPath(EditorGUILayout.ObjectField(Resources.UI_UNITYPLUGIN_INSPECTOR_ASSET_LABEL, watchedAsset, typeof(UnityObject), false));
+						else
+							this.gameDataSettings.ScriptingAssemblies[i] = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_INSPECTOR_NAME_LABEL, watchedAssetPath);
+					}
+					EditorGUILayout.Space();
+					this.newScriptingAssembly = EditorGUILayout.ObjectField("<" + Resources.UI_UNITYPLUGIN_INSPECTOR_ADD_ASSET_BUTTON + ">", this.newScriptingAssembly, typeof(UnityObject), false);
+					if (Event.current.type == EventType.Repaint && this.newScriptingAssembly != null)
+					{
+						var assemblies = new HashSet<string>(this.gameDataSettings.ScriptingAssemblies);
+						assemblies.Remove("");
+						assemblies.Add(AssetDatabase.GetAssetPath(this.newScriptingAssembly));
+						this.gameDataSettings.ScriptingAssemblies = assemblies.ToArray();
+						this.newScriptingAssembly = null;
+						GUI.changed = true;
+					}
+					EditorGUILayout.BeginHorizontal();
+					this.newScriptingAssemblyName = EditorGUILayout.TextField("<" + Resources.UI_UNITYPLUGIN_INSPECTOR_ADD_NAME_BUTTON + ">", this.newScriptingAssemblyName);
+					if (GUILayout.Button(Resources.UI_UNITYPLUGIN_INSPECTOR_ADD_BUTTON, EditorStyles.miniButton, GUILayout.Width(50), GUILayout.Height(18)))
+					{
+						var assemblies = new HashSet<string>(this.gameDataSettings.ScriptingAssemblies);
+						assemblies.Remove("");
+						assemblies.Add(this.newScriptingAssemblyName);
+						this.gameDataSettings.ScriptingAssemblies = assemblies.ToArray();
+						this.newScriptingAssemblyName = null;
+						GUI.changed = true;
+						this.Repaint();
+					}
+					GUILayout.Space(5);
+					EditorGUILayout.EndHorizontal();
 				}
-				GUILayout.Space(5);
-				EditorGUILayout.EndHorizontal();
 			}
 
 			EditorGUILayout.Space();
@@ -412,6 +347,15 @@ namespace GameDevWare.Charon.Unity.Windows
 				).ContinueWith(_ => this.Repaint());
 			}
 			EditorGUILayout.EndHorizontal();
+			EditorGUILayout.BeginHorizontal();
+			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_INSPECTOR_SELECT_BUTTON))
+			{
+				Selection.activeObject = gameDataAsset;
+				ActiveObject = gameDataAsset;
+				EditorGUIUtility.PingObject(gameDataAsset);
+			}
+			EditorGUILayout.EndHorizontal();
+
 			GUI.enabled = true;
 
 			if (GUI.changed)
@@ -419,5 +363,13 @@ namespace GameDevWare.Charon.Unity.Windows
 				this.gameDataSettings.Save(gameDataPath);
 			}
 		}
+	}
+
+	/// <summary>
+	/// Asset surrogate for game data files
+	/// </summary>
+	public class GameDataAsset : ScriptableObject
+	{
+		[System.NonSerialized] public string FilePath;
 	}
 }

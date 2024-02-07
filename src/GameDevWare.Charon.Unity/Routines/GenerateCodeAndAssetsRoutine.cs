@@ -30,6 +30,7 @@ using GameDevWare.Charon.Unity.ServerApi.KeyStorage;
 using JetBrains.Annotations;
 using UnityEditor;
 using Debug = UnityEngine.Debug;
+using System.Xml.Serialization;
 
 namespace GameDevWare.Charon.Unity.Routines
 {
@@ -53,7 +54,6 @@ namespace GameDevWare.Charon.Unity.Routines
 			switch (checkRequirements.GetResult())
 			{
 				case RequirementsCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
-				case RequirementsCheckResult.WrongVersion:
 				case RequirementsCheckResult.MissingExecutable: yield return CharonCli.DownloadCharon(progressCallback); break;
 				case RequirementsCheckResult.Ok: break;
 				default: throw new InvalidOperationException("Unknown Tools check result.");
@@ -88,6 +88,11 @@ namespace GameDevWare.Charon.Unity.Routines
 
 				var optimizations = gameDataSettings.Optimizations;
 
+				if (Array.IndexOf(Settings.SupportedExtensions, Settings.EXTENSION_FORMULAS) == -1) // no expression library installed
+				{
+					optimizations |= (int)SourceCodeGenerationOptimizations.DisableFormulaCompilation;
+				}
+
 				// trying to touch gamedata file
 				var readGameDataTask = FileHelper.ReadFileAsync(gameDataPath, 5);
 				yield return readGameDataTask;
@@ -113,13 +118,29 @@ namespace GameDevWare.Charon.Unity.Routines
 								SourceCodeGenerationOptimizations.DisableMessagePackSerialization
 							);
 
+							var assetCode = string.Empty;
 							var assetCodeGenerationPath = Path.Combine(gameDataSettings.CodeGenerationPath,
 								gameDataSettings.GameDataClassName + "Asset.cs");
-							var assetCodeGenerator = new AssetLoaderGenerator();
-							assetCodeGenerator.AssetClassName = gameDataSettings.GameDataClassName + "Asset";
-							assetCodeGenerator.GameDataClassName = gameDataSettings.Namespace + "." + gameDataSettings.GameDataClassName;
-							assetCodeGenerator.Namespace = gameDataSettings.Namespace;
-							var assetCode = assetCodeGenerator.TransformText();
+
+							if ((CSharpLanguageVersion)gameDataSettings.LanguageVersion == CSharpLanguageVersion.CSharp73)
+							{
+								var assetCodeGenerator = new CSharp73GameDataFromAssetGenerator {
+									AssetClassName = gameDataSettings.GameDataClassName + "Asset",
+									GameDataClassName = gameDataSettings.Namespace + "." + gameDataSettings.GameDataClassName,
+									Namespace = gameDataSettings.Namespace
+								};
+								assetCode = assetCodeGenerator.TransformText();
+							}
+							else
+							{
+								var assetCodeGenerator = new CSharp40GameDataFromAssetGenerator {
+									AssetClassName = gameDataSettings.GameDataClassName + "Asset",
+									GameDataClassName = gameDataSettings.Namespace + "." + gameDataSettings.GameDataClassName,
+									Namespace = gameDataSettings.Namespace
+								};
+								assetCode = assetCodeGenerator.TransformText();
+							}
+							
 							File.WriteAllText(assetCodeGenerationPath, assetCode);
 
 							forceReImportList.Add(assetCodeGenerationPath);
@@ -171,6 +192,7 @@ namespace GameDevWare.Charon.Unity.Routines
 						(
 							gameDataLocation,
 							Path.GetFullPath(codeGenerationPath),
+							(CSharpLanguageVersion)gameDataSettings.LanguageVersion,
 							(SourceCodeGenerationOptimizations)optimizations,
 							gameDataSettings.DocumentClassName,
 							gameDataSettings.GameDataClassName,

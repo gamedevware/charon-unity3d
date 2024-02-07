@@ -2,17 +2,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFramework>net35</TargetFramework>
-		<Version>2023.4.0</Version>
+		<Version>2023.4.16</Version>
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 		<Authors>Denis Zykov</Authors>
 		<Company>GameDevWare</Company>
-		<Copyright>2021 @ GameDevWare, Denis Zykov</Copyright>
+		<Copyright>2023 @ GameDevWare, Denis Zykov</Copyright>
 		<LangVersion>latest</LangVersion>
 		<PlatformTarget>AnyCPU</PlatformTarget>
-		<Description>Charon is a software for managing game's data. It is used for creating data structure, editing data and accessing this data in the code.
-
-# Documentation
-https://gamedevware.github.io/charon/
+		<Description>Charon is a powerful game development tool that streamlines the game development process. It provides a structured approach to designing and modeling game data, with automatic source code generation that reduces the load on programmers and eliminates human errors.
+			# Online version: https://charon.live
+			# Website: https://www.gamedevware.com/
+			# Documentation https://gamedevware.github.io/charon/
 		</Description>
 		<PackageReleaseNotes>No release notes specified.</PackageReleaseNotes>
 		<PackageProjectUrl>https://github.com/gamedevware/charon</PackageProjectUrl>
@@ -20,7 +20,6 @@ https://gamedevware.github.io/charon/
 		<RepositoryType>git</RepositoryType>
 		<PackageLicenseUrl>https://github.com/gamedevware/charon/blob/master/LICENSE.md</PackageLicenseUrl>
 		<DocumentationFile>$(TargetDir)\$(AssemblyName).xml</DocumentationFile>
-		<AssemblyVersion>2021.1.2.0</AssemblyVersion>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)'=='Release'">
 		<DefineConstants>RELEASE</DefineConstants>
@@ -33,7 +32,7 @@ https://gamedevware.github.io/charon/
 		<None Remove="Charon.exe.config" />
 	</ItemGroup>
 	<ItemGroup>
-		<None Include="..\..\ReleaseNotes.txt" Link="ReleaseNotes.txt" />
+		<None Include=".\ReleaseNotes.txt" Link="ReleaseNotes.txt" />
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="appsettings.json" />
@@ -43,16 +42,25 @@ https://gamedevware.github.io/charon/
 		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
 	</ItemGroup>
 	<ItemGroup>
-		<Compile Update="AssetLoaderGenerator.cs">
-			<DesignTime>True</DesignTime>
-			<AutoGen>True</AutoGen>
-			<DependentUpon>AssetLoaderGenerator.tt</DependentUpon>
+		<Compile Update="CSharp40GameDataFromAssetGenerator.cs">
+		  <AutoGen>True</AutoGen>
+		  <DesignTime>True</DesignTime>
+		  <DependentUpon>CSharp40GameDataFromAssetGenerator.tt</DependentUpon>
+		</Compile>
+		<Compile Update="CSharp73GameDataFromAssetGenerator.cs">
+		  <AutoGen>True</AutoGen>
+		  <DesignTime>True</DesignTime>
+		  <DependentUpon>CSharp73GameDataFromAssetGenerator.tt</DependentUpon>
 		</Compile>
 	</ItemGroup>
 	<ItemGroup>
-		<None Update="AssetLoaderGenerator.tt">
+		<None Update="CSharp40GameDataFromAssetGenerator.tt">
 			<Generator>TextTemplatingFilePreprocessor</Generator>
-			<LastGenOutput>AssetLoaderGenerator.cs</LastGenOutput>
+			<LastGenOutput>CSharp40GameDataFromAssetGenerator.cs</LastGenOutput>
+		</None>
+		<None Update="CSharp73GameDataFromAssetGenerator.tt">
+			<Generator>TextTemplatingFilePreprocessor</Generator>
+			<LastGenOutput>CSharp73GameDataFromAssetGenerator.cs</LastGenOutput>
 		</None>
 	</ItemGroup>
 	<ItemGroup>
@@ -64,7 +72,7 @@ https://gamedevware.github.io/charon/
 
 	<Target Name="ReadPackageMetadataromFile" BeforeTargets="GenerateNuspec">
 		<ItemGroup>
-			<ReleaseNotesFile Include="..\..\ReleaseNotes.txt" />
+			<ReleaseNotesFile Include=".\ReleaseNotes.txt" />
 		</ItemGroup>
 		<ReadLinesFromFile File="@(ReleaseNotesFile)">
 			<Output TaskParameter="Lines" ItemName="PackageReleaseNotesLines" />
@@ -75,13 +83,10 @@ https://gamedevware.github.io/charon/
 	</Target>
 
 	<Target Name="CopyFiles" AfterTargets="CoreBuild">
-		<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../../example/GameDevWare.Charon.Unity.2018/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-		<Copy SourceFiles="$(TargetDir)\$(AssemblyName).xml" DestinationFolder="$(ProjectDir)../../example/GameDevWare.Charon.Unity.2018/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="$(TargetPath)" DestinationFolder="../example/GameDevWare.Charon.Unity.2021/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="$(TargetDir)\$(AssemblyName).xml" DestinationFolder="../example/GameDevWare.Charon.Unity.2021/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
 
-		<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../../example/GameDevWare.Charon.Unity.2021/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-		<Copy SourceFiles="$(TargetDir)\$(AssemblyName).xml" DestinationFolder="$(ProjectDir)../../example/GameDevWare.Charon.Unity.2021/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-
-		<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../../example/RpgGame/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-		<Copy SourceFiles="$(TargetDir)\$(AssemblyName).xml" DestinationFolder="$(ProjectDir)../../example/RpgGame/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="$(TargetPath)" DestinationFolder="../example/GameDevWare.Charon.Unity.2021.RpgGame/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="$(TargetDir)\$(AssemblyName).xml" DestinationFolder="../example/GameDevWare.Charon.Unity.2021.RpgGame/Assets/Editor/GameDevWare.Charon/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
 	</Target>
 </Project>

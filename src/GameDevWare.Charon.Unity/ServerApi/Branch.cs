@@ -31,5 +31,7 @@ namespace GameDevWare.Charon.Unity.ServerApi
 		public string Name;
 		[JsonMember("isPrimary")]
 		public bool IsPrimary;
+		[JsonMember("dataSize")]
+		public int DataSize;
 	}
 }

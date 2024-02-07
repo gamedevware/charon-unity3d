@@ -41,6 +41,7 @@ namespace GameDevWare.Charon.Unity
 		}
 
 		public int Generator;
+		public int LanguageVersion;
 		public bool AutoGeneration;
 		public string AssetGenerationPath;
 		public string CodeGenerationPath;
@@ -75,6 +76,7 @@ namespace GameDevWare.Charon.Unity
 
 			var settings = new GameDataSettings();
 			settings.Generator = (int)CodeGenerator.CSharp;
+			settings.LanguageVersion = (int)CSharpLanguageVersion.CSharp73;
 			settings.AutoGeneration = true;
 			settings.LineEnding = (int)SourceCodeLineEndings.Windows;
 			settings.Indentation = (int)Unity.SourceCodeIndentation.Tabs;

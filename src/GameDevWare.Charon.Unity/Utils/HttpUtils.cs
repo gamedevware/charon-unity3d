@@ -33,6 +33,25 @@ namespace GameDevWare.Charon.Unity.Utils
 	{
 		private const int BUFFER_SIZE = 32 * 1024;
 
+		public static Promise UploadFromFile(string method, Uri url, string uploadFilePath, NameValueCollection requestHeaders = null, Action<long, long> uploadProgressCallback = null, TimeSpan timeout = default(TimeSpan), Promise cancellation = null)
+		{
+			if (url == null) throw new ArgumentNullException("url");
+			if (uploadFilePath == null) throw new ArgumentNullException("uploadFilePath");
+			
+			const bool LEAVE_OPEN = false;
+			var uploadStream = new FileStream(uploadFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, BUFFER_SIZE, FileOptions.SequentialScan);
+			if (requestHeaders == null) requestHeaders = new NameValueCollection();
+			var downloadCoroutine = new Coroutine<long>(RequestToAsync(method, url, Stream.Null, uploadStream, LEAVE_OPEN, requestHeaders, uploadProgressCallback, timeout, cancellation)).ContinueWith(new FuncContinuation<long, long>(p =>
+			{
+				if (p.HasErrors)
+				{
+					throw EnrichWebError(p.Error, url, requestHeaders, timeout);
+				}
+
+				return p.GetResult();
+			}));
+			return downloadCoroutine;
+		}
 		public static Promise DownloadToFile(Uri url, string downloadToFilePath, NameValueCollection requestHeaders = null, Action<long, long> downloadProgressCallback = null, TimeSpan timeout = default(TimeSpan), Promise cancellation = null)
 		{
 			if (url == null) throw new ArgumentNullException("url");
@@ -45,7 +64,7 @@ namespace GameDevWare.Charon.Unity.Utils
 
 			const bool LEAVE_OPEN = false;
 			var downloadToStream = new FileStream(downloadToFilePath, FileMode.Create, FileAccess.Write, FileShare.None, BUFFER_SIZE, FileOptions.None);
-			var downloadCoroutine = new Coroutine<long>(DownloadToAsync(url, downloadToStream, LEAVE_OPEN, requestHeaders, downloadProgressCallback, timeout, cancellation)).ContinueWith(new FuncContinuation<long, long>(p =>
+			var downloadCoroutine = new Coroutine<long>(RequestToAsync("GET", url, downloadToStream, Stream.Null, LEAVE_OPEN, requestHeaders, downloadProgressCallback, timeout, cancellation)).ContinueWith(new FuncContinuation<long, long>(p =>
 			{
 				if (p.HasErrors)
 				{
@@ -58,7 +77,7 @@ namespace GameDevWare.Charon.Unity.Utils
 		}
 		public static Promise DownloadTo(Stream downloadToStream, Uri url, NameValueCollection requestHeaders = null, Action<long, long> downloadProgressCallback = null, TimeSpan timeout = default(TimeSpan), Promise cancellation = null)
 		{
-			var downloadCoroutine = new Coroutine<long>(DownloadToAsync(url, downloadToStream, true, requestHeaders, downloadProgressCallback, timeout, cancellation)).ContinueWith(new FuncContinuation<long, long>(p =>
+			var downloadCoroutine = new Coroutine<long>(RequestToAsync("GET", url, downloadToStream, Stream.Null, true, requestHeaders, downloadProgressCallback, timeout, cancellation)).ContinueWith(new FuncContinuation<long, long>(p =>
 			{
 				if (p.HasErrors)
 				{
@@ -73,7 +92,7 @@ namespace GameDevWare.Charon.Unity.Utils
 		{
 			var memoryStream = new MemoryStream();
 			const bool LEAVE_OPEN = true;
-			return new Coroutine<long>(DownloadToAsync(url, memoryStream, LEAVE_OPEN, requestHeaders, downloadProgressCallback, timeout, cancellation)).ContinueWith(new FuncContinuation<T>(p =>
+			return new Coroutine<long>(RequestToAsync("GET", url, memoryStream, Stream.Null, LEAVE_OPEN, requestHeaders, downloadProgressCallback, timeout, cancellation)).ContinueWith(new FuncContinuation<T>(p =>
 			{
 				if (p.HasErrors)
 				{
@@ -102,21 +121,23 @@ namespace GameDevWare.Charon.Unity.Utils
 				return memoryStream;
 			});
 		}
-
-		private static IEnumerable DownloadToAsync(Uri url, Stream downloadToStream, bool leaveOpen, NameValueCollection requestHeaders, Action<long, long> downloadProgressCallback, TimeSpan timeout, Promise cancellation)
+		
+		private static IEnumerable RequestToAsync(string method, Uri url, Stream downloadToStream, Stream uploadStream, bool leaveOpen, NameValueCollection requestHeaders, Action<long, long> progressCallback, TimeSpan timeout, Promise cancellation)
 		{
 			if (url == null) throw new ArgumentNullException("url");
 			if (downloadToStream == null) throw new ArgumentNullException("downloadToStream");
-
+			
 			var noCertificateValidationContext = new NoCertificateValidationContext();
 			var written = 0L;
 			var request = default(HttpWebRequest);
 			var responseStream = default(Stream);
+			var requestStream = default(Stream);
 			try
 			{
 				cancellation.ThrowIfCancellationRequested();
 
 				request = (HttpWebRequest)WebRequest.Create(url);
+				request.Method = method;
 				request.Accept = "*/*";
 				request.UserAgent = typeof(HttpUtils).Assembly.GetName().FullName;
 				request.AutomaticDecompression = DecompressionMethods.None;
@@ -172,6 +193,17 @@ namespace GameDevWare.Charon.Unity.Utils
 				if (Settings.Current.Verbose)
 					UnityEngine.Debug.Log(string.Format("Staring new request to [{0}]'{1}'.", request.Method, request.RequestUri));
 
+				if (uploadStream != Stream.Null && uploadStream.Length > 0)
+				{
+					request.ContentLength = uploadStream.Length;
+					requestStream = request.GetRequestStream();
+					foreach (var step in CopyStreamAsync(uploadStream, uploadStream.Length, requestStream, progressCallback, cancellation))
+					{
+						yield return step;
+					}
+					requestStream.Close();
+				}
+				
 				var getResponseAsync = request.BeginGetResponse(ar =>
 				{
 					try
@@ -203,73 +235,38 @@ namespace GameDevWare.Charon.Unity.Utils
 					if (contentDisposition.Size > 0)
 						totalLength = contentDisposition.Size;
 				}
-
-				if (downloadProgressCallback != null) downloadProgressCallback(0, totalLength);
-				var lastReported = 0L;
-
-				var buffer = new byte[BUFFER_SIZE];
-				var read = 0;
-				do
+				
+				foreach (var step in CopyStreamAsync(responseStream, totalLength, downloadToStream, progressCallback, cancellation))
 				{
-					if (UnityEditor.EditorApplication.isCompiling)
-						throw new InvalidOperationException("Download has been canceled due pending compilation.");
-
-					cancellation.ThrowIfCancellationRequested();
-					
-					var readAsync = responseStream.BeginRead(buffer, 0, buffer.Length, ar =>
-					{
-						try
-						{
-							responseStream.EndRead(ar);
-						}
-						catch
-						{
-							/* ignore */
-						}
-					}, null);
-					yield return readAsync;
-
-					if (UnityEditor.EditorApplication.isCompiling)
-						throw new InvalidOperationException("Download has been canceled due pending compilation.");
-
-					read = responseStream.EndRead(readAsync);
-					if (read <= 0) continue;
-
-					var writeAsync = downloadToStream.BeginWrite(buffer, 0, read, ar =>
-					{
-						try
-						{
-							downloadToStream.EndWrite(ar);
-						}
-						catch
-						{
-							/* ignore */
-						}
-					}, null);
-					yield return writeAsync;
-
-					written += read;
-
-					if (downloadProgressCallback != null && (written - lastReported) > (totalLength / 200.0f))
-						downloadProgressCallback(lastReported = written, totalLength);
-				} while (read != 0);
-
-				downloadToStream.Flush();
-
-				if (downloadProgressCallback != null) downloadProgressCallback(totalLength, totalLength);
+					yield return step;
+				}
 			}
 			finally
 			{
 				noCertificateValidationContext.Dispose();
 
 				if (!leaveOpen)
+				{
 					downloadToStream.Dispose();
+					uploadStream.Dispose();
+				}
 
-				if (responseStream != null)
-					responseStream.Dispose();
-				
 				if (request != null)
-					request.Abort();
+				{
+					try { request.Abort(); }
+					catch { /* ignore close errors*/ }
+				}
+				
+				if (responseStream != null)
+				{
+					try { responseStream.Dispose(); }
+					catch { /* ignore close errors*/ }
+				}
+				if (requestStream != null)
+				{
+					try { requestStream.Dispose(); }
+					catch { /* ignore close errors*/ }
+				}
 			}
 
 			yield return written;
@@ -287,6 +284,78 @@ namespace GameDevWare.Charon.Unity.Utils
 			error.Data["timeout"] = timeout;
 
 			return error;
+		}
+		private static IEnumerable CopyStreamAsync(Stream fromStream, long? fromLength, Stream toStream, Action<long, long> progressCallback, Promise cancellation)
+		{
+			if (fromStream == null) throw new ArgumentNullException("fromStream");
+			if (toStream == null) throw new ArgumentNullException("toStream");
+
+			var totalLength = fromLength ?? (fromStream.Length - fromStream.Position);
+			if (progressCallback != null) progressCallback(0, totalLength);
+			var lastReported = 0L;
+
+			var buffer = new byte[BUFFER_SIZE];
+			var read = 0;
+			var readCalled = false;
+			var written = 0;
+			do
+			{
+				if (UnityEditor.EditorApplication.isCompiling)
+				{
+					throw new InvalidOperationException("Operation has been canceled due pending compilation.");
+				}
+
+				cancellation.ThrowIfCancellationRequested();
+					
+				var readAsync = fromStream.BeginRead(buffer, 0, buffer.Length, ar =>
+				{
+					try
+					{
+						read = fromStream.EndRead(ar);
+						readCalled = true;
+					}
+					catch
+					{
+						/* ignore */
+					}
+				}, null);
+				yield return readAsync;
+
+				if (UnityEditor.EditorApplication.isCompiling)
+					throw new InvalidOperationException("Operation has been canceled due pending compilation.");
+
+				if (!readCalled)
+				{
+					read = fromStream.EndRead(readAsync);
+				}
+
+				readCalled = false;
+				if (read <= 0) break;
+
+				var writeAsync = toStream.BeginWrite(buffer, 0, read, ar =>
+				{
+					try
+					{
+						toStream.EndWrite(ar);
+					}
+					catch
+					{
+						/* ignore */
+					}
+				}, null);
+				yield return writeAsync;
+
+				written += read;
+
+				if (progressCallback != null && (written - lastReported) > (totalLength / 200.0f))
+				{
+					progressCallback(lastReported = written, totalLength);
+				}
+			} while (read != 0);
+
+			toStream.Flush();
+
+			if (progressCallback != null) progressCallback(totalLength, totalLength);
 		}
 	}
 }

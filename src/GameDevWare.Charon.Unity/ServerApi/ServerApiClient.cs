@@ -90,6 +90,37 @@ namespace GameDevWare.Charon.Unity.ServerApi
 				cancellation: cancellation);
 			return downloadDataSourceAsync;
 		}
+		public Promise UploadDataSourceAsync(string branchId, GameDataStoreFormat storeFormat, string uploadPath, Action<long, long> uploadProgressCallback, Promise cancellation = null)
+		{
+			if (branchId == null) throw new ArgumentNullException("branchId");
+			if (uploadPath == null) throw new ArgumentNullException("uploadPath");
+
+			var requestHeaders = new NameValueCollection(this.requestHeaders);
+			requestHeaders.Add("Accept", "*/*");
+			
+			switch (storeFormat)
+			{
+				case GameDataStoreFormat.Json:
+					requestHeaders.Add("Content-Type", "application/json");
+					break;
+				case GameDataStoreFormat.MessagePack:
+					requestHeaders.Add("Content-Type", "application/x-msgpack");
+					break;
+				default:
+					throw new InvalidOperationException(string.Format("Unknown storage format '{0}'.", storeFormat));
+			}
+
+			var uploadDataSourceAddress = new Uri(this.baseAddress, string.Format("api/v1/datasource/{0}", branchId));
+			var uploadDataSourceAsync = HttpUtils.UploadFromFile(
+				"PUT",
+				uploadDataSourceAddress,
+				uploadPath,
+				requestHeaders,
+				uploadProgressCallback,
+				cancellation: cancellation);
+			return uploadDataSourceAsync;
+		}
+		
 		public Promise<string> GetLoginLink()
 		{
 			return Promise<string>.DefaultFulfilled;
