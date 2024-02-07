@@ -11,3 +11,7 @@ This is Unity plugin for [gamedevware/charon](https://github.com/gamedevware/cha
 # Collaboration
 
 [Discord](https://discord.gg/2quB5vXryd) • [Issues](https://github.com/gamedevware/charon-unity3d/issues) • [support@gamedevware.com](mailto:support@gamedevware.com)  
+
+# License
+
+[Asset Store Terms of Service and EULA](https://unity3d.com/ru/legal/as_terms)
