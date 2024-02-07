@@ -10,7 +10,7 @@ This is Unity plugin for [gamedevware/charon](https://github.com/gamedevware/cha
 
 # Collaboration
 
-[Discord](https://discord.gg/2quB5vXryd) • [Issues](https://github.com/gamedevware/charon-unity3d/issues) • [support@gamedevware.com](mailto:support@gamedevware.com)  
+[Discord](https://discord.gg/2quB5vXryd) • [Plugin Issues](https://github.com/gamedevware/charon-unity3d/issues) • [support@gamedevware.com](mailto:support@gamedevware.com)  
 
 # License
 
