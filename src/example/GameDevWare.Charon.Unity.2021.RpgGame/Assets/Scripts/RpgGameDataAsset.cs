@@ -16,7 +16,7 @@ namespace Assets.Scripts
 	using UnityEngine;
 
 	[Serializable]
-    [global::System.CodeDom.Compiler.GeneratedCode("GameDevWare.Charon.Unity", "2023.4.14.0")]
+    [global::System.CodeDom.Compiler.GeneratedCode("GameDevWare.Charon.Unity", "2023.4.16.0")]
 	public partial class RpgGameDataAsset : ScriptableObject, ISerializationCallbackReceiver
 	{
 		[SerializeField, HideInInspector]
