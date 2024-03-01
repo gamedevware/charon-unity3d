@@ -23,6 +23,7 @@ bin/
 obj/
 packages/
 AssetStoreTools*
+.DS_Store
 
 src/example/GameDevWare.Charon.Unity*/Assembly*
 src/example/GameDevWare.Charon.Unity*/Library/

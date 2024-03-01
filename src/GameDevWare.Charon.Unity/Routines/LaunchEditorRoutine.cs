@@ -106,18 +106,19 @@ namespace GameDevWare.Charon.Unity.Routines
 			var apiKeyPath = new Uri(gameDataEditorUrl, "/" + gameDataSettings.ProjectId);
 			var apiKey = KeyCryptoStorage.GetKey(apiKeyPath);
 			var navigateUrl = new Uri(gameDataEditorUrl, reference);
-			if (string.IsNullOrEmpty(apiKey))
+			
+			if (!string.IsNullOrEmpty(apiKey))
 			{
 				serverApiClient.UseApiKey(apiKey);
 
 				progressCallback(Resources.UI_UNITYPLUGIN_PROGRESS_AUTHENTICATING, 0.1f);
 
-				var getLoginLinkTask = serverApiClient.GetLoginLink();
-				yield return getLoginLinkTask.IgnoreFault();
+				var getLoginCodeTask = serverApiClient.GetLoginCodeAsync(apiKey);
+				yield return getLoginCodeTask.IgnoreFault();
 
-				if (!getLoginLinkTask.HasErrors && getLoginLinkTask.GetResult() != null)
+				if (!getLoginCodeTask.HasErrors && string.IsNullOrEmpty(getLoginCodeTask.GetResult()) == false)
 				{
-					var loginParameters = string.Format("?loginLink={0}&returnUrl={1}", Uri.EscapeDataString(getLoginLinkTask.GetResult()), Uri.EscapeDataString(reference));
+					var loginParameters = string.Format("?loginCode={0}&returnUrl={1}", Uri.EscapeDataString(getLoginCodeTask.GetResult()), Uri.EscapeDataString(reference));
 					navigateUrl = new Uri(gameDataEditorUrl, "view/sign-in" + loginParameters);
 				}
 

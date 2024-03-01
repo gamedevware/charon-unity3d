@@ -24,6 +24,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Mime;
+using System.Text;
 using GameDevWare.Charon.Unity.Async;
 using GameDevWare.Charon.Unity.Json;
 
@@ -90,23 +91,41 @@ namespace GameDevWare.Charon.Unity.Utils
 		}
 		public static Promise<T> GetJson<T>(Uri url, NameValueCollection requestHeaders = null, Action<long, long> downloadProgressCallback = null, TimeSpan timeout = default(TimeSpan), Promise cancellation = null)
 		{
-			var memoryStream = new MemoryStream();
+			var responseStream = new MemoryStream();
 			const bool LEAVE_OPEN = true;
-			return new Coroutine<long>(RequestToAsync("GET", url, memoryStream, Stream.Null, LEAVE_OPEN, requestHeaders, downloadProgressCallback, timeout, cancellation)).ContinueWith(new FuncContinuation<T>(p =>
+			return new Coroutine<long>(RequestToAsync("GET", url, responseStream, Stream.Null, LEAVE_OPEN, requestHeaders, downloadProgressCallback, timeout, cancellation)).ContinueWith(new FuncContinuation<T>(p =>
 			{
 				if (p.HasErrors)
 				{
 					throw EnrichWebError(p.Error, url, requestHeaders, timeout);
 				}
 
-				memoryStream.Position = 0;
+				responseStream.Position = 0;
 				if (typeof(JsonValue) == typeof(T))
-					return (T)(object)JsonValue.Load(memoryStream);
+					return (T)(object)JsonValue.Load(responseStream);
 				else
-					return JsonValue.Load(memoryStream).As<T>();
+					return JsonValue.Load(responseStream).As<T>();
 			}));
 		}
+		public static Promise< ResponseT> PostJson<RequestT, ResponseT>(Uri url, RequestT request, NameValueCollection requestHeaders = null, Action<long, long> downloadProgressCallback = null, TimeSpan timeout = default(TimeSpan), Promise cancellation = null)
+		{
+			var requestStream = new MemoryStream(Encoding.UTF8.GetBytes(JsonObject.From(request).ToString())); 
+			var responseStream = new MemoryStream();
+			const bool LEAVE_OPEN = true;
+			return new Coroutine<long>(RequestToAsync("POST", url, responseStream, requestStream, LEAVE_OPEN, requestHeaders, downloadProgressCallback, timeout, cancellation)).ContinueWith(new FuncContinuation< ResponseT>(p =>
+			{
+				if (p.HasErrors)
+				{
+					throw EnrichWebError(p.Error, url, requestHeaders, timeout);
+				}
 
+				responseStream.Position = 0;
+				if (typeof(JsonValue) == typeof( ResponseT))
+					return ( ResponseT)(object)JsonValue.Load(responseStream);
+				else
+					return JsonValue.Load(responseStream).As< ResponseT>();
+			}));
+		}
 		public static Promise<MemoryStream> GetStream(Uri url, NameValueCollection requestHeaders = null, Action<long, long> downloadProgressCallback = null, TimeSpan timeout = default(TimeSpan), Promise cancellation = null)
 		{
 			var memoryStream = new MemoryStream();

@@ -197,6 +197,7 @@ namespace GameDevWare.Charon.Unity.Routines
 							gameDataSettings.DocumentClassName,
 							gameDataSettings.GameDataClassName,
 							gameDataSettings.Namespace,
+							"",
 							(SourceCodeIndentation)gameDataSettings.Indentation,
 							(SourceCodeLineEndings)gameDataSettings.LineEnding,
 							gameDataSettings.SplitSourceCodeFiles

@@ -121,9 +121,21 @@ namespace GameDevWare.Charon.Unity.ServerApi
 			return uploadDataSourceAsync;
 		}
 		
-		public Promise<string> GetLoginLink()
+		public Promise<string> GetLoginCodeAsync(string apiKey)
 		{
-			return Promise<string>.DefaultFulfilled;
+			if (apiKey == null) throw new ArgumentNullException("apiKey");
+
+			var requestHeaders = new NameValueCollection(this.requestHeaders);
+			requestHeaders.Add("Accept", "application/json");
+			requestHeaders.Add("Content-Type", "application/json");
+			
+			var request = new ApiKeyAuthenticateRequest {
+				ApiKey = apiKey
+			};
+			var beginApiKeyAuthFlow = new Uri(this.baseAddress, "api/v1/auth/flow/api-key/");
+			var beginApiKeyAuthFlowAsync = HttpUtils.PostJson<ApiKeyAuthenticateRequest, ApiResponse<AuthenticationFlowStage>>(
+				beginApiKeyAuthFlow, request, requestHeaders);
+			return beginApiKeyAuthFlowAsync.ContinueWith(result => result.GetResult().GetResponseResultOrError().AuthorizationCode);
 		}
 	}
 }
