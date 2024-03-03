@@ -1,3 +1,3 @@
 ﻿feature: added progress bar right after "Edit" button is clicked on game data
 feature: added auto-login feature for connected game data
-fix: added call missing "defineConstant" parameter for `GenerateGodeAsync` method
+fix: added call missing "defineConstant" parameter for `GenerateCodeAsync` method
