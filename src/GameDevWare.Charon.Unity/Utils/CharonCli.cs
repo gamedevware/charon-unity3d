@@ -772,7 +772,7 @@ namespace GameDevWare.Charon.Unity.Utils
 						"--documentClassName", documentClassName,
 						"--gameDataClassName", gameDataClassName,
 						"--namespace", @namespace,
-						"--defineConstants", defineConstants,
+						string.IsNullOrEmpty(defineConstants) ? new [] { "" } : new[] { "--defineConstants", defineConstants },
 						"--languageVersion", languageVersion.ToString(),
 						"--indentation", sourceCodeIndentation.ToString(),
 						"--lineEndings", sourceCodeLineEndings.ToString(),
