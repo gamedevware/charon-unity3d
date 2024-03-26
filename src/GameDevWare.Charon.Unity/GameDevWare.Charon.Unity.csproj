@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFramework>net35</TargetFramework>
-		<Version>2024.1.6</Version>
+		<Version>2024.1.7</Version>
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 		<Authors>Denis Zykov</Authors>
 		<Company>GameDevWare</Company>
