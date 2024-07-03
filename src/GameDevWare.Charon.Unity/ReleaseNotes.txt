@@ -1,1 +1,2 @@
-﻿fix: fixed code generation issue due to an empty `--defineConstants` parameter
+﻿fix: added better error message if it fails to find game data asset class in default assemblies.
+feature: added `disableDocumentIdEnums` optimization for code generator 
