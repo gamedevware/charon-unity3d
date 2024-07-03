@@ -31,7 +31,7 @@ namespace GameDevWare.Charon {
 		public const string UI_UNITYPLUGIN_COMPILING_WARNING = "No actions can be taken while the Unity Editor is compiling scripts.";
 		public const string UI_UNITYPLUGIN_COROUTINE_IS_RUNNIG_WARNING = "No actions can be performed while another action is running.";
 		public const string UI_UNITYPLUGIN_DOWNLOAD_BUTTON = "Update (~{0:F1} MiB)";
-		public const string UI_UNITYPLUGIN_GENERATE_ASSET_CANT_FIND_GAMEDATA_CLASS = "Asset generation failed: unable to find the game's data type in C# assemblies. Please ensure there are no compilation errors.";
+		public const string UI_UNITYPLUGIN_GENERATE_ASSET_CANT_FIND_GAMEDATA_CLASS = "Asset generation failed: unable to find the game's data type '{0}' in following assemblies: {1}. Please ensure there are no compilation errors.";
 		public const string UI_UNITYPLUGIN_GENERATE_CODE_FOR = "Running source code generator for {0}";
 		public const string UI_UNITYPLUGIN_GENERATE_FAILED_DUE_ERRORS = "Source code generation for '{0}' has failed due to errors: {1}.";
 		public const string UI_UNITYPLUGIN_GENERATE_REFORMAT_CODE = "Re-formatting generated source code for {0}";

@@ -89,12 +89,21 @@ namespace GameDevWare.Charon.Unity.Routines
 						offset += read;
 				}
 
-				var gameDataAssetType = Type.GetType(gameDataSettings.Namespace + "." + gameDataSettings.GameDataClassName + "Asset, Assembly-CSharp", throwOnError: false) ??
-					Type.GetType(gameDataSettings.Namespace + "." + gameDataSettings.GameDataClassName + "Asset, Assembly-CSharp-firstpass", throwOnError: false) ??
-					Type.GetType(gameDataSettings.Namespace + "." + gameDataSettings.GameDataClassName + "Asset, Assembly-CSharp-Editor", throwOnError: false);
+				var lookupAssemblies = new string[] { "Assembly-CSharp", "Assembly-CSharp-firstpass", "Assembly-CSharp-Editor" };
+				var gameDataAssetClassName = gameDataSettings.Namespace + "." + gameDataSettings.GameDataClassName + "Asset";
+				var gameDataAssetType = default(Type);
+				foreach (var assemlbyName in lookupAssemblies)
+				{
+					gameDataAssetType = Type.GetType(gameDataAssetClassName + ", " + assemlbyName, throwOnError: false);
+					if (gameDataAssetType != null)
+					{
+						break;
+					}
+				}
+				
 				if (gameDataAssetType == null)
 				{
-					UnityEngine.Debug.LogError(Resources.UI_UNITYPLUGIN_GENERATE_ASSET_CANT_FIND_GAMEDATA_CLASS);
+					UnityEngine.Debug.LogError(string.Format(Resources.UI_UNITYPLUGIN_GENERATE_ASSET_CANT_FIND_GAMEDATA_CLASS, gameDataAssetClassName, string.Join(", ", lookupAssemblies)));
 					continue;
 				}
 
