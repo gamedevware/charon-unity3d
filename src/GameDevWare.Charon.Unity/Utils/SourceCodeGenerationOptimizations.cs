@@ -58,5 +58,9 @@ namespace GameDevWare.Charon.Unity.Utils
 		/// Enumeration value - disableFormulas.
 		/// </summary>
 		DisableFormulaCompilation = 1 << 7,
+		/// <summary>
+		/// Enumeration value - disableDocumentIdEnums.
+		/// </summary>
+		DisableDocumentIdEnums = 1 << 8,
 	}
 }

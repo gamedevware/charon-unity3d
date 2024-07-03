@@ -45,6 +45,7 @@ namespace GameDevWare.Charon.Unity.Utils
 		internal static readonly Version MinimalDotNetVersion = new Version(4, 7, 2);
 		internal static readonly SemanticVersion LegacyToolsVersion = new SemanticVersion("2020.1.1");
 		internal static readonly SemanticVersion LegacyPluginVersion = new SemanticVersion("2021.3.0");
+		internal static readonly SemanticVersion DisableDocumentIdEnumsOptimizationsVersion = new SemanticVersion("2024.2.18");
 
 
 		internal static Promise<RequirementsCheckResult> CheckRequirementsAsync()
@@ -704,6 +705,12 @@ namespace GameDevWare.Charon.Unity.Utils
 			var optimizationsList = new List<string>();
 			foreach (SourceCodeGenerationOptimizations optimization in Enum.GetValues(typeof(SourceCodeGenerationOptimizations)))
 			{
+				if (optimizations == SourceCodeGenerationOptimizations.DisableDocumentIdEnums &&
+					!IsSupportDisableDocumentIdsOptimizations())
+				{
+					continue; // skip DocumentIds optimization
+				}
+                
 				if ((optimizations & optimization) != 0)
 				{
 					optimizationsList.Add(optimization.ToString());
@@ -1018,6 +1025,20 @@ namespace GameDevWare.Charon.Unity.Utils
 			}
 
 			return toolsVersion == null || toolsVersion <= LegacyToolsVersion;
+		}
+		internal static bool IsSupportDisableDocumentIdsOptimizations()
+		{
+			var toolsVersion = default(SemanticVersion);
+			try
+			{
+				toolsVersion = new SemanticVersion(Settings.Current.EditorVersion);
+			}
+			catch
+			{
+				/* ignore parsing errors */
+			}
+
+			return toolsVersion == null || toolsVersion >= DisableDocumentIdEnumsOptimizationsVersion;
 		}
 	}
 }
