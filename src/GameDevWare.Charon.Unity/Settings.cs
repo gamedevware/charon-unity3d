@@ -55,6 +55,7 @@ namespace GameDevWare.Charon.Unity
 		public string EditorVersion;
 		public string IdleCloseTimeout;
 		public int EditorPort;
+		public bool RandomizePort;
 		public bool UseBetaFeed;
 		public bool Verbose;
 
@@ -98,7 +99,8 @@ namespace GameDevWare.Charon.Unity
 					EditorPort = new System.Random().Next(10000, 50000),
 					ServerAddress = null,
 					Verbose = false,
-					UseBetaFeed = false
+					UseBetaFeed = false,
+					RandomizePort = true
 				};
 
 				try { File.WriteAllText(SettingsPath, JsonObject.From(settings).Stringify(pretty: true), DefaultEncoding); }
@@ -133,8 +135,8 @@ namespace GameDevWare.Charon.Unity
 		{
 			if (this.EditorPort < 5000)
 				this.EditorPort = 5000;
-			if (this.EditorPort > 65535)
-				this.EditorPort = 65535;
+			if (this.EditorPort > ushort.MaxValue)
+				this.EditorPort = ushort.MaxValue;
 		}
 
 		internal Uri GetServerAddressUrl()
@@ -169,11 +171,23 @@ namespace GameDevWare.Charon.Unity
 			}
 			return timeout;
 		}
+		public int GetEditorPort()
+		{
+			if (this.RandomizePort)
+			{
+				return new System.Random().Next(10000, 50000);
+			}
+			else
+			{
+				return this.EditorPort;
+			}
+		}
 
 		public override string ToString()
 		{
 			return string.Format("Browser: {0}, Browser path: {1}, Server Address: {2}, Editor Port: {3}, Editor Version: {4}, Verbose: {5}", (BrowserType)this.Browser, this.BrowserPath, this.ServerAddress, this.EditorPort, this.EditorVersion, this.Verbose);
 		}
+
 	}
 }
 

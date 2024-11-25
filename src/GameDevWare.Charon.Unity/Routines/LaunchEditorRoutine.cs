@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 using GameDevWare.Charon.Unity.ServerApi;
 using UnityEditor;
 using UnityEditor.Callbacks;
@@ -15,8 +16,10 @@ namespace GameDevWare.Charon.Unity.Routines
 	internal class LaunchEditorRoutine
 	{
 		private static Promise loadEditorTask;
-		private static int CurrentEditorPid;
+		private static Process CurrentEditorProcess;
 		private static string CurrentEditorGameDataPath;
+		private static Uri CurrentEditorUrl;
+
 
 		// ReSharper disable once InconsistentNaming
 		// ReSharper disable once UnusedMember.Local
@@ -40,6 +43,29 @@ namespace GameDevWare.Charon.Unity.Routines
 			loadEditorTask.ContinueWith(t => EditorUtility.ClearProgressBar());
 
 			return true;
+		}
+
+		public static Process GetCurrentEditorProcess()
+		{
+			if (CurrentEditorProcess == null)
+			{
+				return null;
+			}
+
+			try
+			{
+				var process = CurrentEditorProcess;
+				if (process.HasExited)
+				{
+					return null;
+				}
+
+				return process;
+			}
+			catch
+			{
+				return null;
+			}
 		}
 
 		private static IEnumerable LoadEditor(string gameDataPath, string reference, Promise waitTask, Action<string, float> progressCallback, Promise cancellation)
@@ -134,12 +160,14 @@ namespace GameDevWare.Charon.Unity.Routines
 		}
 		private static IEnumerable LaunchCharonAndOpenWindow(string gameDataPath, string reference, Action<string, float> progressCallback, Promise cancellation)
 		{
-			var port = Settings.Current.EditorPort;
-			var gameDataEditorUrl = new Uri("http://localhost:" + port + "/");
+			if (CurrentEditorUrl == null)
+			{
+				CurrentEditorUrl = new Uri("http://localhost:" + Settings.Current.GetEditorPort() + "/");
+			}
 
 			if (IsCurrentEditorServing(gameDataPath) == false)
 			{
-				foreach (var step in KillAndReLaunchLocalCharon(gameDataPath, gameDataEditorUrl, progressCallback, cancellation))
+				foreach (var step in KillAndReLaunchLocalCharon(gameDataPath, CurrentEditorUrl, progressCallback, cancellation))
 				{
 					yield return step;
 				}
@@ -147,31 +175,33 @@ namespace GameDevWare.Charon.Unity.Routines
 
 			cancellation.ThrowIfScriptsCompiling();
 			cancellation.ThrowIfCancellationRequested();
-
-			var waitForStart = new Async.Coroutine(WaitForStart(gameDataEditorUrl, progressCallback.Sub(0.50f, 1.00f), cancellation));
+			
+			var waitForStart = new Async.Coroutine(WaitForStart(CurrentEditorUrl, progressCallback.Sub(0.50f, 1.00f), cancellation));
 			yield return waitForStart;
 
 			cancellation.ThrowIfScriptsCompiling();
 			cancellation.ThrowIfCancellationRequested();
 
-			var navigateUrl = new Uri(gameDataEditorUrl, reference);
-			NavigateTo(gameDataPath, gameDataEditorUrl, navigateUrl);
+			var navigateUrl = new Uri(CurrentEditorUrl, reference);
+			NavigateTo(gameDataPath, CurrentEditorUrl, navigateUrl);
 		}
 
 		private static bool IsCurrentEditorServing(string gameDataPath)
 		{
-			if (CurrentEditorGameDataPath != gameDataPath || CurrentEditorPid == 0)
+			if (CurrentEditorGameDataPath != gameDataPath || 
+				CurrentEditorProcess == null)
 			{
 				return false;
 			}
 
 			try
 			{
-				var process = Process.GetProcessById(CurrentEditorPid);
-				return !process.HasExited;
+				CurrentEditorProcess.Refresh();
+				return !CurrentEditorProcess.HasExited;
 			}
 			catch { return false; }
 		}
+
 		private static IEnumerable KillAndReLaunchLocalCharon(string gameDataPath, Uri gameDataEditorUrl, Action<string, float> progressCallback, Promise cancellation)
 		{
 			CharonCli.FindAndEndGracefully();
@@ -218,7 +248,7 @@ namespace GameDevWare.Charon.Unity.Routines
 
 			progressCallback(Resources.UI_UNITYPLUGIN_WINDOW_EDITOR_LAUNCHING_EXECUTABLE, 0.50f);
 
-			CurrentEditorPid = charonRunTask.GetResult().Id;
+			CurrentEditorProcess = charonRunTask.GetResult();
 			CurrentEditorGameDataPath = gameDataPath;
 		}
 

@@ -27,7 +27,9 @@ namespace GameDevWare.Charon {
 		public const string UI_UNITYPLUGIN_ABOUT_CHARON_TITLE = "Charon: Game Data Editor";
 		public const string UI_UNITYPLUGIN_ABOUT_CLOSE_BUTTON = "Close";
 		public const string UI_UNITYPLUGIN_ABOUT_EDITOR_PORT = "Editor TCP Port";
+		public const string UI_UNITYPLUGIN_ABOUT_RANDOMIZE_EDITOR_PORT = "Randomize TCP Port";
 		public const string UI_UNITYPLUGIN_ABOUT_EDITOR_VERSION_LABEL = "Editor Version";
+		public const string UI_UNITYPLUGIN_ABOUT_EDITOR_PROCESS_LABEL = "Editor Process ID";
 		public const string UI_UNITYPLUGIN_COMPILING_WARNING = "No actions can be taken while the Unity Editor is compiling scripts.";
 		public const string UI_UNITYPLUGIN_COROUTINE_IS_RUNNIG_WARNING = "No actions can be performed while another action is running.";
 		public const string UI_UNITYPLUGIN_DOWNLOAD_BUTTON = "Update (~{0:F1} MiB)";
@@ -170,7 +172,7 @@ namespace GameDevWare.Charon {
 		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_UPDATE_ACTION = "Update";
 		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_UPDATE_BUTTON = "Update";
 		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_REVIEW_UPDATES_BUTTON = "Update...";
-		public const string UI_UNITYPLUGIN_WINDOWCHECK_RESULT_MISSING_TOOLS = "Missing Tools!";
+		public const string UI_UNITYPLUGIN_WINDOWCHECK_RESULT_MISSING_TOOLS = "Missing editor executable!";
 		public const string UI_UNITYPLUGIN_SERVER_ERROR = "The request ended with the following errors:";
 		public const string UI_UNITYPLUGIN_GENERATE_API_KEY_TITLE = "API Key";
 		public const string UI_UNITYPLUGIN_GENERATE_PROJECT_LABEL = "Project";

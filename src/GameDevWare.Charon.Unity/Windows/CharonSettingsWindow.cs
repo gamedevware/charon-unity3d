@@ -19,6 +19,7 @@
 
 using System;
 using GameDevWare.Charon.Unity.Async;
+using GameDevWare.Charon.Unity.Routines;
 using GameDevWare.Charon.Unity.Updates;
 using GameDevWare.Charon.Unity.Utils;
 using JetBrains.Annotations;
@@ -74,12 +75,19 @@ namespace GameDevWare.Charon.Unity.Windows
 				GUILayout.Space(5);
 			}
 			EditorGUILayout.EndHorizontal();
+			var editorProcess = LaunchEditorRoutine.GetCurrentEditorProcess();
+			if (editorProcess != null)
+			{
+				EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_ABOUT_EDITOR_PROCESS_LABEL, string.Format("{0} [PID: {1}]", editorProcess.ProcessName, editorProcess.Id));
+			}
+
 			EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_WINDOW_ASSET_VERSION_LABEL, assetVersion);
 			EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_WINDOW_EXTENSIONS_LABEL, string.Join(", ", Settings.SupportedExtensions));
 			GUI.enabled = true;
 			GUILayout.Space(10);
 			GUILayout.Label(Resources.UI_UNITYPLUGIN_WINDOW_SETTINGS_GROUP, EditorStyles.boldLabel);
 			Settings.Current.EditorPort = EditorGUILayout.IntField(Resources.UI_UNITYPLUGIN_ABOUT_EDITOR_PORT, Settings.Current.EditorPort);
+			Settings.Current.RandomizePort = EditorGUILayout.Toggle(Resources.UI_UNITYPLUGIN_ABOUT_RANDOMIZE_EDITOR_PORT, Settings.Current.RandomizePort);
 			Settings.Current.Browser = Convert.ToInt32(EditorGUILayout.EnumPopup(Resources.UI_UNITYPLUGIN_WINDOW_BROWSER, (BrowserType)Settings.Current.Browser));
 			if (Settings.Current.Browser == (int)BrowserType.Custom)
 			{
