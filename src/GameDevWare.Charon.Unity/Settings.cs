@@ -20,6 +20,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using GameDevWare.Charon.Unity.Json;
 using GameDevWare.Charon.Unity.Utils;
@@ -52,6 +53,7 @@ namespace GameDevWare.Charon.Unity
 		public string BrowserPath;
 		public string ServerAddress;
 		public string EditorVersion;
+		public string IdleCloseTimeout;
 		public int EditorPort;
 		public bool UseBetaFeed;
 		public bool Verbose;
@@ -156,6 +158,16 @@ namespace GameDevWare.Charon.Unity
 				return typeof(Settings).Assembly.GetName().Version;
 			else
 				return null;
+		}
+		internal TimeSpan GetIdleCloseTimeout()
+		{
+			TimeSpan timeout;
+			if (string.IsNullOrEmpty(this.IdleCloseTimeout) ||
+				!TimeSpan.TryParse(this.IdleCloseTimeout, out timeout))
+			{
+				timeout = TimeSpan.FromSeconds(30);
+			}
+			return timeout;
 		}
 
 		public override string ToString()

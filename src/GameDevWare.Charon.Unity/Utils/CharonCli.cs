@@ -166,6 +166,8 @@ namespace GameDevWare.Charon.Unity.Utils
 				}
 			}
 			if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_WINDOW_EDITOR_LAUNCHING_EXECUTABLE, 0.30f);
+
+			var idleTimeout = Settings.Current.GetIdleCloseTimeout();
 			var unityPid = Process.GetCurrentProcess().Id;
 			var scriptingAssemblies = FindAndLoadScriptingAssemblies(gameDataPath);
 			var runTask = CommandLine.Run(
@@ -188,7 +190,7 @@ namespace GameDevWare.Charon.Unity.Utils
 						} :
 						//
 						new object[] {
-							"--maxIdleTime", "00:00:30", // auto-close idle editor
+							"--maxIdleTime", idleTimeout.ToString(), // auto-close idle editor
 							"--log", "out",
 						},
 						Settings.Current.Verbose ? "--verbose" : ""
