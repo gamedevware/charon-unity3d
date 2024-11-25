@@ -4,8 +4,10 @@
 	"Browser": 0, 
 	"BrowserPath": "", 
 	"EditorPort": 26735, 
-	"EditorVersion": "", 
+	"EditorVersion": "2024.3.6", 
+	"IdleCloseTimeout": "", 
+	"RandomizePort": true, 
 	"ServerAddress": "", 
 	"UseBetaFeed": false, 
-	"Verbose": false
+	"Verbose": true
 }

@@ -4253,6 +4253,11 @@
             Enumeration value - disableFormulas.
             </summary>
         </member>
+        <member name="F:GameDevWare.Charon.Unity.Utils.SourceCodeGenerationOptimizations.DisableDocumentIdEnums">
+            <summary>
+            Enumeration value - disableDocumentIdEnums.
+            </summary>
+        </member>
         <member name="M:GameDevWare.Charon.Unity.Windows.ApiKeyPromptWindow.OnBeforeSerialize">
             <inheritdoc />
         </member>
