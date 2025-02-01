@@ -4148,6 +4148,12 @@
         <member name="M:GameDevWare.Charon.Unity.Utils.GameDataLocation.ToString">
             <inheritdoc />
         </member>
+        <member name="M:GameDevWare.Charon.Unity.Utils.ListFilter.ToString">
+            <inheritdoc />
+        </member>
+        <member name="M:GameDevWare.Charon.Unity.Utils.ListSorter.ToString">
+            <inheritdoc />
+        </member>
         <member name="M:GameDevWare.Charon.Unity.Utils.NoCertificateValidationContext.Dispose">
             <inheritdoc />
         </member>

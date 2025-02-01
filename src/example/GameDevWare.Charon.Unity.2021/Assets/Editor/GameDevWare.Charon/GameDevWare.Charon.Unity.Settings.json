@@ -1,0 +1,13 @@
+﻿
+{
+
+	"Browser": 0, 
+	"BrowserPath": "", 
+	"EditorPort": 44997, 
+	"EditorVersion": "2024.4.3", 
+	"IdleCloseTimeout": "", 
+	"RandomizePort": true, 
+	"ServerAddress": "", 
+	"UseBetaFeed": false, 
+	"Verbose": false
+}
