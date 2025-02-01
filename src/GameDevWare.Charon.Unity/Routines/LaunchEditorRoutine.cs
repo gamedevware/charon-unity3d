@@ -255,7 +255,7 @@ namespace GameDevWare.Charon.Unity.Routines
 		private static IEnumerable WaitForStart(Uri gameDataEditorUrl, Action<string, float> progressCallback, Promise cancellation)
 		{
 			// wait until server start to respond
-			var timeout = TimeSpan.FromSeconds(10);
+			var timeout = Settings.Current.GetIdleCloseTimeout();
 			var downloadStream = new MemoryStream();
 			var startTime = DateTime.UtcNow;
 			var timeoutDateTime = startTime + timeout;

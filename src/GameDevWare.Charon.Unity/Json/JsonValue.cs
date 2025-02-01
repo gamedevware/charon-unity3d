@@ -245,6 +245,32 @@ namespace GameDevWare.Charon.Unity.Json
 			}
 		}
 
+		public object ToObject()
+		{
+			switch (JsonType)
+			{
+				case JsonType.Number:
+				case JsonType.String:
+				case JsonType.Boolean: return ((JsonPrimitive)this).Value;
+				case JsonType.Array:
+					var list = new List<object>();
+					foreach (var jsonValue in ((JsonArray)this))
+					{
+						list.Add(jsonValue.ToObject());
+					}
+					return list;
+				case JsonType.Object:
+					var dictionary = new Dictionary<string, object>();
+					var jsonObject = ((JsonObject)this);
+					foreach (var key in jsonObject.Keys)
+					{
+						dictionary[key] = jsonObject[key].ToObject();
+					}
+					return dictionary;
+				default:
+					throw new InvalidOperationException($"Unknown JSON type {JsonType}.");
+			}
+		}
 		public abstract object As(Type type);
 		public T As<T>()
 		{

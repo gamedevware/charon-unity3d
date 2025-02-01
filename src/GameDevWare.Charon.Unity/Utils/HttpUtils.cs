@@ -161,6 +161,13 @@ namespace GameDevWare.Charon.Unity.Utils
 				request.UserAgent = typeof(HttpUtils).Assembly.GetName().FullName;
 				request.AutomaticDecompression = DecompressionMethods.None;
 
+				// disable proxying for local targets
+				if (string.Equals(url.Host, "localhost", StringComparison.Ordinal))
+				{
+					request.Proxy = new WebProxy();
+				}
+				
+
 				if (timeout.Ticks > 0)
 					request.Timeout = (int)timeout.TotalMilliseconds;
 

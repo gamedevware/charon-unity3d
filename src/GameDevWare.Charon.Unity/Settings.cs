@@ -167,7 +167,7 @@ namespace GameDevWare.Charon.Unity
 			if (string.IsNullOrEmpty(this.IdleCloseTimeout) ||
 				!TimeSpan.TryParse(this.IdleCloseTimeout, out timeout))
 			{
-				timeout = TimeSpan.FromSeconds(30);
+				timeout = TimeSpan.FromSeconds(60);
 			}
 			return timeout;
 		}

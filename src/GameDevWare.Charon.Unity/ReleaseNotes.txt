@@ -1,2 +1,1 @@
-﻿fix: added better error message if it fails to find game data asset class in default assemblies.
-feature: added `disableDocumentIdEnums` optimization for code generator 
+﻿feature: added ReadJsonObject, ReadJsonArray, ReadJsonValue methods for CommandOutput

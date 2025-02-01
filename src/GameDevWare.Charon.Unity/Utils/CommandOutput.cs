@@ -18,6 +18,8 @@
 */
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using GameDevWare.Charon.Unity.Async;
@@ -125,6 +127,30 @@ namespace GameDevWare.Charon.Unity.Utils
 			};
 		}
 
+		public IDictionary<string, object> ReadJsonObject()
+		{
+			var jsonValue = this.ReadJsonAs<JsonValue>();
+			if (jsonValue.JsonType != JsonType.Array)
+			{
+				throw new InvalidOperationException($"Failed to read JSON '{jsonValue.JsonType}' as object.");
+			}
+			return (Dictionary<string, object>)jsonValue.ToObject();
+		}
+		public IList<object> ReadJsonArray()
+		{
+			var jsonValue = this.ReadJsonAs<JsonValue>();
+			if (jsonValue.JsonType != JsonType.Array)
+			{
+				throw new InvalidOperationException($"Failed to read JSON '{jsonValue.JsonType}' as array.");
+			}
+			return (IList<object>)jsonValue.ToObject();
+		}
+		public object ReadJsonValue()
+		{
+			var jsonValue = this.ReadJsonAs<JsonValue>();
+			return jsonValue.ToObject();
+		}
+		
 		public T ReadJsonAs<T>()
 		{
 			var output = default(string);
