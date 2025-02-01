@@ -247,28 +247,37 @@ namespace GameDevWare.Charon.Unity.Json
 
 		public object ToObject()
 		{
-			switch (JsonType)
+			var jsonPrimitive = this as JsonPrimitive;
+			var jsonArray = this as JsonArray;
+			var jsonObject = this as JsonObject;
+
+			if (jsonPrimitive != null)
 			{
-				case JsonType.Number:
-				case JsonType.String:
-				case JsonType.Boolean: return ((JsonPrimitive)this).Value;
-				case JsonType.Array:
-					var list = new List<object>();
-					foreach (var jsonValue in ((JsonArray)this))
-					{
-						list.Add(jsonValue.ToObject());
-					}
-					return list;
-				case JsonType.Object:
-					var dictionary = new Dictionary<string, object>();
-					var jsonObject = ((JsonObject)this);
-					foreach (var key in jsonObject.Keys)
-					{
-						dictionary[key] = jsonObject[key].ToObject();
-					}
-					return dictionary;
-				default:
-					throw new InvalidOperationException($"Unknown JSON type {JsonType}.");
+				return jsonPrimitive.Value;
+			}
+			else if (jsonArray != null)
+			{
+				var list = new List<object>();
+				foreach (var jsonValue in (JsonArray)this)
+				{
+					list.Add(jsonValue == null ? null : jsonValue.ToObject());
+				}
+				return list;
+			}
+			else if (jsonObject != null)
+			{
+				var dictionary = new Dictionary<string, object>();
+				foreach (var pair in jsonObject)
+				{
+					var key = pair.Key;
+					var jsonValue = pair.Value;
+					dictionary[key] = jsonValue != null ? jsonValue.ToObject() : null;
+				}
+				return dictionary;
+			}
+			else
+			{
+				throw new InvalidOperationException($"Unknown JSON type {this.JsonType}.");
 			}
 		}
 		public abstract object As(Type type);

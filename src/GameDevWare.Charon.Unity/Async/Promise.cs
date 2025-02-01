@@ -4,21 +4,22 @@
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
 	Charon Game Data Editor Unity Plugin is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see http://www.gnu.org/licenses.
+	You should have received a copy of the GNU General Public License
+	along with this program.  If not, see http://www.gnu.org/licenses.
 */
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using JetBrains.Annotations;
 
@@ -44,15 +45,31 @@ namespace GameDevWare.Charon.Unity.Async
 		{
 			get
 			{
-				this.IsErrorObserved = true; return this.error;
+				this.IsErrorObserved = true;
+				return this.error;
 			}
 		}
 		public object PromiseState { get { return this.promiseState; } }
 		public bool IsCompleted { get; private set; }
-		WaitHandle IAsyncResult.AsyncWaitHandle { get { this.EnsureCompletionEvent(); return this.completionEvent; } }
+		WaitHandle IAsyncResult.AsyncWaitHandle
+		{
+			get
+			{
+				this.EnsureCompletionEvent();
+				return this.completionEvent;
+			}
+		}
 		object IAsyncResult.AsyncState { get { return this.asyncCallbackState; } }
 		bool IAsyncResult.CompletedSynchronously { get { return false; } }
-		private bool ContinueOnCapturedContext { get { return SynchronizationContext.Current != this.capturedSynchronizationContext && this.capturedSynchronizationContext != null && this.capturedSynchronizationContext.GetType() != typeof(SynchronizationContext); } }
+		private bool ContinueOnCapturedContext
+		{
+			get
+			{
+				return SynchronizationContext.Current != this.capturedSynchronizationContext &&
+					this.capturedSynchronizationContext != null &&
+					this.capturedSynchronizationContext.GetType() != typeof(SynchronizationContext);
+			}
+		}
 		internal bool IsErrorObserved { get; private set; }
 
 		public Promise(AsyncCallback callback = null, object asyncCallbackState = null, object promiseState = null)
@@ -144,6 +161,7 @@ namespace GameDevWare.Charon.Unity.Async
 				{
 					if (this.error.InnerExceptions.Count == 1 && this.Error.InnerException != null)
 						throw this.Error.InnerException;
+
 					throw this.Error;
 				}
 			}
@@ -165,6 +183,7 @@ namespace GameDevWare.Charon.Unity.Async
 		{
 			if (promises == null) throw new ArgumentNullException("promises");
 			if (promises.Length == 0) throw new ArgumentOutOfRangeException("promises");
+
 			if (promises.Length == 1) return promises[0];
 
 			var result = new Promise();
@@ -219,6 +238,7 @@ namespace GameDevWare.Charon.Unity.Async
 					{
 						if (promise.HasErrors == false)
 							continue;
+
 						if (errorList == null)
 							errorList = new List<Exception>();
 
@@ -265,6 +285,7 @@ namespace GameDevWare.Charon.Unity.Async
 		{
 			if (promises == null) throw new ArgumentNullException("promises");
 			if (promises.Length == 0) throw new ArgumentOutOfRangeException("promises");
+
 			if (promises.Length == 1) return promises[0];
 
 			var result = new Promise<T>();
@@ -318,6 +339,7 @@ namespace GameDevWare.Charon.Unity.Async
 					{
 						if (promise.HasErrors == false)
 							continue;
+
 						if (errorList == null)
 							errorList = new List<Exception>();
 
@@ -459,6 +481,11 @@ namespace GameDevWare.Charon.Unity.Async
 			return continuationPromise;
 		}
 
+		public PromiseAwaiter GetAwaiter()
+		{
+			return new PromiseAwaiter(this);
+		}
+
 		protected virtual void Dispose(bool disposed)
 		{
 			lock (this)
@@ -476,7 +503,30 @@ namespace GameDevWare.Charon.Unity.Async
 		{
 			if (this.IsCompleted)
 				return "Fulfilled promise.";
+
 			return "Unfulfilled promise";
+		}
+	}
+
+	public class PromiseAwaiter: INotifyCompletion
+	{
+		private readonly Promise promise;
+
+		public PromiseAwaiter(Promise promise)
+		{
+			this.promise = promise;
+		}
+
+		public bool IsCompleted => promise.IsCompleted;
+
+		public void OnCompleted(Action continuation)
+		{
+			this.promise.ContinueWith(_ => continuation());
+		}
+
+		public void GetResult()
+		{
+			this.promise.GetResult();
 		}
 	}
 
@@ -512,9 +562,10 @@ namespace GameDevWare.Charon.Unity.Async
 				this.value = result;
 				this.TrySetCompleted();
 			}
+
 			return true;
 		}
-		public T GetResult()
+		public new T GetResult()
 		{
 			lock (this)
 			{
@@ -559,11 +610,39 @@ namespace GameDevWare.Charon.Unity.Async
 			});
 		}
 
+		public new PromiseAwaiter<T> GetAwaiter()
+		{
+			return new PromiseAwaiter<T>(this);
+		}
+
 		public override string ToString()
 		{
 			if (this.IsCompleted)
 				return string.Format("Fulfilled promise, result={0}.", this.value);
+
 			return "Unfulfilled promise";
+		}
+	}
+
+	public class PromiseAwaiter<T>: INotifyCompletion
+	{
+		private readonly Promise<T> promise;
+
+		public PromiseAwaiter(Promise<T> promise)
+		{
+			this.promise = promise;
+		}
+
+		public bool IsCompleted => promise.IsCompleted;
+
+		public void OnCompleted(Action continuation)
+		{
+			this.promise.ContinueWith(_ => continuation());
+		}
+
+		public T GetResult()
+		{
+			return this.promise.GetResult();
 		}
 	}
 }

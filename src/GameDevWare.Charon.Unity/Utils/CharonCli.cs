@@ -532,7 +532,7 @@ namespace GameDevWare.Charon.Unity.Utils
 				RunOptions.FlattenArguments(
 					"DATA", "IMPORT", gameDataLocation,
 					IsToolsLegacy() ? "--entities" : "--schemas", schemas,
-					"--mode", mode,
+					"--mode", (int)mode,
 					"--input", input.Source,
 					"--inputFormat", input.Format,
 					"--inputFormattingOptions", input.FormattingOptions
@@ -573,15 +573,63 @@ namespace GameDevWare.Charon.Unity.Utils
 					IsToolsLegacy() ? "--entities" : "--schemas", schemas,
 					IsToolsLegacy() ? "--attributes" : "--properties", properties,
 					"--languages", Array.ConvertAll(languages, l => l.Name),
-					"--mode", mode,
+					"--mode", (int)mode,
 					"--output", output.Target,
 					"--outputFormat", output.Format,
 					"--outputFormattingOptions", output.FormattingOptions
 				)
 			);
-			return runTask;
+			return output.Capture(runTask);
 		}
 
+		public static Promise<RunResult> ListAsync(GameDataLocation gameDataLocation, string schema, CommandOutput output, ListFilter[] filters = null, ListSorter[] sorters = null, string path = null, int skip = 0, int take = 0)
+		{
+			if (gameDataLocation.Location == null) throw new ArgumentNullException("gameDataLocation");
+			if (schema == null) throw new ArgumentNullException("schema");
+			if (output == null) throw new ArgumentNullException("output");
+
+			gameDataLocation.ThrowIfFileNotExists();
+
+			var filtersList = new List<string>();
+			if (filters != null && filters.Length > 0)
+			{
+				filtersList.Add("--filters");
+				foreach (var listFilter in filters)
+				{
+					filtersList.Add(listFilter.PropertyName);
+					filtersList.Add(listFilter.GetOperationName());
+					filtersList.Add(listFilter.GetValueQuoted());
+				}
+			}
+			var sortersList = new List<string>();
+			if (sorters != null && sorters.Length > 0)
+			{
+				sortersList.Add("--sorters");
+				foreach (var listSorter in sorters)
+				{
+					sortersList.Add(listSorter.PropertyName);
+					sortersList.Add(listSorter.GetDirectionName());
+				}
+			}
+			var runTask = RunInternal
+			(
+				gameDataLocation.ApiKey,
+				RunOptions.FlattenArguments(
+					"DATA", "LIST", gameDataLocation,
+					 "--schema", schema,
+					filtersList,
+					sortersList,
+					string.IsNullOrEmpty(path) ? new string[0] : new string[] { "--path", path },
+					skip == 0 ? new string[0] : new string[] { "--skip", skip.ToString() },
+					take == 0 ? new string[0] : new string[] { "--take", take.ToString() },
+					"--output", output.Target,
+					"--outputFormat", output.Format,
+					"--outputFormattingOptions", output.FormattingOptions
+				)
+			);
+			return output.Capture(runTask);
+		}
+		
 		public static Promise<RunResult> CreatePatchAsync(GameDataLocation gameDataLocation, GameDataLocation gameDataPath2, CommandOutput output)
 		{
 			if (gameDataLocation.Location == null) throw new ArgumentNullException("gameDataPath");
@@ -603,7 +651,7 @@ namespace GameDevWare.Charon.Unity.Utils
 					"--outputFormattingOptions", output.FormattingOptions
 				)
 			);
-			return runTask;
+			return output.Capture(runTask);
 		}
 		public static Promise<RunResult> ApplyPatchAsync(GameDataLocation gameDataLocation, CommandInput input)
 		{

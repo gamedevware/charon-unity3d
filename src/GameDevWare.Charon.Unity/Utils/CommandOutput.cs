@@ -130,7 +130,7 @@ namespace GameDevWare.Charon.Unity.Utils
 		public IDictionary<string, object> ReadJsonObject()
 		{
 			var jsonValue = this.ReadJsonAs<JsonValue>();
-			if (jsonValue.JsonType != JsonType.Array)
+			if (jsonValue.JsonType != JsonType.Object)
 			{
 				throw new InvalidOperationException($"Failed to read JSON '{jsonValue.JsonType}' as object.");
 			}

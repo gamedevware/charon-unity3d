@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>net35</TargetFramework>
-		<Version>2024.4.1</Version>
+		<TargetFramework>net45</TargetFramework>
+		<Version>2024.4.2</Version>
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 		<Authors>Denis Zykov</Authors>
 		<Company>GameDevWare</Company>
-		<Copyright>2023 @ GameDevWare, Denis Zykov</Copyright>
+		<Copyright>2024 @ GameDevWare, Denis Zykov</Copyright>
 		<LangVersion>latest</LangVersion>
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>

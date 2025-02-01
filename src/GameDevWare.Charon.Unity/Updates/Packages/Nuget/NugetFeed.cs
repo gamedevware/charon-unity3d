@@ -79,7 +79,6 @@ namespace GameDevWare.Charon.Unity.Updates.Packages.Nuget
 			using (var xmlReader = new XmlTextReader(textReader)
 			{
 				EntityHandling = EntityHandling.ExpandCharEntities,
-				ProhibitDtd = true,
 				WhitespaceHandling = WhitespaceHandling.None,
 				Normalization = true
 			})

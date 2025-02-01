@@ -25,8 +25,7 @@ namespace GameDevWare.Charon.Unity.Utils
 	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	public enum ExportMode
 	{
-		None = 0,
-		Default = 0,
+		Normal = 0,
 		Publication = 1,
 		Localization = 2,
 		Extraction = 3
