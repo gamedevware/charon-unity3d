@@ -21,12 +21,13 @@ media/
 .vs
 bin/
 obj/
-packages/
+
 AssetStoreTools*
 .DS_Store
 
 example/GameDevWare.Charon.Unity*/Assembly*
 example/GameDevWare.Charon.Unity*/Library/
+example/GameDevWare.Charon.Unity*/Packages/
 example/GameDevWare.Charon.Unity*/Temp/
 example/GameDevWare.Charon.Unity*/ProjectSettings/
 example/GameDevWare.Charon.Unity*/UserSettings/
@@ -34,6 +35,7 @@ example/GameDevWare.Charon.Unity*/Assets/Plugins*
 
 src/GameDevWare.Charon.Unity*/Assembly*
 src/GameDevWare.Charon.Unity*/Library/
+src/GameDevWare.Charon.Unity*/Packages/com.unity.asset-store-tools/
 src/GameDevWare.Charon.Unity*/Temp/
 src/GameDevWare.Charon.Unity*/ProjectSettings/
 src/GameDevWare.Charon.Unity*/UserSettings/

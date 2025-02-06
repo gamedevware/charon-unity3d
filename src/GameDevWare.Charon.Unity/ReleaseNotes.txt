@@ -1,5 +1,0 @@
-﻿BREAKING CHANGE: Unity Plugin now targets .NET 4.5 instead of 3.5, very old versions (before 2010) of Unity will stop working with this plugin. 
-feature: added ReadJsonObject, ReadJsonArray, ReadJsonValue methods for CommandOutput
-feature: make Promise and Promise<T> awaitable. They could be used in async context with `await` keywords. Example `await CharonCli.ExportAsync()`
-fix: fixed error when `CharonCli.ExportAsync()`` is not capturing output of command and always raise 'No output captured during command execution.' exception.
-feature: added `CharonCli.ListAsync()` command allowing to export all documents for one schema. You can pass `path = "*""` to get all documents including embedded.
