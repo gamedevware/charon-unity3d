@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (c) 2023 Denis Zykov
+	Copyright (c) 2025 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
@@ -18,20 +18,21 @@
 */
 
 using System;
-using GameDevWare.Charon.Unity.Json;
+using System.Runtime.Serialization;
+using GameDevWare.Charon.Editor.Json;
 
-namespace GameDevWare.Charon.Unity.ServerApi
+namespace GameDevWare.Charon.Editor.ServerApi
 {
 	[Serializable]
 	internal class Project
 	{
-		[JsonMember("id")]
+		[DataMember(Name = "id")]
 		public string Id;
-		[JsonMember("name")]
+		[DataMember(Name = "name")]
 		public string Name;
-		[JsonMember("pictureUrl")]
+		[DataMember(Name = "pictureUrl")]
 		public string PictureUrl;
-		[JsonMember("branches")]
+		[DataMember(Name = "branches")]
 		public Branch[] Branches;
 	}
 }

@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (c) 2023 Denis Zykov
+	Copyright (c) 2025 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace GameDevWare.Charon.Unity
+namespace GameDevWare.Charon.Editor
 {
 	internal class ValidationError : Exception
 	{
@@ -32,7 +32,7 @@ namespace GameDevWare.Charon.Unity
 		private static int LastExceptionId = 1;
 
 		public ValidationError(string gameDataPath, string projectId, string branchId, string id, string schemaName, string path, string errorMessage)
-			: base(string.Format("{0}->{1}, {2}", schemaName, id, errorMessage))
+			: base($"{schemaName}->{id}, {errorMessage}")
 		{
 
 			var exceptionId = LastExceptionId++;
@@ -40,7 +40,7 @@ namespace GameDevWare.Charon.Unity
 			if (StackTraceField != null) // Trick Unity into thinking that error inside game data file by replacing StackTrace of this Exception
 				StackTraceField.SetValue(this, path + " (<double-click to open>) (at " + gameDataPath + ":" + exceptionId + ")");
 
-			var reference = string.Format("view/data/{0}/{1}/form/{2}/{3}", projectId, branchId, schemaName, id);
+			var reference = $"view/data/{projectId}/{branchId}/form/{schemaName}/{id}";
 			ReferenceByExceptionId.Add(exceptionId, reference);
 		}
 

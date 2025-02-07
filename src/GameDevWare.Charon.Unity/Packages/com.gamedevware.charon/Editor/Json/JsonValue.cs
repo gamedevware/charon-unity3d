@@ -31,28 +31,29 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
+using JsonPair = System.Collections.Generic.KeyValuePair<string, GameDevWare.Charon.Editor.Json.JsonValue>;
 
-using JsonPair = System.Collections.Generic.KeyValuePair<string, GameDevWare.Charon.Unity.Json.JsonValue>;
-
-namespace GameDevWare.Charon.Unity.Json
+namespace GameDevWare.Charon.Editor.Json
 {
 	[PublicAPI, UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
-	internal abstract class JsonValue : IEnumerable
+#if JSON_NET_3_0_2_OR_NEWER
+	internal
+#else
+	public
+#endif
+	abstract class JsonValue : IEnumerable
 	{
-		public virtual int Count
-		{
-			get { throw new InvalidOperationException(); }
-		}
+		public virtual int Count => throw new InvalidOperationException();
 		public abstract JsonType JsonType { get; }
 		public virtual JsonValue this[int index]
 		{
-			get { throw new InvalidOperationException(); }
-			set { throw new InvalidOperationException(); }
+			get => throw new InvalidOperationException();
+			set => throw new InvalidOperationException();
 		}
 		public virtual JsonValue this[string key]
 		{
-			get { throw new InvalidOperationException(); }
-			set { throw new InvalidOperationException(); }
+			get => throw new InvalidOperationException();
+			set => throw new InvalidOperationException();
 		}
 		IEnumerator IEnumerable.GetEnumerator()
 		{
@@ -61,13 +62,13 @@ namespace GameDevWare.Charon.Unity.Json
 		public static JsonValue Load(Stream stream)
 		{
 			if (stream == null)
-				throw new ArgumentNullException("stream");
+				throw new ArgumentNullException(nameof(stream));
 			return Load(new StreamReader(stream, Encoding.UTF8));
 		}
 		public static JsonValue Load(TextReader textReader)
 		{
 			if (textReader == null)
-				throw new ArgumentNullException("textReader");
+				throw new ArgumentNullException(nameof(textReader));
 
 			var ret = new JsonReader(textReader).Read();
 
@@ -135,12 +136,12 @@ namespace GameDevWare.Charon.Unity.Json
 				return new JsonPrimitive((TimeSpan)ret);
 			if (ret is Uri)
 				return new JsonPrimitive((Uri)ret);
-			throw new NotSupportedException(string.Format("Unexpected parser return type: {0}", ret.GetType()));
+			throw new NotSupportedException($"Unexpected parser return type: {ret.GetType()}");
 		}
 		public static JsonValue Parse(string jsonString)
 		{
 			if (jsonString == null)
-				throw new ArgumentNullException("jsonString");
+				throw new ArgumentNullException(nameof(jsonString));
 			return Load(new StringReader(jsonString));
 		}
 		public virtual bool ContainsKey(string key)
@@ -150,14 +151,14 @@ namespace GameDevWare.Charon.Unity.Json
 		public virtual void Save(Stream stream)
 		{
 			if (stream == null)
-				throw new ArgumentNullException("stream");
+				throw new ArgumentNullException(nameof(stream));
 
 			this.Save(new StreamWriter(stream, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false)), false);
 		}
 		public virtual void Save(TextWriter textWriter, bool pretty)
 		{
 			if (textWriter == null)
-				throw new ArgumentNullException("textWriter");
+				throw new ArgumentNullException(nameof(textWriter));
 
 			this.SaveInternal(textWriter, 0, pretty);
 		}
@@ -280,10 +281,10 @@ namespace GameDevWare.Charon.Unity.Json
 				throw new InvalidOperationException($"Unknown JSON type {this.JsonType}.");
 			}
 		}
-		public abstract object As(Type type);
-		public T As<T>()
+		public abstract object ToObject(Type type);
+		public T ToObject<T>()
 		{
-			return (T)this.As(typeof(T));
+			return (T)this.ToObject(typeof(T));
 		}
 		public override string ToString()
 		{
@@ -460,61 +461,61 @@ namespace GameDevWare.Charon.Unity.Json
 		public static implicit operator bool(JsonValue value)
 		{
 			if (value == null)
-				throw new ArgumentNullException("value");
+				throw new ArgumentNullException(nameof(value));
 			return Convert.ToBoolean(((JsonPrimitive)value).Value, NumberFormatInfo.InvariantInfo);
 		}
 		public static implicit operator byte(JsonValue value)
 		{
 			if (value == null)
-				throw new ArgumentNullException("value");
+				throw new ArgumentNullException(nameof(value));
 			return Convert.ToByte(((JsonPrimitive)value).Value, NumberFormatInfo.InvariantInfo);
 		}
 		public static implicit operator char(JsonValue value)
 		{
 			if (value == null)
-				throw new ArgumentNullException("value");
+				throw new ArgumentNullException(nameof(value));
 			return Convert.ToChar(((JsonPrimitive)value).Value, NumberFormatInfo.InvariantInfo);
 		}
 		public static implicit operator decimal(JsonValue value)
 		{
 			if (value == null)
-				throw new ArgumentNullException("value");
+				throw new ArgumentNullException(nameof(value));
 			return Convert.ToDecimal(((JsonPrimitive)value).Value, NumberFormatInfo.InvariantInfo);
 		}
 		public static implicit operator double(JsonValue value)
 		{
 			if (value == null)
-				throw new ArgumentNullException("value");
+				throw new ArgumentNullException(nameof(value));
 			return Convert.ToDouble(((JsonPrimitive)value).Value, NumberFormatInfo.InvariantInfo);
 		}
 		public static implicit operator float(JsonValue value)
 		{
 			if (value == null)
-				throw new ArgumentNullException("value");
+				throw new ArgumentNullException(nameof(value));
 			return Convert.ToSingle(((JsonPrimitive)value).Value, NumberFormatInfo.InvariantInfo);
 		}
 		public static implicit operator int(JsonValue value)
 		{
 			if (value == null)
-				throw new ArgumentNullException("value");
+				throw new ArgumentNullException(nameof(value));
 			return Convert.ToInt32(((JsonPrimitive)value).Value, NumberFormatInfo.InvariantInfo);
 		}
 		public static implicit operator long(JsonValue value)
 		{
 			if (value == null)
-				throw new ArgumentNullException("value");
+				throw new ArgumentNullException(nameof(value));
 			return Convert.ToInt64(((JsonPrimitive)value).Value, NumberFormatInfo.InvariantInfo);
 		}
 		public static implicit operator sbyte(JsonValue value)
 		{
 			if (value == null)
-				throw new ArgumentNullException("value");
+				throw new ArgumentNullException(nameof(value));
 			return Convert.ToSByte(((JsonPrimitive)value).Value, NumberFormatInfo.InvariantInfo);
 		}
 		public static implicit operator short(JsonValue value)
 		{
 			if (value == null)
-				throw new ArgumentNullException("value");
+				throw new ArgumentNullException(nameof(value));
 			return Convert.ToInt16(((JsonPrimitive)value).Value, NumberFormatInfo.InvariantInfo);
 		}
 		public static implicit operator string(JsonValue value)
@@ -526,49 +527,49 @@ namespace GameDevWare.Charon.Unity.Json
 		public static implicit operator uint(JsonValue value)
 		{
 			if (value == null)
-				throw new ArgumentNullException("value");
+				throw new ArgumentNullException(nameof(value));
 			return Convert.ToUInt16(((JsonPrimitive)value).Value, NumberFormatInfo.InvariantInfo);
 		}
 		public static implicit operator ulong(JsonValue value)
 		{
 			if (value == null)
-				throw new ArgumentNullException("value");
+				throw new ArgumentNullException(nameof(value));
 			return Convert.ToUInt64(((JsonPrimitive)value).Value, NumberFormatInfo.InvariantInfo);
 		}
 		public static implicit operator ushort(JsonValue value)
 		{
 			if (value == null)
-				throw new ArgumentNullException("value");
+				throw new ArgumentNullException(nameof(value));
 			return Convert.ToUInt16(((JsonPrimitive)value).Value, NumberFormatInfo.InvariantInfo);
 		}
 		public static implicit operator DateTime(JsonValue value)
 		{
 			if (value == null)
-				throw new ArgumentNullException("value");
+				throw new ArgumentNullException(nameof(value));
 			return (DateTime)((JsonPrimitive)value).Value;
 		}
 		public static implicit operator DateTimeOffset(JsonValue value)
 		{
 			if (value == null)
-				throw new ArgumentNullException("value");
+				throw new ArgumentNullException(nameof(value));
 			return (DateTimeOffset)((JsonPrimitive)value).Value;
 		}
 		public static implicit operator TimeSpan(JsonValue value)
 		{
 			if (value == null)
-				throw new ArgumentNullException("value");
+				throw new ArgumentNullException(nameof(value));
 			return (TimeSpan)((JsonPrimitive)value).Value;
 		}
 		public static implicit operator Guid(JsonValue value)
 		{
 			if (value == null)
-				throw new ArgumentNullException("value");
+				throw new ArgumentNullException(nameof(value));
 			return (Guid)((JsonPrimitive)value).Value;
 		}
 		public static implicit operator Uri(JsonValue value)
 		{
 			if (value == null)
-				throw new ArgumentNullException("value");
+				throw new ArgumentNullException(nameof(value));
 			return (Uri)((JsonPrimitive)value).Value;
 		}
 

@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (c) 2023 Denis Zykov
+	Copyright (c) 2025 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
@@ -18,24 +18,57 @@
 */
 
 using System;
-using System.Collections;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
-using GameDevWare.Charon.Unity.Async;
+using System.Threading.Tasks;
 using UnityEngine;
 
-namespace GameDevWare.Charon.Unity.Utils
+namespace GameDevWare.Charon.Editor.Utils
 {
 	internal static class FileHelper
 	{
 		private static readonly char[] InvalidFileNameChars = Path.GetInvalidFileNameChars();
 
-		public static string MakeProjectRelative(string path)
+		public static readonly string TempPath;
+		public static readonly string LibraryCharonPath;
+		public static readonly string LibraryCharonLogsPath;
+		public static readonly string CharonAppContentPath;
+		public static readonly string PluginBasePath;
+
+		static FileHelper()
+		{
+			PluginBasePath = Path.GetFullPath("./Packages/com.gamedevware.charon");
+
+			LibraryCharonPath = Path.GetFullPath("./Library/Charon/");
+			TempPath = Path.GetFullPath("./Temp/");
+			CharonAppContentPath = Path.Combine(Path.Combine(LibraryCharonPath, "preferences"), SanitizeFileName(Environment.UserName ?? "Default"));
+			LibraryCharonLogsPath = Path.Combine(LibraryCharonPath, "logs");
+
+			if (!Directory.Exists(LibraryCharonPath))
+			{
+				Directory.CreateDirectory(LibraryCharonPath);
+			}
+			if (!Directory.Exists(TempPath))
+			{
+				Directory.CreateDirectory(TempPath);
+			}
+			if (!Directory.Exists(CharonAppContentPath))
+			{
+				Directory.CreateDirectory(CharonAppContentPath);
+			}
+			if (!Directory.Exists(LibraryCharonLogsPath))
+			{
+				Directory.CreateDirectory(LibraryCharonLogsPath);
+			}
+		}
+
+		public static string GetProjectRelativePath(string path)
 		{
 			if (string.IsNullOrEmpty(path)) return null;
+
 			var fullPath = Path.GetFullPath(Environment.CurrentDirectory).Replace("\\", "/");
 			path = Path.GetFullPath(path).Replace("\\", "/");
 
@@ -53,35 +86,31 @@ namespace GameDevWare.Charon.Unity.Utils
 
 			return path;
 		}
+
 		public static string ComputeNameHash(string value, string hashAlgorithmName = "MD5")
 		{
-			using (var hashAlgorithm = HashAlgorithm.Create(hashAlgorithmName) ?? new MD5CryptoServiceProvider())
-			{
-				var valueBytes = Encoding.UTF8.GetBytes(value ?? string.Empty);
-				var valueHash = hashAlgorithm.ComputeHash(valueBytes);
-				return BitConverter.ToString(valueHash).Replace("-", "").ToLower();
-			}
+			using var hashAlgorithm = HashAlgorithm.Create(hashAlgorithmName) ?? new MD5CryptoServiceProvider();
+			var valueBytes = Encoding.UTF8.GetBytes(value ?? string.Empty);
+			var valueHash = hashAlgorithm.ComputeHash(valueBytes);
+			return BitConverter.ToString(valueHash).Replace("-", "").ToLower();
 		}
 		public static string ComputeHash(string path, string hashAlgorithmName = "MD5", int tries = 5)
 		{
-			if (path == null) throw new ArgumentNullException("path");
-			if (tries <= 0) throw new ArgumentOutOfRangeException("tries");
+			if (path == null) throw new ArgumentNullException(nameof(path));
+			if (tries <= 0) throw new ArgumentOutOfRangeException(nameof(tries));
 
 			foreach (var attempt in Enumerable.Range(1, tries))
 			{
 				try
 				{
-					using (var fs = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read))
-					using (var hashAlgorithm = HashAlgorithm.Create(hashAlgorithmName) ?? new MD5CryptoServiceProvider())
-					{
-						var hashBytes = hashAlgorithm.ComputeHash(fs);
-						return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
-					}
+					using var fs = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+					using var hashAlgorithm = HashAlgorithm.Create(hashAlgorithmName) ?? new MD5CryptoServiceProvider();
+					var hashBytes = hashAlgorithm.ComputeHash(fs);
+					return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
 				}
 				catch (IOException exception)
 				{
-					if (Settings.Current.Verbose)
-						Debug.LogWarning("Attempt #" + attempt + " to compute hash of " + path + " has failed with IO error: " + exception);
+					CharonEditorModule.Instance.Logger.Log(LogType.Warning, "Attempt #" + attempt + " to compute hash of " + path + " has failed with IO error: " + exception);
 
 					if (attempt == tries)
 						throw;
@@ -97,7 +126,7 @@ namespace GameDevWare.Charon.Unity.Utils
 			var directoryPath = string.Empty;
 			do
 			{
-				directoryPath = Path.Combine(Settings.TempPath, BitConverter.ToString(Guid.NewGuid().ToByteArray()).Replace("-", "").ToLower());
+				directoryPath = Path.Combine(TempPath, BitConverter.ToString(Guid.NewGuid().ToByteArray()).Replace("-", "").ToLower());
 			} while (Directory.Exists(directoryPath));
 
 			if (createIfNotExists)
@@ -107,15 +136,11 @@ namespace GameDevWare.Charon.Unity.Utils
 			return directoryPath;
 		}
 
-		public static Promise<FileStream> ReadFileAsync(string path, int maxAttempts = 5)
+		public static async Task<FileStream> ReadFileAsync(string path, int maxAttempts = 5)
 		{
-			if (path == null) throw new ArgumentNullException("path");
-			if (maxAttempts < 1) throw new ArgumentOutOfRangeException("maxAttempts");
+			if (path == null) throw new ArgumentNullException(nameof(path));
+			if (maxAttempts < 1) throw new ArgumentOutOfRangeException(nameof(maxAttempts));
 
-			return new Coroutine<FileStream>(ReadFile(path, maxAttempts));
-		}
-		private static IEnumerable ReadFile(string path, int maxAttempts)
-		{
 			var fileStream = default(FileStream);
 			foreach (var attempt in Enumerable.Range(1, maxAttempts))
 			{
@@ -126,15 +151,14 @@ namespace GameDevWare.Charon.Unity.Utils
 				}
 				catch (IOException openError)
 				{
-					if (Settings.Current.Verbose)
-						UnityEngine.Debug.LogWarning("Attempt #" + attempt + " to read " + path + " file has failed with IO error: " + Environment.NewLine + openError);
+					CharonEditorModule.Instance.Logger.Log(LogType.Warning, "Attempt #" + attempt + " to read " + path + " file has failed with IO error: " + Environment.NewLine + openError);
 				}
-				if (fileStream != null)
-					fileStream.Dispose();
 
-				yield return Promise.Delayed(TimeSpan.FromSeconds(1));
+				fileStream?.Dispose();
+
+				await Task.Delay(TimeSpan.FromSeconds(1));
 			}
-			yield return fileStream;
+			return fileStream;
 		}
 
 		public static string SanitizeFileName(string path)
@@ -147,19 +171,10 @@ namespace GameDevWare.Charon.Unity.Utils
 			}
 			return fileName.ToString();
 		}
-		internal static string GetProgramFilesx86()
-		{
-			if (8 == IntPtr.Size || (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("PROCESSOR_ARCHITEW6432"))))
-			{
-				return Environment.GetEnvironmentVariable("ProgramFiles(x86)");
-			}
-
-			return Environment.GetEnvironmentVariable("ProgramFiles");
-		}
 
 		public static void SafeDirectoryDelete(string directoryPath)
 		{
-			if (directoryPath == null) throw new ArgumentNullException("directoryPath");
+			if (directoryPath == null) throw new ArgumentNullException(nameof(directoryPath));
 
 			try
 			{
@@ -167,16 +182,13 @@ namespace GameDevWare.Charon.Unity.Utils
 			}
 			catch (Exception error)
 			{
-				if (Settings.Current.Verbose)
-				{
-					UnityEngine.Debug.LogWarning(string.Format("Failed to delete directory '{0}' due error.", directoryPath));
-					UnityEngine.Debug.LogWarning(error);
-				}
+				CharonEditorModule.Instance.Logger.Log(LogType.Warning, $"Failed to delete directory '{directoryPath}' due error.");
+				CharonEditorModule.Instance.Logger.Log(LogType.Warning, error);
 			}
 		}
 		public static void SafeFileDelete(string filePath)
 		{
-			if (filePath == null) throw new ArgumentNullException("filePath");
+			if (filePath == null) throw new ArgumentNullException(nameof(filePath));
 
 			try
 			{
@@ -184,11 +196,8 @@ namespace GameDevWare.Charon.Unity.Utils
 			}
 			catch (Exception error)
 			{
-				if (Settings.Current.Verbose)
-				{
-					UnityEngine.Debug.LogWarning(string.Format("Failed to delete file '{0}' due error.", filePath));
-					UnityEngine.Debug.LogWarning(error);
-				}
+				CharonEditorModule.Instance.Logger.Log(LogType.Warning,$"Failed to delete file '{filePath}' due error.");
+				CharonEditorModule.Instance.Logger.Log(LogType.Warning,error);
 			}
 		}
 	}

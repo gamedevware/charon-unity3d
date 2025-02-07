@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (c) 2023 Denis Zykov
+	Copyright (c) 2025 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
@@ -18,22 +18,18 @@
 */
 
 using System;
-using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using GameDevWare.Charon.Unity.Async;
-using GameDevWare.Charon.Unity.ServerApi;
-using GameDevWare.Charon.Unity.ServerApi.KeyStorage;
-using GameDevWare.Charon.Unity.Utils;
+using System.Threading.Tasks;
+using GameDevWare.Charon.Editor.ServerApi;
+using GameDevWare.Charon.Editor.Utils;
 using JetBrains.Annotations;
 using UnityEditor;
 using UnityEngine;
 
-using Coroutine = GameDevWare.Charon.Unity.Async.Coroutine;
-
-// ReSharper disable UnusedMember.Local
-namespace GameDevWare.Charon.Unity.Windows
+// ReSharper disable Unity.RedundantSerializeFieldAttribute
+namespace GameDevWare.Charon.Editor.Windows
 {
 	internal class ApiKeyPromptWindow : EditorWindow, ISerializationCallbackReceiver
 	{
@@ -41,8 +37,9 @@ namespace GameDevWare.Charon.Unity.Windows
 
 		[NonSerialized] private string lastError;
 		[NonSerialized] private string progressStatus;
-		[NonSerialized] private Promise projectsFetchTask;
+		[NonSerialized] private Task projectsFetchTask;
 		[NonSerialized] private ServerApiClient serverApiClient;
+		[NonSerialized] private ILogger logger;
 
 		[SerializeField] private bool autoClose;
 		[SerializeField] private string apiKey;
@@ -59,7 +56,7 @@ namespace GameDevWare.Charon.Unity.Windows
 			{
 				if (this.serverApiClient == null)
 				{
-					this.serverApiClient = new ServerApiClient(Settings.Current.GetServerAddressUrl());
+					this.serverApiClient = new ServerApiClient(CharonEditorModule.Instance.Settings.GetServerAddressUrl());
 				}
 				return this.serverApiClient;
 			}
@@ -81,6 +78,7 @@ namespace GameDevWare.Charon.Unity.Windows
 			this.expectedProjectName = string.Empty;
 			this.lastError = string.Empty;
 			this.progressStatus = string.Empty;
+			this.logger = CharonEditorModule.Instance.Logger;
 		}
 
 		[SuppressMessage("ReSharper", "InconsistentNaming"), UsedImplicitly]
@@ -88,7 +86,7 @@ namespace GameDevWare.Charon.Unity.Windows
 		{
 			if (string.IsNullOrEmpty(this.apiKey) == false)
 			{
-				this.projectsFetchTask = this.FetchProjectList(this.apiKey);
+				this.projectsFetchTask = this.FetchProjectListAsync(this.apiKey);
 			}
 		}
 
@@ -107,7 +105,8 @@ namespace GameDevWare.Charon.Unity.Windows
 			{
 				GUILayout.Label("API Key", new GUIStyle(EditorStyles.boldLabel));
 				var newApiKey = (EditorGUILayout.TextArea(this.apiKey, new GUIStyle(EditorStyles.textArea) { fixedHeight = 38 }) ?? string.Empty).Trim();
-				if (GUILayout.Button(string.Format("To generate new API Key go to your <a href=\"{0}\">Profile -> API Keys</a>.", this.ServerApiClient.GetApiKeysUrl().OriginalString),
+				if (GUILayout.Button(
+						$"To generate new API Key go to your <a href=\"{this.ServerApiClient.GetApiKeysUrl().OriginalString}\">Profile -> API Keys</a>.",
 						new GUIStyle(EditorStyles.label) { richText = true }))
 				{
 					EditorUtility.OpenWithDefaultApp(this.ServerApiClient.GetApiKeysUrl().OriginalString);
@@ -117,7 +116,7 @@ namespace GameDevWare.Charon.Unity.Windows
 				{
 					if (string.IsNullOrEmpty(newApiKey) == false)
 					{
-						this.projectsFetchTask = this.FetchProjectList(newApiKey);
+						this.projectsFetchTask = this.FetchProjectListAsync(newApiKey);
 					}
 				}
 				this.apiKey = newApiKey;
@@ -188,35 +187,32 @@ namespace GameDevWare.Charon.Unity.Windows
 
 			EditorGUI.DrawRect(rect, new Color(0.5f, 0.5f, 0.5f, 1));
 		}
-		private Promise FetchProjectList(string apiKey)
+		private async Task FetchProjectListAsync(string apiKey)
 		{
-			if (apiKey == null) throw new ArgumentNullException("apiKey");
+			if (apiKey == null) throw new ArgumentNullException(nameof(apiKey));
 
 
 			this.lastError = string.Empty;
 			this.projectFound = null;
 
-			return new Coroutine(this.UpdateProjectListAsync(apiKey)).ContinueWith(promise =>
+			var updateTask = this.UpdateProjectListAsync(apiKey);
+			await updateTask.IgnoreFault().ConfigureAwait(true);
+
+			this.Repaint();
+
+			if (updateTask.IsFaulted)
 			{
-				this.Repaint();
-
-				if (!promise.HasErrors) return;
-
-				this.lastError = promise.Error.Unwrap().Message;
-				Debug.LogWarning(promise.Error.Unwrap());
-			});
-
+				this.lastError = updateTask.Exception.Unwrap().Message;
+				this.logger.Log(LogType.Error, updateTask.Exception.Unwrap());
+			}
 		}
-		private IEnumerable UpdateProjectListAsync(string apiKey)
+		private async Task UpdateProjectListAsync(string apiKey)
 		{
-			if (apiKey == null) throw new ArgumentNullException("apiKey");
+			if (apiKey == null) throw new ArgumentNullException(nameof(apiKey));
 
 			this.ServerApiClient.UseApiKey(apiKey);
 
-			var getMyProjectsAsync = this.ServerApiClient.GetMyProjectsAsync();
-			yield return getMyProjectsAsync;
-
-			var projects = getMyProjectsAsync.GetResult();
+			var projects = await this.ServerApiClient.GetMyProjectsAsync().ConfigureAwait(true);
 
 			if (string.IsNullOrEmpty(this.expectedProjectId))
 			{
@@ -226,7 +222,7 @@ namespace GameDevWare.Charon.Unity.Windows
 				foreach (var project in projects)
 				{
 					var apiKeyPath = new Uri(this.ServerApiClient.BaseAddress, "/" + project.Id);
-					KeyCryptoStorage.StoreKey(apiKeyPath, apiKey);
+					CharonEditorModule.Instance.KeyCryptoStorage.StoreKey(apiKeyPath, apiKey);
 				}
 			}
 			else
@@ -234,13 +230,13 @@ namespace GameDevWare.Charon.Unity.Windows
 				this.projectFound = projects.Any(p => string.Equals(p.Id, this.expectedProjectId));
 				if (this.projectFound == false)
 				{
-					throw new InvalidOperationException(string.Format("API Key is valid but has no access to project '{0}'.", this.expectedProjectName));
+					throw new InvalidOperationException($"API Key is valid but has no access to project '{this.expectedProjectName}'.");
 				}
 
 				if (this.projectFound.GetValueOrDefault())
 				{
 					var apiKeyPath = new Uri(this.ServerApiClient.BaseAddress, "/" + this.expectedProjectId);
-					KeyCryptoStorage.StoreKey(apiKeyPath, apiKey);
+					CharonEditorModule.Instance.KeyCryptoStorage.StoreKey(apiKeyPath, apiKey);
 				}
 			}
 
@@ -265,8 +261,6 @@ namespace GameDevWare.Charon.Unity.Windows
 			if (this.Cancel != null)
 			{
 				this.Cancel(this, new ErrorEventArgs(new InvalidOperationException(Resources.UI_UNITYPLUGIN_OPERATION_CANCELLED)));
-				if (Settings.Current.Verbose)
-					Debug.Log(string.Format("'{0}' window is closed by user.", this.titleContent.text));
 			}
 			this.Cancel = null;
 			this.Done = null;
@@ -280,18 +274,18 @@ namespace GameDevWare.Charon.Unity.Windows
 		{
 			return (msg, progress) =>
 			{
-				this.progressStatus = string.Format("{0} ({1:F2}%)", msg, progress * 100);
+				this.progressStatus = $"{msg} ({progress * 100:F2}%)";
 				this.Repaint();
 			};
 		}
 
-		public static Promise ShowAsync(string expectedProjectId, string expectedProjectName, bool autoClose = true)
+		public static Task ShowAsync(string expectedProjectId, string expectedProjectName, bool autoClose = true)
 		{
-			var promise = new Promise();
+			var taskCompletionSource = new TaskCompletionSource<object>();
 			var window = GetWindow<ApiKeyPromptWindow>(utility: true);
 
-			window.Done += (sender, args) => promise.TrySetCompleted();
-			window.Cancel += (sender, args) => promise.TrySetFailed(args.GetException());
+			window.Done += (_, _) => taskCompletionSource.TrySetResult(null);
+			window.Cancel += (_, args) => taskCompletionSource.TrySetException(args.GetException());
 
 			window.autoClose = autoClose;
 			window.expectedProjectId = expectedProjectId;
@@ -299,10 +293,7 @@ namespace GameDevWare.Charon.Unity.Windows
 
 			window.Focus();
 
-			if (Settings.Current.Verbose)
-				Debug.Log(string.Format("Showing '{0}' window.", window.titleContent.text));
-
-			return promise;
+			return taskCompletionSource.Task;
 		}
 
 		/// <inheritdoc />
@@ -316,7 +307,7 @@ namespace GameDevWare.Charon.Unity.Windows
 			if (string.IsNullOrEmpty(this.apiKey))
 				return;
 
-			this.projectsFetchTask = this.FetchProjectList(this.apiKey);
+			this.projectsFetchTask = this.FetchProjectListAsync(this.apiKey);
 		}
 	}
 }

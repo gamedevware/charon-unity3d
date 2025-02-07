@@ -25,10 +25,15 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using JetBrains.Annotations;
 
-namespace GameDevWare.Charon.Unity.Json
+namespace GameDevWare.Charon.Editor.Json
 {
 	[PublicAPI, UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
-	internal enum JsonType
+#if JSON_NET_3_0_2_OR_NEWER
+	internal
+#else
+	public
+#endif
+	enum JsonType
 	{
 		String,
 		Number,

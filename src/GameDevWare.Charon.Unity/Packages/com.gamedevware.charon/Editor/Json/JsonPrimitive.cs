@@ -28,13 +28,18 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Text;
-using GameDevWare.Charon.Unity.Utils;
+using GameDevWare.Charon.Editor.Utils;
 using JetBrains.Annotations;
 
-namespace GameDevWare.Charon.Unity.Json
+namespace GameDevWare.Charon.Editor.Json
 {
 	[PublicAPI, UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
-	internal class JsonPrimitive : JsonValue
+#if JSON_NET_3_0_2_OR_NEWER
+	internal
+#else
+	public
+#endif
+	class JsonPrimitive : JsonValue
 	{
 		private static readonly byte[] TrueBytes = Encoding.UTF8.GetBytes("true");
 		private static readonly byte[] FalseBytes = Encoding.UTF8.GetBytes("false");
@@ -204,9 +209,9 @@ namespace GameDevWare.Charon.Unity.Json
 					throw new InvalidOperationException();
 			}
 		}
-		public override object As(Type type)
+		public override object ToObject(Type type)
 		{
-			if (type == null) throw new ArgumentNullException("type");
+			if (type == null) throw new ArgumentNullException(nameof(type));
 
 			var value = this.Value;
 			if (value == null)
@@ -259,7 +264,7 @@ namespace GameDevWare.Charon.Unity.Json
 			}
 			catch (FormatException formatException)
 			{
-				throw new FormatException(string.Format("Failed to convert '{0}' to {1} type.", value, type.Name), formatException);
+				throw new FormatException($"Failed to convert '{value}' to {type.Name} type.", formatException);
 			}
 		}
 	}

@@ -1,128 +1,116 @@
-﻿using GameDevWare.Charon.Unity.Async;
-using GameDevWare.Charon.Unity.Utils;
-using GameDevWare.Charon.Unity.Windows;
+﻿/*
+	Copyright (c) 2025 Denis Zykov
+
+	This is part of "Charon: Game Data Editor" Unity Plugin.
+
+	Charon Game Data Editor Unity Plugin is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program.  If not, see http://www.gnu.org/licenses.
+*/
+
 using System;
-using System.Collections;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.CompilerServices;
-using GameDevWare.Charon.Unity.ServerApi;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using GameDevWare.Charon.Editor.Cli;
+using GameDevWare.Charon.Editor.ServerApi;
+using GameDevWare.Charon.Editor.Utils;
+using JetBrains.Annotations;
 using UnityEditor;
 using UnityEditor.Callbacks;
-using GameDevWare.Charon.Unity.ServerApi.KeyStorage;
+using UnityEngine;
+using UnityObject = UnityEngine.Object;
+using Random = System.Random;
 
-namespace GameDevWare.Charon.Unity.Routines
+namespace GameDevWare.Charon.Editor.Routines
 {
+	[PublicAPI]
 	internal class LaunchEditorRoutine
 	{
-		private static Promise loadEditorTask;
-		private static Process CurrentEditorProcess;
-		private static string CurrentEditorGameDataPath;
-		private static Uri CurrentEditorUrl;
+		private static Task LoadEditorTask;
+		private static CancellationTokenSource LoadEditorTaskCancellationSource;
 
-
-		// ReSharper disable once InconsistentNaming
-		// ReSharper disable once UnusedMember.Local
 		[OnOpenAsset(0)]
 		private static bool OnOpenAsset(int instanceID, int exceptionId)
 		{
-			var gameDataPath = AssetDatabase.GetAssetPath(instanceID);
-			if (GameDataTracker.IsGameDataFile(gameDataPath) == false)
-				return false;
+			var gameDataAssetPath = AssetDatabase.GetAssetPath(instanceID);
 
-			if (loadEditorTask != null && !loadEditorTask.IsCompleted)
+			var asset = AssetDatabase.LoadAssetAtPath<UnityObject>(gameDataAssetPath);
+			var gameDataAsset = GameDataAssetUtils.GetAssociatedGameDataAsset(asset);
+			if (gameDataAsset == null)
 			{
 				return false;
 			}
 
 			var reference = ValidationError.GetReference(exceptionId);
-			var cancellation = new Promise();
-			var progressCallback = ProgressUtils.ShowCancellableProgressBar(Resources.UI_UNITYPLUGIN_INSPECTOR_LAUNCHING_EDITOR_PREFIX + " ", cancellation: cancellation);
+			LoadEditorTaskCancellationSource?.Cancel();
+			var cancellationSource = LoadEditorTaskCancellationSource = new CancellationTokenSource();
+			var progressCallback = ProgressUtils.ShowCancellableProgressBar(Resources.UI_UNITYPLUGIN_INSPECTOR_LAUNCHING_EDITOR_PREFIX + " ",
+				cancellationSource: cancellationSource);
 			progressCallback(Resources.UI_UNITYPLUGIN_PROGRESS_CHECKING_TOOLS_VERSION, 0.0f);
-			loadEditorTask = new Coroutine<bool>(LoadEditor(gameDataPath, reference, loadEditorTask, progressCallback, cancellation));
-			loadEditorTask.ContinueWith(t => EditorUtility.ClearProgressBar());
+
+			LoadEditorTask = LoadEditorAsync(gameDataAsset, gameDataAssetPath, reference, LoadEditorTask, progressCallback, cancellationSource.Token)
+				.ContinueWith(_ => EditorUtility.ClearProgressBar(), CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Current);
+			LoadEditorTask.LogFaultAsError();
 
 			return true;
 		}
 
-		public static Process GetCurrentEditorProcess()
+		private static async Task LoadEditorAsync
+		(
+			GameDataBase gameDataBase,
+			string gameDataAssetPath,
+			string reference,
+			Task waitTask,
+			Action<string, float> progressCallback,
+			CancellationToken cancellation)
 		{
-			if (CurrentEditorProcess == null)
-			{
-				return null;
-			}
-
-			try
-			{
-				var process = CurrentEditorProcess;
-				if (process.HasExited)
-				{
-					return null;
-				}
-
-				return process;
-			}
-			catch
-			{
-				return null;
-			}
-		}
-
-		private static IEnumerable LoadEditor(string gameDataPath, string reference, Promise waitTask, Action<string, float> progressCallback, Promise cancellation)
-		{
-			if (gameDataPath == null) throw new ArgumentNullException("gameDataPath");
-			if (progressCallback == null) throw new ArgumentNullException("progressCallback");
-
-			// un-select gamedata file in Project window
-			if (Selection.activeObject != null && AssetDatabase.GetAssetPath(Selection.activeObject) == gameDataPath)
-				Selection.activeObject = null;
+			if (gameDataBase == null) throw new ArgumentNullException(nameof(gameDataBase));
+			if (progressCallback == null) throw new ArgumentNullException(nameof(progressCallback));
 
 			if (waitTask != null)
-				yield return waitTask.IgnoreFault();
-
-			var gameDataSettings = GameDataSettings.Load(gameDataPath);
-			if (gameDataSettings == null)
 			{
-				throw new InvalidOperationException(string.Format("Unable to start editor for '{0}'. File is not a game data file.", gameDataPath));
+				await waitTask.IgnoreFault().ConfigureAwait(true);
 			}
 
-			var checkRequirements = CharonCli.CheckRequirementsAsync();
-			yield return checkRequirements;
+			cancellation.ThrowIfCancellationRequested();
 
-			switch (checkRequirements.GetResult())
+			var gameDataSettings = gameDataBase.settings;
+			if (gameDataSettings == null)
 			{
-				case RequirementsCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
-				case RequirementsCheckResult.WrongVersion:
-				case RequirementsCheckResult.MissingExecutable: yield return CharonCli.DownloadCharon(progressCallback.Sub(0.00f, 0.50f)); break;
-				case RequirementsCheckResult.Ok: break;
-				default: throw new InvalidOperationException(string.Format("Unexpected Charon check error: {0}.", checkRequirements.GetResult()));
+				throw new InvalidOperationException($"Unable to start editor for '{gameDataAssetPath}'. File is not a game data file.");
 			}
 
 			if (gameDataSettings.IsConnected)
 			{
-				foreach (var step in RemoteAuthenticateAndOpenWindow(gameDataPath, gameDataSettings, reference, progressCallback.Sub(0.50f, 1.00f), cancellation))
-				{
-					yield return step;
-				}
+				await RemoteAuthenticateAndOpenWindowAsync(gameDataSettings, reference, progressCallback.Sub(0.50f, 1.00f), cancellation).ConfigureAwait(true);
 			}
-			else
+			else if (!await TryJoinExistingEditorAsync(gameDataSettings, reference, progressCallback, cancellation).ConfigureAwait(true))
 			{
-				foreach (var step in LaunchCharonAndOpenWindow(gameDataPath, reference, progressCallback, cancellation))
-				{
-					yield return step;
-				}
+				await LaunchCharonAndOpenWindowAsync(gameDataSettings, reference, progressCallback, cancellation).ConfigureAwait(true);
 			}
 		}
-		private static IEnumerable RemoteAuthenticateAndOpenWindow(string gameDataPath, GameDataSettings gameDataSettings, string reference, Action<string, float> progressCallback, Promise cancellation)
+
+
+		private static async Task RemoteAuthenticateAndOpenWindowAsync(GameDataSettings gameDataSettings, string reference, Action<string, float> progressCallback, CancellationToken cancellation)
 		{
-			if (gameDataPath == null) throw new ArgumentNullException("gameDataPath");
-			if (gameDataSettings == null) throw new ArgumentNullException("gameDataSettings");
-			if (progressCallback == null) throw new ArgumentNullException("progressCallback");
-			if (cancellation == null) throw new ArgumentNullException("cancellation");
+			if (gameDataSettings == null) throw new ArgumentNullException(nameof(gameDataSettings));
+			if (progressCallback == null) throw new ArgumentNullException(nameof(progressCallback));
 
 			cancellation.ThrowIfCancellationRequested();
 
-			var gameDataEditorUrl = new Uri(gameDataSettings.ServerAddress);
+			var gameDataEditorUrl = new Uri(gameDataSettings.serverAddress);
 
 			if (reference == null || string.IsNullOrEmpty(reference))
 			{
@@ -130,22 +118,21 @@ namespace GameDevWare.Charon.Unity.Routines
 			}
 
 			var serverApiClient = new ServerApiClient(gameDataEditorUrl);
-			var apiKeyPath = new Uri(gameDataEditorUrl, "/" + gameDataSettings.ProjectId);
-			var apiKey = KeyCryptoStorage.GetKey(apiKeyPath);
+			var apiKeyPath = new Uri(gameDataEditorUrl, "/" + gameDataSettings.projectId);
+			var apiKey = CharonEditorModule.Instance.KeyCryptoStorage.GetKey(apiKeyPath);
 			var navigateUrl = new Uri(gameDataEditorUrl, reference);
-			
+
 			if (!string.IsNullOrEmpty(apiKey))
 			{
 				serverApiClient.UseApiKey(apiKey);
 
 				progressCallback(Resources.UI_UNITYPLUGIN_PROGRESS_AUTHENTICATING, 0.1f);
 
-				var getLoginCodeTask = serverApiClient.GetLoginCodeAsync(apiKey);
-				yield return getLoginCodeTask.IgnoreFault();
+				var loginCode = await serverApiClient.GetLoginCodeAsync(apiKey).IgnoreFault().ConfigureAwait(true);
 
-				if (!getLoginCodeTask.HasErrors && string.IsNullOrEmpty(getLoginCodeTask.GetResult()) == false)
+				if (string.IsNullOrEmpty(loginCode) == false)
 				{
-					var loginParameters = string.Format("?loginCode={0}&returnUrl={1}", Uri.EscapeDataString(getLoginCodeTask.GetResult()), Uri.EscapeDataString(reference));
+					var loginParameters = $"?loginCode={Uri.EscapeDataString(loginCode)}&returnUrl={Uri.EscapeDataString(reference)}";
 					navigateUrl = new Uri(gameDataEditorUrl, "view/sign-in" + loginParameters);
 				}
 
@@ -156,110 +143,125 @@ namespace GameDevWare.Charon.Unity.Routines
 
 			progressCallback(Resources.UI_UNITYPLUGIN_WINDOW_EDITOR_OPENING_BROWSER, 0.90f);
 
-			NavigateTo(gameDataPath, gameDataEditorUrl, navigateUrl);
+			NavigateTo(navigateUrl);
 		}
-		private static IEnumerable LaunchCharonAndOpenWindow(string gameDataPath, string reference, Action<string, float> progressCallback, Promise cancellation)
+		private static async Task LaunchCharonAndOpenWindowAsync(GameDataSettings gameDataSettings, string reference, Action<string, float> progressCallback, CancellationToken cancellation)
 		{
-			if (CurrentEditorUrl == null)
-			{
-				CurrentEditorUrl = new Uri("http://localhost:" + Settings.Current.GetEditorPort() + "/");
-			}
+			var randomPort = new Random().Next(10000, 65000);
+			var gameDataEditorUrl = new Uri("http://localhost:" + randomPort + "/");
 
-			if (IsCurrentEditorServing(gameDataPath) == false)
-			{
-				foreach (var step in KillAndReLaunchLocalCharon(gameDataPath, CurrentEditorUrl, progressCallback, cancellation))
-				{
-					yield return step;
-				}
-			}
-
-			cancellation.ThrowIfScriptsCompiling();
-			cancellation.ThrowIfCancellationRequested();
-			
-			var waitForStart = new Async.Coroutine(WaitForStart(CurrentEditorUrl, progressCallback.Sub(0.50f, 1.00f), cancellation));
-			yield return waitForStart;
+			var gameDataPath = Path.GetFullPath(AssetDatabase.GUIDToAssetPath(gameDataSettings.gameDataFileGuid) ?? "");
+			await LaunchLocalCharon(gameDataPath, gameDataEditorUrl, progressCallback, cancellation).ConfigureAwait(true);
 
 			cancellation.ThrowIfScriptsCompiling();
 			cancellation.ThrowIfCancellationRequested();
 
-			var navigateUrl = new Uri(CurrentEditorUrl, reference);
-			NavigateTo(gameDataPath, CurrentEditorUrl, navigateUrl);
+			await WaitForStart(gameDataEditorUrl, progressCallback.Sub(0.50f, 1.00f), cancellation).ConfigureAwait(true);
+
+			cancellation.ThrowIfScriptsCompiling();
+			cancellation.ThrowIfCancellationRequested();
+
+			var navigateUrl = new Uri(gameDataEditorUrl, reference);
+			NavigateTo(navigateUrl);
 		}
 
-		private static bool IsCurrentEditorServing(string gameDataPath)
+		private static async Task<bool> TryJoinExistingEditorAsync(GameDataSettings gameDataSettings, string reference, Action<string,float> progressCallback, CancellationToken cancellation)
 		{
-			if (CurrentEditorGameDataPath != gameDataPath || 
-				CurrentEditorProcess == null)
+			var gameDataPath = Path.GetFullPath(AssetDatabase.GUIDToAssetPath(gameDataSettings.gameDataFileGuid) ?? "");
+			var lockFilePath = Path.Combine(FileHelper.LibraryCharonPath, CharonServerProcess.GetLockFileNameFor(gameDataPath));
+			if (!File.Exists(lockFilePath))
 			{
 				return false;
 			}
 
+			// try delete orphained lock
+			try { File.Delete(lockFilePath); }
+			catch { /* ignore delete attempt errors and continue */ }
+
+			var gameDataEditorUrl = default(Uri);
 			try
 			{
-				CurrentEditorProcess.Refresh();
-				return !CurrentEditorProcess.HasExited;
+				using var lockFileStream = new FileStream(lockFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+				using var lockFileReader = new StreamReader(lockFileStream, Encoding.UTF8, detectEncodingFromByteOrderMarks: false, 1024, leaveOpen: true);
+
+				var pidStr = await lockFileReader.ReadLineAsync();
+				var listenAddressString = await lockFileReader.ReadLineAsync();
+
+				if (!int.TryParse(pidStr, out var pid) ||
+					!Uri.TryCreate(listenAddressString, UriKind.Absolute, out gameDataEditorUrl))
+				{
+					return false;
+				}
+
+				using var downloadStream = new MemoryStream();
+				var downloadTask = HttpUtils.DownloadToAsync(downloadStream, gameDataEditorUrl, timeout: TimeSpan.FromSeconds(5), cancellation: cancellation);
+				await downloadTask.IgnoreFault().ConfigureAwait(true);
+				if (downloadTask.IsFaulted || downloadStream.Length == 0)
+				{
+					return false;
+				}
 			}
-			catch { return false; }
+			catch
+			{
+				return false;
+			}
+
+			var navigateUrl = new Uri(gameDataEditorUrl, reference);
+			NavigateTo(navigateUrl);
+			return true;
 		}
 
-		private static IEnumerable KillAndReLaunchLocalCharon(string gameDataPath, Uri gameDataEditorUrl, Action<string, float> progressCallback, Promise cancellation)
+		private static async Task LaunchLocalCharon(string gameDataPath, Uri gameDataEditorUrl, Action<string, float> progressCallback, CancellationToken cancellation)
 		{
-			CharonCli.FindAndEndGracefully();
+			var logger = CharonEditorModule.Instance.Logger;
 
-			if (Settings.Current.Verbose)
-				UnityEngine.Debug.Log("Starting game data editor at " + gameDataEditorUrl + "...");
+			logger.Log(LogType.Assert, "Starting game data editor at " + gameDataEditorUrl + "...");
 
 			progressCallback(Resources.UI_UNITYPLUGIN_WINDOW_EDITOR_LAUNCHING_EXECUTABLE, 0.10f);
 
 			cancellation.ThrowIfScriptsCompiling();
 
-			var charonRunTask = CharonCli.Listen(gameDataPath, CharonCli.GetDefaultLockFilePath(), gameDataEditorUrl.Port, shadowCopy: true,
-				progressCallback: progressCallback.Sub(0.10f, 0.30f));
+			var charonRunTask = CharonCli.StartServerAsync(gameDataPath, gameDataEditorUrl.Port, progressCallback: progressCallback.Sub(0.10f, 0.30f));
 
-			if (Settings.Current.Verbose)
-				UnityEngine.Debug.Log("Launching game data editor process.");
+			logger.Log(LogType.Assert, "Launching game data editor process.");
 
 			// wait until server process start
-			var timeoutPromise = Promise.Delayed(TimeSpan.FromSeconds(10));
-			var startPromise = (Promise)charonRunTask.IgnoreFault();
-			var startCompletePromise = Promise.WhenAny(timeoutPromise, startPromise);
+			var timeoutTask = Task.Delay(TimeSpan.FromSeconds(10), cancellation);
+			var startTask = charonRunTask.IgnoreFault();
+			var startOrTimeoutTask = Task.WhenAny(timeoutTask, startTask);
 
-			var timeBasedWait = new Coroutine<bool>(RunTimeBasedProgress(Resources.UI_UNITYPLUGIN_WINDOW_EDITOR_LAUNCHING_EXECUTABLE, TimeSpan.FromSeconds(5),
-				progressCallback.Sub(0.35f, 0.50f), cancellation, startCompletePromise));
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+			RunTimedProgressAsync(Resources.UI_UNITYPLUGIN_WINDOW_EDITOR_LAUNCHING_EXECUTABLE, expectedTime: TimeSpan.FromSeconds(5),
+				progressCallback.Sub(0.35f, 0.50f), cancellation, startOrTimeoutTask);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
-			yield return Promise.WhenAny(timeoutPromise, startPromise, cancellation);
-			yield return timeBasedWait;
+			await Task.WhenAny(timeoutTask, startTask).ConfigureAwait(true);
 
-			if (timeoutPromise.IsCompleted)
+			if (timeoutTask.IsCompleted)
 			{
 				EditorUtility.ClearProgressBar();
-				UnityEngine.Debug.LogWarning(Resources.UI_UNITYPLUGIN_WINDOW_FAILED_TO_START_EDITOR_TIMEOUT);
-				yield break; // yield break;
+				logger.Log(LogType.Warning, Resources.UI_UNITYPLUGIN_WINDOW_FAILED_TO_START_EDITOR_TIMEOUT);
+				return;
 			}
-			else if (cancellation.IsCompleted)
+			else if (cancellation.IsCancellationRequested)
 			{
 				cancellation.ThrowIfScriptsCompiling();
 				cancellation.ThrowIfCancellationRequested();
 			}
-			else if (charonRunTask.HasErrors)
-			{
-				throw new InvalidOperationException("Failed to start editor.", charonRunTask.Error.Unwrap());
-			}
 
 			progressCallback(Resources.UI_UNITYPLUGIN_WINDOW_EDITOR_LAUNCHING_EXECUTABLE, 0.50f);
 
-			CurrentEditorProcess = charonRunTask.GetResult();
-			CurrentEditorGameDataPath = gameDataPath;
+			var editorProcess = await charonRunTask.ConfigureAwait(true);
+			CharonEditorModule.Instance.Processes.Add(editorProcess);
 		}
-
-		private static IEnumerable WaitForStart(Uri gameDataEditorUrl, Action<string, float> progressCallback, Promise cancellation)
+		private static async Task WaitForStart(Uri gameDataEditorUrl, Action<string, float> progressCallback, CancellationToken cancellation)
 		{
 			// wait until server start to respond
-			var timeout = Settings.Current.GetIdleCloseTimeout();
+			var timeout = CharonEditorModule.Instance.Settings.IdleCloseTimeout;
 			var downloadStream = new MemoryStream();
 			var startTime = DateTime.UtcNow;
 			var timeoutDateTime = startTime + timeout;
-			var downloadIndexHtmlTask = HttpUtils.DownloadTo(downloadStream, gameDataEditorUrl, timeout: TimeSpan.FromSeconds(1));
+			var downloadIndexHtmlTask = HttpUtils.DownloadToAsync(downloadStream, gameDataEditorUrl, timeout: TimeSpan.FromSeconds(1), cancellation: cancellation);
 
 			do
 			{
@@ -268,9 +270,9 @@ namespace GameDevWare.Charon.Unity.Routines
 					throw new TimeoutException(Resources.UI_UNITYPLUGIN_WINDOW_FAILED_TO_START_EDITOR_TIMEOUT);
 				}
 
-				yield return downloadIndexHtmlTask.IgnoreFault();
+				await downloadIndexHtmlTask.IgnoreFault().ConfigureAwait(true);
 
-				if (downloadIndexHtmlTask.HasErrors == false && downloadStream.Length > 0)
+				if (!downloadIndexHtmlTask.IsFaulted && downloadStream.Length > 0)
 					break;
 
 				var launchProgress = Math.Min(1.0f, Math.Max(0.0, (DateTime.UtcNow - startTime).TotalMilliseconds / timeout.TotalMilliseconds));
@@ -280,56 +282,48 @@ namespace GameDevWare.Charon.Unity.Routines
 				cancellation.ThrowIfCancellationRequested();
 
 				downloadStream.SetLength(0);
-				downloadIndexHtmlTask = HttpUtils.DownloadTo(downloadStream, gameDataEditorUrl, timeout: TimeSpan.FromSeconds(1));
+				downloadIndexHtmlTask = HttpUtils.DownloadToAsync(downloadStream, gameDataEditorUrl, timeout: TimeSpan.FromSeconds(1), cancellation: cancellation);
 			} while (true);
 
 			progressCallback(Resources.UI_UNITYPLUGIN_WINDOW_EDITOR_OPENING_BROWSER, 0.99f);
 		}
-		private static IEnumerable RunTimeBasedProgress(string message, TimeSpan expectedTime, Action<string, float> progressCallback, Promise cancellation, Promise completion)
+		private static async Task RunTimedProgressAsync
+			(string message, TimeSpan expectedTime, Action<string, float> progressCallback, CancellationToken cancellation, Task completion)
 		{
 			var startTime = DateTime.UtcNow;
-			while (cancellation.IsCompleted == false && completion.IsCompleted == false)
+			while (!cancellation.IsCancellationRequested && !completion.IsCompleted)
 			{
 				var timeElapsed = DateTime.UtcNow - startTime;
 				var timeElapsedRatio = (float)Math.Min(1.0f, Math.Max(0.0f, timeElapsed.TotalMilliseconds / expectedTime.TotalMilliseconds));
 
 				progressCallback(message, timeElapsedRatio);
 
-				yield return Promise.Delayed(TimeSpan.FromMilliseconds(100));
+				await Task.Delay(TimeSpan.FromMilliseconds(100), CancellationToken.None).ConfigureAwait(true);
 			}
-			yield return false;
 		}
 
-		private static void NavigateTo(string gameDataPath, Uri gameDataEditorUrl, Uri navigateUrl)
+		private static void NavigateTo(Uri navigateUrl)
 		{
-			var browserType = (BrowserType)Settings.Current.Browser;
-			if (browserType == BrowserType.UnityEmbedded && !GameDataEditorWindow.IsWebViewAvailable)
+			var logger = CharonEditorModule.Instance.Logger;
+			var settings = CharonEditorModule.Instance.Settings;
+			switch (settings.EditorApplication)
 			{
-				browserType = BrowserType.SystemDefault;
-			}
-			switch (browserType)
-			{
-				case BrowserType.Custom:
-					if (string.IsNullOrEmpty(Settings.Current.BrowserPath))
-						goto case BrowserType.SystemDefault;
-					if (Settings.Current.Verbose)
-					{
-						UnityEngine.Debug.Log(string.Format("Opening custom browser '{1}' window for '{0}' address.", navigateUrl, Settings.Current.BrowserPath));
-					}
-					Process.Start(Settings.Current.BrowserPath, navigateUrl.OriginalString);
+				case CharonEditorApplication.CustomBrowser:
+					if (string.IsNullOrEmpty(settings.CustomEditorApplicationPath))
+						goto case CharonEditorApplication.DefaultBrowser;
+
+					logger.Log(LogType.Assert, string.Format("Opening custom browser '{1}' window for '{0}' address.", navigateUrl, settings.CustomEditorApplicationPath));
+
+					Process.Start(settings.CustomEditorApplicationPath, navigateUrl.OriginalString);
 					break;
-				case BrowserType.UnityEmbedded:
-				case BrowserType.SystemDefault:
-					if (Settings.Current.Verbose)
-					{
-						UnityEngine.Debug.Log(string.Format("Opening default browser window for '{0}' address.", navigateUrl));
-					}
+				case CharonEditorApplication.DefaultBrowser:
+					logger.Log(LogType.Assert, $"Opening default browser window for '{navigateUrl}' address.");
+
 					EditorUtility.OpenWithDefaultApp(navigateUrl.OriginalString);
 					break;
 				default:
-					throw new ArgumentOutOfRangeException(string.Format("Unexpected value '{0}' for '{1}' enum.", browserType, typeof(BrowserType)));
+					throw new ArgumentOutOfRangeException($"Unexpected value '{settings.EditorApplication}' for '{typeof(CharonEditorApplication)}' enum.");
 			}
 		}
-
 	}
 }

@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (c) 2023 Denis Zykov
+	Copyright (c) 2025 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
@@ -18,19 +18,20 @@
 */
 
 using System;
-using GameDevWare.Charon.Unity.Json;
+using System.Runtime.Serialization;
+using GameDevWare.Charon.Editor.Json;
 using JetBrains.Annotations;
 
-namespace GameDevWare.Charon.Unity.ServerApi
+namespace GameDevWare.Charon.Editor.ServerApi
 {
 	[Serializable, UsedImplicitly(ImplicitUseTargetFlags.WithMembers), PublicAPI]
 	public class ValidationError
 	{
-		[JsonMember("path")]
+		[DataMember(Name = "path")]
 		public string Path;
-		[JsonMember("message")]
+		[DataMember(Name = "message")]
 		public string Message;
-		[JsonMember("code")]
+		[DataMember(Name = "code")]
 		public string Code;
 	}
 }

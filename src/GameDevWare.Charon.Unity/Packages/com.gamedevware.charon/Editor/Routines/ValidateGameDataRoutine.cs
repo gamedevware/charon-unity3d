@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (c) 2023 Denis Zykov
+	Copyright (c) 2025 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
@@ -17,142 +17,119 @@
     along with this program.  If not, see http://www.gnu.org/licenses.
 */
 
-using GameDevWare.Charon.Unity.Json;
-using GameDevWare.Charon.Unity.Utils;
-using GameDevWare.Charon.Unity.Windows;
-using System.Collections.Generic;
-using System.IO;
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
-using GameDevWare.Charon.Unity.Async;
-using GameDevWare.Charon.Unity.ServerApi;
-using GameDevWare.Charon.Unity.ServerApi.KeyStorage;
+using System.Threading;
+using System.Threading.Tasks;
+using GameDevWare.Charon.Editor.Cli;
+using GameDevWare.Charon.Editor.Json;
+using GameDevWare.Charon.Editor.ServerApi;
+using GameDevWare.Charon.Editor.Utils;
+using GameDevWare.Charon.Editor.Windows;
 using JetBrains.Annotations;
 using UnityEditor;
+using UnityEngine;
 
-namespace GameDevWare.Charon.Unity.Routines
+namespace GameDevWare.Charon.Editor.Routines
 {
-	[PublicAPI, UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
+	[PublicAPI]
 	public static class ValidateGameDataRoutine
 	{
-		public static Promise<List<GameDataValidationReport>> Run(string path = null, Action<string, float> progressCallback = null)
+		public static Task<List<GameDataValidationReport>> ScheduleAsync(string[] paths = null, Action<string, float> progressCallback = null, CancellationToken cancellation = default)
 		{
-			return new Coroutine<List<GameDataValidationReport>>(ValidateGameData(path, progressCallback));
-		}
-		public static Promise<List<GameDataValidationReport>> Schedule(string path = null, Action<string, float> progressCallback = null, string coroutineId = null)
-		{
-			return CoroutineScheduler.Schedule<List<GameDataValidationReport>>(ValidateGameData(path, progressCallback), coroutineId);
+			return CharonEditorModule.Instance.Routines.Schedule(() => RunAsync(paths, progressCallback), cancellation);
 		}
 
-		private static IEnumerable ValidateGameData(string path = null, Action<string, float> progressCallback = null)
+		public static Task<List<GameDataValidationReport>> RunAsync(string[] paths = null, Action<string, float> progressCallback = null)
 		{
-			var checkRequirements = CharonCli.CheckRequirementsAsync();
-			yield return checkRequirements;
-
-			switch (checkRequirements.GetResult())
-			{
-				case RequirementsCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
-				case RequirementsCheckResult.WrongVersion:
-				case RequirementsCheckResult.MissingExecutable: yield return CharonCli.DownloadCharon(progressCallback); break;
-				case RequirementsCheckResult.Ok: break;
-				default: throw new InvalidOperationException("Unknown Tools check result.");
-			}
-
+			var task = RunInternalAsync(paths, progressCallback);
+			task.LogFaultAsError();
+			return task;
+		}
+		private static async Task<List<GameDataValidationReport>> RunInternalAsync(string[] paths = null, Action<string, float> progressCallback = null)
+		{
 			var reports = new List<GameDataValidationReport>();
-			var paths = !string.IsNullOrEmpty(path) ? new[] { path } : GameDataTracker.All.ToArray();
+			paths ??= Array.ConvertAll(AssetDatabase.FindAssets("t:" + nameof(GameDataBase)), AssetDatabase.GUIDToAssetPath);
+
+			var logger = CharonEditorModule.Instance.Logger;
+
 			var total = paths.Length;
 			for (var i = 0; i < paths.Length; i++)
 			{
-				var gameDataPath = paths[i];
-				if (File.Exists(gameDataPath) == false)
+				var gameDataAssetPath = paths[i];
+				if (File.Exists(gameDataAssetPath) == false)
 					continue;
 
-				if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_PROGRESS_PROCESSING_GAMEDATA, gameDataPath), (float)i / total);
+				progressCallback?.Invoke(string.Format(Resources.UI_UNITYPLUGIN_PROGRESS_PROCESSING_GAMEDATA, gameDataAssetPath), (float)i / total);
 
-				var gameDataObj = AssetDatabase.LoadAssetAtPath(gameDataPath, typeof(UnityEngine.Object));
-				var assetImport = AssetImporter.GetAtPath(gameDataPath);
-				if (assetImport == null)
+				var gameDataAsset = AssetDatabase.LoadAssetAtPath<GameDataBase>(gameDataAssetPath);
+				if (gameDataAsset == null)
 				{
 					continue;
 				}
 
-				var gameDataSettings = GameDataSettings.Load(gameDataObj);
+				var gameDataSettings = gameDataAsset.settings;
 
-				var apiKey = default(string);
-				var gameDataLocation = default(GameDataLocation);
+				var gameDataPath = AssetDatabase.GUIDToAssetPath(gameDataSettings.gameDataFileGuid);
+				var apiKey = string.Empty;
+				var gameDataLocation = default(string);
 				if (gameDataSettings.IsConnected)
 				{
-					var serverAddress = new Uri(gameDataSettings.ServerAddress);
-					var apiKeyPath = new Uri(serverAddress, "/" + gameDataSettings.ProjectId);
-					apiKey = KeyCryptoStorage.GetKey(apiKeyPath);
+					var serverAddress = new Uri(gameDataSettings.serverAddress);
+					var apiKeyPath = new Uri(serverAddress, "/" + gameDataSettings.projectId);
+					apiKey = CharonEditorModule.Instance.KeyCryptoStorage.GetKey(apiKeyPath);
 					if (string.IsNullOrEmpty(apiKey))
 					{
-						var apiKeyPromptTask = ApiKeyPromptWindow.ShowAsync(gameDataSettings.ProjectId, gameDataSettings.ProjectName);
-						yield return apiKeyPromptTask;
-						apiKey = KeyCryptoStorage.GetKey(apiKeyPath);
+						await ApiKeyPromptWindow.ShowAsync(gameDataSettings.projectId, gameDataSettings.projectName);
+						apiKey = CharonEditorModule.Instance.KeyCryptoStorage.GetKey(apiKeyPath);
 
 						if (string.IsNullOrEmpty(apiKey))
 						{
-							if (Settings.Current.Verbose)
-							{
-								UnityEngine.Debug.LogWarning(string.Format("Unable to validate game data at '{0}' because there is API Key associated with it. ", gameDataPath) +
+							logger.Log(LogType.Warning, $"Unable to validate game data at '{gameDataPath}' because there is API Key associated with it. " +
 									"Find this asset in Project window and click 'Synchronize' button in Inspector window.");
-							}
 							continue; // no key
 						}
 					}
 
-					gameDataLocation = new GameDataLocation(gameDataSettings.MakeDataSourceUrl(), apiKey);
+					gameDataLocation = gameDataSettings.MakeDataSourceUrl().OriginalString;
 				}
 				else
 				{
-					gameDataLocation = new GameDataLocation(gameDataPath);
+					gameDataLocation = Path.GetFullPath(gameDataPath);
 				}
 
 				var startTime = Stopwatch.StartNew();
-				if (Settings.Current.Verbose)
-					UnityEngine.Debug.Log(string.Format("Validating game data '{0}'.", gameDataLocation));
+				logger.Log(LogType.Assert, $"Validating game data '{gameDataLocation}'.");
 
-				if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_VALIDATE_RUN_FOR, gameDataLocation), (float)i / total);
+				progressCallback?.Invoke(string.Format(Resources.UI_UNITYPLUGIN_VALIDATE_RUN_FOR, gameDataLocation), (float)i / total);
 
-				var output = CommandOutput.CaptureJson();
-				var validateProcess = CharonCli.ValidateAsync(gameDataLocation, ValidationOptions.AllIntegrityChecks, output);
-				yield return validateProcess;
-
-				using (var validateResult = validateProcess.GetResult())
+				try
 				{
-					if (Settings.Current.Verbose) UnityEngine.Debug.Log(string.Format("Validation complete, exit code: '{0}'", validateResult.ExitCode));
-
-					if (validateResult.ExitCode != 0)
-					{
-						reports.Add(new GameDataValidationReport(gameDataPath, ValidationReport.CreateErrorReport(validateProcess.GetResult().GetErrorData())));
-
-						UnityEngine.Debug.LogWarning(string.Format(Resources.UI_UNITYPLUGIN_VALIDATE_FAILED_DUE_ERRORS, gameDataLocation, validateResult.GetErrorData()));
-					}
-					else
-					{
-						try
-						{
-							var report = output.ReadJsonAs<ValidationReport>();
-							reports.Add(new GameDataValidationReport(gameDataPath, report));
-							PushValidationErrorsToUnityLog(report, gameDataPath, gameDataSettings);
-						}
-						catch (Exception reportProcessingError)
-						{
-							UnityEngine.Debug.LogWarning(string.Format(Resources.UI_UNITYPLUGIN_VALIDATE_FAILED_DUE_ERRORS, gameDataPath, reportProcessingError));
-						}
-					}
+					var report = await CharonCli.ValidateAsync(
+						gameDataLocation,
+						apiKey,
+						ValidationOptions.AllIntegrityChecks,
+						CharonEditorModule.Instance.Settings.LogLevel
+					);
+					reports.Add(new GameDataValidationReport(gameDataPath, report));
+					PushValidationErrorsToUnityLog(report, gameDataPath, gameDataSettings, logger);
+				}
+				catch (Exception error)
+				{
+					reports.Add(new GameDataValidationReport(gameDataPath, ValidationReport.CreateErrorReport(error.Unwrap().Message)));
+					logger.Log(LogType.Warning, string.Format(Resources.UI_UNITYPLUGIN_VALIDATE_FAILED_DUE_ERRORS, gameDataLocation, error.Message));
 				}
 
-				UnityEngine.Debug.Log(string.Format("Game data validation of '{0}' is finished successfully in '{1}'.", gameDataPath, startTime.Elapsed));
+				logger.Log(LogType.Assert, $"Game data validation of '{gameDataPath}' is finished successfully in '{startTime.Elapsed}'.");
 			}
-			if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESS_DONE, 1);
-			yield return reports;
+			progressCallback?.Invoke(Resources.UI_UNITYPLUGIN_PROGRESS_DONE, 1);
+			return reports;
 		}
 
-		private static void PushValidationErrorsToUnityLog(ValidationReport report, string gameDataPath, GameDataSettings gameDataSettings)
+		private static void PushValidationErrorsToUnityLog(ValidationReport report, string gameDataPath, GameDataSettings gameDataSettings, ILogger logger)
 		{
 			const int MAX_LOGGED_ERRORS = 20;
 
@@ -165,8 +142,8 @@ namespace GameDevWare.Charon.Unity.Routines
 
 				if (gameDataSettings.IsConnected)
 				{
-					projectId = gameDataSettings.ProjectId;
-					branchId = gameDataSettings.BranchId;
+					projectId = gameDataSettings.projectId;
+					branchId = gameDataSettings.branchId;
 				}
 
 				var records = report.Records ?? Enumerable.Empty<ValidationRecord>();
@@ -190,7 +167,7 @@ namespace GameDevWare.Charon.Unity.Routines
 
 						var validationException = new ValidationError(gameDataPath, projectId, branchId, id, schemaName, error.Path, error.Message);
 
-						var log = (Action<Exception>)UnityEngine.Debug.LogException;
+						var log = (Action<Exception>)CharonEditorModule.Instance.Logger.LogException;
 						log.BeginInvoke(validationException, null, null);
 					}
 
@@ -198,7 +175,7 @@ namespace GameDevWare.Charon.Unity.Routines
 				}
 			}
 
-			UnityEngine.Debug.Log(string.Format(Resources.UI_UNITYPLUGIN_VALIDATE_COMPLETE, gameDataPath, report.HasErrors ? "failure" : "success", totalErrors));
+			logger.Log(LogType.Log, string.Format(Resources.UI_UNITYPLUGIN_VALIDATE_COMPLETE, gameDataPath, report.HasErrors ? "failure" : "success", totalErrors));
 		}
 	}
 }

@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (c) 2023 Denis Zykov
+	Copyright (c) 2025 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
@@ -18,52 +18,46 @@
 */
 
 using System;
-using System.Collections;
-using GameDevWare.Charon.Unity.Async;
-using GameDevWare.Charon.Unity.Utils;
-using GameDevWare.Charon.Unity.Windows;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using GameDevWare.Charon.Editor.Cli;
+using GameDevWare.Charon.Editor.Utils;
 using JetBrains.Annotations;
 using UnityEngine;
 
-namespace GameDevWare.Charon.Unity.Routines
+namespace GameDevWare.Charon.Editor.Routines
 {
-	[PublicAPI, UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
+	[PublicAPI]
 	public static class ExtractT4TemplatesRoutine
 	{
-		public static Promise Run(string extractionPath)
+
+		public static Task ScheduleAsync(string extractionPath, CancellationToken cancellation = default)
 		{
-			return new Async.Coroutine(ExtractT4Templates(extractionPath));
-		}
-		public static Promise Schedule(string extractionPath)
-		{
-			return CoroutineScheduler.Schedule(ExtractT4Templates(extractionPath));
+			return CharonEditorModule.Instance.Routines.Schedule(() => RunAsync(extractionPath), cancellation);
 		}
 
-		private static IEnumerable ExtractT4Templates(string extractionPath)
+		public static Task RunAsync(string extractionPath)
 		{
-			var checkRequirements = CharonCli.CheckRequirementsAsync();
-			yield return checkRequirements;
+			var task = RunInternalAsync(extractionPath);
+			task.LogFaultAsError();
+			return task;
+		}
+		private static async Task RunInternalAsync(string extractionPath)
+		{
+			var logger = CharonEditorModule.Instance.Logger;
+			logger.Log(LogType.Assert, $"Extracting T4 Templates to '{extractionPath}'...");
 
-			switch (checkRequirements.GetResult())
+			try
 			{
-				case RequirementsCheckResult.MissingRuntime: yield return UpdateRuntimeWindow.ShowAsync(); break;
-				case RequirementsCheckResult.WrongVersion:
-				case RequirementsCheckResult.MissingExecutable: yield return CharonCli.DownloadCharon(ProgressUtils.ReportToLog(Resources.UI_UNITYPLUGIN_MENU_CHECK_UPDATES)); break;
-				case RequirementsCheckResult.Ok: break;
-				default: throw new InvalidOperationException("Unknown Tools check result.");
+				await CharonCli.DumpTemplatesAsync(Path.GetFullPath(extractionPath));
 			}
-
-			if (Settings.Current.Verbose) Debug.Log(string.Format("Extracting T4 Templates to '{0}'...", extractionPath));
-			var dumpProcess = CharonCli.DumpTemplatesAsync(extractionPath);
-			yield return dumpProcess;
-
-			using (var dumpResult = dumpProcess.GetResult())
+			catch (Exception dumpError)
 			{
-				if (string.IsNullOrEmpty(dumpResult.GetErrorData()) == false)
-					Debug.LogWarning(string.Format(Resources.UI_UNITYPLUGIN_T4_EXTRACTION_FAILED, dumpResult.GetErrorData()));
-				else
-					Debug.Log(Resources.UI_UNITYPLUGIN_T4_EXTRACTION_COMPLETE + "\r\n" + dumpResult.GetOutputData());
+				logger.Log(LogType.Error, string.Format(Resources.UI_UNITYPLUGIN_T4_EXTRACTION_FAILED, dumpError.Unwrap().Message));
+				logger.Log(LogType.Error, dumpError.Unwrap());
 			}
+			logger.Log(LogType.Assert, Resources.UI_UNITYPLUGIN_T4_EXTRACTION_COMPLETE);
 		}
 	}
 }

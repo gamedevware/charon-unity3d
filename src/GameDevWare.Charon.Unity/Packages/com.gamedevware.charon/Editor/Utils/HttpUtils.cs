@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (c) 2023 Denis Zykov
+	Copyright (c) 2025 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
@@ -18,158 +18,205 @@
 */
 
 using System;
-using System.Collections;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Mime;
 using System.Text;
-using GameDevWare.Charon.Unity.Async;
-using GameDevWare.Charon.Unity.Json;
+using System.Threading;
+using System.Threading.Tasks;
+using GameDevWare.Charon.Editor.Json;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.Networking;
 
-namespace GameDevWare.Charon.Unity.Utils
+namespace GameDevWare.Charon.Editor.Utils
 {
 	internal static class HttpUtils
 	{
 		private const int BUFFER_SIZE = 32 * 1024;
 
-		public static Promise UploadFromFile(string method, Uri url, string uploadFilePath, NameValueCollection requestHeaders = null, Action<long, long> uploadProgressCallback = null, TimeSpan timeout = default(TimeSpan), Promise cancellation = null)
+		public static async Task UploadFromFileAsync
+		(
+			string method,
+			Uri url,
+			string uploadFilePath,
+			NameValueCollection requestHeaders = null,
+			Action<long, long> uploadProgressCallback = null,
+			TimeSpan timeout = default,
+			CancellationToken cancellation = default)
 		{
-			if (url == null) throw new ArgumentNullException("url");
-			if (uploadFilePath == null) throw new ArgumentNullException("uploadFilePath");
-			
+			if (url == null) throw new ArgumentNullException(nameof(url));
+			if (uploadFilePath == null) throw new ArgumentNullException(nameof(uploadFilePath));
+
 			const bool LEAVE_OPEN = false;
 			var uploadStream = new FileStream(uploadFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, BUFFER_SIZE, FileOptions.SequentialScan);
 			if (requestHeaders == null) requestHeaders = new NameValueCollection();
-			var downloadCoroutine = new Coroutine<long>(RequestToAsync(method, url, Stream.Null, uploadStream, LEAVE_OPEN, requestHeaders, uploadProgressCallback, timeout, cancellation)).ContinueWith(new FuncContinuation<long, long>(p =>
+			try
 			{
-				if (p.HasErrors)
-				{
-					throw EnrichWebError(p.Error, url, requestHeaders, timeout);
-				}
-
-				return p.GetResult();
-			}));
-			return downloadCoroutine;
+				await RequestToAsync(method, url, Stream.Null, uploadStream, LEAVE_OPEN, requestHeaders, uploadProgressCallback, timeout, cancellation);
+			}
+			catch (Exception requestError)
+			{
+				throw EnrichWebError(requestError, url, requestHeaders, timeout);
+			}
 		}
-		public static Promise DownloadToFile(Uri url, string downloadToFilePath, NameValueCollection requestHeaders = null, Action<long, long> downloadProgressCallback = null, TimeSpan timeout = default(TimeSpan), Promise cancellation = null)
+		public static async Task DownloadToFileAsync
+		(
+			Uri url,
+			string downloadToFilePath,
+			NameValueCollection requestHeaders = null,
+			Action<long, long> downloadProgressCallback = null,
+			TimeSpan timeout = default,
+			CancellationToken cancellation = default)
 		{
-			if (url == null) throw new ArgumentNullException("url");
-			if (downloadToFilePath == null) throw new ArgumentNullException("downloadToFilePath");
+			if (url == null) throw new ArgumentNullException(nameof(url));
+			if (downloadToFilePath == null) throw new ArgumentNullException(nameof(downloadToFilePath));
 
 			var downloadDir = Path.GetDirectoryName(downloadToFilePath);
 			if (string.IsNullOrEmpty(downloadDir) == false && Directory.Exists(downloadDir) == false)
 				Directory.CreateDirectory(downloadDir);
 
-
 			const bool LEAVE_OPEN = false;
 			var downloadToStream = new FileStream(downloadToFilePath, FileMode.Create, FileAccess.Write, FileShare.None, BUFFER_SIZE, FileOptions.None);
-			var downloadCoroutine = new Coroutine<long>(RequestToAsync("GET", url, downloadToStream, Stream.Null, LEAVE_OPEN, requestHeaders, downloadProgressCallback, timeout, cancellation)).ContinueWith(new FuncContinuation<long, long>(p =>
+			try
 			{
-				if (p.HasErrors)
-				{
-					throw EnrichWebError(p.Error, url, requestHeaders, timeout);
-				}
-
-				return p.GetResult();
-			}));
-			return downloadCoroutine;
-		}
-		public static Promise DownloadTo(Stream downloadToStream, Uri url, NameValueCollection requestHeaders = null, Action<long, long> downloadProgressCallback = null, TimeSpan timeout = default(TimeSpan), Promise cancellation = null)
-		{
-			var downloadCoroutine = new Coroutine<long>(RequestToAsync("GET", url, downloadToStream, Stream.Null, true, requestHeaders, downloadProgressCallback, timeout, cancellation)).ContinueWith(new FuncContinuation<long, long>(p =>
+				await RequestToAsync("GET", url, downloadToStream, Stream.Null, LEAVE_OPEN, requestHeaders, downloadProgressCallback, timeout, cancellation);
+			}
+			catch (Exception requestError)
 			{
-				if (p.HasErrors)
-				{
-					throw EnrichWebError(p.Error, url, requestHeaders, timeout);
-				}
-
-				return p.GetResult();
-			}));
-			return downloadCoroutine;
+				throw EnrichWebError(requestError, url, requestHeaders, timeout);
+			}
 		}
-		public static Promise<T> GetJson<T>(Uri url, NameValueCollection requestHeaders = null, Action<long, long> downloadProgressCallback = null, TimeSpan timeout = default(TimeSpan), Promise cancellation = null)
+		public static async Task DownloadToAsync
+		(
+			Stream downloadToStream,
+			Uri url,
+			NameValueCollection requestHeaders = null,
+			Action<long, long> downloadProgressCallback = null,
+			TimeSpan timeout = default,
+			CancellationToken cancellation = default)
 		{
-			var responseStream = new MemoryStream();
 			const bool LEAVE_OPEN = true;
-			return new Coroutine<long>(RequestToAsync("GET", url, responseStream, Stream.Null, LEAVE_OPEN, requestHeaders, downloadProgressCallback, timeout, cancellation)).ContinueWith(new FuncContinuation<T>(p =>
+			try
 			{
-				if (p.HasErrors)
-				{
-					throw EnrichWebError(p.Error, url, requestHeaders, timeout);
-				}
+				await RequestToAsync("GET", url, downloadToStream, Stream.Null, LEAVE_OPEN, requestHeaders, downloadProgressCallback, timeout, cancellation);
+			}
+			catch (Exception requestError)
+			{
+				throw EnrichWebError(requestError, url, requestHeaders, timeout);
+			}
+		}
+		public static async Task<T> GetJsonAsync<T>
+		(
+			Uri url,
+			NameValueCollection requestHeaders = null,
+			Action<long, long> downloadProgressCallback = null,
+			TimeSpan timeout = default,
+			CancellationToken cancellation = default)
+		{
+			using var responseStream = new MemoryStream();
+			const bool LEAVE_OPEN = true;
+
+			try
+			{
+				await RequestToAsync("GET", url, responseStream, Stream.Null, LEAVE_OPEN, requestHeaders, downloadProgressCallback, timeout, cancellation);
 
 				responseStream.Position = 0;
 				if (typeof(JsonValue) == typeof(T))
 					return (T)(object)JsonValue.Load(responseStream);
 				else
-					return JsonValue.Load(responseStream).As<T>();
-			}));
+					return JsonValue.Load(responseStream).ToObject<T>();
+			}
+			catch (Exception requestError)
+			{
+				throw EnrichWebError(requestError, url, requestHeaders, timeout);
+			}
 		}
-		public static Promise< ResponseT> PostJson<RequestT, ResponseT>(Uri url, RequestT request, NameValueCollection requestHeaders = null, Action<long, long> downloadProgressCallback = null, TimeSpan timeout = default(TimeSpan), Promise cancellation = null)
+		public static async Task<ResponseT> PostJsonAsync<RequestT, ResponseT>
+		(
+			Uri url,
+			RequestT request,
+			NameValueCollection requestHeaders = null,
+			Action<long, long> downloadProgressCallback = null,
+			TimeSpan timeout = default,
+			CancellationToken cancellation = default)
 		{
-			var requestStream = new MemoryStream(Encoding.UTF8.GetBytes(JsonObject.From(request).ToString())); 
+			var requestStream = new MemoryStream(Encoding.UTF8.GetBytes(JsonObject.From(request).ToString()));
 			var responseStream = new MemoryStream();
 			const bool LEAVE_OPEN = true;
-			return new Coroutine<long>(RequestToAsync("POST", url, responseStream, requestStream, LEAVE_OPEN, requestHeaders, downloadProgressCallback, timeout, cancellation)).ContinueWith(new FuncContinuation< ResponseT>(p =>
+			try
 			{
-				if (p.HasErrors)
-				{
-					throw EnrichWebError(p.Error, url, requestHeaders, timeout);
-				}
+				await RequestToAsync("POST", url, responseStream, requestStream, LEAVE_OPEN, requestHeaders, downloadProgressCallback, timeout, cancellation);
 
 				responseStream.Position = 0;
-				if (typeof(JsonValue) == typeof( ResponseT))
-					return ( ResponseT)(object)JsonValue.Load(responseStream);
+				if (typeof(JsonValue) == typeof(ResponseT))
+					return (ResponseT)(object)JsonValue.Load(responseStream);
 				else
-					return JsonValue.Load(responseStream).As< ResponseT>();
-			}));
+					return JsonValue.Load(responseStream).ToObject<ResponseT>();
+			}
+			catch (Exception requestError)
+			{
+				throw EnrichWebError(requestError, url, requestHeaders, timeout);
+			}
 		}
-		public static Promise<MemoryStream> GetStream(Uri url, NameValueCollection requestHeaders = null, Action<long, long> downloadProgressCallback = null, TimeSpan timeout = default(TimeSpan), Promise cancellation = null)
+		public static async Task<Stream> GetStreamAsync
+		(
+			Uri url,
+			NameValueCollection requestHeaders = null,
+			Action<long, long> downloadProgressCallback = null,
+			TimeSpan timeout = default,
+			CancellationToken cancellation = default)
 		{
 			var memoryStream = new MemoryStream();
-			return DownloadTo(memoryStream, url, requestHeaders, downloadProgressCallback, cancellation: cancellation).ContinueWith(p =>
+			try
 			{
-				if (p.HasErrors)
-				{
-					throw EnrichWebError(p.Error, url, requestHeaders, timeout);
-				}
+				await DownloadToAsync(memoryStream, url, requestHeaders, downloadProgressCallback, timeout, cancellation);
 
 				memoryStream.Position = 0;
 				return memoryStream;
-			});
+			}
+			catch (Exception requestError)
+			{
+				throw EnrichWebError(requestError, url, requestHeaders, timeout);
+			}
 		}
-		
-		private static IEnumerable RequestToAsync(string method, Uri url, Stream downloadToStream, Stream uploadStream, bool leaveOpen, NameValueCollection requestHeaders, Action<long, long> progressCallback, TimeSpan timeout, Promise cancellation)
+
+		private static async Task RequestToAsync
+		(
+			string method,
+			Uri url,
+			Stream downloadToStream,
+			Stream uploadStream,
+			bool leaveOpen,
+			NameValueCollection requestHeaders,
+			Action<long, long> progressCallback,
+			TimeSpan timeout,
+			CancellationToken cancellation)
 		{
-			if (url == null) throw new ArgumentNullException("url");
-			if (downloadToStream == null) throw new ArgumentNullException("downloadToStream");
-			
-			var noCertificateValidationContext = new NoCertificateValidationContext();
-			var written = 0L;
-			var request = default(HttpWebRequest);
-			var responseStream = default(Stream);
+			if (url == null) throw new ArgumentNullException(nameof(url));
+			if (downloadToStream == null) throw new ArgumentNullException(nameof(downloadToStream));
+
+			var request = default(UnityWebRequest);
 			var requestStream = default(Stream);
 			try
 			{
+				var logger = CharonEditorModule.Instance.Logger;
+
 				cancellation.ThrowIfCancellationRequested();
 
-				request = (HttpWebRequest)WebRequest.Create(url);
-				request.Method = method;
-				request.Accept = "*/*";
-				request.UserAgent = typeof(HttpUtils).Assembly.GetName().FullName;
-				request.AutomaticDecompression = DecompressionMethods.None;
-
-				// disable proxying for local targets
-				if (string.Equals(url.Host, "localhost", StringComparison.Ordinal))
-				{
-					request.Proxy = new WebProxy();
-				}
-				
+				request = new UnityWebRequest();
+				request.uri = url;
+				request.method = method;
+				request.useHttpContinue = false;
+				request.disposeCertificateHandlerOnDispose = true;
+				request.disposeDownloadHandlerOnDispose = true;
+				request.disposeUploadHandlerOnDispose = true;
 
 				if (timeout.Ticks > 0)
-					request.Timeout = (int)timeout.TotalMilliseconds;
+				{
+					request.timeout = (int)timeout.TotalSeconds;
+				}
 
 				if (requestHeaders != null)
 				{
@@ -177,100 +224,70 @@ namespace GameDevWare.Charon.Unity.Utils
 					{
 						foreach (var headerValue in requestHeaders.GetValues(header ?? "") ?? Enumerable.Empty<string>())
 						{
-							switch (header)
-							{
-								case "Accept":
-									request.Accept = headerValue;
-									break;
-								case "Connection":
-									request.Connection = headerValue;
-									break;
-								case "Content-Type":
-									request.ContentType = headerValue;
-									break;
-								case "Content-Length":
-									request.ContentLength = long.Parse(headerValue);
-									break;
-								case "Expect":
-									request.Expect = headerValue;
-									break;
-								case "Referer":
-									request.Referer = headerValue;
-									break;
-								case "Transfer-Encoding":
-									request.TransferEncoding = headerValue;
-									break;
-								case "User-Agent":
-									request.UserAgent = headerValue;
-									break;
-								default:
-									request.Headers.Add(header, headerValue);
-									break;
-							}
+							request.SetRequestHeader(header, headerValue);
 						}
+					}
+
+					if (string.IsNullOrEmpty(requestHeaders["Accept"]))
+					{
+						request.SetRequestHeader("Accept", "*/*");
+					}
+
+					if (string.IsNullOrEmpty(requestHeaders["User-Agent"]))
+					{
+						request.SetRequestHeader("User-Agent", RuntimeInformation.UserAgentHeaderValue);
 					}
 				}
 
-				if (string.IsNullOrEmpty(request.UserAgent))
-				{
-					request.UserAgent = RuntimeInformation.UserAgentHeaderValue;
-				}
-
-				if (Settings.Current.Verbose)
-					UnityEngine.Debug.Log(string.Format("Staring new request to [{0}]'{1}'.", request.Method, request.RequestUri));
+				logger.Log(LogType.Assert, $"Staring new request to [{request.method}]'{request.uri}'.");
 
 				if (uploadStream != Stream.Null && uploadStream.Length > 0)
 				{
-					request.ContentLength = uploadStream.Length;
-					requestStream = request.GetRequestStream();
-					foreach (var step in CopyStreamAsync(uploadStream, uploadStream.Length, requestStream, progressCallback, cancellation))
+					request.disposeUploadHandlerOnDispose = true;
+					if (uploadStream is FileStream fileStream && fileStream.Position == 0)
 					{
-						yield return step;
+						request.uploadHandler = new UploadHandlerFile(fileStream.Name);
 					}
-					requestStream.Close();
+					else
+					{
+						request.uploadHandler = new UploadHandlerRaw(ReadAllBytes(uploadStream));
+					}
 				}
-				
-				var getResponseAsync = request.BeginGetResponse(ar =>
-				{
-					try
-					{
-						request.EndGetResponse(ar);
-					}
-					catch
-					{
-						/* ignore */
-					}
-				}, null);
-				yield return getResponseAsync;
 
-				var response = (HttpWebResponse)request.EndGetResponse(getResponseAsync);
-				responseStream = response.GetResponseStream();
+				var downloadBuffer = new DownloadHandlerBuffer();
+				request.downloadHandler = downloadBuffer;
+
+				await request.SendWebRequest().ToTask();
+
+				switch (request.result)
+				{
+					case UnityWebRequest.Result.Success:
+						break;
+					case UnityWebRequest.Result.ConnectionError:
+						throw new WebException($"Connection failed for for request [{request.method}]'{url}'.", WebExceptionStatus.ConnectFailure);
+					case UnityWebRequest.Result.ProtocolError:
+						throw new WebException($"Protocol error for for request [{request.method}]'{url}'.", WebExceptionStatus.ProtocolError);
+					case UnityWebRequest.Result.DataProcessingError:
+						throw new WebException($"Data transfer error for for request [{request.method}]'{url}'.", WebExceptionStatus.ReceiveFailure);
+					case UnityWebRequest.Result.InProgress:
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
 
 				cancellation.ThrowIfCancellationRequested();
 
-				if (Settings.Current.Verbose)
-					UnityEngine.Debug.Log(string.Format("Got '{2}' response for [{0}]'{1}' request.", request.Method, request.RequestUri, response.StatusCode));
 
-				if (response.StatusCode != HttpStatusCode.OK)
-					throw new WebException(string.Format("An unexpected status code '{0}' returned for request '{1}'.", response.StatusCode, url));
+				logger.Log(LogType.Assert, string.Format("Got '{2}' response for [{0}]'{1}' request.", request.method, request.uri, request.responseCode));
 
-				var totalLength = response.ContentLength;
-				if (!string.IsNullOrEmpty(response.Headers["Content-Disposition"]))
+				if (request.responseCode != (int)HttpStatusCode.OK)
 				{
-					var contentDisposition = new ContentDisposition(response.Headers["Content-Disposition"]);
-					if (contentDisposition.Size > 0)
-						totalLength = contentDisposition.Size;
+					throw new WebException($"An unexpected status code '{request.responseCode}' returned for request [{request.method}]'{url}'.");
 				}
-				
-				foreach (var step in CopyStreamAsync(responseStream, totalLength, downloadToStream, progressCallback, cancellation))
-				{
-					yield return step;
-				}
+
+				downloadToStream.Write(downloadBuffer.data);
 			}
 			finally
 			{
-				noCertificateValidationContext.Dispose();
-
 				if (!leaveOpen)
 				{
 					downloadToStream.Dispose();
@@ -279,30 +296,49 @@ namespace GameDevWare.Charon.Unity.Utils
 
 				if (request != null)
 				{
-					try { request.Abort(); }
-					catch { /* ignore close errors*/ }
+					try
+					{
+						request.Abort();
+					}
+					catch
+					{
+						/* ignore close errors*/
+					}
 				}
-				
-				if (responseStream != null)
-				{
-					try { responseStream.Dispose(); }
-					catch { /* ignore close errors*/ }
-				}
+
 				if (requestStream != null)
 				{
-					try { requestStream.Dispose(); }
-					catch { /* ignore close errors*/ }
+					try
+					{
+						requestStream.Dispose();
+					}
+					catch
+					{
+						/* ignore close errors*/
+					}
 				}
 			}
+		}
 
-			yield return written;
+		private static byte[] ReadAllBytes(Stream uploadStream)
+		{
+			var bytes = new byte[uploadStream.Length - uploadStream.Position];
+			var offset = 0;
+			var read = 0;
+			while ((read = uploadStream.Read(bytes, offset, bytes.Length - offset)) > 0 && offset < bytes.Length)
+			{
+				offset += read;
+			}
 
+			if (offset != bytes.Length) throw new InvalidOperationException("Failed to read whole stream into byte array.");
+
+			return bytes;
 		}
 
 		private static Exception EnrichWebError(Exception error, Uri requestUrl, NameValueCollection requestHeaders, TimeSpan timeout)
 		{
-			if (error == null) throw new ArgumentNullException("error");
-			if (requestUrl == null) throw new ArgumentNullException("requestUrl");
+			if (error == null) throw new ArgumentNullException(nameof(error));
+			if (requestUrl == null) throw new ArgumentNullException(nameof(requestUrl));
 
 			error.Data["requestUrl"] = requestUrl;
 			if (requestHeaders != null)
@@ -310,78 +346,6 @@ namespace GameDevWare.Charon.Unity.Utils
 			error.Data["timeout"] = timeout;
 
 			return error;
-		}
-		private static IEnumerable CopyStreamAsync(Stream fromStream, long? fromLength, Stream toStream, Action<long, long> progressCallback, Promise cancellation)
-		{
-			if (fromStream == null) throw new ArgumentNullException("fromStream");
-			if (toStream == null) throw new ArgumentNullException("toStream");
-
-			var totalLength = fromLength ?? (fromStream.Length - fromStream.Position);
-			if (progressCallback != null) progressCallback(0, totalLength);
-			var lastReported = 0L;
-
-			var buffer = new byte[BUFFER_SIZE];
-			var read = 0;
-			var readCalled = false;
-			var written = 0;
-			do
-			{
-				if (UnityEditor.EditorApplication.isCompiling)
-				{
-					throw new InvalidOperationException("Operation has been canceled due pending compilation.");
-				}
-
-				cancellation.ThrowIfCancellationRequested();
-					
-				var readAsync = fromStream.BeginRead(buffer, 0, buffer.Length, ar =>
-				{
-					try
-					{
-						read = fromStream.EndRead(ar);
-						readCalled = true;
-					}
-					catch
-					{
-						/* ignore */
-					}
-				}, null);
-				yield return readAsync;
-
-				if (UnityEditor.EditorApplication.isCompiling)
-					throw new InvalidOperationException("Operation has been canceled due pending compilation.");
-
-				if (!readCalled)
-				{
-					read = fromStream.EndRead(readAsync);
-				}
-
-				readCalled = false;
-				if (read <= 0) break;
-
-				var writeAsync = toStream.BeginWrite(buffer, 0, read, ar =>
-				{
-					try
-					{
-						toStream.EndWrite(ar);
-					}
-					catch
-					{
-						/* ignore */
-					}
-				}, null);
-				yield return writeAsync;
-
-				written += read;
-
-				if (progressCallback != null && (written - lastReported) > (totalLength / 200.0f))
-				{
-					progressCallback(lastReported = written, totalLength);
-				}
-			} while (read != 0);
-
-			toStream.Flush();
-
-			if (progressCallback != null) progressCallback(totalLength, totalLength);
 		}
 	}
 }

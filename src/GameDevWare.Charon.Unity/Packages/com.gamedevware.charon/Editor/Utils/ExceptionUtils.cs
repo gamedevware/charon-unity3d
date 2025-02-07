@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (c) 2023 Denis Zykov
+	Copyright (c) 2025 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
@@ -20,19 +20,16 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using GameDevWare.Charon.Unity.Async;
 
-namespace GameDevWare.Charon.Unity.Utils
+namespace GameDevWare.Charon.Editor.Utils
 {
 	internal static class ExceptionUtils
     {
         public static Exception Unwrap(this Exception exception)
         {
-            var aggr = exception as AggregateException;
-            var tie = exception as TargetInvocationException;
-            if (aggr != null)
-                return Unwrap(aggr.InnerException);
-            else if (tie != null)
+			if (exception is AggregateException aggregateException)
+                return Unwrap(aggregateException.InnerException);
+            else if (exception is TargetInvocationException tie)
                 return Unwrap(tie.InnerException);
             else
                 return exception;
@@ -42,17 +39,15 @@ namespace GameDevWare.Charon.Unity.Utils
             if (exception == null)
                 yield break;
 
-            var aggr = exception as AggregateException;
-            var tie = exception as TargetInvocationException;
-            if (aggr != null)
+			if (exception is AggregateException aggregateException)
             {
-                foreach (var innerException in aggr.InnerExceptions)
+                foreach (var innerException in aggregateException.InnerExceptions)
                 {
                     foreach (var innerInnerException in Iterate(innerException))
                         yield return innerInnerException;
                 }
             }
-            else if (tie != null)
+            else if (exception is TargetInvocationException tie)
             {
                 foreach (var innerInnerException in Iterate(tie.InnerException))
                     yield return innerInnerException;

@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "dotnet-charon": {
+      "version": "2025.0.0",
+      "commands": [
+        "charon"
+      ],
+      "rollForward": false
+    }
+  }
+}

@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (c) 2023 Denis Zykov
+	Copyright (c) 2025 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
@@ -20,18 +20,19 @@
 using System;
 using System.Linq;
 using System.Net;
-using GameDevWare.Charon.Unity.Json;
+using System.Runtime.Serialization;
+using GameDevWare.Charon.Editor.Json;
 using JetBrains.Annotations;
 
-namespace GameDevWare.Charon.Unity.ServerApi
+namespace GameDevWare.Charon.Editor.ServerApi
 {
 	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	internal class ApiResponse<T>
 	{
-		[JsonMember("result")]
+		[DataMember(Name = "result")]
 		public T Result;
 
-		[JsonMember("errors")]
+		[DataMember(Name = "errors")]
 		public ApiError[] Errors;
 
 		public T GetResponseResultOrError()

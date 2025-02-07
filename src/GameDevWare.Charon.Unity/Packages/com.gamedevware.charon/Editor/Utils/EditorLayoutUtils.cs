@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (c) 2023 Denis Zykov
+	Copyright (c) 2025 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
@@ -21,7 +21,7 @@ using System;
 using UnityEditor;
 using UnityEngine;
 
-namespace GameDevWare.Charon.Unity.Utils
+namespace GameDevWare.Charon.Editor.Utils
 {
 	internal class EditorLayoutUtils
 	{
@@ -39,7 +39,7 @@ namespace GameDevWare.Charon.Unity.Utils
 		}
 		public static void AutoSize(EditorWindow editorWindow)
 		{
-			if (ReferenceEquals(editorWindow, null)) throw new ArgumentNullException("editorWindow");
+			if (ReferenceEquals(editorWindow, null)) throw new ArgumentNullException(nameof(editorWindow));
 			// ReSharper disable once ConditionIsAlwaysTrueOrFalse
 			if (editorWindow == null) return;
 

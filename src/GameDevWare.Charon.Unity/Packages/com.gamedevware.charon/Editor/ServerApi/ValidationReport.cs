@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (c) 2023 Denis Zykov
+	Copyright (c) 2025 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
@@ -19,15 +19,16 @@
 
 using System;
 using System.Linq;
-using GameDevWare.Charon.Unity.Json;
+using System.Runtime.Serialization;
+using GameDevWare.Charon.Editor.Json;
 using JetBrains.Annotations;
 
-namespace GameDevWare.Charon.Unity.ServerApi
+namespace GameDevWare.Charon.Editor.ServerApi
 {
 	[Serializable, UsedImplicitly(ImplicitUseTargetFlags.WithMembers), PublicAPI]
 	public class ValidationReport
 	{
-		[JsonMember("records")]
+		[DataMember(Name = "records")]
 		public ValidationRecord[] Records;
 
 		public bool HasErrors

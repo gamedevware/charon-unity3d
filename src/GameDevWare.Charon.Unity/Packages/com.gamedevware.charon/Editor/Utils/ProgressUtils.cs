@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (c) 2023 Denis Zykov
+	Copyright (c) 2025 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
@@ -17,12 +17,13 @@
     along with this program.  If not, see http://www.gnu.org/licenses.
 */
 
-using GameDevWare.Charon.Unity.Async;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
 
-namespace GameDevWare.Charon.Unity.Utils
+namespace GameDevWare.Charon.Editor.Utils
 {
 	internal static class ProgressUtils
 	{
@@ -30,14 +31,14 @@ namespace GameDevWare.Charon.Unity.Utils
 		{
 			return (t, p) => EditorUtility.DisplayProgressBar(title, t, Mathf.Clamp(from + (to - from) * Mathf.Clamp(p, 0.0f, 1.0f), 0.0f, 1.0f));
 		}
-		public static Action<string, float> ShowCancellableProgressBar(string title, float from = 0.0f, float to = 1.0f, Promise cancellation = null)
+		public static Action<string, float> ShowCancellableProgressBar(string title, float from = 0.0f, float to = 1.0f, CancellationTokenSource cancellationSource = null)
 		{
 			return (t, p) =>
 			{
 				var isCancelled = EditorUtility.DisplayCancelableProgressBar(title, t, Mathf.Clamp(from + (to - from) * Mathf.Clamp(p, 0.0f, 1.0f), 0.0f, 1.0f));
-				if (isCancelled && cancellation != null)
+				if (isCancelled && cancellationSource != null)
 				{
-					cancellation.TrySetCompleted();
+					cancellationSource.Cancel();
 				}
 			};
 		}
@@ -45,9 +46,13 @@ namespace GameDevWare.Charon.Unity.Utils
 		{
 			EditorUtility.ClearProgressBar();
 		}
+		public static void ContinueWithHideProgressBar(this Task task, CancellationToken cancellationToken = default)
+		{
+			task.ContinueWith(HideProgressBar, cancellationToken, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Current);
+		}
 		public static Action<string, float> ReportToLog(string prefix)
 		{
-			return (t, p) => Debug.Log(prefix + t);
+			return (t, _) => CharonEditorModule.Instance.Logger.Log(LogType.Log, prefix + t);
 		}
 		public static Action<long, long> ToDownloadProgress(this Action<string, float> progress, string fileName)
 		{

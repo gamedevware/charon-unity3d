@@ -19,7 +19,7 @@ using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace GameDevWare.Charon.Unity.Utils
+namespace GameDevWare.Charon.Editor.Utils
 {
 	/// <summary>
 	///     A hybrid implementation of SemVer that supports semantic versioning as described at http://semver.org while not
@@ -75,7 +75,7 @@ namespace GameDevWare.Charon.Unity.Utils
 
 		private SemanticVersion(Version version, string specialVersion, string originalString)
 		{
-			if (version == null) throw new ArgumentNullException("version");
+			if (version == null) throw new ArgumentNullException(nameof(version));
 
 			this.Version = NormalizeVersionValue(version);
 			this.SpecialVersion = specialVersion ?? string.Empty;
@@ -131,11 +131,11 @@ namespace GameDevWare.Charon.Unity.Utils
 		/// </summary>
 		public static SemanticVersion Parse(string version)
 		{
-			if (string.IsNullOrEmpty(version)) throw new ArgumentException("Argument can't be null or empty.", "version");
+			if (string.IsNullOrEmpty(version)) throw new ArgumentException("Argument can't be null or empty.", nameof(version));
 
 			SemanticVersion semVer;
 			if (!TryParse(version, out semVer))
-				throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "Invalid semantic version string '{0}'.", version), "version");
+				throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "Invalid semantic version string '{0}'.", version), nameof(version));
 
 			return semVer;
 		}
@@ -218,7 +218,7 @@ namespace GameDevWare.Charon.Unity.Utils
 
 		public static bool operator <(SemanticVersion version1, SemanticVersion version2)
 		{
-			if (version1 == null) throw new ArgumentNullException("version1");
+			if (version1 == null) throw new ArgumentNullException(nameof(version1));
 
 			return version1.CompareTo(version2) < 0;
 		}
@@ -230,7 +230,7 @@ namespace GameDevWare.Charon.Unity.Utils
 
 		public static bool operator >(SemanticVersion version1, SemanticVersion version2)
 		{
-			if (version1 == null) throw new ArgumentNullException("version1");
+			if (version1 == null) throw new ArgumentNullException(nameof(version1));
 
 			return version2 < version1;
 		}

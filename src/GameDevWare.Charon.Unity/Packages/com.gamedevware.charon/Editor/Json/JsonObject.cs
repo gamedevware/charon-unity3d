@@ -29,15 +29,21 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
 using System.Text;
 using JetBrains.Annotations;
-using JsonPair = System.Collections.Generic.KeyValuePair<string, GameDevWare.Charon.Unity.Json.JsonValue>;
-using JsonPairEnumerable = System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, GameDevWare.Charon.Unity.Json.JsonValue>>;
+using JsonPair = System.Collections.Generic.KeyValuePair<string, GameDevWare.Charon.Editor.Json.JsonValue>;
+using JsonPairEnumerable = System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, GameDevWare.Charon.Editor.Json.JsonValue>>;
 
-namespace GameDevWare.Charon.Unity.Json
+namespace GameDevWare.Charon.Editor.Json
 {
 	[PublicAPI, UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
-	internal class JsonObject : JsonValue, IDictionary<string, JsonValue>, ICollection<KeyValuePair<string, JsonValue>>
+#if JSON_NET_3_0_2_OR_NEWER
+	internal
+#else
+	public
+#endif
+	class JsonObject : JsonValue, IDictionary<string, JsonValue>, ICollection<KeyValuePair<string, JsonValue>>
 	{
 		private static readonly Dictionary<Type, Dictionary<string, MemberInfo>> TypeMembers = new Dictionary<Type, Dictionary<string, MemberInfo>>();
 		// Use SortedDictionary to make result of ToString() deterministic
@@ -52,19 +58,13 @@ namespace GameDevWare.Charon.Unity.Json
 		public JsonObject(JsonPairEnumerable items)
 		{
 			if (items == null)
-				throw new ArgumentNullException("items");
+				throw new ArgumentNullException(nameof(items));
 
 			this.map = new SortedDictionary<string, JsonValue>(StringComparer.Ordinal);
 			this.AddRange(items);
 		}
-		public override JsonType JsonType
-		{
-			get { return JsonType.Object; }
-		}
-		public override int Count
-		{
-			get { return this.map.Count; }
-		}
+		public override JsonType JsonType => JsonType.Object;
+		public override int Count => this.map.Count;
 		public IEnumerator<JsonPair> GetEnumerator()
 		{
 			return this.map.GetEnumerator();
@@ -75,21 +75,15 @@ namespace GameDevWare.Charon.Unity.Json
 		}
 		public sealed override JsonValue this[string key]
 		{
-			get { return this.map[key]; }
-			set { this.map[key] = value; }
+			get => this.map[key];
+			set => this.map[key] = value;
 		}
-		public ICollection<string> Keys
-		{
-			get { return this.map.Keys; }
-		}
-		public ICollection<JsonValue> Values
-		{
-			get { return this.map.Values; }
-		}
+		public ICollection<string> Keys => this.map.Keys;
+		public ICollection<JsonValue> Values => this.map.Values;
 		public void Add(string key, JsonValue value)
 		{
 			if (key == null)
-				throw new ArgumentNullException("key");
+				throw new ArgumentNullException(nameof(key));
 
 			this.map.Add(key, value);
 		}
@@ -112,7 +106,7 @@ namespace GameDevWare.Charon.Unity.Json
 		public override bool ContainsKey(string key)
 		{
 			if (key == null)
-				throw new ArgumentNullException("key");
+				throw new ArgumentNullException(nameof(key));
 
 			return this.map.ContainsKey(key);
 		}
@@ -123,14 +117,11 @@ namespace GameDevWare.Charon.Unity.Json
 		public bool Remove(string key)
 		{
 			if (key == null)
-				throw new ArgumentNullException("key");
+				throw new ArgumentNullException(nameof(key));
 
 			return this.map.Remove(key);
 		}
-		bool ICollection<JsonPair>.IsReadOnly
-		{
-			get { return false; }
-		}
+		bool ICollection<JsonPair>.IsReadOnly => false;
 		public bool TryGetValue(string key, out JsonValue value)
 		{
 			return this.map.TryGetValue(key, out value);
@@ -138,7 +129,7 @@ namespace GameDevWare.Charon.Unity.Json
 		public void AddRange(JsonPairEnumerable items)
 		{
 			if (items == null)
-				throw new ArgumentNullException("items");
+				throw new ArgumentNullException(nameof(items));
 
 			foreach (var pair in items)
 				this.map.Add(pair.Key, pair.Value);
@@ -150,7 +141,7 @@ namespace GameDevWare.Charon.Unity.Json
 		public override void Save(Stream stream)
 		{
 			if (stream == null)
-				throw new ArgumentNullException("stream");
+				throw new ArgumentNullException(nameof(stream));
 			stream.WriteByte((byte)'{');
 			foreach (var pair in this.map)
 			{
@@ -172,9 +163,9 @@ namespace GameDevWare.Charon.Unity.Json
 			}
 			stream.WriteByte((byte)'}');
 		}
-		public override object As(Type type)
+		public override object ToObject(Type type)
 		{
-			if (type == null) throw new ArgumentNullException("type");
+			if (type == null) throw new ArgumentNullException(nameof(type));
 
 			var instance = Activator.CreateInstance(type);
 			var members = GetTypeMembers(type);
@@ -191,9 +182,9 @@ namespace GameDevWare.Charon.Unity.Json
 				if (value != null)
 				{
 					if (prop != null && prop.CanWrite)
-						prop.SetValue(instance, value.As(prop.PropertyType), null);
+						prop.SetValue(instance, value.ToObject(prop.PropertyType), null);
 					else if (field != null && field.IsInitOnly == false)
-						field.SetValue(instance, value.As(field.FieldType));
+						field.SetValue(instance, value.ToObject(field.FieldType));
 				}
 				else
 				{
@@ -257,7 +248,7 @@ namespace GameDevWare.Charon.Unity.Json
 		}
 		private static string GetMemberName(MemberInfo member)
 		{
-			var jsonMember = member.GetCustomAttributes(typeof(JsonMemberAttribute), true).FirstOrDefault() as JsonMemberAttribute;
+			var jsonMember = member.GetCustomAttributes(typeof(DataMemberAttribute), true).OfType<DataMemberAttribute>().FirstOrDefault();
 			if (jsonMember != null && string.IsNullOrEmpty(jsonMember.Name) == false)
 				return jsonMember.Name;
 			else

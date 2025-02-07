@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (c) 2023 Denis Zykov
+	Copyright (c) 2025 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
@@ -17,23 +17,24 @@
     along with this program.  If not, see http://www.gnu.org/licenses.
 */
 
-using GameDevWare.Charon.Unity.Utils;
 using System;
 using System.Collections.Specialized;
-using GameDevWare.Charon.Unity.Async;
+using System.Threading;
+using System.Threading.Tasks;
+using GameDevWare.Charon.Editor.Utils;
 
-namespace GameDevWare.Charon.Unity.ServerApi
+namespace GameDevWare.Charon.Editor.ServerApi
 {
 	internal sealed class ServerApiClient
 	{
 		private readonly Uri baseAddress;
 		private readonly NameValueCollection requestHeaders;
 
-		public Uri BaseAddress { get { return this.baseAddress; } }
+		public Uri BaseAddress => this.baseAddress;
 
 		public ServerApiClient(Uri baseAddress)
 		{
-			if (baseAddress == null) throw new ArgumentNullException("baseAddress");
+			if (baseAddress == null) throw new ArgumentNullException(nameof(baseAddress));
 
 			this.requestHeaders = new NameValueCollection();
 			this.baseAddress = baseAddress;
@@ -45,33 +46,39 @@ namespace GameDevWare.Charon.Unity.ServerApi
 		}
 		public void UseApiKey(string apiKey)
 		{
-			if (apiKey == null) throw new ArgumentNullException("apiKey");
+			if (apiKey == null) throw new ArgumentNullException(nameof(apiKey));
 
 			this.requestHeaders["Authorization"] = "Bearer " + apiKey;
 		}
-		public Promise<Project[]> GetMyProjectsAsync()
+		public async Task<Project[]> GetMyProjectsAsync()
 		{
 			var getMyProjectsAddress = new Uri(this.baseAddress, "api/v1/project/my/");
-			var getMyProjectsAsync = HttpUtils.GetJson<ApiResponse<Project[]>>(getMyProjectsAddress, this.requestHeaders);
-			return getMyProjectsAsync.ContinueWith(result => result.GetResult().GetResponseResultOrError());
+			var myProjects = await HttpUtils.GetJsonAsync<ApiResponse<Project[]>>(getMyProjectsAddress, this.requestHeaders);
+			return myProjects.GetResponseResultOrError();
 		}
-		public Promise DownloadDataSourceAsync(string branchId, GameDataStoreFormat storeFormat, string downloadPath, Action<long, long> downloadProgressCallback, Promise cancellation = null)
+		public Task DownloadDataSourceAsync
+		(
+			string branchId,
+			GameDataFormat storeFormat,
+			string downloadPath,
+			Action<long, long> downloadProgressCallback,
+			CancellationToken cancellation = default)
 		{
-			if (branchId == null) throw new ArgumentNullException("branchId");
-			if (downloadPath == null) throw new ArgumentNullException("downloadPath");
+			if (branchId == null) throw new ArgumentNullException(nameof(branchId));
+			if (downloadPath == null) throw new ArgumentNullException(nameof(downloadPath));
 
 			var requestHeaders = new NameValueCollection(this.requestHeaders);
 
 			switch (storeFormat)
 			{
-				case GameDataStoreFormat.Json:
+				case GameDataFormat.Json:
 					requestHeaders.Add("Accept", "application/json");
 					break;
-				case GameDataStoreFormat.MessagePack:
+				case GameDataFormat.MessagePack:
 					requestHeaders.Add("Accept", "application/x-msgpack");
 					break;
 				default:
-					throw new InvalidOperationException(string.Format("Unknown storage format '{0}'.", storeFormat));
+					throw new InvalidOperationException($"Unknown storage format '{storeFormat}'.");
 			}
 
 			var downloadParams = "?" +
@@ -81,8 +88,8 @@ namespace GameDevWare.Charon.Unity.ServerApi
 				"languages=%2A&" +
 				"download=true";
 
-			var downloadDataSourceAddress = new Uri(this.baseAddress, string.Format("api/v1/datasource/{0}/collections/raw/{1}", branchId, downloadParams));
-			var downloadDataSourceAsync = HttpUtils.DownloadToFile(
+			var downloadDataSourceAddress = new Uri(this.baseAddress, $"api/v1/datasource/{branchId}/collections/raw/{downloadParams}");
+			var downloadDataSourceAsync = HttpUtils.DownloadToFileAsync(
 				downloadDataSourceAddress,
 				downloadPath,
 				requestHeaders,
@@ -90,28 +97,34 @@ namespace GameDevWare.Charon.Unity.ServerApi
 				cancellation: cancellation);
 			return downloadDataSourceAsync;
 		}
-		public Promise UploadDataSourceAsync(string branchId, GameDataStoreFormat storeFormat, string uploadPath, Action<long, long> uploadProgressCallback, Promise cancellation = null)
+		public Task UploadDataSourceAsync
+		(
+			string branchId,
+			GameDataFormat storeFormat,
+			string uploadPath,
+			Action<long, long> uploadProgressCallback,
+			CancellationToken cancellation = default)
 		{
-			if (branchId == null) throw new ArgumentNullException("branchId");
-			if (uploadPath == null) throw new ArgumentNullException("uploadPath");
+			if (branchId == null) throw new ArgumentNullException(nameof(branchId));
+			if (uploadPath == null) throw new ArgumentNullException(nameof(uploadPath));
 
 			var requestHeaders = new NameValueCollection(this.requestHeaders);
 			requestHeaders.Add("Accept", "*/*");
-			
+
 			switch (storeFormat)
 			{
-				case GameDataStoreFormat.Json:
+				case GameDataFormat.Json:
 					requestHeaders.Add("Content-Type", "application/json");
 					break;
-				case GameDataStoreFormat.MessagePack:
+				case GameDataFormat.MessagePack:
 					requestHeaders.Add("Content-Type", "application/x-msgpack");
 					break;
 				default:
-					throw new InvalidOperationException(string.Format("Unknown storage format '{0}'.", storeFormat));
+					throw new InvalidOperationException($"Unknown storage format '{storeFormat}'.");
 			}
 
-			var uploadDataSourceAddress = new Uri(this.baseAddress, string.Format("api/v1/datasource/{0}", branchId));
-			var uploadDataSourceAsync = HttpUtils.UploadFromFile(
+			var uploadDataSourceAddress = new Uri(this.baseAddress, $"api/v1/datasource/{branchId}");
+			var uploadDataSourceAsync = HttpUtils.UploadFromFileAsync(
 				"PUT",
 				uploadDataSourceAddress,
 				uploadPath,
@@ -120,22 +133,22 @@ namespace GameDevWare.Charon.Unity.ServerApi
 				cancellation: cancellation);
 			return uploadDataSourceAsync;
 		}
-		
-		public Promise<string> GetLoginCodeAsync(string apiKey)
+
+		public async Task<string> GetLoginCodeAsync(string apiKey)
 		{
-			if (apiKey == null) throw new ArgumentNullException("apiKey");
+			if (apiKey == null) throw new ArgumentNullException(nameof(apiKey));
 
 			var requestHeaders = new NameValueCollection(this.requestHeaders);
 			requestHeaders.Add("Accept", "application/json");
 			requestHeaders.Add("Content-Type", "application/json");
-			
+
 			var request = new ApiKeyAuthenticateRequest {
 				ApiKey = apiKey
 			};
 			var beginApiKeyAuthFlow = new Uri(this.baseAddress, "api/v1/auth/flow/api-key/");
-			var beginApiKeyAuthFlowAsync = HttpUtils.PostJson<ApiKeyAuthenticateRequest, ApiResponse<AuthenticationFlowStage>>(
+			var apiKeyAuthFlow = await HttpUtils.PostJsonAsync<ApiKeyAuthenticateRequest, ApiResponse<AuthenticationFlowStage>>(
 				beginApiKeyAuthFlow, request, requestHeaders);
-			return beginApiKeyAuthFlowAsync.ContinueWith(result => result.GetResult().GetResponseResultOrError().AuthorizationCode);
+			return apiKeyAuthFlow.GetResponseResultOrError().AuthorizationCode;
 		}
 	}
 }

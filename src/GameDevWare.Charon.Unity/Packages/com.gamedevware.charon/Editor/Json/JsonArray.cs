@@ -31,10 +31,15 @@ using System.Linq;
 using System.Reflection;
 using JetBrains.Annotations;
 
-namespace GameDevWare.Charon.Unity.Json
+namespace GameDevWare.Charon.Editor.Json
 {
 	[PublicAPI, UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
-	internal class JsonArray : JsonValue, IList<JsonValue>
+#if JSON_NET_3_0_2_OR_NEWER
+	internal
+#else
+	public
+ #endif
+		class JsonArray : JsonValue, IList<JsonValue>
 	{
 		private readonly List<JsonValue> list;
 		public JsonArray(params JsonValue[] items)
@@ -45,31 +50,22 @@ namespace GameDevWare.Charon.Unity.Json
 		public JsonArray(IEnumerable<JsonValue> items)
 		{
 			if (items == null)
-				throw new ArgumentNullException("items");
+				throw new ArgumentNullException(nameof(items));
 
 			this.list = new List<JsonValue>(items);
 		}
-		public override JsonType JsonType
-		{
-			get { return JsonType.Array; }
-		}
-		public override int Count
-		{
-			get { return this.list.Count; }
-		}
-		public bool IsReadOnly
-		{
-			get { return false; }
-		}
+		public override JsonType JsonType => JsonType.Array;
+		public override int Count => this.list.Count;
+		public bool IsReadOnly => false;
 		public sealed override JsonValue this[int index]
 		{
-			get { return this.list[index]; }
-			set { this.list[index] = value; }
+			get => this.list[index];
+			set => this.list[index] = value;
 		}
 		public void Add(JsonValue item)
 		{
 			if (item == null)
-				throw new ArgumentNullException("item");
+				throw new ArgumentNullException(nameof(item));
 
 			this.list.Add(item);
 		}
@@ -112,7 +108,7 @@ namespace GameDevWare.Charon.Unity.Json
 		public void AddRange(IEnumerable<JsonValue> items)
 		{
 			if (items == null)
-				throw new ArgumentNullException("items");
+				throw new ArgumentNullException(nameof(items));
 
 			this.list.AddRange(items);
 		}
@@ -126,7 +122,7 @@ namespace GameDevWare.Charon.Unity.Json
 		public override void Save(Stream stream)
 		{
 			if (stream == null)
-				throw new ArgumentNullException("stream");
+				throw new ArgumentNullException(nameof(stream));
 			stream.WriteByte((byte)'[');
 			for (var i = 0; i < this.list.Count; i++)
 			{
@@ -149,9 +145,9 @@ namespace GameDevWare.Charon.Unity.Json
 			}
 			stream.WriteByte((byte)']');
 		}
-		public override object As(Type type)
+		public override object ToObject(Type type)
 		{
-			if (type == null) throw new ArgumentNullException("type");
+			if (type == null) throw new ArgumentNullException(nameof(type));
 
 			var itemType = default(Type);
 			var genericEnumerableInterface = type.GetInterfaces().FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>));
@@ -174,7 +170,7 @@ namespace GameDevWare.Charon.Unity.Json
 				if (item == null)
 					items.Add(null);
 				else
-					items.Add(item.As(itemType));
+					items.Add(item.ToObject(itemType));
 			}
 
 			if (items.GetType().IsAssignableFrom(type))
@@ -187,7 +183,7 @@ namespace GameDevWare.Charon.Unity.Json
 			}
 			else
 			{
-				throw new InvalidOperationException(string.Format("Can't convert JsonArray to non-list type '{0}'", type));
+				throw new InvalidOperationException($"Can't convert JsonArray to non-list type '{type}'");
 			}
 		}
 	}

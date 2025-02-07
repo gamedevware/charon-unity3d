@@ -1,0 +1,21 @@
+﻿{
+	"name": "gamedevware-charon-editor",
+	"references": ["GUID:8108250f010648b497e862e8f33c24fc"],
+	"includePlatforms": [
+		"Editor"
+	],
+	"excludePlatforms": [],
+	"allowUnsafeCode": false,
+	"overrideReferences": false,
+	"precompiledReferences": [],
+	"autoReferenced": true,
+	"defineConstraints": [],
+	"versionDefines": [
+		{
+			"name": "com.unity.nuget.newtonsoft-json",
+			"expression": "3.0.2",
+			"define": "JSON_NET_3_0_2_OR_NEWER"
+		}
+	],
+	"noEngineReferences": false
+}

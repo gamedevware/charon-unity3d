@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (c) 2023 Denis Zykov
+	Copyright (c) 2025 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
@@ -18,30 +18,28 @@
 */
 
 using System;
-using GameDevWare.Charon.Unity.Json;
+using System.Runtime.Serialization;
+using GameDevWare.Charon.Editor.Json;
 using JetBrains.Annotations;
 
-namespace GameDevWare.Charon.Unity.ServerApi
+namespace GameDevWare.Charon.Editor.ServerApi
 {
 	[Serializable, UsedImplicitly(ImplicitUseTargetFlags.WithMembers), PublicAPI]
 	public class ValidationRecord
 	{
-		[JsonMember("id")]
+		[DataMember(Name = "id")]
 		public object Id;
-		[JsonMember("entityName"), Obsolete]
+		[DataMember(Name = "entityName"), Obsolete]
 		public string EntityName;
-		[JsonMember("entityId"), Obsolete]
+		[DataMember(Name = "entityId"), Obsolete]
 		public string EntityId;
-		[JsonMember("schemaName")]
+		[DataMember(Name = "schemaName")]
 		public string SchemaName;
-		[JsonMember("schemaId")]
+		[DataMember(Name = "schemaId")]
 		public string SchemaId;
-		[JsonMember("errors")]
+		[DataMember(Name = "errors")]
 		public ValidationError[] Errors;
 
-		public bool HasErrors
-		{
-			get { return this.Errors == null || this.Errors.Length == 0; }
-		}
+		public bool HasErrors => this.Errors == null || this.Errors.Length == 0;
 	}
 }

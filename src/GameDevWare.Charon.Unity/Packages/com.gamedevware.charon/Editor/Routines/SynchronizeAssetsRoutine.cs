@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (c) 2023 Denis Zykov
+	Copyright (c) 2025 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
@@ -18,99 +18,94 @@
 */
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using GameDevWare.Charon.Unity.Async;
-using GameDevWare.Charon.Unity.ServerApi;
-using GameDevWare.Charon.Unity.ServerApi.KeyStorage;
-using GameDevWare.Charon.Unity.Utils;
-using GameDevWare.Charon.Unity.Windows;
+using System.Threading;
+using System.Threading.Tasks;
+using GameDevWare.Charon.Editor.ServerApi;
+using GameDevWare.Charon.Editor.Utils;
+using GameDevWare.Charon.Editor.Windows;
 using JetBrains.Annotations;
 using UnityEditor;
+using UnityEngine;
 
-namespace GameDevWare.Charon.Unity.Routines
+namespace GameDevWare.Charon.Editor.Routines
 {
-	[PublicAPI, UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
+	[PublicAPI]
 	internal class SynchronizeAssetsRoutine
 	{
-		public static Promise Run(bool force, string[] paths = null, Action<string, float> progressCallback = null, Promise cancellation = null)
+
+		public static Task ScheduleAsync(bool force, string[] paths = null, Action<string, float> progressCallback = null, CancellationToken cancellation = default)
 		{
-			return new Async.Coroutine(SynchronizeAssets(force, paths, progressCallback, cancellation));
-		}
-		public static Promise Schedule(bool force, string[] paths = null, Action<string, float> progressCallback = null, string coroutineId = null, Promise cancellation = null)
-		{
-			return CoroutineScheduler.Schedule<Dictionary<string, object>>(SynchronizeAssets(force, paths, progressCallback, cancellation), coroutineId);
+			return CharonEditorModule.Instance.Routines.Schedule(() => RunAsync(force, paths, progressCallback, cancellation), cancellation);
 		}
 
-		private static IEnumerable SynchronizeAssets(bool force, string[] paths = null, Action<string, float> progressCallback = null, Promise cancellation = null)
+		public static Task RunAsync(bool force, string[] paths = null, Action<string, float> progressCallback = null, CancellationToken cancellation = default)
 		{
-			if (paths == null) paths = GameDataTracker.All.ToArray();
+			var task = RunInternalAsync(force, paths, progressCallback);
+			task.LogFaultAsError();
+			return task;
+		}
+		public static async Task RunInternalAsync(bool force, string[] paths = null, Action<string, float> progressCallback = null, CancellationToken cancellation = default)
+		{
+			paths ??= Array.ConvertAll(AssetDatabase.FindAssets("t:" + nameof(GameDataBase)), AssetDatabase.GUIDToAssetPath);
+
+			var logger = CharonEditorModule.Instance.Logger;
 
 			var total = paths.Length;
 			for (var i = 0; i < paths.Length; i++)
 			{
 				cancellation.ThrowIfCancellationRequested();
 
-				var gameDataPath = paths[i];
+				var gameDataAssetPath = paths[i];
 
-				if (File.Exists(gameDataPath) == false)
+				if (File.Exists(gameDataAssetPath) == false)
 					continue;
 
 
-				if (progressCallback != null) progressCallback(string.Format(Resources.UI_UNITYPLUGIN_PROGRESS_PROCESSING_GAMEDATA, gameDataPath), (float)i / total);
+				progressCallback?.Invoke(string.Format(Resources.UI_UNITYPLUGIN_PROGRESS_PROCESSING_GAMEDATA, gameDataAssetPath), (float)i / total);
 
-
-				var gameDataObj = AssetDatabase.LoadAssetAtPath(gameDataPath, typeof(UnityEngine.Object));
-				var assetImport = AssetImporter.GetAtPath(gameDataPath);
-				if (assetImport == null)
+				var gameDataAsset = AssetDatabase.LoadAssetAtPath<GameDataBase>(gameDataAssetPath);
+				if (gameDataAsset == null)
+				{
 					continue;
+				}
 
-				var gameDataSettings = GameDataSettings.Load(gameDataObj);
-
+				var gameDataSettings = gameDataAsset.settings;
 				if (!gameDataSettings.IsConnected)
 				{
 					continue; // no sync required
 				}
 
-				var isSyncTooSoon = (DateTime.UtcNow - File.GetLastWriteTimeUtc(gameDataPath)) < TimeSpan.FromMinutes(2);
+				var isSyncTooSoon = (DateTime.UtcNow - File.GetLastWriteTimeUtc(gameDataAssetPath)) < TimeSpan.FromMinutes(2);
 				if (isSyncTooSoon && !force)
 				{
-					if (Settings.Current.Verbose)
-					{
-						UnityEngine.Debug.Log(string.Format("Skipping synchronization game data at '{0}' because there not much time passes since last one.", gameDataPath));
-					}
+					logger.Log(LogType.Assert, $"Skipping synchronization game data at '{gameDataAssetPath}' because there not much time passes since last one.");
 					continue;
 				}
 
-				var storeFormat = StorageFormats.GetStoreFormat(gameDataPath);
-				if (storeFormat == null)
+				var gameDataFormat = FormatsExtensions.GetGameDataFormatForExtension(gameDataAssetPath);
+				if (gameDataFormat == null)
 				{
-					UnityEngine.Debug.LogWarning(string.Format("Skipping synchronization game data at '{0}' because storage format '{1}' is not supported.", gameDataPath, Path.GetExtension(gameDataPath)));
+					logger.Log(LogType.Warning, $"Skipping synchronization game data at '{gameDataAssetPath}' because storage format '{Path.GetExtension(gameDataAssetPath)}' is not supported.");
 					continue;
 				}
 
-				var serverAddress = new Uri(gameDataSettings.ServerAddress);
-				var apiKeyPath = new Uri(serverAddress, "/" + gameDataSettings.ProjectId);
-				var apiKey = KeyCryptoStorage.GetKey(apiKeyPath);
+				var serverAddress = new Uri(gameDataSettings.serverAddress);
+				var apiKeyPath = new Uri(serverAddress, "/" + gameDataSettings.projectId);
+				var apiKey = CharonEditorModule.Instance.KeyCryptoStorage.GetKey(apiKeyPath);
 				if (string.IsNullOrEmpty(apiKey))
 				{
 					if (force)
 					{
-						var apiKeyPromptTask = ApiKeyPromptWindow.ShowAsync(gameDataSettings.ProjectId, gameDataSettings.ProjectName);
-						yield return apiKeyPromptTask;
-						apiKey = KeyCryptoStorage.GetKey(apiKeyPath);
+						await ApiKeyPromptWindow.ShowAsync(gameDataSettings.projectId, gameDataSettings.projectName);
+						apiKey = CharonEditorModule.Instance.KeyCryptoStorage.GetKey(apiKeyPath);
 					}
 
 					if (string.IsNullOrEmpty(apiKey))
 					{
-						if (Settings.Current.Verbose)
-						{
-							UnityEngine.Debug.LogWarning(string.Format("Unable to synchronize game data at '{0}' because there is API Key associated with it. ", gameDataPath) +
-								"Find this asset in Project window and click 'Synchronize' button in Inspector window.");
-						}
+						logger.Log(LogType.Warning, $"Unable to synchronize game data at '{gameDataAssetPath}' because there is API Key associated with it. " +
+							"Find this asset in Project window and click 'Synchronize' button in Inspector window.");
 						continue; // no key
 					}
 				}
@@ -118,42 +113,36 @@ namespace GameDevWare.Charon.Unity.Routines
 				cancellation.ThrowIfCancellationRequested();
 
 				// trying to touch gamedata file
-				var readGameDataTask = FileHelper.ReadFileAsync(gameDataPath, 5);
-				yield return readGameDataTask;
-				readGameDataTask.GetResult().Dispose();
+				var gameDataPath = AssetDatabase.GUIDToAssetPath(gameDataSettings.gameDataFileGuid);
+				{
+					await using var readGameDataTask = await FileHelper.ReadFileAsync(gameDataPath, 5);
+				}
 
 				var startTime = Stopwatch.StartNew();
-				if (Settings.Current.Verbose)
-				{
-					UnityEngine.Debug.Log(string.Format("Starting synchronization of game data at '{0}' from server '{1}'.", gameDataPath, serverAddress));
-				}
+				logger.Log(LogType.Assert, $"Starting synchronization of game data at '{gameDataPath}' from server '{serverAddress}'.");
 
 				var downloadTempPath = Path.Combine(FileHelper.GetRandomTempDirectory(), Path.GetFileName(gameDataPath));
 				var gameDataPathBak = gameDataPath + ".bak";
 				var serverApiClient = new ServerApiClient(serverAddress);
 				serverApiClient.UseApiKey(apiKey);
 
-				var subProgressCallback = progressCallback != null ? progressCallback.Sub(i + 0.0f / total, i + 1.0f / total) : null;
-				var downloadDataSourceAsync = serverApiClient.DownloadDataSourceAsync(gameDataSettings.BranchId, storeFormat.Value, downloadTempPath,
+				var subProgressCallback = progressCallback?.Sub(i + 0.0f / total, i + 1.0f / total);
+				await serverApiClient.DownloadDataSourceAsync(gameDataSettings.branchId, gameDataFormat.Value, downloadTempPath,
 					subProgressCallback.ToDownloadProgress(Path.GetFileName(downloadTempPath)), cancellation: cancellation);
-				yield return downloadDataSourceAsync;
 
 				File.Replace(downloadTempPath, gameDataPath, gameDataPathBak);
 
 				FileHelper.SafeFileDelete(gameDataPathBak);
 				FileHelper.SafeDirectoryDelete(Path.GetDirectoryName(downloadTempPath));
 
-				if (Settings.Current.Verbose)
-				{
-					UnityEngine.Debug.Log(string.Format("Synchronization of game data at '{0}' from server '{1}' is finished successfully in '{2}'.", gameDataPath, serverAddress, startTime.Elapsed));
-				}
+				logger.Log(LogType.Assert,$"Synchronization of game data at '{gameDataPath}' from server '{serverAddress}' is finished successfully in '{startTime.Elapsed}'.");
 			}
 
-			if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_GENERATE_REFRESHING_ASSETS, 0.99f);
+			progressCallback?.Invoke(Resources.UI_UNITYPLUGIN_GENERATE_REFRESHING_ASSETS, 0.99f);
 
 			AssetDatabase.Refresh(ImportAssetOptions.Default);
 
-			if (progressCallback != null) progressCallback(Resources.UI_UNITYPLUGIN_PROGRESS_DONE, 1);
+			progressCallback?.Invoke(Resources.UI_UNITYPLUGIN_PROGRESS_DONE, 1);
 		}
 	}
 }

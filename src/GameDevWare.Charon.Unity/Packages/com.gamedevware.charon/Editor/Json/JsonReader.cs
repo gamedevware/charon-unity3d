@@ -30,10 +30,15 @@ using System.IO;
 using System.Text;
 using JetBrains.Annotations;
 
-namespace GameDevWare.Charon.Unity.Json
+namespace GameDevWare.Charon.Editor.Json
 {
 	[PublicAPI, UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
-	internal class JsonReader
+#if JSON_NET_3_0_2_OR_NEWER
+	internal
+#else
+	public
+#endif
+	class JsonReader
 	{
 		private readonly TextReader r;
 		private readonly StringBuilder vb = new StringBuilder();
@@ -45,7 +50,7 @@ namespace GameDevWare.Charon.Unity.Json
 		public JsonReader(TextReader reader)
 		{
 			if (reader == null)
-				throw new ArgumentNullException("reader");
+				throw new ArgumentNullException(nameof(reader));
 			this.r = reader;
 		}
 		public JsonValue Read()
@@ -131,7 +136,7 @@ namespace GameDevWare.Charon.Unity.Json
 				default:
 					if ('0' <= c && c <= '9' || c == '-')
 						return this.ReadNumericLiteral();
-					throw this.JsonError(string.Format("Unexpected character '{0}'", (char) c));
+					throw this.JsonError($"Unexpected character '{(char)c}'");
 			}
 		}
 		private int PeekChar()
@@ -342,19 +347,19 @@ namespace GameDevWare.Charon.Unity.Json
 		{
 			int c;
 			if ((c = this.ReadChar()) != expected)
-				throw this.JsonError(string.Format("Expected '{0}', got '{1}'", expected, (char) c));
+				throw this.JsonError($"Expected '{expected}', got '{(char)c}'");
 		}
 		private void Expect(string expected)
 		{
 			for (var i = 0; i < expected.Length; i++)
 			{
 				if (this.ReadChar() != expected[i])
-					throw this.JsonError(string.Format("Expected '{0}', differed at {1}", expected, i));
+					throw this.JsonError($"Expected '{expected}', differed at {i}");
 			}
 		}
 		private Exception JsonError(string msg)
 		{
-			return new ArgumentException(string.Format("{0}. At line {1}, column {2}", msg, this.line, this.column));
+			return new ArgumentException($"{msg}. At line {this.line}, column {this.column}");
 		}
 	}
 }

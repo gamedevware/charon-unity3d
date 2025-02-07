@@ -21,54 +21,119 @@ namespace <#= this.Namespace #>
 {
 	using System;
 	using System.IO;
+	using System.Collections.Generic;
 	using System.Text;
 	using UnityEngine;
+	using Unity.Collections;
+	using GameDevWare.Charon;
 
-	[Serializable]
+	[Serializable, PreferBinarySerialization]
     [global::System.CodeDom.Compiler.GeneratedCode("<#= this.ToolsName #>", "<#= this.ToolsVersion #>")]
-	public partial class <#= this.AssetClassName #> : ScriptableObject, ISerializationCallbackReceiver
+	public partial class <#= this.AssetClassName #> : GameDataBase, ISerializationCallbackReceiver
 	{
 		[SerializeField, HideInInspector]
-		private byte[] dataBytes; // is set by asset creator via reflection
+		private byte[] gameDataBytes;
 		[SerializeField, HideInInspector]
-		private string extension; // is set by asset creator via reflection
+		private GameDataFormat format;
 		[NonSerialized, HideInInspector]
 		public <#= this.GameDataClassName #> GameData;
+
+		/// <inheritdoc />
+		public override string RevisionHash => this.GameData.RevisionHash;
+		/// <inheritdoc />
+		public override string GameDataVersion => this.GameData.GameDataVersion;
 
 		private <#= this.AssetClassName #>()
 		{
 
 		}
 
+		/// <inheritdoc />
 		void ISerializationCallbackReceiver.OnBeforeSerialize()
 		{
 		}
+		/// <inheritdoc />
 		void ISerializationCallbackReceiver.OnAfterDeserialize()
 		{
-			var data = new MemoryStream(dataBytes, 0, dataBytes.Length, false);
-#pragma warning disable 0618
-			switch (this.extension.Trim('.'))
+			if (this.gameDataBytes == null || this.gameDataBytes.Length == 0)
 			{
-				case "gdjs":
-				case "json":
-					this.GameData = new <#= this.GameDataClassName #>(data, new Formatters.GameDataLoadOptions { Format = Formatters.Format.Json });
-					break;
-				case "gdmp":
-				case "msgpack":
-				case "msgpck":
-					this.GameData = new <#= this.GameDataClassName #>(data, new Formatters.GameDataLoadOptions { Format = Formatters.Format.MessagePack });
-					break;
-				default:
-					throw new InvalidOperationException(string.Format("Unknown file extension '{0}'. Unable to determine file format by extension.",
-						this.extension));
+				return;
 			}
-#pragma warning restore 0618
+
+			using var gameDataStream = new MemoryStream(this.gameDataBytes, 0, this.gameDataBytes.Length, writable: false);
+			if (!this.TryLoad(gameDataStream, this.format))
+			{
+				throw new InvalidOperationException(string.Format("Unknown file format '{0}'.", this.format));
+			}
+		}
+
+		/// <inheritdoc />
+		public override void Save(Stream gameDataStream, GameDataFormat format)
+		{
+			if (gameDataStream == null) throw new ArgumentNullException(nameof(gameDataStream));
+
+			this.format = format;
+			this.gameDataBytes = new byte[(int)gameDataStream.Length];
+			gameDataStream.Position = 0;
+
+			var offset = 0;
+			var read = 0;
+			while ((read = gameDataStream.Read(this.gameDataBytes, offset, this.gameDataBytes.Length - offset)) > 0 &&
+				offset < this.gameDataBytes.Length)
+			{
+				offset += read;
+			}
+
+			if (offset != this.gameDataBytes.Length) throw new InvalidOperationException("Failed to read whole stream into byte array.");
+
+			using var gameDataMemoryStream = new MemoryStream(this.gameDataBytes, 0, this.gameDataBytes.Length, writable: false);
+			if (!this.TryLoad(gameDataMemoryStream, this.format))
+			{
+				throw new InvalidOperationException(string.Format("Unknown file format '{0}'.", this.format));
+			}
+		}
+
+		/// <inheritdoc />
+		public override bool TryLoad(Stream gameDataStream, GameDataFormat format)
+		{
+			if (gameDataStream == null) throw new ArgumentNullException(nameof(gameDataStream));
+
+			switch (format)
+			{
+				case GameDataFormat.Json:
+					this.GameData = new <#= this.GameDataClassName #>(gameDataStream, new Formatters.GameDataLoadOptions { Format = Formatters.GameDataFormat.Json });
+					return true;
+				case GameDataFormat.MessagePack:
+					this.GameData = new <#= this.GameDataClassName #>(gameDataStream, new Formatters.GameDataLoadOptions { Format = Formatters.GameDataFormat.MessagePack });
+					return true;
+				default:
+					return false;
+			}
+		}
+		/// <inheritdoc />
+		public override object FindGameDataDocumentById(string schemaNameOrId, string id)
+		{
+			if (schemaNameOrId == null) throw new ArgumentNullException(nameof(schemaNameOrId));
+
+			return this.GameData.FindDocument(schemaNameOrId, id);
+		}
+		/// <inheritdoc />
+		public override IEnumerable<string> GetDocumentIds(string schemaNameOrId)
+		{
+			if (schemaNameOrId == null) throw new ArgumentNullException(nameof(schemaNameOrId));
+
+			return this.GameData.GetDocumentIds(schemaNameOrId);
+		}
+		/// <inheritdoc />
+		public override IEnumerable<string> GetDocumentSchemaNames()
+		{
+			return this.GameData.GetDocumentSchemaNames();
 		}
 	}
 }
 
-<#+ 
-	
+<#+
+
 	public string ToolsVersion { get; set; }
 	public string ToolsName { get; set; }
 

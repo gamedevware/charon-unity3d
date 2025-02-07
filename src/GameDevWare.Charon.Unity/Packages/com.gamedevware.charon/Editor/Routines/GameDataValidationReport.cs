@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (c) 2023 Denis Zykov
+	Copyright (c) 2025 Denis Zykov
 
 	This is part of "Charon: Game Data Editor" Unity Plugin.
 
@@ -18,9 +18,9 @@
 */
 
 using System;
-using GameDevWare.Charon.Unity.ServerApi;
+using GameDevWare.Charon.Editor.ServerApi;
 
-namespace GameDevWare.Charon.Unity.Routines
+namespace GameDevWare.Charon.Editor.Routines
 {
 	public class GameDataValidationReport
 	{
@@ -29,8 +29,8 @@ namespace GameDevWare.Charon.Unity.Routines
 
 		public GameDataValidationReport(string gameDataPath, ValidationReport report)
 		{
-			if (gameDataPath == null) throw new ArgumentNullException("gameDataPath");
-			if (report == null) throw new ArgumentNullException("report");
+			if (gameDataPath == null) throw new ArgumentNullException(nameof(gameDataPath));
+			if (report == null) throw new ArgumentNullException(nameof(report));
 
 			this.GameDataPath = gameDataPath;
 			this.Report = report;
@@ -39,7 +39,7 @@ namespace GameDevWare.Charon.Unity.Routines
 		/// <inheritdoc />
 		public override string ToString()
 		{
-			return string.Format("{0}, Has Errors: {1}", this.GameDataPath, this.Report.HasErrors);
+			return $"{this.GameDataPath}, Has Errors: {this.Report.HasErrors}";
 		}
 	}
 }
