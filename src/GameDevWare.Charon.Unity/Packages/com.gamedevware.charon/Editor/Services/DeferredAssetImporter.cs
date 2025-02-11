@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Codice.CM.SEIDInfo;
 using GameDevWare.Charon.Editor.Routines;
 using GameDevWare.Charon.Editor.Utils;
 using UnityEditor;
@@ -69,7 +68,7 @@ namespace GameDevWare.Charon.Editor.Services
 
 			this.logger.Log(LogType.Assert, "Scheduling " + this.assetGenerationList.Count + " asset generating tasks.");
 
-			UpdateAssetsRoutine.ScheduleAsync(this.assetGenerationList.ToArray())
+			SynchronizeAssetsRoutine.ScheduleAsync(this.assetGenerationList.ToArray())
 				.IgnoreFault()
 				.ContinueWith(_ => EditorPrefs.DeleteKey(this.preferencesPrefix + "::List"), CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Current);
 

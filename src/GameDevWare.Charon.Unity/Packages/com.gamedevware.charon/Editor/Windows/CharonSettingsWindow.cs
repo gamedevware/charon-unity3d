@@ -32,15 +32,6 @@ namespace GameDevWare.Charon.Editor.Windows
 	{
 		private static string CharonEditorVersion = (typeof(CharonSettingsWindow).Assembly.GetName().Version ?? new Version()).ToString();
 
-		private static Task<SemanticVersion> currentCharonsVersion;
-		private static Task<SemanticVersion> lastCharonVersion;
-
-		private static bool HasNewCharonVersion =>
-			currentCharonsVersion != null &&
-			lastCharonVersion != null &&
-			currentCharonsVersion.IsCompleted &&
-			lastCharonVersion.IsCompleted;
-
 		[SettingsProvider]
 		public static SettingsProvider CreateCharonSettingsProvider()
 		{
@@ -53,8 +44,6 @@ namespace GameDevWare.Charon.Editor.Windows
 				// Populate the search keywords to enable smart search filtering and label highlighting:
 				keywords = new HashSet<string>(new[] {
 					Resources.UI_UNITYPLUGIN_WINDOW_CHARON_EDITOR_VERSION_LABEL,
-					Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_AVAILABLE_TITLE,
-					Resources.UI_UNITYPLUGIN_CHARON_VERSION_LABEL,
 					Resources.UI_UNITYPLUGIN_ABOUT_IDLE_CLOSE_TIMEOUT_LABEL,
 					Resources.UI_UNITYPLUGIN_ABOUT_SERVER_ADDRESS_LABEL,
 					Resources.UI_UNITYPLUGIN_WINDOW_BROWSER_PATH,
@@ -70,20 +59,21 @@ namespace GameDevWare.Charon.Editor.Windows
 		{
 			GUILayout.Space(10);
 			GUILayout.Label(Resources.UI_UNITYPLUGIN_WINDOW_INFO_GROUP, EditorStyles.boldLabel);
+
 			EditorGUILayout.BeginHorizontal();
-			// EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_CHARON_VERSION_LABEL, charonVersion);
-			if (HasNewCharonVersion)
 			{
-				if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_UPDATE_AVAILABLE_TITLE, EditorStyles.miniButton, GUILayout.Width(120), GUILayout.Height(18)))
+				EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_WINDOW_CHARON_EDITOR_VERSION_LABEL, CharonEditorVersion);
+				GUILayout.Space(5);
+				if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_CHECK_UPDATES_BUTTON, EditorStyles.miniButton, GUILayout.Width(120), GUILayout.Height(18)))
 				{
 					CharonEditorMenu.CheckUpdates();
 					GUI.changed = true;
 				}
+
 				GUILayout.Space(5);
 			}
 			EditorGUILayout.EndHorizontal();
 
-			EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_WINDOW_CHARON_EDITOR_VERSION_LABEL, CharonEditorVersion);
 			GUI.enabled = true;
 			GUILayout.Space(10);
 			GUILayout.Label(Resources.UI_UNITYPLUGIN_WINDOW_SETTINGS_GROUP, EditorStyles.boldLabel);

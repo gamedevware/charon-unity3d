@@ -357,7 +357,7 @@ namespace GameDevWare.Charon.Editor.Windows
 			await this.ServerApiClient.DownloadDataSourceAsync(branch.Id, storeFormat, Path.GetFullPath(downloadPath),
 				this.GetProgressReport().ToDownloadProgress(Path.GetFileName(downloadPath))).ConfigureAwait(true);
 
-			FileHelper.SafeFileDelete(gameDataPath);
+			CharonFileUtils.SafeFileDelete(gameDataPath);
 			File.Move(downloadPath, gameDataPath);
 
 			this.RaiseDone();

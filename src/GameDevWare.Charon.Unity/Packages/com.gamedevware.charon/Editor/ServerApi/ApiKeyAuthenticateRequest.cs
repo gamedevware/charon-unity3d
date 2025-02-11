@@ -18,7 +18,6 @@
 */
 
 using System.Runtime.Serialization;
-using GameDevWare.Charon.Editor.Json;
 
 namespace GameDevWare.Charon.Editor.ServerApi
 {

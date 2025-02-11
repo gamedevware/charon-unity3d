@@ -20,7 +20,6 @@
 using System;
 using System.Linq;
 using System.Runtime.Serialization;
-using GameDevWare.Charon.Editor.Json;
 using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Editor.ServerApi

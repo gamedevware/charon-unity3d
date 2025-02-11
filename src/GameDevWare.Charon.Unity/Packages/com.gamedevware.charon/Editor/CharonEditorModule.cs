@@ -17,15 +17,22 @@
     along with this program.  If not, see http://www.gnu.org/licenses.
 */
 
+using System;
 using GameDevWare.Charon.Editor.Services;
 using JetBrains.Annotations;
 using UnityEditor;
 
 namespace GameDevWare.Charon.Editor
 {
-	[InitializeOnLoad, UsedImplicitly]
+	/// <summary>
+	/// Module governing Charon editor activities. Here you can subscribe on events and change settings.
+	/// </summary>
+	[InitializeOnLoad, PublicAPI]
 	public class CharonEditorModule
 	{
+		/// <summary>
+		/// Singleton instance of <see cref="CharonEditorModule"/>.
+		/// </summary>
 		public static readonly CharonEditorModule Instance;
 
 		static CharonEditorModule()
@@ -37,8 +44,32 @@ namespace GameDevWare.Charon.Editor
 		internal readonly CharonProcessList Processes;
 		internal readonly DeferredAssetImporter AssetImporter;
 		internal readonly CharonLogger Logger;
+
+		/// <summary>
+		/// API key storage of current user.
+		/// </summary>
 		public readonly KeyCryptoStorage KeyCryptoStorage;
+		/// <summary>
+		/// Settings of this module.
+		/// </summary>
 		public readonly CharonSettings Settings;
+
+		/// <summary>
+		/// Point of extension of code generation process. Tasks added in this event are executed before source code generation.
+		/// </summary>
+		public event EventHandler<GameDataSourceCodeGenerationEventArgs> OnGameDataPreSourceCodeGeneration;
+		/// <summary>
+		/// Point of extension of code generation process. Tasks added in this event are executed after source code generation.
+		/// </summary>
+		public event EventHandler<GameDataSourceCodeGenerationEventArgs> OnGameDataPostSourceCodeGeneration;
+		/// <summary>
+		/// Point of extension of asset synchronization process. Tasks added in this event are executed before asset synchronization.
+		/// </summary>
+		public event EventHandler<GameDataSynchronizationEventArgs> OnGameDataPreSynchronization;
+		/// <summary>
+		/// Point of extension of asset synchronization process. Tasks added in this event are executed after asset synchronization.
+		/// </summary>
+		public event EventHandler<GameDataSynchronizationEventArgs> OnGameDataPostSynchronization;
 
 		private CharonEditorModule()
 		{
@@ -60,6 +91,39 @@ namespace GameDevWare.Charon.Editor
 			EditorApplication.update -= this.Initialize;
 
 			this.AssetImporter.Initialize();
+		}
+
+		internal GameDataSourceCodeGenerationEventArgs RaiseOnGameDataPreSourceCodeGeneration(GameDataBase sender, string sourceCodeDirectory)
+		{
+			if (sender == null) throw new ArgumentNullException(nameof(sender));
+
+			var args = new GameDataSourceCodeGenerationEventArgs(sourceCodeDirectory);
+			this.OnGameDataPreSourceCodeGeneration?.Invoke(sender, args);
+			return args;
+		}
+		internal GameDataSourceCodeGenerationEventArgs RaiseOnGameDataPostSourceCodeGeneration(GameDataBase sender, string sourceCodeDirectory)
+		{
+			if (sender == null) throw new ArgumentNullException(nameof(sender));
+
+			var args = new GameDataSourceCodeGenerationEventArgs(sourceCodeDirectory);
+			this.OnGameDataPostSourceCodeGeneration?.Invoke(sender, args);
+			return args;
+		}
+		internal GameDataSynchronizationEventArgs RaiseOnGameDataPreSynchronization(GameDataBase sender)
+		{
+			if (sender == null) throw new ArgumentNullException(nameof(sender));
+
+			var args = new GameDataSynchronizationEventArgs();
+			this.OnGameDataPreSynchronization?.Invoke(sender, args);
+			return args;
+		}
+		internal GameDataSynchronizationEventArgs RaiseOnGameDataPostSynchronization(GameDataBase sender)
+		{
+			if (sender == null) throw new ArgumentNullException(nameof(sender));
+
+			var args = new GameDataSynchronizationEventArgs();
+			this.OnGameDataPostSynchronization?.Invoke(sender, args);
+			return args;
 		}
 	}
 }

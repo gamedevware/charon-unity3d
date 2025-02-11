@@ -18,13 +18,11 @@
 */
 
 using System;
-using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace GameDevWare.Charon.Editor.Cli
+namespace GameDevWare.Charon.Editor.Utils
 {
 	internal static class CommandLineUtils
 	{
@@ -101,18 +99,6 @@ namespace GameDevWare.Charon.Editor.Cli
 			logger.Log(LogType.Assert, $"Process #{result.ProcessId} '{options.StartInfo.FileName}' has exited with code {result.ExitCode}.");
 
 			return result;
-		}
-		private static string ConcatenateDictionaryValues(StringDictionary dictionary)
-		{
-			if (dictionary.Count == 0)
-				return "";
-
-			var sb = new StringBuilder();
-			foreach (string key in dictionary.Keys)
-				sb.Append(key).Append("=").Append(dictionary[key]).Append(", ");
-			if (sb.Length > 2)
-				sb.Length -= 2;
-			return sb.ToString();
 		}
 	}
 }

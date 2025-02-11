@@ -24,7 +24,7 @@ using System.Threading;
 
 #pragma warning disable 420
 
-namespace GameDevWare.Charon.Editor.Cli
+namespace GameDevWare.Charon.Editor.Utils
 {
 	public sealed class RunResult : IDisposable
 	{

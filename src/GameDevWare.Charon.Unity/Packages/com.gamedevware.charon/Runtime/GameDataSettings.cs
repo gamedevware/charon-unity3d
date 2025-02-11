@@ -49,41 +49,7 @@ namespace GameDevWare.Charon
 			string.IsNullOrEmpty(this.projectId) == false &&
 			string.IsNullOrEmpty(this.branchId) == false;
 
-		public static GameDataSettings CreateDefault(string gameDataPath, string gameDataFileGuid)
-		{
-			if (gameDataPath == null) throw new ArgumentNullException(nameof(gameDataPath));
-
-			var settings = new GameDataSettings {
-				clearOutputDirectory = false,
-				splitSourceCodeFiles =  false,
-				lineEnding = (int)SourceCodeLineEndings.Windows,
-				indentation = (int)SourceCodeIndentation.Tabs,
-				gameDataFileGuid = gameDataFileGuid,
-				codeGenerationPath = "",
-				gameDataClassName = Path.GetFileNameWithoutExtension(gameDataPath).Trim('.', '_'),
-				gameDataNamespace = (Path.GetDirectoryName(gameDataPath) ?? "").Replace("\\", ".").Replace("/", "."),
-				gameDataDocumentClassName = "Document",
-				optimizations = 0 // none,
-			};
-			return settings;
-		}
-
-		public void Validate()
-		{
-			if (string.IsNullOrEmpty(this.gameDataNamespace))
-				this.gameDataNamespace = (Path.GetDirectoryName(this.codeGenerationPath) ?? "").Replace("\\", ".").Replace("/", ".");
-			if (string.IsNullOrEmpty(this.gameDataNamespace))
-				this.gameDataNamespace = "Assets";
-			if (string.IsNullOrEmpty(this.gameDataClassName))
-				this.gameDataClassName = "GameData";
-			if (string.IsNullOrEmpty(this.gameDataDocumentClassName))
-				this.gameDataDocumentClassName = "Document";
-			if (Enum.IsDefined(typeof(SourceCodeIndentation), (SourceCodeIndentation)this.indentation) == false)
-				this.indentation = (int)SourceCodeIndentation.Tabs;
-			if (Enum.IsDefined(typeof(SourceCodeLineEndings), (SourceCodeLineEndings)this.lineEnding) == false)
-				this.lineEnding = (int)SourceCodeLineEndings.Windows;
-		}
-
+		
 		public Uri MakeDataSourceUrl()
 		{
 			if (!this.IsConnected)

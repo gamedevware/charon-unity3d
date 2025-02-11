@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace GameDevWare.Charon.Editor
+namespace GameDevWare.Charon.Editor.Routines
 {
 	internal class ValidationError : Exception
 	{

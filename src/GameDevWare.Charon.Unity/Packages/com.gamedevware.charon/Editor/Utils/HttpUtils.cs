@@ -26,7 +26,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using GameDevWare.Charon.Editor.Json;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -34,6 +33,10 @@ namespace GameDevWare.Charon.Editor.Utils
 {
 	internal static class HttpUtils
 	{
+		public static readonly string UserAgentHeaderValue = string.Format("{0}/{1} (OS: {2}, Unity Version: {3}, Product: {4}, )",
+			typeof(HttpUtils).Assembly.GetName(false).Name, typeof(HttpUtils).Assembly.GetName(false).Version,
+			Application.platform, Application.unityVersion, Application.productName);
+
 		private const int BUFFER_SIZE = 32 * 1024;
 
 		public static async Task UploadFromFileAsync
@@ -235,7 +238,7 @@ namespace GameDevWare.Charon.Editor.Utils
 
 					if (string.IsNullOrEmpty(requestHeaders["User-Agent"]))
 					{
-						request.SetRequestHeader("User-Agent", RuntimeInformation.UserAgentHeaderValue);
+						request.SetRequestHeader("User-Agent", UserAgentHeaderValue);
 					}
 				}
 

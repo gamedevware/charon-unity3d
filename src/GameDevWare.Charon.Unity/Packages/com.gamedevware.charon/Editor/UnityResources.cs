@@ -17,9 +17,6 @@
     along with this program.  If not, see http://www.gnu.org/licenses.
 */
 
-using System;
-using UnityEngine;
-
 namespace GameDevWare.Charon {
 	internal static class Resources
 	{
@@ -58,11 +55,9 @@ namespace GameDevWare.Charon {
 		public const string UI_UNITYPLUGIN_INSPECTOR_SYNCHRONIZE_BUTTON = "Synchronize";
 		public const string UI_UNITYPLUGIN_INSPECTOR_CONNECT_BUTTON = "Connect";
 		public const string UI_UNITYPLUGIN_INSPECTOR_DISCONNECT_BUTTON = "Disconnect";
+		public const string UI_UNITYPLUGIN_INSPECTOR_SET_API_KEY_BUTTON = "Set API Key";
 		public const string UI_UNITYPLUGIN_INSPECTOR_CONNECTION_LABEL = "Connection";
 		public const string UI_UNITYPLUGIN_INSPECTOR_NOT_CONNECTED_LABEL = "<Not Connected>";
-		public const string UI_UNITYPLUGIN_INSPECTOR_VALIDATE_BUTTON = "Validate";
-		public const string UI_UNITYPLUGIN_INSPECTOR_VALIDATION_PREFIX = "Validation:";
-		public const string UI_UNITYPLUGIN_INSPECTOR_SYNCHRONIZATION_PREFIX = "Synchronization:";
 		public const string UI_UNITYPLUGIN_INSPECTOR_LAUNCHING_EDITOR_PREFIX = "Launching Editor:";
 		public const string UI_UNITYPLUGIN_OPERATION_CANCELLED = "Operation was canceled by the user.";
 		public const string UI_UNITYPLUGIN_PROGRESS_CHECKING_TOOLS_VERSION = "Checking current tools version...";
@@ -80,7 +75,6 @@ namespace GameDevWare.Charon {
 		public const string UI_UNITYPLUGIN_VALIDATE_RUN_FOR = "Executing validation tool for {0}";
 		public const string UI_UNITYPLUGIN_VALIDATING_ASSETS = "Validating Assets...";
 		public const string UI_UNITYPLUGIN_WINDOW_CHARON_EDITOR_VERSION_LABEL = "Charon Editor Version";
-		public const string UI_UNITYPLUGIN_CHARON_VERSION_LABEL = "Charon Version";
 		public const string UI_UNITYPLUGIN_ABOUT_IDLE_CLOSE_TIMEOUT_LABEL = "Process Idle Timeout";
 		public const string UI_UNITYPLUGIN_ABOUT_SERVER_ADDRESS_LABEL = "Server Address";
 		public const string UI_UNITYPLUGIN_ABOUT_EDITOR_APPLICATION_TYPE_LABEL = "Editor Application";
@@ -92,7 +86,7 @@ namespace GameDevWare.Charon {
 		public const string UI_UNITYPLUGIN_WINDOW_FAILED_TO_START_EDITOR_TIMEOUT = "Failed to start the Game Data editor: Operation aborted due to timeout.";
 		public const string UI_UNITYPLUGIN_WINDOW_INFO_GROUP = "Info:";
 		public const string UI_UNITYPLUGIN_WINDOW_SETTINGS_GROUP = "Settings:";
-		public const string UI_UNITYPLUGIN_WINDOW_UPDATE_AVAILABLE_TITLE = "Update Available!";
+		public const string UI_UNITYPLUGIN_WINDOW_CHECK_UPDATES_BUTTON = "Check Updates...";
 		public const string UI_UNITYPLUGIN_SERVER_ERROR = "The request encountered the following errors:";
 		public const string UI_UNITYPLUGIN_GENERATE_API_KEY_TITLE = "API Key";
 		public const string UI_UNITYPLUGIN_GENERATE_PROJECT_LABEL = "Project";

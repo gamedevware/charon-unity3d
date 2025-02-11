@@ -168,7 +168,7 @@ namespace GameDevWare.Charon.Editor.Routines
 		private static async Task<bool> TryJoinExistingEditorAsync(GameDataSettings gameDataSettings, string reference, Action<string,float> progressCallback, CancellationToken cancellation)
 		{
 			var gameDataPath = Path.GetFullPath(AssetDatabase.GUIDToAssetPath(gameDataSettings.gameDataFileGuid) ?? "");
-			var lockFilePath = Path.Combine(FileHelper.LibraryCharonPath, CharonServerProcess.GetLockFileNameFor(gameDataPath));
+			var lockFilePath = Path.Combine(CharonFileUtils.LibraryCharonPath, CharonServerProcess.GetLockFileNameFor(gameDataPath));
 			if (!File.Exists(lockFilePath))
 			{
 				return false;

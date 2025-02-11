@@ -23,6 +23,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using GameDevWare.Charon.Editor.ServerApi;
@@ -84,7 +85,7 @@ namespace GameDevWare.Charon.Editor.Cli
 			progressCallback?.Invoke(Resources.UI_UNITYPLUGIN_WINDOW_EDITOR_LAUNCHING_EXECUTABLE, 0.30f);
 
 			var listenAddress = new Uri("http://localhost:" + port);
-			lockFilePath ??= Path.Combine(FileHelper.LibraryCharonPath, CharonServerProcess.GetLockFileNameFor(gameDataPath));
+			lockFilePath ??= Path.Combine(CharonFileUtils.LibraryCharonPath, CharonServerProcess.GetLockFileNameFor(gameDataPath));
 
 			var settings = CharonEditorModule.Instance.Settings;
 
@@ -112,14 +113,14 @@ namespace GameDevWare.Charon.Editor.Cli
 					WaitForExit = false,
 					StartInfo = {
 						EnvironmentVariables = {
-							{ "DOTNET_CONTENTROOT", FileHelper.CharonAppContentPath },
+							{ "DOTNET_CONTENTROOT", CharonFileUtils.CharonAppContentPath },
 
 							//
 							{ "CHARON_API_SERVER", settings.GetServerAddressUrl().OriginalString },
 							{ "CHARON_API_KEY", "" },
 
 							{ "SERILOG__WRITETO__0__NAME", "File" }, {
-								"SERILOG__WRITETO__0__ARGS__PATH", Path.GetFullPath(Path.Combine(FileHelper.LibraryCharonLogsPath,
+								"SERILOG__WRITETO__0__ARGS__PATH", Path.GetFullPath(Path.Combine(CharonFileUtils.LibraryCharonLogsPath,
 									$"{DateTime.UtcNow:yyyy_MM_dd_hh}.charon.unity.log"))
 							},
 						}
@@ -1148,14 +1149,14 @@ namespace GameDevWare.Charon.Editor.Cli
 
 		internal static void CleanUpLogsDirectory()
 		{
-			if (string.IsNullOrEmpty(FileHelper.LibraryCharonLogsPath) || Directory.Exists(FileHelper.LibraryCharonLogsPath) == false)
+			if (string.IsNullOrEmpty(CharonFileUtils.LibraryCharonLogsPath) || Directory.Exists(CharonFileUtils.LibraryCharonLogsPath) == false)
 			{
 				return;
 			}
 
 			var logger = CharonEditorModule.Instance.Logger;
 			var logsRetentionTime = TimeSpan.FromDays(2);
-			foreach (var logFile in Directory.GetFiles(FileHelper.LibraryCharonLogsPath))
+			foreach (var logFile in Directory.GetFiles(CharonFileUtils.LibraryCharonLogsPath))
 			{
 				if (DateTime.UtcNow - File.GetLastWriteTimeUtc(logFile) <= logsRetentionTime)
 				{
@@ -1189,11 +1190,11 @@ namespace GameDevWare.Charon.Editor.Cli
 				WaitForExit = true,
 				StartInfo = {
 					EnvironmentVariables = {
-						{ "DOTNET_CONTENTROOT", FileHelper.CharonAppContentPath },
+						{ "DOTNET_CONTENTROOT", CharonFileUtils.CharonAppContentPath },
 						{ "CHARON_API_KEY", apiKey ?? string.Empty },
 
 						{ "SERILOG__WRITETO__0__NAME", "File" }, {
-							"SERILOG__WRITETO__0__ARGS__PATH", Path.GetFullPath(Path.Combine(FileHelper.LibraryCharonLogsPath,
+							"SERILOG__WRITETO__0__ARGS__PATH", Path.GetFullPath(Path.Combine(CharonFileUtils.LibraryCharonLogsPath,
 								$"{DateTime.UtcNow:yyyy_MM_dd_hh}.charon.unity.log"))
 						},
 					}
@@ -1240,7 +1241,7 @@ namespace GameDevWare.Charon.Editor.Cli
 		}
 		private static string CreateTemporaryFile(string extension, [CallerMemberName] string memberName = "Command")
 		{
-			var tempFileName = Path.GetFullPath(Path.Combine(Path.Combine(FileHelper.TempPath, "charoncli"),
+			var tempFileName = Path.GetFullPath(Path.Combine(Path.Combine(CharonFileUtils.TempPath, "charoncli"),
 				memberName + "_" + Guid.NewGuid().ToString().Replace("-", "") + "." + extension));
 
 			if (!Directory.Exists(Path.GetDirectoryName(tempFileName)))
@@ -1254,16 +1255,16 @@ namespace GameDevWare.Charon.Editor.Cli
 		private static string EnsureCharonRunScript()
 		{
 			var scriptFile = default(FileInfo);
-			if (RuntimeInformation.IsWindows)
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 			{
-				scriptFile = new FileInfo(Path.Combine(FileHelper.PluginBasePath, "Scripts/RunCharon.bat"));
+				scriptFile = new FileInfo(Path.Combine(CharonFileUtils.PluginBasePath, "Scripts/RunCharon.bat"));
 			}
 			else
 			{
-				scriptFile = new FileInfo(Path.Combine(FileHelper.PluginBasePath, "Scripts/RunCharon.sh"));
+				scriptFile = new FileInfo(Path.Combine(CharonFileUtils.PluginBasePath, "Scripts/RunCharon.sh"));
 			}
 
-			var targetFile = new FileInfo(Path.Combine(FileHelper.LibraryCharonPath, scriptFile.Name));
+			var targetFile = new FileInfo(Path.Combine(CharonFileUtils.LibraryCharonPath, scriptFile.Name));
 			if (!targetFile.Exists)
 			{
 				if (!targetFile.Directory!.Exists)

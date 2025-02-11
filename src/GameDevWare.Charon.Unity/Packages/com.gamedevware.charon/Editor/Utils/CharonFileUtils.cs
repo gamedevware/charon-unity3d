@@ -28,7 +28,7 @@ using UnityEngine;
 
 namespace GameDevWare.Charon.Editor.Utils
 {
-	internal static class FileHelper
+	internal static class CharonFileUtils
 	{
 		private static readonly char[] InvalidFileNameChars = Path.GetInvalidFileNameChars();
 
@@ -38,7 +38,7 @@ namespace GameDevWare.Charon.Editor.Utils
 		public static readonly string CharonAppContentPath;
 		public static readonly string PluginBasePath;
 
-		static FileHelper()
+		static CharonFileUtils()
 		{
 			PluginBasePath = Path.GetFullPath("./Packages/com.gamedevware.charon");
 

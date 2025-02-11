@@ -19,6 +19,8 @@
 
 using System;
 using System.IO;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using GameDevWare.Charon.Editor.Cli;
@@ -33,14 +35,28 @@ namespace GameDevWare.Charon.Editor.Windows
 	[CustomEditor(typeof(GameDataBase), editorForChildClasses: true)]
 	internal class GameDataAssetInspector : UnityEditor.Editor
 	{
-		[NonSerialized] private GameDataBase lastGameDataAsset;
-		[NonSerialized] private UnityObject gameDataFile;
-		[NonSerialized] private GameDataSettings gameDataSettings;
-		[NonSerialized] private Task generateCodeTask;
-		[NonSerialized] private Task syncTask;
-		[NonSerialized] private string lastServerAddress;
-		[SerializeField] private bool codeGenerationFold;
-		[SerializeField] private bool connectionFold;
+		private static readonly Regex RevisionHashRegex = new Regex("\"RevisionHash\"\\s*:\\s*\"([a-fA-F0-9\\-]+)\"");
+
+		[NonSerialized]
+		private GameDataBase lastGameDataAsset;
+		[NonSerialized]
+		private UnityObject gameDataFile;
+		[NonSerialized]
+		private GameDataSettings gameDataSettings;
+		[NonSerialized]
+		private Task generateCodeTask;
+		[NonSerialized]
+		private Task syncTask;
+		[NonSerialized]
+		private string lastServerAddress;
+		[NonSerialized]
+		private string lastGameDataFileRevisionHash;
+		[NonSerialized]
+		private DateTime lastGameDataFileRevisionHashCheckTime;
+		[SerializeField]
+		private bool codeGenerationFold;
+		[SerializeField]
+		private bool connectionFold;
 
 		/// <inheritdoc />
 
@@ -55,7 +71,7 @@ namespace GameDevWare.Charon.Editor.Windows
 				return;
 			}
 
-			var gameDataAssetPath = FileHelper.GetProjectRelativePath(AssetDatabase.GetAssetPath(this.target));
+			var gameDataAssetPath = CharonFileUtils.GetProjectRelativePath(AssetDatabase.GetAssetPath(this.target));
 			if (this.lastGameDataAsset != gameDataAsset || this.gameDataSettings == null)
 			{
 				this.gameDataSettings = gameDataAsset.settings;
@@ -74,7 +90,6 @@ namespace GameDevWare.Charon.Editor.Windows
 				this.gameDataFile = newGameDataFile;
 			}
 
-
 			GUI.enabled = true;
 
 			if (this.gameDataFile == null)
@@ -82,7 +97,15 @@ namespace GameDevWare.Charon.Editor.Windows
 				EditorGUILayout.HelpBox(Resources.UI_UNITYPLUGIN_INSPECTOR_CODE_MISSING_GAMEDATA_FILE, MessageType.Error);
 			}
 
+			this.RecheckGamedataHash();
+
+			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_INSPECTOR_REVISION_HASH_LABEL, gameDataAsset.RevisionHash);
+			if (!string.Equals(this.lastGameDataFileRevisionHash, gameDataAsset.RevisionHash, StringComparison.OrdinalIgnoreCase))
+			{
+				GUILayout.Label("\u26a0\ufe0f", GUILayout.Width(20));
+			}
+			EditorGUILayout.EndHorizontal();
 			EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_INSPECTOR_GAME_DATA_VERSION_LABEL, gameDataAsset.GameDataVersion);
 
 			this.codeGenerationFold = EditorGUILayout.Foldout(this.codeGenerationFold, Resources.UI_UNITYPLUGIN_INSPECTOR_CODE_GENERATION_LABEL);
@@ -143,26 +166,6 @@ namespace GameDevWare.Charon.Editor.Windows
 					EditorGUILayout.Space();
 
 					EditorGUILayout.BeginHorizontal();
-					var hasDoneSync = this.syncTask != null && this.syncTask.IsCompleted;
-					var hasRunningSync = this.syncTask != null && !this.syncTask.IsCompleted;
-					var syncStatus = (hasDoneSync ? " " + Resources.UI_UNITYPLUGIN_INSPECTOR_OPERATION_DONE :
-						hasRunningSync ? " " + Resources.UI_UNITYPLUGIN_INSPECTOR_OPERATION_RUNNING : "");
-
-					if (GUILayout.Button(Resources.UI_UNITYPLUGIN_INSPECTOR_SYNCHRONIZE_BUTTON + syncStatus))
-					{
-						var cancellationSource = new CancellationTokenSource();
-						this.syncTask = SynchronizeAssetsRoutine.RunAsync(
-							force: true,
-							paths: new[] { gameDataAssetPath },
-							progressCallback: ProgressUtils.ShowCancellableProgressBar(Resources.UI_UNITYPLUGIN_INSPECTOR_SYNCHRONIZATION_PREFIX + " ",
-								cancellationSource: cancellationSource),
-							cancellation: cancellationSource.Token
-						).ContinueWith(_ =>
-						{
-							ProgressUtils.HideProgressBar();
-							this.Repaint();
-						}, CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Current);
-					}
 
 					if (GUILayout.Button(Resources.UI_UNITYPLUGIN_INSPECTOR_DISCONNECT_BUTTON))
 					{
@@ -174,6 +177,11 @@ namespace GameDevWare.Charon.Editor.Windows
 						this.lastServerAddress = Resources.UI_UNITYPLUGIN_INSPECTOR_NOT_CONNECTED_LABEL;
 
 						GUI.changed = true;
+					}
+
+					if (GUILayout.Button(Resources.UI_UNITYPLUGIN_INSPECTOR_SET_API_KEY_BUTTON))
+					{
+						ApiKeyPromptWindow.ShowAsync(this.gameDataSettings.projectId, this.gameDataSettings.projectName);
 					}
 
 					EditorGUILayout.EndHorizontal();
@@ -210,20 +218,13 @@ namespace GameDevWare.Charon.Editor.Windows
 			}
 
 			GUI.enabled = !CharonEditorModule.Instance.Routines.IsRunning && !EditorApplication.isCompiling;
-			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_INSPECTOR_VALIDATE_BUTTON))
-			{
-				ValidateGameDataRoutine.ScheduleAsync(
-					paths: new[] { gameDataAssetPath },
-					progressCallback: ProgressUtils.ReportToLog(Resources.UI_UNITYPLUGIN_INSPECTOR_VALIDATION_PREFIX + " ")
-				).ContinueWith(_ => { this.Repaint(); }, CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Current);
-			}
 
 			var hasDoneImport = this.generateCodeTask != null && this.generateCodeTask.IsCompleted;
 			var hasRunningImport = this.generateCodeTask != null && !this.generateCodeTask.IsCompleted;
 			var importStatus = (hasDoneImport ? " " + Resources.UI_UNITYPLUGIN_INSPECTOR_OPERATION_DONE :
 				hasRunningImport ? " " + Resources.UI_UNITYPLUGIN_INSPECTOR_OPERATION_RUNNING : "");
 
-			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_INSPECTOR_REIMPORT_BUTTON + importStatus))
+			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_INSPECTOR_SYNCHRONIZE_BUTTON + importStatus))
 			{
 				var progressCallback = ProgressUtils.ShowProgressBar(Resources.UI_UNITYPLUGIN_PROGRESS_IMPORTING);
 				this.generateCodeTask = CharonEditorModule.Instance.Routines.Schedule(() => RunImportAsync(gameDataAsset, progressCallback), CancellationToken.None);
@@ -239,6 +240,60 @@ namespace GameDevWare.Charon.Editor.Windows
 			{
 				EditorUtility.SetDirty(this.target);
 				AssetDatabase.SaveAssetIfDirty(this.target);
+			}
+		}
+
+		private void RecheckGamedataHash()
+		{
+			if (this.lastGameDataFileRevisionHash != null &&
+				this.lastGameDataFileRevisionHashCheckTime != default &&
+				DateTime.UtcNow - this.lastGameDataFileRevisionHashCheckTime < TimeSpan.FromSeconds(5))
+			{
+				return; // recently updated
+			}
+
+			this.lastGameDataFileRevisionHash = new string('0', 24);
+			this.lastGameDataFileRevisionHashCheckTime = DateTime.UtcNow;
+
+			try
+			{
+				if (this.gameDataFile == null)
+				{
+					return;
+				}
+
+				var gameDataPath = AssetDatabase.GetAssetPath(this.gameDataFile);
+				if (!File.Exists(gameDataPath))
+				{
+					return;
+				}
+
+				// read first 8 KiB to the buffer
+				var buffer = new byte[1024 * 8];
+				var offset = 0;
+				var read = 0;
+				using var gameDataFileStream = File.OpenRead(gameDataPath);
+				while ((read = gameDataFileStream.Read(buffer, offset, buffer.Length - offset)) > 0)
+				{
+					offset += read;
+				}
+
+				// clear non-ASCII characters
+				for (var i = 0; i < buffer.Length; i++)
+				{
+					if (buffer[i] > 127) buffer[i] = (byte)'_';
+				}
+
+				var text = Encoding.ASCII.GetString(buffer, 0, offset);
+				var match = RevisionHashRegex.Match(text);
+				if (match.Success)
+				{
+					this.lastGameDataFileRevisionHash = match.Groups[1].Value;
+				}
+			}
+			catch
+			{
+				/* ignore hash compute errors */
 			}
 		}
 
@@ -260,11 +315,16 @@ namespace GameDevWare.Charon.Editor.Windows
 			{
 				gameDataAssetPath = AssetDatabase.GetAssetPath(gameDataAsset);
 			}
+
 			CharonEditorModule.Instance.AssetImporter.ImportOnStart(gameDataAssetPath);
 
 			progressCallback?.Invoke(Resources.UI_UNITYPLUGIN_GENERATING_SOURCE_CODE, 0.30f);
 
-			await GenerateCodeRoutine.RunAsync(new[] { gameDataAssetPath }, progressCallback?.Sub(0.30f, 1.00f)).ConfigureAwait(true);
+			await GenerateCodeRoutine.RunAsync(
+				paths: new[] { gameDataAssetPath },
+				progressCallback: progressCallback?.Sub(0.30f, 1.00f),
+				cancellationToken: CancellationToken.None
+			).ConfigureAwait(true);
 		}
 		private static string CreateNewGameDataAsset(UnityObject gameDataFile, string gameDataPath, string gameDataFileGuid)
 		{
@@ -273,10 +333,10 @@ namespace GameDevWare.Charon.Editor.Windows
 				throw new InvalidOperationException(errorMessage);
 			}
 
-			var newGameDataAssetPath = FileHelper.GetProjectRelativePath(Path.Combine(Path.GetDirectoryName(gameDataPath) ?? "",
+			var newGameDataAssetPath = CharonFileUtils.GetProjectRelativePath(Path.Combine(Path.GetDirectoryName(gameDataPath) ?? "",
 				Path.GetFileNameWithoutExtension(gameDataPath) + ".asset"));
 			var gameDataAsset = CreateInstance<GameDataBase>();
-			gameDataAsset.settings = GameDataSettings.CreateDefault(gameDataPath, gameDataFileGuid);
+			gameDataAsset.settings = GameDataSettingsUtils.CreateDefault(gameDataPath, gameDataFileGuid);
 			AssetDatabase.CreateAsset(gameDataAsset, newGameDataAssetPath);
 			return newGameDataAssetPath;
 		}

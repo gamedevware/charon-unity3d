@@ -135,7 +135,7 @@ namespace GameDevWare.Charon.Editor.Windows
 		public static bool ValidateCreationOptions(UnityObject folder, string gameDataName, out string errorMessage)
 		{
 			var gameDataDirectory = GetBaseDirectory(folder);
-			var isStreamingAssetsDirectory = gameDataDirectory.StartsWith(Path.GetFullPath("./Assets/StreamingAssets"), StringComparison.OrdinalIgnoreCase);
+			var isStreamingAssetsDirectory = gameDataDirectory.StartsWith(Path.GetFullPath(Path.Combine("Assets", "StreamingAssets")), StringComparison.OrdinalIgnoreCase);
 			if (isStreamingAssetsDirectory)
 			{
 				errorMessage = Resources.UI_UNITYPLUGIN_CREATING_GAME_DATA_NO_STREAMING_ASSETS;
@@ -194,21 +194,21 @@ namespace GameDevWare.Charon.Editor.Windows
 				if (gameDataFile == null || string.IsNullOrEmpty(gameDataFileGuid))
 				{
 					this.logger.Log(LogType.Error, $"Failed to get data file as asset at {gameDataPath}.");
-					FileHelper.SafeFileDelete(gameDataPath);
+					CharonFileUtils.SafeFileDelete(gameDataPath);
 					return;
 				}
 
 				progressCallback(Resources.UI_UNITYPLUGIN_CREATING_GAMEDATA_ASSET, 0.30f);
 				this.closeSource.Token.ThrowIfCancellationRequested();
 
-				var gameDataAssetPath = FileHelper.GetProjectRelativePath(Path.Combine(gameDataDirectory, Path.GetFileNameWithoutExtension(gameDataPath) + ".asset"));
+				var gameDataAssetPath = CharonFileUtils.GetProjectRelativePath(Path.Combine(gameDataDirectory, Path.GetFileNameWithoutExtension(gameDataPath) + ".asset"));
 
 				this.logger.Log(LogType.Assert, $"Creating blank game data asset at {gameDataPath}.");
 
 				progressCallback(null, 0.40f);
 
 				var gameDataAsset = CreateInstance<GameDataBase>();
-				gameDataAsset.settings = GameDataSettings.CreateDefault(gameDataPath, gameDataFileGuid);
+				gameDataAsset.settings = GameDataSettingsUtils.CreateDefault(gameDataPath, gameDataFileGuid);
 				AssetDatabase.CreateAsset(gameDataAsset, gameDataAssetPath);
 				EditorGUIUtility.PingObject(gameDataAsset);
 
@@ -221,7 +221,11 @@ namespace GameDevWare.Charon.Editor.Windows
 
 				progressCallback(Resources.UI_UNITYPLUGIN_GENERATING_SOURCE_CODE, 0.50f);
 
-				await GenerateCodeRoutine.RunAsync(new[] { gameDataAssetPath }, progressCallback.Sub(0.50f, 0.99f)).ConfigureAwait(true);
+				await GenerateCodeRoutine.RunAsync(
+					paths: new[] { gameDataAssetPath },
+					progressCallback: progressCallback.Sub(0.50f, 0.99f),
+					cancellationToken: CancellationToken.None
+				).ConfigureAwait(true);
 
 				progressCallback(Resources.UI_UNITYPLUGIN_PROGRESS_DONE, 1.00f);
 

@@ -39,7 +39,7 @@ namespace GameDevWare.Charon.Editor.Windows
 		[NonSerialized] private string progressStatus;
 		[NonSerialized] private Task projectsFetchTask;
 		[NonSerialized] private ServerApiClient serverApiClient;
-		[NonSerialized] private ILogger logger;
+		[NonSerialized] private readonly ILogger logger;
 
 		[SerializeField] private bool autoClose;
 		[SerializeField] private string apiKey;
@@ -149,7 +149,7 @@ namespace GameDevWare.Charon.Editor.Windows
 			GUILayout.Space(5);
 
 			EditorGUILayout.BeginHorizontal();
-			GUILayout.Label(this.progressStatus, EditorStyles.label, GUILayout.MaxWidth(360));
+			GUILayout.Label(this.progressStatus, EditorStyles.label);
 			EditorGUILayout.Space();
 
 			GUI.enabled = true;
@@ -206,6 +206,7 @@ namespace GameDevWare.Charon.Editor.Windows
 				this.logger.Log(LogType.Error, updateTask.Exception.Unwrap());
 			}
 		}
+
 		private async Task UpdateProjectListAsync(string apiKey)
 		{
 			if (apiKey == null) throw new ArgumentNullException(nameof(apiKey));
@@ -240,8 +241,14 @@ namespace GameDevWare.Charon.Editor.Windows
 				}
 			}
 
-			this.RaiseDone();
+
+			this.progressStatus = Resources.UI_UNITYPLUGIN_PROGRESS_DONE;
+
 			this.Repaint();
+
+			await Task.Delay(1000).ConfigureAwait(true);
+
+			this.RaiseDone();
 		}
 
 		private void RaiseDone()

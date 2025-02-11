@@ -9,7 +9,7 @@
 - Added `I18NAddLanguageAsync` method to ease of addition of new language in game data from Unity's build scripts.
 - Added `clearOutputDirectory` flag in `CharonCli.GenerateCSharpCodeAsync` to allow cleanup output directory from old generated files before adding new ones.
 - Added `CharonCli.RunAsync` which allows to run any command supported by `dotnet charon` tool.
-- Model all Charon related activities in `CharonEditorModule`. You can subscribe on events there to extend existing functionality.
+- Model all Charon related activities in `CharonEditorModule`. You can subscribe on `OnGameDataPreSourceCodeGeneration`, `OnGameDataPreSynchronization`, events there to extend existing functionality.
 
 # UI
 - Added "Create Game Data" window where you can name game data file/class before creation.

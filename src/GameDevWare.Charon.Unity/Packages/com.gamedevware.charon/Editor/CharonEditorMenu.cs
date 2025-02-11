@@ -17,12 +17,9 @@
     along with this program.  If not, see http://www.gnu.org/licenses.
 */
 
-
-using System;
 using System.IO;
 using System.Reflection;
 using System.Threading;
-using System.Threading.Tasks;
 using GameDevWare.Charon.Editor.Cli;
 using GameDevWare.Charon.Editor.Routines;
 using GameDevWare.Charon.Editor.Utils;
@@ -37,7 +34,7 @@ namespace GameDevWare.Charon.Editor
 {
 	internal static class CharonEditorMenu
 	{
-		[MenuItem("Tools/Charon/Generate Code and Assets", false, 1)]
+		[MenuItem("Tools/Charon/Generate C# Code", false, 1)]
 		private static void GenerateCodeAndAssets()
 		{
 			if (!GenerateCodeAndAssetsCheck()) return;
@@ -49,29 +46,28 @@ namespace GameDevWare.Charon.Editor
 			generateCodeTask.ContinueWithHideProgressBar();
 			FocusConsoleWindow();
 		}
-		[MenuItem("Tools/Charon/Generate Code and Assets", true, 1)]
+		[MenuItem("Tools/Charon/Generate C# Code", true, 1)]
 		private static bool GenerateCodeAndAssetsCheck()
 		{
 			return !CharonEditorModule.Instance.Routines.IsRunning && !EditorApplication.isCompiling;
 		}
 
-		[MenuItem("Tools/Charon/Synchronize Connected Assets", false, 2)]
+		[MenuItem("Tools/Charon/Synchronize Assets", false, 2)]
 		private static void SynchronizeAssets()
 		{
 			if (!SynchronizeAssetsCheck()) return;
 
 			var cancellationSource = new CancellationTokenSource();
 			var synchronizeAssetsTask = SynchronizeAssetsRoutine.ScheduleAsync(
-				force: true,
 				progressCallback: ProgressUtils.ShowCancellableProgressBar(Resources.UI_UNITYPLUGIN_GENERATING_CODE_AND_ASSETS, cancellationSource: cancellationSource),
-				cancellation: cancellationSource.Token
+				cancellationToken: cancellationSource.Token
 			);
 			synchronizeAssetsTask.LogFaultAsError();
 			synchronizeAssetsTask.ContinueWithHideProgressBar(CancellationToken.None);
 
 			FocusConsoleWindow();
 		}
-		[MenuItem("Tools/Charon/Synchronize Connected Assets", true, 2)]
+		[MenuItem("Tools/Charon/Synchronize Assets", true, 2)]
 		private static bool SynchronizeAssetsCheck()
 		{
 			return !CharonEditorModule.Instance.Routines.IsRunning && !EditorApplication.isCompiling;
@@ -123,7 +119,7 @@ namespace GameDevWare.Charon.Editor
 		[MenuItem("Tools/Charon/Troubleshooting/Reset Preferences", false, 14)]
 		private static void ResetPreferences()
 		{
-			var userDataDirectory = FileHelper.CharonAppContentPath;
+			var userDataDirectory = CharonFileUtils.CharonAppContentPath;
 			if (Directory.Exists(userDataDirectory) == false)
 				return;
 
@@ -135,15 +131,15 @@ namespace GameDevWare.Charon.Editor
 		[MenuItem("Tools/Charon/Troubleshooting/Open Logs...", false, 17)]
 		private static void OpenLogs()
 		{
-			if (string.IsNullOrEmpty(FileHelper.LibraryCharonLogsPath) == false)
+			if (string.IsNullOrEmpty(CharonFileUtils.LibraryCharonLogsPath) == false)
 			{
-				EditorUtility.OpenWithDefaultApp(FileHelper.LibraryCharonLogsPath);
+				EditorUtility.OpenWithDefaultApp(CharonFileUtils.LibraryCharonLogsPath);
 			}
 		}
 		[MenuItem("Tools/Charon/Troubleshooting/Open Logs...", true, 17)]
 		private static bool OpenLogsCheck()
 		{
-			return string.IsNullOrEmpty(FileHelper.LibraryCharonLogsPath) == false && Directory.Exists(FileHelper.LibraryCharonLogsPath) && Directory.GetFiles(FileHelper.LibraryCharonLogsPath).Length > 0;
+			return string.IsNullOrEmpty(CharonFileUtils.LibraryCharonLogsPath) == false && Directory.Exists(CharonFileUtils.LibraryCharonLogsPath) && Directory.GetFiles(CharonFileUtils.LibraryCharonLogsPath).Length > 0;
 		}
 
 		[MenuItem("Tools/Charon/Troubleshooting/Verbose Logs", false, 20)]
@@ -179,7 +175,6 @@ namespace GameDevWare.Charon.Editor
 			var openWindowMethod = packageManagerWindowType.GetMethod("OpenPackageManager", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)!;
 			openWindowMethod.Invoke(null, new object[] { "com.gamedevware.charon" });
 		}
-
 
 		[MenuItem("Tools/Charon/Settings...", false, 31)]
 		private static void ShowSettings()
@@ -222,8 +217,6 @@ namespace GameDevWare.Charon.Editor
 		{
 			return !CharonEditorModule.Instance.Routines.IsRunning && !EditorApplication.isCompiling;
 		}
-
-
 
 		internal static void FocusConsoleWindow()
 		{

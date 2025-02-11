@@ -46,6 +46,70 @@ namespace GameDevWare.Charon.Editor
 			var schemaRect = new Rect(position.x + 10, position.y + FIELD_HEIGHT * 2, position.width - 10, FIELD_HEIGHT - 2);
 			var idRect = new Rect(position.x + 10, position.y + FIELD_HEIGHT * 3, position.width - 10, FIELD_HEIGHT - 2);
 
+			this.UpdateCachedLists(gameDataField, schemaNameOrIdField);
+
+			// ReSharper disable once AssignmentInConditionalExpression
+			if (property.isExpanded = EditorGUI.Foldout(foldoutRect, property.isExpanded, label, toggleOnLabelClick: true))
+			{
+				GUI.changed = false;
+
+				EditorGUI.PropertyField(gameDataRect, gameDataField);
+
+				if (GUI.changed)
+				{
+					this.UpdateCachedLists(gameDataField, schemaNameOrIdField);
+
+					schemaNameOrIdField.stringValue = string.Empty;
+				}
+
+				// Schema
+				GUI.enabled = this.schemaNames.Length > 0;
+				schemaRect = EditorGUI.PrefixLabel(schemaRect, new GUIContent("Schema"));
+				var selectedIndex = Array.IndexOf(this.schemaNames, schemaNameOrIdField.stringValue ?? string.Empty);
+				var newSelectedIndex = selectedIndex;
+				var isInvalid = !string.IsNullOrEmpty(schemaNameOrIdField.stringValue) && selectedIndex < 0;
+				if (isInvalid)
+				{
+					schemaNameOrIdField.stringValue = EditorGUI.TextField(schemaRect, schemaNameOrIdField.stringValue);
+
+					var highlightRect = new Rect(idRect.x - 2, idRect.y - 2, idRect.width + 4, idRect.height + 4);
+					EditorGUI.DrawRect(highlightRect, new Color(1f, 0f, 0f, 0.2f)); // Semi-transparent red
+				}
+				else
+				{
+					newSelectedIndex = EditorGUI.Popup(schemaRect, selectedIndex, this.schemaNames);
+					schemaNameOrIdField.stringValue = this.schemaNames.ElementAtOrDefault(newSelectedIndex);
+				}
+				GUI.enabled = true;
+
+				if (GUI.changed)
+				{
+					idField.stringValue = string.Empty;
+				}
+
+				// Id
+				GUI.enabled = this.documentIds.Length > 0;
+				idRect = EditorGUI.PrefixLabel(idRect, new GUIContent("Id"));
+				selectedIndex = Array.IndexOf(this.documentIds, idField.stringValue ?? string.Empty);
+				isInvalid = !string.IsNullOrEmpty(idField.stringValue) && selectedIndex < 0;
+				if (isInvalid)
+				{
+					idField.stringValue = EditorGUI.TextField(idRect, idField.stringValue);
+
+					var highlightRect = new Rect(idRect.x - 2, idRect.y - 2, idRect.width + 4, idRect.height + 4);
+					EditorGUI.DrawRect(highlightRect, new Color(1f, 0f, 0f, 0.2f)); // Semi-transparent red
+				}
+				else
+				{
+					newSelectedIndex = EditorGUI.Popup(idRect, selectedIndex, this.documentIds);
+					idField.stringValue = this.documentIds.ElementAtOrDefault(newSelectedIndex);
+				}
+				GUI.enabled = true;
+			}
+			EditorGUI.EndProperty();
+		}
+		private void UpdateCachedLists(SerializedProperty gameDataField, SerializedProperty schemaNameOrIdField)
+		{
 			this.schemaNames ??= Array.Empty<string>();
 			this.documentIds ??= Array.Empty<string>();
 
@@ -58,25 +122,15 @@ namespace GameDevWare.Charon.Editor
 			if (this.lastSchemaName != schemaNameOrIdField.stringValue)
 			{
 				this.lastSchemaName = schemaNameOrIdField.stringValue;
-				this.documentIds = this.lastGameData?.GetDocumentIds(this.lastSchemaName).ToArray() ?? Array.Empty<string>();
+				if (this.schemaNames.Contains(this.lastSchemaName))
+				{
+					this.documentIds = this.lastGameData?.GetDocumentIds(this.lastSchemaName).ToArray() ?? Array.Empty<string>();
+				}
+				else
+				{
+					this.documentIds ??= Array.Empty<string>();
+				}
 			}
-
-			// ReSharper disable once AssignmentInConditionalExpression
-			if (property.isExpanded = EditorGUI.Foldout(foldoutRect, property.isExpanded, label, toggleOnLabelClick: true))
-			{
-				idRect = EditorGUI.PrefixLabel(idRect, new GUIContent("Id"));
-				var selectedIndex = Array.IndexOf(this.documentIds, idField.stringValue ?? string.Empty);
-				selectedIndex = EditorGUI.Popup(idRect, selectedIndex, this.documentIds);
-				idField.stringValue = this.documentIds.ElementAtOrDefault(selectedIndex);
-
-				schemaRect = EditorGUI.PrefixLabel(schemaRect, new GUIContent("Schema"));
-				selectedIndex = Array.IndexOf(this.schemaNames, schemaNameOrIdField.stringValue ?? string.Empty);
-				selectedIndex = EditorGUI.Popup(schemaRect, selectedIndex, this.schemaNames);
-				schemaNameOrIdField.stringValue = this.schemaNames.ElementAtOrDefault(selectedIndex);
-
-				EditorGUI.PropertyField(gameDataRect, gameDataField);
-			}
-			EditorGUI.EndProperty();
 		}
 
 		/// <inheritdoc />

@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Linq;
 using JetBrains.Annotations;
 using UnityEngine;
 
@@ -35,12 +36,15 @@ namespace GameDevWare.Charon
 		[CanBeNull]
 		public GameDataBase gameData;
 
-		public bool IsValid => !string.IsNullOrEmpty(this.id) && !string.IsNullOrEmpty(this.schemaNameOrId) && this.gameData != null;
+		public bool IsEmpty => !string.IsNullOrEmpty(this.id) && !string.IsNullOrEmpty(this.schemaNameOrId) && this.gameData != null;
+		public bool IsValid => !string.IsNullOrEmpty(this.id) && !string.IsNullOrEmpty(this.schemaNameOrId) && this.gameData != null &&
+			this.gameData.GetDocumentSchemaNames().Contains(this.schemaNameOrId, StringComparer.Ordinal) &&
+			this.gameData.GetDocumentIds(this.schemaNameOrId).Contains(this.id, StringComparer.Ordinal);
 
 		[CanBeNull]
 		public object GetReferencedDocument<T>() where T : class
 		{
-			if (!this.IsValid)
+			if (!this.IsEmpty)
 			{
 				return null;
 			}

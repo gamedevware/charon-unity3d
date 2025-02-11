@@ -39,7 +39,7 @@ namespace GameDevWare.Charon.Editor.Services
 		public KeyCryptoStorage(ILogger logger)
 		{
 			this.logger = logger;
-			this.baseDirectory = Path.Combine(FileHelper.LibraryCharonPath, "Keys");
+			this.baseDirectory = Path.Combine(CharonFileUtils.LibraryCharonPath, "Keys");
 
 			this.masterKey = InitializeMasterKey();
 			this.initializationVector = Convert.FromBase64String("Much//LiKEs=");

@@ -48,21 +48,57 @@ namespace GameDevWare.Charon.Editor
 		/// <inheritdoc />
 		public void Log(LogType logType, object message)
 		{
+			if (!this.IsLogTypeAllowed(logType))
+			{
+				return;
+			}
+			if (logType == LogType.Assert)
+			{
+				logType = LogType.Log;
+			}
+
 			this.logger.Log(logType, message);
 		}
 		/// <inheritdoc />
 		public void Log(LogType logType, object message, Object context)
 		{
+			if (!this.IsLogTypeAllowed(logType))
+			{
+				return;
+			}
+			if (logType == LogType.Assert)
+			{
+				logType = LogType.Log;
+			}
+
 			this.logger.Log(logType, message, context);
 		}
 		/// <inheritdoc />
 		public void Log(LogType logType, string tag, object message)
 		{
+			if (!this.IsLogTypeAllowed(logType))
+			{
+				return;
+			}
+			if (logType == LogType.Assert)
+			{
+				logType = LogType.Log;
+			}
+
 			this.logger.Log(logType, tag, message);
 		}
 		/// <inheritdoc />
 		public void Log(LogType logType, string tag, object message, Object context)
 		{
+			if (!this.IsLogTypeAllowed(logType))
+			{
+				return;
+			}
+			if (logType == LogType.Assert)
+			{
+				logType = LogType.Log;
+			}
+
 			this.logger.Log(logType, tag, message, context);
 		}
 		/// <inheritdoc />
@@ -103,6 +139,15 @@ namespace GameDevWare.Charon.Editor
 		/// <inheritdoc />
 		public void LogFormat(LogType logType, string format, params object[] args)
 		{
+			if (!this.IsLogTypeAllowed(logType))
+			{
+				return;
+			}
+			if (logType == LogType.Assert)
+			{
+				logType = LogType.Log;
+			}
+
 			this.logger.LogFormat(logType, format, args);
 		}
 		/// <inheritdoc />

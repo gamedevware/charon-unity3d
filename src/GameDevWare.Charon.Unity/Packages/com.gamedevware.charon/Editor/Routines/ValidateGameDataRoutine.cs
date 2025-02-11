@@ -137,7 +137,7 @@ namespace GameDevWare.Charon.Editor.Routines
 			var loggedErrors = 0;
 			if (report.HasErrors)
 			{
-				var projectId = FileHelper.SanitizeFileName(Path.GetFileNameWithoutExtension(gameDataPath));
+				var projectId = CharonFileUtils.SanitizeFileName(Path.GetFileNameWithoutExtension(gameDataPath));
 				var branchId = "development";
 
 				if (gameDataSettings.IsConnected)
