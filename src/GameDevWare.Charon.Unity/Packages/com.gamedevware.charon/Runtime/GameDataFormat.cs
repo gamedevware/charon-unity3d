@@ -21,10 +21,19 @@ using JetBrains.Annotations;
 
 namespace GameDevWare.Charon
 {
+	/// <summary>
+	/// Format of game data file.
+	/// </summary>
 	[PublicAPI]
 	public enum GameDataFormat
 	{
+		/// <summary>
+		/// Json is text, human-readable format. Documentation: https://www.json.org/json-en.html
+		/// </summary>
 		Json,
+		/// <summary>
+		/// Message Pack is binary, compact and performant format. Documentation: https://msgpack.org/index.html
+		/// </summary>
 		MessagePack
 	}
 }

@@ -143,13 +143,21 @@ namespace GameDevWare.Charon.Editor.Json
 			if (stream == null)
 				throw new ArgumentNullException(nameof(stream));
 			stream.WriteByte((byte)'{');
+			var following = false;
 			foreach (var pair in this.map)
 			{
+				if (following)
+				{
+					stream.WriteByte((byte)',');
+					stream.WriteByte((byte)' ');
+				}
+				following = true;
+
 				stream.WriteByte((byte)'"');
 				var bytes = Encoding.UTF8.GetBytes(this.EscapeString(pair.Key));
 				stream.Write(bytes, 0, bytes.Length);
 				stream.WriteByte((byte)'"');
-				stream.WriteByte((byte)',');
+				stream.WriteByte((byte)':');
 				stream.WriteByte((byte)' ');
 				if (pair.Value == null)
 				{
@@ -159,7 +167,9 @@ namespace GameDevWare.Charon.Editor.Json
 					stream.WriteByte((byte)'l');
 				}
 				else
+				{
 					pair.Value.Save(stream);
+				}
 			}
 			stream.WriteByte((byte)'}');
 		}

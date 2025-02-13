@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.IO;
 using JetBrains.Annotations;
 using UnityObject = UnityEngine.Object;
 
@@ -49,7 +48,7 @@ namespace GameDevWare.Charon
 			string.IsNullOrEmpty(this.projectId) == false &&
 			string.IsNullOrEmpty(this.branchId) == false;
 
-		
+
 		public Uri MakeDataSourceUrl()
 		{
 			if (!this.IsConnected)

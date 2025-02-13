@@ -117,7 +117,7 @@ namespace GameDevWare.Charon.Editor.Utils
 					CharonEditorMenu.FocusConsoleWindow();
 				},
 				CancellationToken.None,
-				TaskContinuationOptions.OnlyOnFaulted,
+				TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously,
 				TaskScheduler.Current
 			);
 		}

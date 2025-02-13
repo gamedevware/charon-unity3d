@@ -18,6 +18,7 @@
 */
 
 using System;
+using Editor.Services;
 using GameDevWare.Charon.Editor.Services;
 using JetBrains.Annotations;
 using UnityEditor;
@@ -28,7 +29,7 @@ namespace GameDevWare.Charon.Editor
 	/// Module governing Charon editor activities. Here you can subscribe on events and change settings.
 	/// </summary>
 	[InitializeOnLoad, PublicAPI]
-	public class CharonEditorModule
+	public class CharonEditorModule: IDisposable
 	{
 		/// <summary>
 		/// Singleton instance of <see cref="CharonEditorModule"/>.
@@ -40,10 +41,12 @@ namespace GameDevWare.Charon.Editor
 			Instance = new CharonEditorModule();
 		}
 
+		internal readonly LogArchiver LogArchiver;
 		internal readonly RoutineQueue Routines;
 		internal readonly CharonProcessList Processes;
 		internal readonly DeferredAssetImporter AssetImporter;
 		internal readonly CharonLogger Logger;
+		internal readonly UnityResourceServer ResourceServer;
 
 		/// <summary>
 		/// API key storage of current user.
@@ -74,12 +77,15 @@ namespace GameDevWare.Charon.Editor
 		private CharonEditorModule()
 		{
 			EditorApplication.update += this.Initialize;
+			AssemblyReloadEvents.beforeAssemblyReload += this.OnBeforeAssemblyReload;
 
 			this.Settings = new CharonSettings();
 			this.Logger = new CharonLogger(this.Settings);
+			this.LogArchiver = new LogArchiver(this.Logger);
 			this.KeyCryptoStorage = new KeyCryptoStorage(this.Logger);
 			this.Routines = new RoutineQueue();
 			this.Processes = new CharonProcessList();
+			this.ResourceServer = new UnityResourceServer(this.Logger);
 			this.AssetImporter = new DeferredAssetImporter(this.Logger);
 		}
 
@@ -91,6 +97,13 @@ namespace GameDevWare.Charon.Editor
 			EditorApplication.update -= this.Initialize;
 
 			this.AssetImporter.Initialize();
+			this.ResourceServer.Initialize();
+			this.LogArchiver.Initialize();
+		}
+
+		private void OnBeforeAssemblyReload()
+		{
+			this.Dispose();
 		}
 
 		internal GameDataSourceCodeGenerationEventArgs RaiseOnGameDataPreSourceCodeGeneration(GameDataBase sender, string sourceCodeDirectory)
@@ -124,6 +137,14 @@ namespace GameDevWare.Charon.Editor
 			var args = new GameDataSynchronizationEventArgs();
 			this.OnGameDataPostSynchronization?.Invoke(sender, args);
 			return args;
+		}
+
+		/// <inheritdoc />
+		public void Dispose()
+		{
+			this.Routines?.Dispose();
+			this.Processes?.Dispose();
+			this.ResourceServer?.Dispose();
 		}
 	}
 }

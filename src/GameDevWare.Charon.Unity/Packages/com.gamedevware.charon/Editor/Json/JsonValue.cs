@@ -72,72 +72,19 @@ namespace GameDevWare.Charon.Editor.Json
 
 			var ret = new JsonReader(textReader).Read();
 
-			return ToJsonValue(ret);
+			return From(ret);
 		}
 		private static IEnumerable<JsonPair> ToJsonPairEnumerable(IEnumerable<KeyValuePair<string, object>> kvpc)
 		{
 			foreach (var kvp in kvpc)
-				yield return new KeyValuePair<string, JsonValue>(kvp.Key, ToJsonValue(kvp.Value));
+				yield return new KeyValuePair<string, JsonValue>(kvp.Key, From(kvp.Value));
 		}
 		private static IEnumerable<JsonValue> ToJsonValueEnumerable(IEnumerable<object> arr)
 		{
 			foreach (var obj in arr)
-				yield return ToJsonValue(obj);
+				yield return From(obj);
 		}
-		private static JsonValue ToJsonValue(object ret)
-		{
-			if (ret == null)
-				return null;
-			if (ret is JsonValue)
-				return (JsonValue)ret;
 
-			var kvpc = ret as IEnumerable<KeyValuePair<string, object>>;
-			if (kvpc != null)
-				return new JsonObject(ToJsonPairEnumerable(kvpc));
-			var arr = ret as IEnumerable<object>;
-			if (arr != null)
-				return new JsonArray(ToJsonValueEnumerable(arr));
-
-			if (ret is bool)
-				return new JsonPrimitive((bool)ret);
-			if (ret is byte)
-				return new JsonPrimitive((byte)ret);
-			if (ret is char)
-				return new JsonPrimitive((char)ret);
-			if (ret is decimal)
-				return new JsonPrimitive((decimal)ret);
-			if (ret is double)
-				return new JsonPrimitive((double)ret);
-			if (ret is float)
-				return new JsonPrimitive((float)ret);
-			if (ret is int)
-				return new JsonPrimitive((int)ret);
-			if (ret is long)
-				return new JsonPrimitive((long)ret);
-			if (ret is sbyte)
-				return new JsonPrimitive((sbyte)ret);
-			if (ret is short)
-				return new JsonPrimitive((short)ret);
-			if (ret is string)
-				return new JsonPrimitive((string)ret);
-			if (ret is uint)
-				return new JsonPrimitive((uint)ret);
-			if (ret is ulong)
-				return new JsonPrimitive((ulong)ret);
-			if (ret is ushort)
-				return new JsonPrimitive((ushort)ret);
-			if (ret is DateTime)
-				return new JsonPrimitive((DateTime)ret);
-			if (ret is DateTimeOffset)
-				return new JsonPrimitive((DateTimeOffset)ret);
-			if (ret is Guid)
-				return new JsonPrimitive((Guid)ret);
-			if (ret is TimeSpan)
-				return new JsonPrimitive((TimeSpan)ret);
-			if (ret is Uri)
-				return new JsonPrimitive((Uri)ret);
-			throw new NotSupportedException($"Unexpected parser return type: {ret.GetType()}");
-		}
 		public static JsonValue Parse(string jsonString)
 		{
 			if (jsonString == null)
@@ -575,53 +522,35 @@ namespace GameDevWare.Charon.Editor.Json
 
 		protected static JsonValue From(object value)
 		{
-			var jsonValue = default(JsonValue);
-			if (value is bool)
-				jsonValue = (bool)value;
-			else if (value is byte)
-				jsonValue = (byte)value;
-			else if (value is char)
-				jsonValue = (char)value;
-			else if (value is decimal)
-				jsonValue = (decimal)value;
-			else if (value is double)
-				jsonValue = (double)value;
-			else if (value is float)
-				jsonValue = (float)value;
-			else if (value is int)
-				jsonValue = (int)value;
-			else if (value is long)
-				jsonValue = (long)value;
-			else if (value is sbyte)
-				jsonValue = (sbyte)value;
-			else if (value is short)
-				jsonValue = (short)value;
-			else if (value is string)
-				jsonValue = (string)value;
-			else if (value is uint)
-				jsonValue = (uint)value;
-			else if (value is ulong)
-				jsonValue = (ulong)value;
-			else if (value is ushort)
-				jsonValue = (ushort)value;
-			else if (value is DateTime)
-				jsonValue = (DateTime)value;
-			else if (value is DateTimeOffset)
-				jsonValue = (DateTimeOffset)value;
-			else if (value is TimeSpan)
-				jsonValue = (TimeSpan)value;
-			else if (value is Guid)
-				jsonValue = (Guid)value;
-			else if (value is Uri)
-				jsonValue = (Uri)value;
-			else if (value is IEnumerable)
-				// ReSharper disable RedundantTypeArgumentsOfMethod
-				jsonValue = new JsonArray(((IEnumerable)value).Cast<object>().Select<object, JsonValue>(From).ToArray());
-			// ReSharper restore RedundantTypeArgumentsOfMethod
-			else
-				jsonValue = JsonObject.From(value);
+			return value switch {
+				JsonValue jsonValue => jsonValue,
+				null => new JsonPrimitive(default(string)),
+				bool boolValue => boolValue,
+				char charValue => charValue,
+				byte byteValue => byteValue,
+				sbyte sbyteValue => sbyteValue,
+				ushort ushortValue => ushortValue,
+				short shotValue => shotValue,
+				int intValue => intValue,
+				uint uintValue => uintValue,
+				long longValue => longValue,
+				ulong ulongValue => ulongValue,
+				decimal decimalValue => decimalValue,
+				double doubleValue => doubleValue,
+				float floatValue => floatValue,
+				string stringValue => stringValue,
+				DateTime dateTime => dateTime,
+				DateTimeOffset dateTimeOffset => dateTimeOffset,
+				TimeSpan timeSpan => timeSpan,
+				Guid guid => guid,
+				Uri uri => uri,
+				Enum => Enum.GetUnderlyingType(value.GetType()) == typeof(ulong) ? Convert.ToUInt64(value) : Convert.ToInt64(value),
+				IEnumerable<JsonPair> keyValuePairs => new JsonObject(keyValuePairs),
+				IEnumerable<KeyValuePair<string, object>> keyValuePairs => new JsonObject(ToJsonPairEnumerable(keyValuePairs)),
+				IEnumerable enumerable => new JsonArray(enumerable.Cast<object>().Select(From).ToArray()),
 
-			return jsonValue;
+				_ => JsonObject.From(value)
+			};
 		}
 	}
 }

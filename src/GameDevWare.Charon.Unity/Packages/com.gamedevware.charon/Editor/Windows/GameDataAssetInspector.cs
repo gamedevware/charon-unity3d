@@ -320,7 +320,7 @@ namespace GameDevWare.Charon.Editor.Windows
 
 			progressCallback?.Invoke(Resources.UI_UNITYPLUGIN_GENERATING_SOURCE_CODE, 0.30f);
 
-			await GenerateCodeRoutine.RunAsync(
+			await GenerateSourceCodeRoutine.RunAsync(
 				paths: new[] { gameDataAssetPath },
 				progressCallback: progressCallback?.Sub(0.30f, 1.00f),
 				cancellationToken: CancellationToken.None

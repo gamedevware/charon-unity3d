@@ -34,7 +34,7 @@ using UnityEngine;
 namespace GameDevWare.Charon.Editor.Routines
 {
 	[PublicAPI]
-	public static class GenerateCodeRoutine
+	public static class GenerateSourceCodeRoutine
 	{
 		public static Task ScheduleAsync(string[] paths = null, Action<string, float> progressCallback = null, CancellationToken cancellationToken = default)
 		{
@@ -150,7 +150,7 @@ namespace GameDevWare.Charon.Editor.Routines
 
 					cancellationToken.ThrowIfCancellationRequested();
 					var taskList = CharonEditorModule.Instance.RaiseOnGameDataPreSourceCodeGeneration(gameDataAsset, codeGenerationPath);
-					await taskList.RunAsync(cancellationToken, logger, nameof(GenerateCodeRoutine)).ConfigureAwait(false);
+					await taskList.RunAsync(cancellationToken, logger, nameof(GenerateSourceCodeRoutine)).ConfigureAwait(false);
 					cancellationToken.ThrowIfCancellationRequested();
 
 					var startTime = Stopwatch.StartNew();
@@ -197,7 +197,7 @@ namespace GameDevWare.Charon.Editor.Routines
 					logger.Log(LogType.Assert, $"C# code generation for game data '{gameDataPath}' is finished successfully in '{startTime.Elapsed}'.");
 
 					taskList = CharonEditorModule.Instance.RaiseOnGameDataPostSourceCodeGeneration(gameDataAsset, codeGenerationPath);
-					await taskList.RunAsync(cancellationToken, logger, nameof(GenerateCodeRoutine)).ConfigureAwait(false);
+					await taskList.RunAsync(cancellationToken, logger, nameof(GenerateSourceCodeRoutine)).ConfigureAwait(false);
 				}
 			}
 			finally

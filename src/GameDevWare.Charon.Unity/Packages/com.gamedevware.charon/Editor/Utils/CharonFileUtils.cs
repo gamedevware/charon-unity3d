@@ -172,6 +172,12 @@ namespace GameDevWare.Charon.Editor.Utils
 			return fileName.ToString();
 		}
 
+		public static void SafeDirectoryDelete(DirectoryInfo directory)
+		{
+			if (directory == null) throw new ArgumentNullException(nameof(directory));
+
+			SafeDirectoryDelete(directory.FullName);
+		}
 		public static void SafeDirectoryDelete(string directoryPath)
 		{
 			if (directoryPath == null) throw new ArgumentNullException(nameof(directoryPath));
@@ -185,6 +191,12 @@ namespace GameDevWare.Charon.Editor.Utils
 				CharonEditorModule.Instance.Logger.Log(LogType.Warning, $"Failed to delete directory '{directoryPath}' due error.");
 				CharonEditorModule.Instance.Logger.Log(LogType.Warning, error);
 			}
+		}
+		public static void SafeFileDelete(FileInfo file)
+		{
+			if (file == null) throw new ArgumentNullException(nameof(file));
+
+			SafeFileDelete(file.FullName);
 		}
 		public static void SafeFileDelete(string filePath)
 		{

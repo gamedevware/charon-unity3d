@@ -39,7 +39,7 @@ namespace GameDevWare.Charon.Editor
 		{
 			if (!GenerateCodeAndAssetsCheck()) return;
 
-			var generateCodeTask = GenerateCodeRoutine.ScheduleAsync(
+			var generateCodeTask = GenerateSourceCodeRoutine.ScheduleAsync(
 				progressCallback: ProgressUtils.ShowProgressBar(Resources.UI_UNITYPLUGIN_GENERATING_CODE_AND_ASSETS));
 
 			generateCodeTask.LogFaultAsError();

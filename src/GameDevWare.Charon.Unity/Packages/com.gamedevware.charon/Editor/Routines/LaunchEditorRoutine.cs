@@ -20,7 +20,6 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using GameDevWare.Charon.Editor.Cli;
@@ -60,8 +59,8 @@ namespace GameDevWare.Charon.Editor.Routines
 				cancellationSource: cancellationSource);
 			progressCallback(Resources.UI_UNITYPLUGIN_PROGRESS_CHECKING_TOOLS_VERSION, 0.0f);
 
-			LoadEditorTask = LoadEditorAsync(gameDataAsset, gameDataAssetPath, reference, LoadEditorTask, progressCallback, cancellationSource.Token)
-				.ContinueWith(_ => EditorUtility.ClearProgressBar(), CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Current);
+			LoadEditorTask = LoadEditorAsync(gameDataAsset, gameDataAssetPath, reference, LoadEditorTask, progressCallback, cancellationSource.Token);
+			LoadEditorTask.ContinueWithHideProgressBar(CancellationToken.None);
 			LoadEditorTask.LogFaultAsError();
 
 			return true;
@@ -74,7 +73,8 @@ namespace GameDevWare.Charon.Editor.Routines
 			string reference,
 			Task waitTask,
 			Action<string, float> progressCallback,
-			CancellationToken cancellation)
+			CancellationToken cancellation
+		)
 		{
 			if (gameDataBase == null) throw new ArgumentNullException(nameof(gameDataBase));
 			if (progressCallback == null) throw new ArgumentNullException(nameof(progressCallback));
@@ -92,6 +92,8 @@ namespace GameDevWare.Charon.Editor.Routines
 				throw new InvalidOperationException($"Unable to start editor for '{gameDataAssetPath}'. File is not a game data file.");
 			}
 
+			reference = AppendUnityResourceServerParams(gameDataAssetPath, reference);
+
 			if (gameDataSettings.IsConnected)
 			{
 				await RemoteAuthenticateAndOpenWindowAsync(gameDataSettings, reference, progressCallback.Sub(0.50f, 1.00f), cancellation).ConfigureAwait(true);
@@ -102,6 +104,24 @@ namespace GameDevWare.Charon.Editor.Routines
 			}
 		}
 
+		private static string AppendUnityResourceServerParams(string gameDataAssetPath, string reference)
+		{
+			var unityResourceServerParams = $"unityPort={CharonEditorModule.Instance.ResourceServer.Port}&unityAssetId={Uri.EscapeDataString(AssetDatabase.AssetPathToGUID(gameDataAssetPath))}";
+			if (string.IsNullOrEmpty(reference))
+			{
+				reference = "?" + unityResourceServerParams;
+			}
+			else if (reference.IndexOf('?') > 0)
+			{
+				reference += "&" + unityResourceServerParams;
+			}
+			else
+			{
+				reference += "?" + unityResourceServerParams;
+			}
+
+			return reference;
+		}
 
 		private static async Task RemoteAuthenticateAndOpenWindowAsync(GameDataSettings gameDataSettings, string reference, Action<string, float> progressCallback, CancellationToken cancellation)
 		{
@@ -168,45 +188,20 @@ namespace GameDevWare.Charon.Editor.Routines
 		private static async Task<bool> TryJoinExistingEditorAsync(GameDataSettings gameDataSettings, string reference, Action<string,float> progressCallback, CancellationToken cancellation)
 		{
 			var gameDataPath = Path.GetFullPath(AssetDatabase.GUIDToAssetPath(gameDataSettings.gameDataFileGuid) ?? "");
-			var lockFilePath = Path.Combine(CharonFileUtils.LibraryCharonPath, CharonServerProcess.GetLockFileNameFor(gameDataPath));
-			if (!File.Exists(lockFilePath))
+			if (!CharonProcessLockFileContent.TryReadLockFile(gameDataPath, out var lockFileContent))
 			{
 				return false;
 			}
 
-			// try delete orphained lock
-			try { File.Delete(lockFilePath); }
-			catch { /* ignore delete attempt errors and continue */ }
-
-			var gameDataEditorUrl = default(Uri);
-			try
-			{
-				using var lockFileStream = new FileStream(lockFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-				using var lockFileReader = new StreamReader(lockFileStream, Encoding.UTF8, detectEncodingFromByteOrderMarks: false, 1024, leaveOpen: true);
-
-				var pidStr = await lockFileReader.ReadLineAsync();
-				var listenAddressString = await lockFileReader.ReadLineAsync();
-
-				if (!int.TryParse(pidStr, out var pid) ||
-					!Uri.TryCreate(listenAddressString, UriKind.Absolute, out gameDataEditorUrl))
-				{
-					return false;
-				}
-
-				using var downloadStream = new MemoryStream();
-				var downloadTask = HttpUtils.DownloadToAsync(downloadStream, gameDataEditorUrl, timeout: TimeSpan.FromSeconds(5), cancellation: cancellation);
-				await downloadTask.IgnoreFault().ConfigureAwait(true);
-				if (downloadTask.IsFaulted || downloadStream.Length == 0)
-				{
-					return false;
-				}
-			}
-			catch
+			using var downloadStream = new MemoryStream();
+			var downloadTask = HttpUtils.DownloadToAsync(downloadStream, lockFileContent.ListenAddress, timeout: TimeSpan.FromSeconds(5), cancellation: cancellation);
+			await downloadTask.IgnoreFault().ConfigureAwait(true);
+			if (downloadTask.IsFaulted || downloadStream.Length == 0)
 			{
 				return false;
 			}
 
-			var navigateUrl = new Uri(gameDataEditorUrl, reference);
+			var navigateUrl = new Uri(lockFileContent.ListenAddress, reference);
 			NavigateTo(navigateUrl);
 			return true;
 		}
@@ -239,7 +234,6 @@ namespace GameDevWare.Charon.Editor.Routines
 
 			if (timeoutTask.IsCompleted)
 			{
-				EditorUtility.ClearProgressBar();
 				logger.Log(LogType.Warning, Resources.UI_UNITYPLUGIN_WINDOW_FAILED_TO_START_EDITOR_TIMEOUT);
 				return;
 			}

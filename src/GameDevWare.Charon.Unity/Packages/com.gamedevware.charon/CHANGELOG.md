@@ -1,18 +1,22 @@
 # Build Scripts
-- refactored `CharonCli` to provide `Task` instead of `Promise` as results.
-- refactored `CharonCli` to use auto-updated `dotnet charon` tool instead of `GameDevWare.Charon` Nuget package.
-- Added `CharonCli.InitGameDataAsync` method of game data file initialization.
-- Added `logsVerbosity` parameter to all `CharonCli` as method of log verbosity control.
-- Changed all input and output models in `CharonCli` to use `JsonObject` or `JObject` if JSON.NET library is added to the project.
-- Added `CharonCli.ImportFromFileAsync`, `ExportToFileAsync`, `I18NImportFromFileAsync`, `I18NExportToFileAsync`, `CreatePatchToFileAsync`, `ApplyPatchFromFileAsync`, `BackupToFileAsync` and `RestoreFromFileAsync` methods to allow perform operations on files.
-- Added `CharonCli.I18NImportAsync` and `I18NExportAsync` methods to provide means to work with localizable data from Unity's  build scripts.
-- Added `I18NAddLanguageAsync` method to ease of addition of new language in game data from Unity's build scripts.
-- Added `clearOutputDirectory` flag in `CharonCli.GenerateCSharpCodeAsync` to allow cleanup output directory from old generated files before adding new ones.
-- Added `CharonCli.RunAsync` which allows to run any command supported by `dotnet charon` tool.
-- Model all Charon related activities in `CharonEditorModule`. You can subscribe on `OnGameDataPreSourceCodeGeneration`, `OnGameDataPreSynchronization`, events there to extend existing functionality.
+- Updated `CharonCli` to return `Task` instead of `Promise` for improved asynchronous handling.
+- Transitioned `CharonCli` to utilize the auto-updated `dotnet charon` tool, replacing the `GameDevWare.Charon` NuGet package.
+- Introduced the `CharonCli.InitGameDataAsync` method for initializing game data files.
+- Incorporated a `logsVerbosity` parameter across all `CharonCli` methods to enable log verbosity control.
+- Modified all input and output models in `CharonCli` to utilize `JsonObject` or `JObject` when the JSON.NET library is included in the project.
+- Expanded `CharonCli` with methods `ImportFromFileAsync`, `ExportToFileAsync`, `I18NImportFromFileAsync`, `I18NExportToFileAsync`, `CreatePatchToFileAsync`, `ApplyPatchFromFileAsync`, `BackupToFileAsync`, and `RestoreFromFileAsync` to facilitate file-based operations.
+- Added `CharonCli.I18NImportAsync` and `I18NExportAsync` methods to support handling of localizable data within Unity's build scripts.
+- Implemented the `I18NAddLanguageAsync` method to simplify the addition of new languages to game data via Unity's build scripts.
+- Introduced a `clearOutputDirectory` flag in `CharonCli.GenerateCSharpCodeAsync` to enable the removal of outdated generated files before adding new ones.
+- Added `CharonCli.RunAsync` to execute any command supported by the `dotnet charon` tool.
+- Structured all Charon-related activities within `CharonEditorModule`, allowing subscription to `OnGameDataPreSourceCodeGeneration` and `OnGameDataPreSynchronization` events for extending functionality.
 
 # UI
-- Added "Create Game Data" window where you can name game data file/class before creation.
-- Moved code generation, import settings from ".gdjs/.gdmp" file to ".asset". Now it is main asset regarding the game data. Every routine refers this asset input parameter instead of ".gdjs/.gdmp" file.
-- Added custom `AssetImporter` for ".gdjs/.gdmp" files. Now these assets have "Reimport" button.
-- Added custom property drawer for `GameDataDocumentReference` type which allows to refer exact document by schema and it's Id.
+- Introduced a "Create Game Data" window for naming game data files/classes prior to creation.
+- Relocated code generation and import settings from ".gdjs/.gdmp" files to ".asset" files, establishing them as the primary assets for game data. All routines now reference these assets instead of ".gdjs/.gdmp" files.
+- Implemented a custom `AssetImporter` for ".gdjs/.gdmp" files, featuring a "Reimport" button for these assets.
+- Developed a custom property drawer for the `GameDataDocumentReference` type, enabling precise document reference by schema and ID.
+
+# Unity
+- Implemented automatic Charon log archiving on a weekly basis with auto-cleanup after one month.
+- Added a local HTTP server to serve the project's C# types to "Formulas" and enabled code generation and asset reimport directly from Charon's UI.

@@ -124,23 +124,27 @@ namespace GameDevWare.Charon.Editor.Json
 			if (stream == null)
 				throw new ArgumentNullException(nameof(stream));
 			stream.WriteByte((byte)'[');
+			var following = false;
 			for (var i = 0; i < this.list.Count; i++)
 			{
+				if (following)
+				{
+					stream.WriteByte((byte)',');
+					stream.WriteByte((byte)' ');
+				}
+				following = true;
+
 				var v = this.list[i];
 				if (v != null)
+				{
 					v.Save(stream);
+				}
 				else
 				{
 					stream.WriteByte((byte)'n');
 					stream.WriteByte((byte)'u');
 					stream.WriteByte((byte)'l');
 					stream.WriteByte((byte)'l');
-				}
-
-				if (i < this.Count - 1)
-				{
-					stream.WriteByte((byte)',');
-					stream.WriteByte((byte)' ');
 				}
 			}
 			stream.WriteByte((byte)']');
