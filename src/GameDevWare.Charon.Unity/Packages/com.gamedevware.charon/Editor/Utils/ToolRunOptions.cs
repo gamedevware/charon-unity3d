@@ -25,7 +25,7 @@ using System.IO;
 
 namespace GameDevWare.Charon.Editor.Utils
 {
-	public sealed class RunOptions
+	public sealed class ToolRunOptions
 	{
 		public bool CaptureStandardOutput { get; set; }
 		public bool CaptureStandardError { get; set; }
@@ -34,7 +34,7 @@ namespace GameDevWare.Charon.Editor.Utils
 		public TimeSpan ExecutionTimeout { get; set; }
 		public TimeSpan TerminationTimeout { get; set; }
 
-		public RunOptions(string executablePath, params string[] arguments)
+		public ToolRunOptions(string executablePath, params string[] arguments)
 		{
 			if (arguments == null) throw new ArgumentNullException(nameof(arguments));
 

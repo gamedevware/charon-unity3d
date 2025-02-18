@@ -26,7 +26,7 @@ namespace GameDevWare.Charon.Editor.Utils
 {
 	internal static class CommandLineUtils
 	{
-		public static async Task<RunResult> RunAsync(RunOptions options)
+		public static async Task<ToolRunResult> RunAsync(ToolRunOptions options)
 		{
 			if (options == null) throw new ArgumentNullException(nameof(options));
 
@@ -47,7 +47,7 @@ namespace GameDevWare.Charon.Editor.Utils
 			if (process == null)
 				throw new InvalidOperationException("Unknown process start error.");
 
-			var result = new RunResult(options, process);
+			var result = new ToolRunResult(options, process);
 			if (options.WaitForExit == false)
 			{
 				//if (Settings.Current.Verbose)

@@ -58,6 +58,17 @@ namespace GameDevWare.Charon.Editor
 			return serverAddress;
 		}
 
+		public void Initialize()
+		{
+			// pre-load prefs
+			
+			_ = this.EditorApplication;
+			_ = this.CustomEditorApplicationPath;
+			_ = this.ServerAddress;
+			_ = this.IdleCloseTimeout;
+			_ = this.LogLevel;
+		}
+		
 		private T GetPrefsValue<T>(string keyName, T defaultValue, ref T? cachedValue) where T: struct
 		{
 			if (cachedValue.HasValue)

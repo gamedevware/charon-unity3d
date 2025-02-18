@@ -28,7 +28,7 @@ namespace GameDevWare.Charon.Editor.Cli
 {
 	public class CharonServerProcess : IDisposable
 	{
-		private readonly RunResult runResult;
+		private readonly ToolRunResult toolRunResult;
 		private readonly ILogger logger;
 
 		public readonly Process Process;
@@ -36,15 +36,15 @@ namespace GameDevWare.Charon.Editor.Cli
 		public readonly Uri ListenAddress;
 		public readonly string LockFilePath;
 
-		public CharonServerProcess(RunResult runResult, string gameDataFilePath, Uri listenAddress, string lockFilePath)
+		public CharonServerProcess(ToolRunResult toolRunResult, string gameDataFilePath, Uri listenAddress, string lockFilePath)
 		{
-			if (runResult == null) throw new ArgumentNullException(nameof(runResult));
+			if (toolRunResult == null) throw new ArgumentNullException(nameof(toolRunResult));
 			if (listenAddress == null) throw new ArgumentNullException(nameof(listenAddress));
 			if (lockFilePath == null) throw new ArgumentNullException(nameof(lockFilePath));
 
 			this.logger = CharonEditorModule.Instance.Logger;
-			this.Process = runResult.Process;
-			this.runResult = runResult;
+			this.Process = toolRunResult.Process;
+			this.toolRunResult = toolRunResult;
 			this.ListenAddress = listenAddress;
 			this.LockFilePath = lockFilePath;
 			this.GameDataFilePath = gameDataFilePath;
@@ -139,7 +139,7 @@ namespace GameDevWare.Charon.Editor.Cli
 		public void Dispose()
 		{
 			this.EndGracefully();
-			((IDisposable)this.runResult)?.Dispose();
+			((IDisposable)this.toolRunResult)?.Dispose();
 		}
 	}
 }

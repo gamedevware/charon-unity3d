@@ -26,7 +26,7 @@ using System.Threading;
 
 namespace GameDevWare.Charon.Editor.Utils
 {
-	public sealed class RunResult : IDisposable
+	public sealed class ToolRunResult : IDisposable
 	{
 		private const int STANDARD_OUTPUT_OPENED = 0x1 << 1;
 		private const int STANDARD_ERROR_OPENED = 0x1 << 2;
@@ -41,7 +41,7 @@ namespace GameDevWare.Charon.Editor.Utils
 		public int ProcessId { get; private set; }
 		public int ExitCode { get; set; }
 
-		public RunResult(RunOptions options, Process process)
+		public ToolRunResult(ToolRunOptions options, Process process)
 		{
 			this.Process = process;
 			this.ProcessId = process.Id;
@@ -62,7 +62,7 @@ namespace GameDevWare.Charon.Editor.Utils
 				process.BeginErrorReadLine();
 			}
 		}
-		~RunResult()
+		~ToolRunResult()
 		{
 			this.Dispose(false);
 		}

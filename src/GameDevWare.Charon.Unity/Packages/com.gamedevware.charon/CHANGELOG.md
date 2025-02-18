@@ -8,7 +8,8 @@
 - Added `CharonCli.I18NImportAsync` and `I18NExportAsync` methods to support handling of localizable data within Unity's build scripts.
 - Implemented the `I18NAddLanguageAsync` method to simplify the addition of new languages to game data via Unity's build scripts.
 - Introduced a `clearOutputDirectory` flag in `CharonCli.GenerateCSharpCodeAsync` to enable the removal of outdated generated files before adding new ones.
-- Added `CharonCli.RunAsync` to execute any command supported by the `dotnet charon` tool.
+- Added `CharonCli.RunCharonAsync` to execute any command supported by the `dotnet charon` tool.
+- Added `CharonCli.RunT4Async` to execute the `dotnet t4` tool.
 - Structured all Charon-related activities within `CharonEditorModule`, allowing subscription to `OnGameDataPreSourceCodeGeneration` and `OnGameDataPreSynchronization` events for extending functionality.
 
 # UI

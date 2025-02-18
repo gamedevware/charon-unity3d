@@ -33,7 +33,7 @@ namespace GameDevWare.Charon.Editor.Services
 		private const string MASTER_KEY_PROPERTY_NAME = "APIKeyStorageIV";
 
 		private readonly string baseDirectory;
-		private readonly byte[] masterKey;
+		private byte[] masterKey;
 		private readonly byte[] initializationVector;
 
 		public KeyCryptoStorage(ILogger logger)
@@ -41,10 +41,15 @@ namespace GameDevWare.Charon.Editor.Services
 			this.logger = logger;
 			this.baseDirectory = Path.Combine(CharonFileUtils.LibraryCharonPath, "Keys");
 
-			this.masterKey = InitializeMasterKey();
+			this.masterKey = new byte[32];
 			this.initializationVector = Convert.FromBase64String("Much//LiKEs=");
 		}
 
+		public void Initialize()
+		{
+			this.masterKey = this.InitializeMasterKey();
+		}
+		
 		public string GetKey(Uri host)
 		{
 			if (host == null) throw new ArgumentNullException(nameof(host));

@@ -52,6 +52,7 @@ namespace GameDevWare.Charon.Editor.Services
 					this.listener.Prefixes.Clear();
 					this.listener.Prefixes.Add("http://127.0.0.1:" + this.Port + "/");
 
+					cancellationToken.ThrowIfCancellationRequested();
 					this.listener.Start();
 
 					this.logger.Log(LogType.Assert, $"Resource server is listening at '{this.listener.Prefixes.FirstOrDefault()}'.");
@@ -212,6 +213,14 @@ namespace GameDevWare.Charon.Editor.Services
 		public void Dispose()
 		{
 			this.cancellationTokenSource.Cancel();
+			try
+			{
+				if (this.listener.IsListening)
+				{
+					this.listener.Stop();
+				}
+			} catch { /* ignore stop errors */ }
+			
 			((IDisposable)this.listener)?.Dispose();
 		}
 	}

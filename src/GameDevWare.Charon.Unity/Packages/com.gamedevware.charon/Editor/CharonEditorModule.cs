@@ -77,7 +77,8 @@ namespace GameDevWare.Charon.Editor
 		private CharonEditorModule()
 		{
 			EditorApplication.update += this.Initialize;
-			AssemblyReloadEvents.beforeAssemblyReload += this.OnBeforeAssemblyReload;
+			AssemblyReloadEvents.beforeAssemblyReload += this.Dispose;
+			AppDomain.CurrentDomain.DomainUnload += (_, _) => this.Dispose();
 
 			this.Settings = new CharonSettings();
 			this.Logger = new CharonLogger(this.Settings);
@@ -96,15 +97,13 @@ namespace GameDevWare.Charon.Editor
 
 			EditorApplication.update -= this.Initialize;
 
+			this.Settings.Initialize();
+			this.KeyCryptoStorage.Initialize();
 			this.AssetImporter.Initialize();
 			this.ResourceServer.Initialize();
 			this.LogArchiver.Initialize();
 		}
-
-		private void OnBeforeAssemblyReload()
-		{
-			this.Dispose();
-		}
+		
 
 		internal GameDataSourceCodeGenerationEventArgs RaiseOnGameDataPreSourceCodeGeneration(GameDataBase sender, string sourceCodeDirectory)
 		{
@@ -142,9 +141,9 @@ namespace GameDevWare.Charon.Editor
 		/// <inheritdoc />
 		public void Dispose()
 		{
+			this.ResourceServer?.Dispose();
 			this.Routines?.Dispose();
 			this.Processes?.Dispose();
-			this.ResourceServer?.Dispose();
 		}
 	}
 }

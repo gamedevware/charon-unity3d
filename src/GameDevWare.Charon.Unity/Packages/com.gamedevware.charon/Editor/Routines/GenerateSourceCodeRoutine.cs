@@ -210,6 +210,7 @@ namespace GameDevWare.Charon.Editor.Routines
 			{
 				AssetDatabase.ImportAsset(forceReImportPath, ImportAssetOptions.ForceUpdate);
 			}
+			AssetDatabase.Refresh();
 
 			progressCallback?.Invoke(Resources.UI_UNITYPLUGIN_PROGRESS_DONE, 1);
 		}

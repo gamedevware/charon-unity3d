@@ -212,5 +212,25 @@ namespace GameDevWare.Charon.Editor.Utils
 				CharonEditorModule.Instance.Logger.Log(LogType.Warning,error);
 			}
 		}
+		public static bool HasSameContent(string sourceFilePath, string targetFilePath)
+		{
+			if (sourceFilePath == null) throw new ArgumentNullException(nameof(sourceFilePath));
+			if (targetFilePath == null) throw new ArgumentNullException(nameof(targetFilePath));
+
+			if (!File.Exists(sourceFilePath) || !File.Exists(targetFilePath))
+			{
+				return false;
+			}
+			
+			var sourceBytes = default(byte[]);
+			var targetBytes = default(byte[]);
+
+			try { sourceBytes = File.ReadAllBytes(sourceFilePath); }
+			catch { /* ignore read errors */ }
+			try { targetBytes = File.ReadAllBytes(targetFilePath); }
+			catch { /* ignore read errors */ }
+
+			return sourceBytes != null && targetBytes != null && sourceBytes.SequenceEqual(targetBytes);
+		}
 	}
 }
