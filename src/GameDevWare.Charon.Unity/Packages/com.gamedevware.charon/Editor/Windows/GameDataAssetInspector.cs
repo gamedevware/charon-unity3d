@@ -18,7 +18,10 @@
 */
 
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -26,6 +29,7 @@ using System.Threading.Tasks;
 using GameDevWare.Charon.Editor.Cli;
 using GameDevWare.Charon.Editor.Routines;
 using GameDevWare.Charon.Editor.Utils;
+using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
 using UnityObject = UnityEngine.Object;
@@ -36,6 +40,8 @@ namespace GameDevWare.Charon.Editor.Windows
 	internal class GameDataAssetInspector : UnityEditor.Editor
 	{
 		private static readonly Regex RevisionHashRegex = new Regex("\"RevisionHash\"\\s*:\\s*\"([a-fA-F0-9\\-]+)\"");
+		private static readonly KeyValuePair<string, string>[] AllLanguagesWithId = CultureInfo.GetCultures(CultureTypes.SpecificCultures)
+			.OrderBy(c => c.Name).Select(c => new KeyValuePair<string, string>($"{{{c.Name}}}", $"[{c.Name}] {c.EnglishName}")).ToArray();
 
 		[NonSerialized]
 		private GameDataBase lastGameDataAsset;
@@ -57,9 +63,14 @@ namespace GameDevWare.Charon.Editor.Windows
 		private bool codeGenerationFold;
 		[SerializeField]
 		private bool connectionFold;
+		[SerializeField]
+		private bool publicationFold;
+		[SerializeField]
+		private bool publicationLanguagesFold;
+		[SerializeField]
+		private Vector2 scrollPosition;
 
 		/// <inheritdoc />
-
 		// ReSharper disable once FunctionComplexityOverflow
 		public override void OnInspectorGUI()
 		{
@@ -71,7 +82,6 @@ namespace GameDevWare.Charon.Editor.Windows
 				return;
 			}
 
-			var gameDataAssetPath = CharonFileUtils.GetProjectRelativePath(AssetDatabase.GetAssetPath(this.target));
 			if (this.lastGameDataAsset != gameDataAsset || this.gameDataSettings == null)
 			{
 				this.gameDataSettings = gameDataAsset.settings;
@@ -108,100 +118,21 @@ namespace GameDevWare.Charon.Editor.Windows
 			EditorGUILayout.EndHorizontal();
 			EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_INSPECTOR_GAME_DATA_VERSION_LABEL, gameDataAsset.GameDataVersion);
 
-			this.codeGenerationFold = EditorGUILayout.Foldout(this.codeGenerationFold, Resources.UI_UNITYPLUGIN_INSPECTOR_CODE_GENERATION_LABEL);
-			if (this.codeGenerationFold)
-			{
-				GUI.enabled = !CharonEditorModule.Instance.Routines.IsRunning && !EditorApplication.isCompiling;
-
-				var folderAsset = !string.IsNullOrEmpty(this.gameDataSettings.codeGenerationPath) && Directory.Exists(this.gameDataSettings.codeGenerationPath) ?
-					AssetDatabase.LoadAssetAtPath<DefaultAsset>(this.gameDataSettings.codeGenerationPath) : null;
-
-				if (folderAsset != null)
-				{
-					this.gameDataSettings.codeGenerationPath = AssetDatabase.GetAssetPath(
-						EditorGUILayout.ObjectField(Resources.UI_UNITYPLUGIN_INSPECTOR_CODE_GENERATION_PATH, folderAsset, typeof(DefaultAsset), false));
-				}
-				else
-				{
-					this.gameDataSettings.codeGenerationPath = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_INSPECTOR_CODE_GENERATION_PATH,
-						this.gameDataSettings.codeGenerationPath);
-				}
-
-				this.gameDataSettings.gameDataNamespace = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_INSPECTOR_CODE_NAMESPACE,
-					this.gameDataSettings.gameDataNamespace);
-				this.gameDataSettings.gameDataClassName = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_INSPECTOR_CODE_GAMEDATA_CLASS_NAME,
-					this.gameDataSettings.gameDataClassName);
-				this.gameDataSettings.gameDataDocumentClassName = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_INSPECTOR_CODE_DOCUMENT_CLASS_NAME,
-					this.gameDataSettings.gameDataDocumentClassName);
-				this.gameDataSettings.defineConstants = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_INSPECTOR_CODE_DEFINE_CONSTANTS,
-					this.gameDataSettings.defineConstants);
-				this.gameDataSettings.lineEnding = (int)(SourceCodeLineEndings)EditorGUILayout.EnumPopup(
-					Resources.UI_UNITYPLUGIN_INSPECTOR_CODE_LINE_ENDINGS, (SourceCodeLineEndings)this.gameDataSettings.lineEnding);
-				this.gameDataSettings.indentation = (int)(SourceCodeIndentation)EditorGUILayout.EnumPopup(
-					Resources.UI_UNITYPLUGIN_INSPECTOR_CODE_INDENTATION, (SourceCodeIndentation)this.gameDataSettings.indentation);
-				this.gameDataSettings.optimizations = (int)(SourceCodeGenerationOptimizations)EditorGUILayout.EnumFlagsField(
-					Resources.UI_UNITYPLUGIN_INSPECTOR_CODE_OPTIMIZATIONS, (SourceCodeGenerationOptimizations)this.gameDataSettings.optimizations);
-				this.gameDataSettings.clearOutputDirectory = EditorGUILayout.Toggle(Resources.UI_UNITYPLUGIN_INSPECTOR_CLEAR_OUTPUT_DIRECTORY,
-					this.gameDataSettings.clearOutputDirectory);
-				this.gameDataSettings.splitSourceCodeFiles = EditorGUILayout.Toggle(Resources.UI_UNITYPLUGIN_INSPECTOR_SPLIT_FILES,
-					this.gameDataSettings.splitSourceCodeFiles);
-
-				GUI.enabled = true;
-			}
+			this.OnCodeGenerationSettingsGUI(gameDataAsset);
 
 			GUI.enabled = !CharonEditorModule.Instance.Routines.IsRunning &&
 				!EditorApplication.isCompiling;
 
 			EditorGUILayout.Space();
 
-			this.connectionFold = EditorGUILayout.Foldout(this.connectionFold, this.lastServerAddress);
-			if (this.connectionFold)
-			{
-				if (this.gameDataSettings.IsConnected)
-				{
-					EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_INSPECTOR_PROJECT_LABEL,
-						this.gameDataSettings.projectName ?? this.gameDataSettings.projectId);
-					EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_INSPECTOR_BRANCH_LABEL, this.gameDataSettings.branchName ?? this.gameDataSettings.branchId);
-
-					EditorGUILayout.Space();
-
-					EditorGUILayout.BeginHorizontal();
-
-					if (GUILayout.Button(Resources.UI_UNITYPLUGIN_INSPECTOR_DISCONNECT_BUTTON))
-					{
-						this.gameDataSettings.serverAddress = null;
-						this.gameDataSettings.branchId = null;
-						this.gameDataSettings.branchName = null;
-						this.gameDataSettings.projectId = null;
-						this.gameDataSettings.projectName = null;
-						this.lastServerAddress = Resources.UI_UNITYPLUGIN_INSPECTOR_NOT_CONNECTED_LABEL;
-
-						GUI.changed = true;
-					}
-
-					if (GUILayout.Button(Resources.UI_UNITYPLUGIN_INSPECTOR_SET_API_KEY_BUTTON))
-					{
-						ApiKeyPromptWindow.ShowAsync(this.gameDataSettings.projectId, this.gameDataSettings.projectName);
-					}
-
-					EditorGUILayout.EndHorizontal();
-				}
-				else
-				{
-					EditorGUILayout.HelpBox(Resources.UI_UNITYPLUGIN_INSPECTOR_NOT_CONNECTED, MessageType.Info);
-					EditorGUILayout.Space();
-
-					if (GUILayout.Button(Resources.UI_UNITYPLUGIN_INSPECTOR_CONNECT_BUTTON))
-					{
-						ConnectGameDataWindow.ShowAsync(
-							gameDataBase: gameDataAsset,
-							autoClose: true
-						);
-					}
-				}
-			}
+			this.OnAssetImportSettingsGUI(gameDataAsset);
 
 			EditorGUILayout.Space();
+
+			this.OnConnectionGUI(gameDataAsset);
+
+			EditorGUILayout.Space();
+
 			GUILayout.Label(Resources.UI_UNITYPLUGIN_INSPECTOR_ACTIONS_GROUP, EditorStyles.boldLabel);
 
 			if (EditorApplication.isCompiling)
@@ -241,6 +172,157 @@ namespace GameDevWare.Charon.Editor.Windows
 				EditorUtility.SetDirty(this.target);
 				AssetDatabase.SaveAssetIfDirty(this.target);
 			}
+		}
+		private void OnConnectionGUI(GameDataBase gameDataAsset)
+		{
+			this.connectionFold = EditorGUILayout.Foldout(this.connectionFold, this.lastServerAddress);
+			if (!this.connectionFold) return;
+
+			EditorGUI.indentLevel++;
+
+			if (gameDataAsset.settings.IsConnected)
+			{
+				EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_INSPECTOR_PROJECT_LABEL,
+					gameDataAsset.settings.projectName ?? gameDataAsset.settings.projectId);
+				EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_INSPECTOR_BRANCH_LABEL, gameDataAsset.settings.branchName ?? gameDataAsset.settings.branchId);
+
+				EditorGUILayout.Space();
+
+				EditorGUILayout.BeginHorizontal();
+
+				if (GUILayout.Button(Resources.UI_UNITYPLUGIN_INSPECTOR_DISCONNECT_BUTTON))
+				{
+					gameDataAsset.settings.serverAddress = null;
+					gameDataAsset.settings.branchId = null;
+					gameDataAsset.settings.branchName = null;
+					gameDataAsset.settings.projectId = null;
+					gameDataAsset.settings.projectName = null;
+					this.lastServerAddress = Resources.UI_UNITYPLUGIN_INSPECTOR_NOT_CONNECTED_LABEL;
+
+					GUI.changed = true;
+				}
+
+				if (GUILayout.Button(Resources.UI_UNITYPLUGIN_INSPECTOR_SET_API_KEY_BUTTON))
+				{
+					ApiKeyPromptWindow.ShowAsync(gameDataAsset.settings.projectId, gameDataAsset.settings.projectName);
+				}
+
+				EditorGUILayout.EndHorizontal();
+			}
+			else
+			{
+				EditorGUILayout.HelpBox(Resources.UI_UNITYPLUGIN_INSPECTOR_NOT_CONNECTED, MessageType.Info);
+				EditorGUILayout.Space();
+
+				if (GUILayout.Button(Resources.UI_UNITYPLUGIN_INSPECTOR_CONNECT_BUTTON))
+				{
+					ConnectGameDataWindow.ShowAsync(
+						gameDataBase: gameDataAsset,
+						autoClose: true
+					);
+				}
+			}
+
+			EditorGUI.indentLevel--;
+		}
+		private void OnCodeGenerationSettingsGUI(GameDataBase gameDataAsset)
+		{
+			this.codeGenerationFold = EditorGUILayout.Foldout(this.codeGenerationFold, Resources.UI_UNITYPLUGIN_INSPECTOR_CODE_GENERATION_LABEL);
+			if (!this.codeGenerationFold) return;
+
+			EditorGUI.indentLevel++;
+			GUI.enabled = !CharonEditorModule.Instance.Routines.IsRunning && !EditorApplication.isCompiling;
+
+			var folderAsset = !string.IsNullOrEmpty(gameDataAsset.settings.codeGenerationPath) && Directory.Exists(gameDataAsset.settings.codeGenerationPath) ?
+				AssetDatabase.LoadAssetAtPath<DefaultAsset>(gameDataAsset.settings.codeGenerationPath) : null;
+
+			if (folderAsset != null)
+			{
+				gameDataAsset.settings.codeGenerationPath = AssetDatabase.GetAssetPath(
+					EditorGUILayout.ObjectField(Resources.UI_UNITYPLUGIN_INSPECTOR_CODE_GENERATION_PATH, folderAsset, typeof(DefaultAsset), false));
+			}
+			else
+			{
+				gameDataAsset.settings.codeGenerationPath = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_INSPECTOR_CODE_GENERATION_PATH,
+					gameDataAsset.settings.codeGenerationPath);
+			}
+
+			gameDataAsset.settings.gameDataNamespace = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_INSPECTOR_CODE_NAMESPACE,
+				gameDataAsset.settings.gameDataNamespace);
+			gameDataAsset.settings.gameDataClassName = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_INSPECTOR_CODE_GAMEDATA_CLASS_NAME,
+				gameDataAsset.settings.gameDataClassName);
+			gameDataAsset.settings.gameDataDocumentClassName = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_INSPECTOR_CODE_DOCUMENT_CLASS_NAME,
+				gameDataAsset.settings.gameDataDocumentClassName);
+			gameDataAsset.settings.defineConstants = EditorGUILayout.TextField(Resources.UI_UNITYPLUGIN_INSPECTOR_CODE_DEFINE_CONSTANTS,
+				gameDataAsset.settings.defineConstants);
+			gameDataAsset.settings.lineEnding = (int)(SourceCodeLineEndings)EditorGUILayout.EnumPopup(
+				Resources.UI_UNITYPLUGIN_INSPECTOR_CODE_LINE_ENDINGS, (SourceCodeLineEndings)gameDataAsset.settings.lineEnding);
+			gameDataAsset.settings.indentation = (int)(SourceCodeIndentation)EditorGUILayout.EnumPopup(
+				Resources.UI_UNITYPLUGIN_INSPECTOR_CODE_INDENTATION, (SourceCodeIndentation)gameDataAsset.settings.indentation);
+			gameDataAsset.settings.optimizations = (int)(SourceCodeGenerationOptimizations)EditorGUILayout.EnumFlagsField(
+				Resources.UI_UNITYPLUGIN_INSPECTOR_CODE_OPTIMIZATIONS, (SourceCodeGenerationOptimizations)gameDataAsset.settings.optimizations);
+			gameDataAsset.settings.clearOutputDirectory = EditorGUILayout.Toggle(Resources.UI_UNITYPLUGIN_INSPECTOR_CLEAR_OUTPUT_DIRECTORY,
+				gameDataAsset.settings.clearOutputDirectory);
+			gameDataAsset.settings.splitSourceCodeFiles = EditorGUILayout.Toggle(Resources.UI_UNITYPLUGIN_INSPECTOR_SPLIT_FILES,
+				gameDataAsset.settings.splitSourceCodeFiles);
+
+			GUI.enabled = true;
+			EditorGUI.indentLevel--;
+		}
+		private void OnAssetImportSettingsGUI(GameDataBase gameDataAsset)
+		{
+			this.publicationFold = EditorGUILayout.Foldout(this.publicationFold, Resources.UI_UNITYPLUGIN_INSPECTOR_ASSET_IMPORT_SETTINGS_LABEL);
+			if (!this.publicationFold) return;
+			EditorGUI.indentLevel++;
+
+			gameDataAsset.settings.publishFormat = Convert.ToInt32(EditorGUILayout.EnumPopup(Resources.UI_UNITYPLUGIN_INSPECTOR_PUBLICATION_FORMAT_LABEL,
+				(GameDataFormat)gameDataAsset.settings.publishFormat));
+
+			var publishLanguages = gameDataAsset.settings.publishLanguages ?? Array.Empty<string>();
+			this.publicationLanguagesFold = EditorGUILayout.Foldout(this.publicationLanguagesFold, Resources.UI_UNITYPLUGIN_INSPECTOR_PUBLICATION_LANGUAGES_LABEL + $" [{publishLanguages.Length}]");
+			if (!this.publicationLanguagesFold)
+			{
+				EditorGUI.indentLevel--;
+				return;
+			}
+
+			EditorGUILayout.BeginHorizontal();
+			{
+				GUILayout.Space(20);
+
+				this.scrollPosition = GUILayout.BeginScrollView(this.scrollPosition, GUI.skin.box, GUILayout.Height(120));
+				{
+					foreach (var languageWithId in AllLanguagesWithId)
+					{
+						var hasThisLanguage = publishLanguages.Contains(languageWithId.Key, StringComparer.OrdinalIgnoreCase);
+						var languageToggled = GUILayout.Toggle(hasThisLanguage, languageWithId.Value);
+						if (!hasThisLanguage && languageToggled)
+						{
+							gameDataAsset.settings.publishLanguages = new List<string>(publishLanguages) { languageWithId.Key }.ToArray();
+						}
+						else if (hasThisLanguage && !languageToggled)
+						{
+							gameDataAsset.settings.publishLanguages = new List<string>(publishLanguages.Where(languageId => !string.Equals(languageId,
+								languageWithId.Key, StringComparison.OrdinalIgnoreCase))).ToArray();
+						}
+					}
+				}
+				GUILayout.EndScrollView();
+			}
+			EditorGUILayout.EndHorizontal();
+
+			EditorGUILayout.BeginHorizontal();
+			{
+				EditorGUILayout.Space();
+				if (GUILayout.Button(Resources.UI_UNITYPLUGIN_INSPECTOR_RESET_BUTTON, GUILayout.Height(20), GUILayout.Width(50)))
+				{
+					gameDataAsset.settings.publishLanguages = Array.Empty<string>();
+				}
+			}
+			EditorGUILayout.EndHorizontal();
+
+			EditorGUI.indentLevel--;
+
 		}
 
 		private void RecheckGamedataHash()

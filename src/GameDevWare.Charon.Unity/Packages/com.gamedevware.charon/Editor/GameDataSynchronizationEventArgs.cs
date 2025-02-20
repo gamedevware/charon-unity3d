@@ -16,7 +16,17 @@ namespace GameDevWare.Charon.Editor
 		/// <summary>
 		/// List of additional tasks to perform during asset synchronization.
 		/// </summary>
-		public readonly List<Func<CancellationToken, Task>> Tasks = new List<Func<CancellationToken, Task>>();
+		public readonly List<Func<CancellationToken, Task>> Tasks;
+		/// <summary>
+		/// Path to published game data file which would be imported into `.asset` file.
+		/// </summary>
+		public readonly string PublishedGameDataFilePath;
+
+		public GameDataSynchronizationEventArgs(string publishedGameDataFilePath)
+		{
+			this.Tasks = new List<Func<CancellationToken, Task>>();
+			this.PublishedGameDataFilePath = publishedGameDataFilePath;
+		}
 
 		internal async Task RunAsync(CancellationToken cancellationToken, ILogger logger, string operationName)
 		{

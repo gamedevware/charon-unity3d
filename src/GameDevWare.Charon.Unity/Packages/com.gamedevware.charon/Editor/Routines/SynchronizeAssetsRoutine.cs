@@ -23,6 +23,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using GameDevWare.Charon.Editor.Cli;
 using GameDevWare.Charon.Editor.ServerApi;
 using GameDevWare.Charon.Editor.Utils;
 using GameDevWare.Charon.Editor.Windows;
@@ -63,7 +64,8 @@ namespace GameDevWare.Charon.Editor.Routines
 					if (File.Exists(gameDataAssetPath) == false)
 						continue;
 
-					progressCallback?.Invoke(string.Format(Resources.UI_UNITYPLUGIN_PROGRESS_PROCESSING_GAMEDATA, gameDataAssetPath), (float)i / total);
+					var pathSpecificProgress = progressCallback?.Sub((float)i / total, i + 1.0f / total);
+					pathSpecificProgress?.Invoke(string.Format(Resources.UI_UNITYPLUGIN_PROGRESS_PROCESSING_GAMEDATA, gameDataAssetPath), 0.00f);
 
 					var gameDataAsset = AssetDatabase.LoadAssetAtPath<GameDataBase>(gameDataAssetPath);
 					if (gameDataAsset == null)
@@ -71,19 +73,25 @@ namespace GameDevWare.Charon.Editor.Routines
 						continue;
 					}
 
+					cancellationToken.ThrowIfCancellationRequested();
 					var gameDataSettings = gameDataAsset.settings;
 					var gameDataPath = AssetDatabase.GUIDToAssetPath(gameDataSettings.gameDataFileGuid) ?? string.Empty;
+					var publishFilePath = Path.Combine(CharonFileUtils.TempPath, $"gamedata_{Guid.NewGuid():N}.tmp");
 
-					cancellationToken.ThrowIfCancellationRequested();
-					var taskList = CharonEditorModule.Instance.RaiseOnGameDataPreSynchronization(gameDataAsset);
+
+					pathSpecificProgress?.Invoke(Resources.UI_UNITYPLUGIN_PROGRESS_RUNNING_PRE_TASKS, 0.10f);
+					var taskList = CharonEditorModule.Instance.RaiseOnGameDataPreSynchronization(gameDataAsset, publishFilePath);
 					await taskList.RunAsync(cancellationToken, logger, nameof(SynchronizeAssetsRoutine)).ConfigureAwait(false);
 					cancellationToken.ThrowIfCancellationRequested();
 
+					pathSpecificProgress?.Invoke(Resources.UI_UNITYPLUGIN_GENERATING_CODE_AND_ASSETS, 0.30f);
+
 					// synchronize with online service if required
-					await SynchronizeAssetIfNeededAsync(gameDataAssetPath, gameDataSettings, progressCallback.Sub((float)i / total, i + 1.0f / total), logger,
+					await SynchronizeAssetIfNeededAsync(gameDataAssetPath, gameDataSettings, pathSpecificProgress?.Sub(0.30f, 0.50f), logger,
 						cancellationToken).IgnoreFault();
 
-					// trying to touch gamedata file
+					pathSpecificProgress?.Invoke(null, 0.50f);
+
 					var startTime = Stopwatch.StartNew();
 					var gameDataAssetClassName = gameDataSettings.gameDataNamespace + "." + gameDataSettings.gameDataClassName + "Asset";
 					var gameDataAssetType = default(Type);
@@ -103,15 +111,23 @@ namespace GameDevWare.Charon.Editor.Routines
 						continue;
 					}
 
-					using (var file = await CharonFileUtils.ReadFileAsync(gameDataPath, 5))
-					{
-						var gameDataFormat = FormatsExtensions.GetGameDataFormatForExtension(gameDataPath);
-						if (gameDataFormat == null)
-						{
-							throw new InvalidOperationException($"Unable to generate game data asset at '{gameDataPath}' " +
-								$"because storage format '{Path.GetExtension(gameDataPath)}' is not supported.");
-						}
+					var publishFormat = (GameDataFormat)gameDataAsset.settings.publishFormat;
+					var exportPublicationFormat = publishFormat switch {
+						GameDataFormat.Json => ExportFormat.Json,
+						GameDataFormat.MessagePack => ExportFormat.MessagePack,
+						_ => throw new ArgumentOutOfRangeException($"Unknown {nameof(GameDataFormat)} value '{publishFormat}' in settings of '{gameDataAssetPath}' asset.")
+					};
 
+					logger.Log(LogType.Assert, $"Exporting game data from '{gameDataPath}' into temporary file '{publishFilePath}'[format: {publishFormat}].");
+
+					await CharonCli.ExportToFileAsync(Path.GetFullPath(gameDataPath), apiKey: null, exportedDocumentsFilePath: publishFilePath, format: exportPublicationFormat,
+						schemaNamesOrIds: Array.Empty<string>(), properties: Array.Empty<string>(), languages: gameDataAsset.settings.publishLanguages ?? Array.Empty<string>(),
+						exportMode: ExportMode.Publication, logsVerbosity: CharonEditorModule.Instance.Settings.LogLevel).ConfigureAwait(true);
+
+					pathSpecificProgress?.Invoke(null, 0.70f);
+
+					using (var fileStream = await CharonFileUtils.ReadFileAsync(publishFilePath, 5)) // trying to touch gamedata file
+					{
 						if (gameDataAsset.GetType() != gameDataAssetType)
 						{
 							logger.Log(LogType.Assert, $"Asset at '{gameDataAssetPath}'({AssetDatabase.AssetPathToGUID(gameDataAssetPath)}) has type " +
@@ -129,8 +145,10 @@ namespace GameDevWare.Charon.Editor.Routines
 								$"now is '{gameDataAsset.GetType().Name}' type.");
 						}
 
-						gameDataAsset.Save(file, gameDataFormat.Value);
+						gameDataAsset.Save(fileStream, publishFormat);
 					}
+
+					pathSpecificProgress?.Invoke(null, 0.80f);
 
 					EditorUtility.SetDirty(gameDataAsset);
 					AssetDatabase.SaveAssetIfDirty(gameDataAsset);
@@ -138,13 +156,10 @@ namespace GameDevWare.Charon.Editor.Routines
 					logger.Log(LogType.Assert, $"Asset generation of game data at '{gameDataAssetPath}' is finished " +
 						$"successfully in '{startTime.Elapsed}'.");
 
-					taskList = CharonEditorModule.Instance.RaiseOnGameDataPostSynchronization(gameDataAsset);
+					pathSpecificProgress?.Invoke(Resources.UI_UNITYPLUGIN_PROGRESS_RUNNING_POST_TASKS, 0.90f);
+
+					taskList = CharonEditorModule.Instance.RaiseOnGameDataPostSynchronization(gameDataAsset, publishFilePath);
 					await taskList.RunAsync(cancellationToken, logger, nameof(SynchronizeAssetsRoutine)).ConfigureAwait(false);
-
-					progressCallback?.Invoke(Resources.UI_UNITYPLUGIN_GENERATE_REFRESHING_ASSETS, 1.00f);
-
-					AssetDatabase.Refresh(ImportAssetOptions.Default);
-
 				}
 			}
 			catch (Exception reimportError)

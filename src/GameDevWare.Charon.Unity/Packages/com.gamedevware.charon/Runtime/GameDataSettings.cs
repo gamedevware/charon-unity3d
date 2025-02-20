@@ -32,6 +32,8 @@ namespace GameDevWare.Charon
 		public string gameDataNamespace;
 		public string gameDataDocumentClassName;
 		public string defineConstants;
+		public string[] publishLanguages;
+		public int publishFormat;
 		public int optimizations;
 		public int lineEnding;
 		public int indentation;

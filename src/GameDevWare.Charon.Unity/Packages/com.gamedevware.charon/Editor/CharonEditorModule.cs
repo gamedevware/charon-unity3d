@@ -77,8 +77,6 @@ namespace GameDevWare.Charon.Editor
 		private CharonEditorModule()
 		{
 			EditorApplication.update += this.Initialize;
-			AssemblyReloadEvents.beforeAssemblyReload += this.Dispose;
-			AppDomain.CurrentDomain.DomainUnload += (_, _) => this.Dispose();
 
 			this.Settings = new CharonSettings();
 			this.Logger = new CharonLogger(this.Settings);
@@ -102,8 +100,12 @@ namespace GameDevWare.Charon.Editor
 			this.AssetImporter.Initialize();
 			this.ResourceServer.Initialize();
 			this.LogArchiver.Initialize();
+
+			AssemblyReloadEvents.beforeAssemblyReload += this.Dispose;
+			AppDomain.CurrentDomain.DomainUnload += (_, _) => this.Dispose();
+			EditorApplication.quitting += this.Dispose;
 		}
-		
+
 
 		internal GameDataSourceCodeGenerationEventArgs RaiseOnGameDataPreSourceCodeGeneration(GameDataBase sender, string sourceCodeDirectory)
 		{
@@ -121,19 +123,19 @@ namespace GameDevWare.Charon.Editor
 			this.OnGameDataPostSourceCodeGeneration?.Invoke(sender, args);
 			return args;
 		}
-		internal GameDataSynchronizationEventArgs RaiseOnGameDataPreSynchronization(GameDataBase sender)
+		internal GameDataSynchronizationEventArgs RaiseOnGameDataPreSynchronization(GameDataBase sender, string publishedGameDataFilePath)
 		{
 			if (sender == null) throw new ArgumentNullException(nameof(sender));
 
-			var args = new GameDataSynchronizationEventArgs();
+			var args = new GameDataSynchronizationEventArgs(publishedGameDataFilePath);
 			this.OnGameDataPreSynchronization?.Invoke(sender, args);
 			return args;
 		}
-		internal GameDataSynchronizationEventArgs RaiseOnGameDataPostSynchronization(GameDataBase sender)
+		internal GameDataSynchronizationEventArgs RaiseOnGameDataPostSynchronization(GameDataBase sender, string publishedGameDataFilePath)
 		{
 			if (sender == null) throw new ArgumentNullException(nameof(sender));
 
-			var args = new GameDataSynchronizationEventArgs();
+			var args = new GameDataSynchronizationEventArgs(publishedGameDataFilePath);
 			this.OnGameDataPostSynchronization?.Invoke(sender, args);
 			return args;
 		}

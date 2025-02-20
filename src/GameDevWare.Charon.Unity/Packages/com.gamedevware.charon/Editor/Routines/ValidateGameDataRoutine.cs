@@ -63,7 +63,8 @@ namespace GameDevWare.Charon.Editor.Routines
 				if (File.Exists(gameDataAssetPath) == false)
 					continue;
 
-				progressCallback?.Invoke(string.Format(Resources.UI_UNITYPLUGIN_PROGRESS_PROCESSING_GAMEDATA, gameDataAssetPath), (float)i / total);
+				var pathSpecificProgress = progressCallback?.Sub((float)i / total, i + 1.0f / total);
+				pathSpecificProgress?.Invoke(string.Format(Resources.UI_UNITYPLUGIN_PROGRESS_PROCESSING_GAMEDATA, gameDataAssetPath), 0.00f);
 
 				var gameDataAsset = AssetDatabase.LoadAssetAtPath<GameDataBase>(gameDataAssetPath);
 				if (gameDataAsset == null)
@@ -72,7 +73,6 @@ namespace GameDevWare.Charon.Editor.Routines
 				}
 
 				var gameDataSettings = gameDataAsset.settings;
-
 				var gameDataPath = AssetDatabase.GUIDToAssetPath(gameDataSettings.gameDataFileGuid);
 				var apiKey = string.Empty;
 				var gameDataLocation = default(string);
@@ -104,7 +104,7 @@ namespace GameDevWare.Charon.Editor.Routines
 				var startTime = Stopwatch.StartNew();
 				logger.Log(LogType.Assert, $"Validating game data '{gameDataLocation}'.");
 
-				progressCallback?.Invoke(string.Format(Resources.UI_UNITYPLUGIN_VALIDATE_RUN_FOR, gameDataLocation), (float)i / total);
+				pathSpecificProgress?.Invoke(string.Format(Resources.UI_UNITYPLUGIN_VALIDATE_RUN_FOR, gameDataLocation), 0.10f);
 
 				try
 				{

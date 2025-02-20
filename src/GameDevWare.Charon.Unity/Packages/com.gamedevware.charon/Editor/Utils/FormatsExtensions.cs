@@ -64,5 +64,13 @@ namespace GameDevWare.Charon.Editor.Utils
 				_ => null
 			};
 		}
+		public static GameDataFormat? GetGameDataFormatForContentType(string contentType)
+		{
+			return contentType.ToLowerInvariant() switch {
+				"application/json" => GameDataFormat.Json,
+				"application/x-msgpack" => GameDataFormat.MessagePack,
+				_ => null
+			};
+		}
 	}
 }

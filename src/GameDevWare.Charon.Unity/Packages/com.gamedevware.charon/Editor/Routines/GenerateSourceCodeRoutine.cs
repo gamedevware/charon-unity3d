@@ -68,8 +68,8 @@ namespace GameDevWare.Charon.Editor.Routines
 					{
 						continue;
 					}
-
-					progressCallback?.Invoke(string.Format(Resources.UI_UNITYPLUGIN_PROGRESS_PROCESSING_GAMEDATA, CharonFileUtils.GetProjectRelativePath(gameDataAssetPath)), (float)i / total);
+					var pathSpecificProgress = progressCallback?.Sub((float)i / total, i + 1.0f / total);
+					pathSpecificProgress?.Invoke(string.Format(Resources.UI_UNITYPLUGIN_PROGRESS_PROCESSING_GAMEDATA, CharonFileUtils.GetProjectRelativePath(gameDataAssetPath)), 0);
 
 					var gameDataAsset = AssetDatabase.LoadAssetAtPath<GameDataBase>(gameDataAssetPath);
 					if (gameDataAsset == null)
@@ -148,6 +148,8 @@ namespace GameDevWare.Charon.Editor.Routines
 						gameDataLocation = Path.GetFullPath(gameDataPath);
 					}
 
+					pathSpecificProgress?.Invoke(Resources.UI_UNITYPLUGIN_PROGRESS_RUNNING_PRE_TASKS, 0.10f);
+
 					cancellationToken.ThrowIfCancellationRequested();
 					var taskList = CharonEditorModule.Instance.RaiseOnGameDataPreSourceCodeGeneration(gameDataAsset, codeGenerationPath);
 					await taskList.RunAsync(cancellationToken, logger, nameof(GenerateSourceCodeRoutine)).ConfigureAwait(false);
@@ -156,7 +158,7 @@ namespace GameDevWare.Charon.Editor.Routines
 					var startTime = Stopwatch.StartNew();
 					logger.Log(LogType.Assert, $"Staring C# code generation for game data '{gameDataLocation}'.");
 
-					progressCallback?.Invoke(string.Format(Resources.UI_UNITYPLUGIN_GENERATE_CODE_FOR, CharonFileUtils.GetProjectRelativePath(gameDataLocation)), (float)i / total);
+					pathSpecificProgress?.Invoke(string.Format(Resources.UI_UNITYPLUGIN_GENERATE_CODE_FOR, CharonFileUtils.GetProjectRelativePath(gameDataLocation)), 0.30f);
 
 					try
 					{
@@ -191,13 +193,17 @@ namespace GameDevWare.Charon.Editor.Routines
 						GameDataClassName = gameDataSettings.gameDataNamespace + "." + gameDataSettings.gameDataClassName,
 						Namespace = gameDataSettings.gameDataNamespace
 					};
-					await File.WriteAllTextAsync(assetCodeGenerationPath, assetCodeGenerator.TransformText());
+					await File.WriteAllTextAsync(assetCodeGenerationPath, assetCodeGenerator.TransformText(), CancellationToken.None);
 					forceReImportList.Add(assetCodeGenerationPath);
 
 					logger.Log(LogType.Assert, $"C# code generation for game data '{gameDataPath}' is finished successfully in '{startTime.Elapsed}'.");
 
+					pathSpecificProgress?.Invoke(Resources.UI_UNITYPLUGIN_PROGRESS_RUNNING_POST_TASKS, 0.90f);
+
 					taskList = CharonEditorModule.Instance.RaiseOnGameDataPostSourceCodeGeneration(gameDataAsset, codeGenerationPath);
 					await taskList.RunAsync(cancellationToken, logger, nameof(GenerateSourceCodeRoutine)).ConfigureAwait(false);
+
+					pathSpecificProgress?.Invoke(string.Format(Resources.UI_UNITYPLUGIN_GENERATE_CODE_FOR, CharonFileUtils.GetProjectRelativePath(gameDataLocation)), 1.00f);
 				}
 			}
 			finally
@@ -211,8 +217,9 @@ namespace GameDevWare.Charon.Editor.Routines
 				AssetDatabase.ImportAsset(forceReImportPath, ImportAssetOptions.ForceUpdate);
 			}
 			AssetDatabase.Refresh();
+			EditorUtility.RequestScriptReload();
 
-			progressCallback?.Invoke(Resources.UI_UNITYPLUGIN_PROGRESS_DONE, 1);
+			progressCallback?.Invoke(Resources.UI_UNITYPLUGIN_PROGRESS_DONE, 1.00f);
 		}
 	}
 }
