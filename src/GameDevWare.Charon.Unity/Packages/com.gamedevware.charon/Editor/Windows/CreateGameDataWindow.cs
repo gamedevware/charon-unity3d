@@ -53,7 +53,7 @@ namespace GameDevWare.Charon.Editor.Windows
 		public CreateGameDataWindow()
 		{
 			this.titleContent = new GUIContent(Resources.UI_UNITYPLUGIN_CREATE_GAMEDATA_WINDOW_TITLE);
-			this.minSize = new Vector2(480, 400);
+			this.minSize = new Vector2(600, 400);
 			this.maxSize = new Vector2(800, 600);
 			this.position = new Rect(
 				(Screen.width - this.maxSize.x),
@@ -95,32 +95,88 @@ namespace GameDevWare.Charon.Editor.Windows
 			GUI.enabled = this.folder != null && !string.IsNullOrEmpty(this.gameDataName) &&
 				!someOperationPending && !CharonEditorModule.Instance.Routines.IsRunning;
 
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.Space();
-			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_CREATE_GAMEDATA_CREATE_BUTTON, GUI.skin.button, GUILayout.Width(80), GUILayout.Height(25)))
+			EditorGUILayout.BeginHorizontal(GUI.skin.box);
 			{
-				this.lastError = null;
-				this.progressStatus = null;
-
-				if (ValidateCreationOptions(this.folder, this.gameDataName, out this.lastError))
+				EditorGUILayout.BeginVertical();
 				{
-					this.gameDataCreationTask = CharonEditorModule.Instance.Routines.Schedule(this.CreateGameDataAsync, this.closeSource.Token);
-					this.gameDataCreationTask.LogFaultAsError();
-					this.gameDataCreationTask.ContinueWith(t =>
+					EditorGUILayout.BeginHorizontal();
+					EditorGUILayout.Space();
+					GUILayout.Label(EditorGUIUtility.IconContent("cs Script Icon"));
+					EditorGUILayout.Space();
+					EditorGUILayout.EndHorizontal();
+
+					GUILayout.Label(this.gameDataName + ".cs", GUILayout.MaxWidth((this.position.width - 60) / 4));
+				}
+				EditorGUILayout.EndVertical();
+				GUILayout.FlexibleSpace();
+				EditorGUILayout.BeginVertical();
+				{
+					EditorGUILayout.BeginHorizontal();
+					EditorGUILayout.Space();
+					GUILayout.Label(EditorGUIUtility.IconContent("cs Script Icon"));
+					EditorGUILayout.Space();
+					EditorGUILayout.EndHorizontal();
+
+					GUILayout.Label(this.gameDataName + "Asset.cs", GUILayout.MaxWidth((this.position.width - 60) / 4));
+				}
+				EditorGUILayout.EndVertical();
+				GUILayout.FlexibleSpace();
+				EditorGUILayout.BeginVertical();
+				{
+					EditorGUILayout.BeginHorizontal();
+					EditorGUILayout.Space();
+					GUILayout.Label(EditorGUIUtility.IconContent("TextAsset Icon"));
+					EditorGUILayout.Space();
+					EditorGUILayout.EndHorizontal();
+
+					GUILayout.Label(this.gameDataName + this.format.GetExtensionFromGameDataFormat(), GUILayout.MaxWidth((this.position.width - 60) / 4));
+				}
+				EditorGUILayout.EndVertical();
+				GUILayout.FlexibleSpace();
+				EditorGUILayout.BeginVertical();
+				{
+					EditorGUILayout.BeginHorizontal();
+					EditorGUILayout.Space();
+					GUILayout.Label(EditorGUIUtility.IconContent("Prefab Icon"));
+					EditorGUILayout.Space();
+					EditorGUILayout.EndHorizontal();
+
+					GUILayout.Label(this.gameDataName + ".asset", GUILayout.MaxWidth((this.position.width - 60) / 4));
+				}
+				EditorGUILayout.EndVertical();
+			}
+			EditorGUILayout.EndHorizontal();
+			GUILayout.Space(5);
+
+			EditorGUILayout.BeginHorizontal();
+			{
+				EditorGUILayout.Space();
+				if (GUILayout.Button(Resources.UI_UNITYPLUGIN_CREATE_GAMEDATA_CREATE_BUTTON, GUI.skin.button, GUILayout.Width(80), GUILayout.Height(25)))
+				{
+					this.lastError = null;
+					this.progressStatus = null;
+
+					if (ValidateCreationOptions(this.folder, this.gameDataName, out this.lastError))
 					{
-						if (t.Exception.Unwrap() is not OperationCanceledException)
+						this.gameDataCreationTask = CharonEditorModule.Instance.Routines.Schedule(this.CreateGameDataAsync, this.closeSource.Token);
+						this.gameDataCreationTask.LogFaultAsError();
+						this.gameDataCreationTask.ContinueWith(t =>
 						{
-							this.lastError = t.Exception.Unwrap()!.Message;
-						}
-						this.Repaint();
-					}, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.Current);
+							if (t.Exception.Unwrap() is not OperationCanceledException)
+							{
+								this.lastError = t.Exception.Unwrap()!.Message;
+							}
+							this.Repaint();
+						}, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.Current);
+					}
+
+					this.Repaint();
 				}
 
-				this.Repaint();
+				GUILayout.Space(5);
 			}
-
-			GUILayout.Space(5);
 			EditorGUILayout.EndHorizontal();
+
 			if (this.gameDataCreationTask is { IsCompleted: false } && !string.IsNullOrEmpty(this.progressStatus))
 			{
 				GUILayout.Label($"[{this.progress * 100:N0}%] {this.progressStatus}");
