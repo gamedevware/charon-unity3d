@@ -41,7 +41,10 @@ namespace GameDevWare.Charon {
 		public const string UI_UNITYPLUGIN_INSPECTOR_CODE_DEFINE_CONSTANTS = "Define Constants";
 		public const string UI_UNITYPLUGIN_INSPECTOR_REVISION_HASH_LABEL = "Revision Hash";
 		public const string UI_UNITYPLUGIN_INSPECTOR_GAME_DATA_VERSION_LABEL = "Game Data Version";
-		public const string UI_UNITYPLUGIN_INSPECTOR_CODE_GENERATION_LABEL = "Code Generation";
+		public const string UI_UNITYPLUGIN_INSPECTOR_CODE_GENERATION_LABEL = "C# Code Generation Settings";
+		public const string UI_UNITYPLUGIN_INSPECTOR_ASSET_IMPORT_SETTINGS_LABEL = "Asset Import Settings";
+		public const string UI_UNITYPLUGIN_INSPECTOR_PUBLICATION_LANGUAGES_LABEL = "Languages";
+		public const string UI_UNITYPLUGIN_INSPECTOR_PUBLICATION_FORMAT_LABEL = "Format";
 		public const string UI_UNITYPLUGIN_INSPECTOR_CODE_GENERATION_PATH = "Generation Path";
 		public const string UI_UNITYPLUGIN_INSPECTOR_GAME_DATA_FILE = "Game Data File";
 		public const string UI_UNITYPLUGIN_INSPECTOR_CODE_INDENTATION = "Indentation";
@@ -54,6 +57,7 @@ namespace GameDevWare.Charon {
 		public const string UI_UNITYPLUGIN_INSPECTOR_OPERATION_RUNNING = "(Running)";
 		public const string UI_UNITYPLUGIN_INSPECTOR_SYNCHRONIZE_BUTTON = "Synchronize";
 		public const string UI_UNITYPLUGIN_INSPECTOR_CONNECT_BUTTON = "Connect";
+		public const string UI_UNITYPLUGIN_INSPECTOR_RESET_BUTTON = "Reset";
 		public const string UI_UNITYPLUGIN_INSPECTOR_DISCONNECT_BUTTON = "Disconnect";
 		public const string UI_UNITYPLUGIN_INSPECTOR_SET_API_KEY_BUTTON = "Set API Key";
 		public const string UI_UNITYPLUGIN_INSPECTOR_CONNECTION_LABEL = "Connection";
@@ -65,6 +69,8 @@ namespace GameDevWare.Charon {
 		public const string UI_UNITYPLUGIN_PROGRESS_AUTHENTICATING = "Authenticating...";
 		public const string UI_UNITYPLUGIN_PROGRESS_IMPORTING = "Importing...";
 		public const string UI_UNITYPLUGIN_PROGRESS_DONE = "Done";
+		public const string UI_UNITYPLUGIN_PROGRESS_RUNNING_PRE_TASKS = "Running custom pre-operation tasks...";
+		public const string UI_UNITYPLUGIN_PROGRESS_RUNNING_POST_TASKS = "Running custom post-operation tasks...";
 		public const string UI_UNITYPLUGIN_PROGRESS_DOWNLOADING = "Downloading '{2}' ({0:F2}/{1:F2} MiB)...";
 		public const string UI_UNITYPLUGIN_PROGRESS_UPLOADING = "Uploading '{2}' ({0:F2}/{1:F2} MiB)...";
 		public const string UI_UNITYPLUGIN_SPECIFY_EXTRACTION_LOC_TITLE = "Specify Extraction Location...";

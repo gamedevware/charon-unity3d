@@ -81,14 +81,9 @@ namespace GameDevWare.Charon.Editor.ServerApi
 					throw new InvalidOperationException($"Unknown storage format '{storeFormat}'.");
 			}
 
-			var downloadParams = "?" +
-				"exportMode=publication&" +
-				"schemas=%2A&" +
-				"properties=%2A&" +
-				"languages=%2A&" +
-				"download=true";
+			var downloadParams = "?download=true";
 
-			var downloadDataSourceAddress = new Uri(this.baseAddress, $"api/v1/datasource/{branchId}/collections/raw/{downloadParams}");
+			var downloadDataSourceAddress = new Uri(this.baseAddress, $"api/v1/datasource/{branchId}/raw/{downloadParams}");
 			var downloadDataSourceAsync = HttpUtils.DownloadToFileAsync(
 				downloadDataSourceAddress,
 				downloadPath,

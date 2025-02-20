@@ -7,5 +7,9 @@ namespace Editor.Services.ResourceServerApi
 	{
 		[DataMember(Name = "unityAssetId")]
 		public string GameDataAssetId;
+		[DataMember(Name = "format")]
+		public string Format;
+		[DataMember(Name = "languages")]
+		public string[] Languages;
 	}
 }

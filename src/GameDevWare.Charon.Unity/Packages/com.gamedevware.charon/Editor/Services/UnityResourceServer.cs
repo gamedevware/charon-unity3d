@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using Editor.Services;
+using Editor.Services.HttpServer;
 using Editor.Services.ResourceServerApi;
 using GameDevWare.Charon.Editor.Json;
 using GameDevWare.Charon.Editor.Routines;
@@ -14,14 +18,15 @@ using UnityEngine;
 
 namespace GameDevWare.Charon.Editor.Services
 {
-	internal class UnityResourceServer : IDisposable
+	internal class UnityResourceServer : HttpMessageHandler
 	{
-		private readonly HttpListener listener;
 		private readonly FormulaTypeIndexer formulaTypeIndexer;
 		private readonly CancellationTokenSource cancellationTokenSource;
 		private readonly CharonSettings settings;
 		private readonly CharonLogger logger;
+		private readonly TaskScheduler uiTaskScheduler;
 		private Task receiveTask;
+		private int isDisposed;
 
 		public int Port { get; }
 		public Task Completion => this.receiveTask.IgnoreFault();
@@ -30,12 +35,12 @@ namespace GameDevWare.Charon.Editor.Services
 		{
 			if (logger == null) throw new ArgumentNullException(nameof(logger));
 
-			this.listener = new HttpListener();
 			this.cancellationTokenSource = new CancellationTokenSource();
 			this.formulaTypeIndexer = new FormulaTypeIndexer();
 			this.Port = 10000 + Process.GetCurrentProcess().Id % 65000;
 			this.logger = logger;
 			this.receiveTask = Task.CompletedTask;
+			this.uiTaskScheduler = TaskScheduler.FromCurrentSynchronizationContext();
 		}
 
 		public void Initialize()
@@ -45,21 +50,29 @@ namespace GameDevWare.Charon.Editor.Services
 
 		private async Task ReceiveRequestsAsync(CancellationToken cancellationToken)
 		{
+			var listenEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), this.Port);
+
 			while (!cancellationToken.IsCancellationRequested)
 			{
 				try
 				{
-					this.listener.Prefixes.Clear();
-					this.listener.Prefixes.Add("http://127.0.0.1:" + this.Port + "/");
+					using var httpServer = new HttpServer(listenEndPoint, this, this.logger, cancellationToken);
 
 					cancellationToken.ThrowIfCancellationRequested();
-					this.listener.Start();
+					cancellationToken.Register(state => ((IDisposable)state).Dispose(), httpServer);
 
-					this.logger.Log(LogType.Assert, $"Resource server is listening at '{this.listener.Prefixes.FirstOrDefault()}'.");
+					this.logger.Log(LogType.Assert, $"Resource server is listening at '{listenEndPoint}'.");
+
+					await httpServer.Completion.ConfigureAwait(false);
 				}
 				catch (Exception startError)
 				{
-					this.logger.Log(LogType.Assert, $"Failed to start resource server at '{this.listener.Prefixes.FirstOrDefault()}' due to an error.");
+					if (cancellationToken.IsCancellationRequested)
+					{
+						break;
+					}
+
+					this.logger.Log(LogType.Assert, $"Failed to start resource server at '{listenEndPoint}' due to an error.");
 					this.logger.Log(LogType.Assert, startError.Unwrap());
 
 					await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken).ConfigureAwait(false);
@@ -67,110 +80,127 @@ namespace GameDevWare.Charon.Editor.Services
 				}
 
 				await Task.Yield();
-
-				while (!cancellationToken.IsCancellationRequested)
-				{
-					var context = await this.listener.GetContextAsync().ConfigureAwait(false);
-					this.DispatchRequest(context);
-				}
-
-				try
-				{
-					this.listener.Stop();
-				}
-				catch (Exception stopError)
-				{
-					this.logger.Log(LogType.Assert, $"Failed to stop resource server at '{this.listener.Prefixes.FirstOrDefault()}' due to an error.");
-					this.logger.Log(LogType.Assert, stopError.Unwrap());
-				}
 			}
+
+			this.Dispose();
 		}
 
-		private async void DispatchRequest(HttpListenerContext context)
+		/// <inheritdoc />
+		protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
 		{
-			try
+			using var _ = request;
+			var response = default(HttpResponseMessage);
+
+			var stopwatch = Stopwatch.StartNew();
+			this.logger.Log(LogType.Assert, $"Received [{request.Method}] {request.RequestUri.LocalPath} request.");
+
+			var localPath = request.RequestUri.LocalPath;
+			if (string.Equals(request.Method.Method, "OPTIONS", StringComparison.OrdinalIgnoreCase))
 			{
-				using var _ = context.Response;
-				context.Response.StatusCode =(int)HttpStatusCode.OK;
-
-				var stopwatch = Stopwatch.StartNew();
-				this.logger.Log(LogType.Assert, $"Received [{context.Request.HttpMethod.ToUpperInvariant()}] {context.Request.Url.LocalPath} request.");
-
-				var localPath = context.Request.Url.LocalPath;
-				if (context.Request.HttpMethod == "OPTIONS")
-				{
-					await this.OnOptionsRequestAsync(context.Request, context.Response).ConfigureAwait(false);
-				}
-				else if (localPath.StartsWith("/api/commands/generate-code", StringComparison.OrdinalIgnoreCase))
-				{
-					await this.OnGenerateCodeAsync(context.Request, context.Response).ConfigureAwait(false);
-				}
-				else if (localPath.StartsWith("/api/commands/publish", StringComparison.OrdinalIgnoreCase))
-				{
-					await this.OnPublishAsync(context.Request, context.Response).ConfigureAwait(false);
-				}
-				else if (localPath.StartsWith("/api/formula-types/list", StringComparison.OrdinalIgnoreCase))
-				{
-					await this.OnListFormulaTypesAsync(context.Request, context.Response).ConfigureAwait(false);
-				}
-
-				this.logger.Log(LogType.Assert, $"Finished [{context.Request.HttpMethod.ToUpperInvariant()}] {context.Request.Url.LocalPath} request in {stopwatch.ElapsedMilliseconds:F0}ms with {context.Response.StatusCode} status code.");
+				response = await this.OnOptionsRequestAsync(request).ConfigureAwait(false);
 			}
-			catch (Exception requestError)
+			else if (localPath.StartsWith("/api/commands/generate-code", StringComparison.OrdinalIgnoreCase))
 			{
-				try
-				{
-					this.logger.Log(LogType.Assert, $"Failed to process request to '{context.Request.Url}' due to an error.");
-					this.logger.Log(LogType.Assert, requestError.Unwrap());
-
-					context.Response.Headers.Clear();
-					context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-					context.Response.Close();
-				}
-				catch { /* failed to finish request */ }
+				response = await this.OnGenerateCodeAsync(request).ConfigureAwait(false);
 			}
+			else if (localPath.StartsWith("/api/commands/publish", StringComparison.OrdinalIgnoreCase))
+			{
+				response = await this.OnPublishAsync(request).ConfigureAwait(false);
+			}
+			else if (localPath.StartsWith("/api/formula-types/list", StringComparison.OrdinalIgnoreCase))
+			{
+				response = await this.OnListFormulaTypesAsync(request).ConfigureAwait(false);
+			}
+			else
+			{
+				response = new HttpResponseMessage(HttpStatusCode.NotFound) { RequestMessage = request };
+			}
+
+			this.logger.Log(LogType.Assert, $"Finished [{request.Method}] {request.RequestUri.LocalPath} request in {stopwatch.ElapsedMilliseconds:F0}ms with {response.StatusCode} status code.");
+
+			return response;
 		}
 
-		private Task OnOptionsRequestAsync(HttpListenerRequest request, HttpListenerResponse response)
+		private Task<HttpResponseMessage> OnOptionsRequestAsync(HttpRequestMessage request)
 		{
+			var response = new HttpResponseMessage(HttpStatusCode.NoContent);
 			this.AddCorsHeaders(request, response);
 
-			response.StatusCode = (int)HttpStatusCode.NoContent;
-
-			return Task.CompletedTask;
+			return Task.FromResult(response);
 		}
-		private async Task OnPublishAsync(HttpListenerRequest request, HttpListenerResponse response)
+		private async Task<HttpResponseMessage> OnPublishAsync(HttpRequestMessage request)
 		{
-			if (!string.Equals(request.HttpMethod, "POST", StringComparison.OrdinalIgnoreCase))
-				throw new InvalidOperationException("POST method is expected for this endpoint.");
+			if (!string.Equals(request.Method.Method, "POST", StringComparison.OrdinalIgnoreCase))
+				throw new InvalidOperationException($"POST method is expected for [{request.Method}]{request.RequestUri} endpoint.");
 
+			var publishRequest = await ReadRequestBodyAsync<PublishRequest>(request).ConfigureAwait(false);
+
+			var response = new HttpResponseMessage(HttpStatusCode.OK);
 			this.AddCorsHeaders(request, response);
 
-			var publishRequest = ReadRequestBody<PublishRequest>(request);
-			var paths = new[] { AssetDatabase.GUIDToAssetPath(publishRequest.GameDataAssetId) };
-			await SynchronizeAssetsRoutine.ScheduleAsync(paths).ConfigureAwait(false);
-			response.StatusCode = (int)HttpStatusCode.NoContent;
+			await this.uiTaskScheduler.SwitchTo();
+
+			var gameDataAssetPath = AssetDatabase.GUIDToAssetPath(publishRequest.GameDataAssetId);
+			var gameDataAsset = AssetDatabase.LoadAssetAtPath<GameDataBase>(gameDataAssetPath);
+			if (gameDataAsset == null)
+			{
+				response.StatusCode = HttpStatusCode.NotFound;
+				return response;
+			}
+
+			gameDataAsset.settings.publishFormat = (int)(FormatsExtensions.GetGameDataFormatForContentType(publishRequest.Format) ??
+				(GameDataFormat)gameDataAsset.settings.publishFormat);
+			if (publishRequest.Languages == null || (publishRequest.Languages.Length == 1 && publishRequest.Languages[0] == "*"))
+			{
+				gameDataAsset.settings.publishLanguages = null;
+			}
+			else
+			{
+				gameDataAsset.settings.publishLanguages = publishRequest.Languages;
+			}
+			EditorUtility.SetDirty(gameDataAsset);
+			AssetDatabase.SaveAssetIfDirty(gameDataAsset);
+
+			await SynchronizeAssetsRoutine.ScheduleAsync(new[] { gameDataAssetPath }).ConfigureAwait(false);
+
+			response.StatusCode = HttpStatusCode.NoContent;
+			return response;
 		}
-		private async Task OnGenerateCodeAsync(HttpListenerRequest request, HttpListenerResponse response)
+		private async Task<HttpResponseMessage> OnGenerateCodeAsync(HttpRequestMessage request)
 		{
-			if (!string.Equals(request.HttpMethod, "POST", StringComparison.OrdinalIgnoreCase))
-				throw new InvalidOperationException("POST method is expected for this endpoint.");
+			if (!string.Equals(request.Method.Method, "POST", StringComparison.OrdinalIgnoreCase))
+				throw new InvalidOperationException($"POST method is expected for [{request.Method}]{request.RequestUri} endpoint.");
 
+			var generateSourceCodeRequest = await ReadRequestBodyAsync<GenerateSourceCodeRequest>(request).ConfigureAwait(false);
+
+			var response = new HttpResponseMessage(HttpStatusCode.OK);
 			this.AddCorsHeaders(request, response);
 
-			var publishRequest = ReadRequestBody<GenerateSourceCodeRequest>(request);
-			var paths = new[] { AssetDatabase.GUIDToAssetPath(publishRequest.GameDataAssetId) };
-			await GenerateSourceCodeRoutine.ScheduleAsync(paths).ConfigureAwait(false);
-			response.StatusCode = (int)HttpStatusCode.NoContent;
+			await this.uiTaskScheduler.SwitchTo();
+
+			var gameDataAssetPath = AssetDatabase.GUIDToAssetPath(generateSourceCodeRequest.GameDataAssetId);
+			var gameDataAsset = AssetDatabase.LoadAssetAtPath<GameDataBase>(gameDataAssetPath);
+			if (gameDataAsset == null)
+			{
+				response.StatusCode = HttpStatusCode.NotFound;
+				return response;
+			}
+
+			await GenerateSourceCodeRoutine.ScheduleAsync(new[] { gameDataAssetPath }).ConfigureAwait(false);
+
+			response.StatusCode = HttpStatusCode.NoContent;
+			return response;
 		}
-		private Task OnListFormulaTypesAsync(HttpListenerRequest request, HttpListenerResponse response)
+		private async Task<HttpResponseMessage> OnListFormulaTypesAsync(HttpRequestMessage request)
 		{
-			if (!string.Equals(request.HttpMethod, "POST", StringComparison.OrdinalIgnoreCase))
-				throw new InvalidOperationException("POST method is expected for this endpoint.");
+			if (!string.Equals(request.Method.Method, "POST", StringComparison.OrdinalIgnoreCase))
+				throw new InvalidOperationException($"POST method is expected for [{request.Method}]{request.RequestUri} endpoint.");
 
+			var listFormulaTypesRequest = await ReadRequestBodyAsync<ListFormulaTypesRequest>(request).ConfigureAwait(true);
+
+			var response = new HttpResponseMessage(HttpStatusCode.OK);
 			this.AddCorsHeaders(request, response);
 
-			var listFormulaTypesRequest = ReadRequestBody<ListFormulaTypesRequest>(request);
 			var listFormulaTypesResponse = this.formulaTypeIndexer.ListFormulaTypes
 			(
 				listFormulaTypesRequest.Skip,
@@ -178,50 +208,56 @@ namespace GameDevWare.Charon.Editor.Services
 				listFormulaTypesRequest.Query
 			);
 
-			response.StatusCode = (int)HttpStatusCode.OK;
+			response.StatusCode = HttpStatusCode.OK;
 			this.WriteResponseBody(listFormulaTypesResponse, response);
-			return Task.CompletedTask;
+			return response;
 		}
 
-		private static T ReadRequestBody<T>(HttpListenerRequest request)
+		private static async Task<T> ReadRequestBodyAsync<T>(HttpRequestMessage request)
 		{
-			var jsonValue = JsonValue.Load(request.InputStream);
+			if(request.Content == null) throw new InvalidOperationException($"Request to [{request.Method}]{request.RequestUri} doesn't have body.");
+
+			await using var stream = await request.Content.ReadAsStreamAsync().ConfigureAwait(true);
+
+			var jsonValue = JsonValue.Load(stream);
 			return jsonValue.ToObject<T>();
 		}
-		private void WriteResponseBody<T>(T responseObject, HttpListenerResponse response)
+		private void WriteResponseBody<T>(T responseObject, HttpResponseMessage response)
 		{
-			response.ContentType = "application/json";
-			response.SendChunked = true;
+			var responseStream = new MemoryStream();
+			JsonObject.From(responseObject).Save(responseStream);
+			responseStream.Position = 0;
 
-			JsonObject.From(responseObject).Save(response.OutputStream);
+			response.Content = new StreamContent(responseStream) {
+				Headers = {
+					ContentType = MediaTypeHeaderValue.Parse("application/json")
+				}
+			};
 		}
 
-		private void AddCorsHeaders(HttpListenerRequest request, HttpListenerResponse response)
+		private void AddCorsHeaders(HttpRequestMessage request, HttpResponseMessage responseMessage)
 		{
-			var origin = request.Headers["Origin"];
+			var origin = request.Headers.GetValues("Origin").FirstOrDefault();
 			if (string.IsNullOrEmpty(origin))
 			{
 				origin = "*";
 			}
-			response.Headers.Add("Access-Control-Allow-Origin", origin);
-			response.Headers.Add("Access-Control-Allow-Methods", "*");
-			response.Headers.Add("Access-Control-Allow-Headers", "*, Authorization");
-			response.Headers.Add("Access-Control-Max-Age", "60000");
+			responseMessage.Headers.Add("Access-Control-Allow-Origin", origin);
+			responseMessage.Headers.Add("Access-Control-Allow-Methods", "*");
+			responseMessage.Headers.Add("Access-Control-Allow-Headers", "*, Authorization");
+			responseMessage.Headers.Add("Access-Control-Max-Age", "60000");
 		}
 
 		/// <inheritdoc />
-		public void Dispose()
+		protected override void Dispose(bool disposing)
 		{
-			this.cancellationTokenSource.Cancel();
-			try
+			if (Interlocked.Exchange(ref this.isDisposed, 1) != 0)
 			{
-				if (this.listener.IsListening)
-				{
-					this.listener.Stop();
-				}
-			} catch { /* ignore stop errors */ }
-			
-			((IDisposable)this.listener)?.Dispose();
+				return;
+			}
+			this.cancellationTokenSource.Cancel();
+			//this.cancellationTokenSource.Dispose();
+			base.Dispose(disposing);
 		}
 	}
 }
