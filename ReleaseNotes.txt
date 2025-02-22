@@ -1,6 +1,0 @@
-﻿feature: added support for Charon 2023.4.0+
-feature: added Beta update feed support
-feature: pretty print JSON configuration files for better SVC merging experience
-fix: updated documentation and feedback links
-
-BREAKING CHANGE: minimal version of .NET Framework is 4.7.1+ and Mono is 5.0.0+
