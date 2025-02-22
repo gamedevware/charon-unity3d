@@ -14,4 +14,4 @@ This is Unity plugin for [gamedevware/charon](https://github.com/gamedevware/cha
 
 # License
 
-[Asset Store Terms of Service and EULA](https://unity3d.com/ru/legal/as_terms)
+MIT
