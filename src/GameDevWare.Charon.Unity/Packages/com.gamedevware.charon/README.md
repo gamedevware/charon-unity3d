@@ -1,4 +1,4 @@
-![NuGet Version](https://img.shields.io/nuget/v/GameDevWare.Charon.Unity)
+[![openupm](https://img.shields.io/npm/v/com.gamedevware.charon?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.gamedevware.charon/)
 
 # Introduction
 

@@ -33,13 +33,13 @@ using System.Threading.Tasks;
 using Editor.GameDevWare.Charon.Services.ServerApi;
 using Editor.GameDevWare.Charon.Utils;
 using JetBrains.Annotations;
-using Newtonsoft.Json;
 using UnityEngine;
 #if JSON_NET_3_0_2_OR_NEWER
+using Newtonsoft.Json;
 using JsonObject = Newtonsoft.Json.Linq.JObject;
 using JsonValue = Newtonsoft.Json.Linq.JToken;
 #else
-using GameDevWare.Charon.Editor.Json;
+using Editor.GameDevWare.Charon.Json;
 #endif
 
 // ReSharper disable UseAwaitUsing
@@ -750,7 +750,7 @@ namespace Editor.GameDevWare.Charon.Cli
 			Action<ToolRunOptions> configureTool = null
 		)
 		{
-			if (gameDataUrl == null) throw new ArgumentNullException(nameof(gameDataUrl)); ;
+			if (gameDataUrl == null) throw new ArgumentNullException(nameof(gameDataUrl));
 			if (schemaNamesOrIds == null) throw new ArgumentNullException(nameof(schemaNamesOrIds));
 			if (sourceLanguage == null) throw new ArgumentNullException(nameof(sourceLanguage));
 			if (targetLanguage == null) throw new ArgumentNullException(nameof(targetLanguage));
@@ -1625,7 +1625,6 @@ namespace Editor.GameDevWare.Charon.Cli
 			{
 				FileName = "chmod",
 				Arguments = $"\"{permissions}\" \"{filePath}\"",
-				RedirectStandardOutput = true,
 				UseShellExecute = true,
 				CreateNoWindow = true,
 			};
