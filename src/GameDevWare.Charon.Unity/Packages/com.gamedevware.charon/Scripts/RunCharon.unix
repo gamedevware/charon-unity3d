@@ -40,11 +40,7 @@ install_update_charon_tool() {
 	# Check if dotnet-charon is installed locally
     if dotnet tool list --local | grep -q 'dotnet-charon'; then
 		pushd "$SCRIPT_DIR" > /dev/null || exit 1
-		if ! dotnet tool update dotnet-charon --local > /dev/null 2>&1; then
-			echo "Failed to execute the 'dotnet tool update dotnet-charon' command to retrieve the latest package version from NuGet." >&2
-			popd > /dev/null || exit 1
-			exit 1
-		fi
+		dotnet tool update dotnet-charon --local > /dev/null 2>&1;
 		popd > /dev/null || exit 1
     else
 		pushd "$SCRIPT_DIR" > /dev/null || exit 1
