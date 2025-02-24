@@ -64,7 +64,7 @@ namespace Editor.GameDevWare.Charon.Services
 				reimportTask.LogFaultAsError();
 				reimportTask.ContinueWithHideProgressBar();
 				await reimportTask.ConfigureAwait(true);
-				progressCallback?.Invoke(Resources.UI_UNITYPLUGIN_PROGRESS_DONE, 0.100f);
+				progressCallback?.Invoke(Resources.UI_UNITYPLUGIN_PROGRESS_DONE, 1.00f);
 			}
 			finally
 			{

@@ -182,7 +182,7 @@ namespace Editor.GameDevWare.Charon.Windows
 
 			if (this.gameDataCreationTask is { IsCompleted: false } && !string.IsNullOrEmpty(this.progressStatus))
 			{
-				GUILayout.Label($"[{this.progress * 100:N0}%] {this.progressStatus}");
+				GUILayout.Label($"[{this.progress * 100:N0}%] {this.progressStatus}", GUILayout.MaxWidth(Math.Max(this.position.width - 60, 60)));
 			}
 			GUI.enabled = true;
 

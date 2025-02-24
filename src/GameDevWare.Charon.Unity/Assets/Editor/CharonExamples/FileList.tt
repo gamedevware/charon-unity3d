@@ -1,0 +1,20 @@
+﻿<#@ template debug="false" hostspecific="true" #>
+<#@ assembly name="System.Core" #>
+<#@ parameter name="rootNodeNameParameter" type="System.String" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+<#@ output extension=".json" #>
+{
+	"<#= this.rootNodeNameParameter ?? "files" #>":
+	[
+<#
+		var files = Directory.GetFiles(this.Host.ResolvePath("./"));
+		foreach(var file in files)
+		{
+#>
+		"<#= Path.GetFileName(file) #>"<#= files.Last() != file ? "," : "" #>
+<#
+		}
+#>
+	]
+}

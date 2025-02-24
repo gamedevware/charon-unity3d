@@ -68,12 +68,20 @@ namespace Editor.GameDevWare.Charon.Windows
 		{
 			var migrator = CharonEditorModule.Instance.LegacyPluginMigrator;
 			var someOperationPending = (this.migrationTask != null && !this.migrationTask.IsCompleted);
+			var legacyPluginPresent = migrator.IsLegacyPluginExists();
 
 			EditorLayoutUtils.BeginPaddings(this.position.size, Padding);
 
 			EditorGUILayout.BeginVertical();
 			{
-				GUILayout.Label("An old version of the plugin was found. Do you want to automatically migrate your data to the new version?", new GUIStyle(EditorStyles.boldLabel));
+				if (legacyPluginPresent)
+				{
+					GUILayout.Box("An old version of the plugin was found [<2025.1.0]. Do you want to automatically migrate your data to the new version?", GUI.skin.box);
+				}
+				else
+				{
+					GUILayout.Box("The old version of the plugin has been removed. You can Close this window now.", GUI.skin.box);
+				}
 			}
 			EditorGUILayout.EndVertical();
 
@@ -83,10 +91,10 @@ namespace Editor.GameDevWare.Charon.Windows
 
 			EditorGUILayout.BeginHorizontal();
 			{
-				GUILayout.Label(this.progressStatus, EditorStyles.label);
+				GUILayout.Label(this.progressStatus, EditorStyles.label, GUILayout.MaxWidth(Math.Max(this.position.width - 60, 60)));
 				EditorGUILayout.Space();
 
-				GUI.enabled = !someOperationPending && !CharonEditorModule.Instance.Routines.IsRunning && !EditorApplication.isCompiling && migrator.IsLegacyPluginExists();
+				GUI.enabled = !someOperationPending && !CharonEditorModule.Instance.Routines.IsRunning && !EditorApplication.isCompiling && legacyPluginPresent;
 
 				if (GUILayout.Button("Migrate", GUI.skin.button, GUILayout.Width(80), GUILayout.Height(25)))
 				{
@@ -95,7 +103,7 @@ namespace Editor.GameDevWare.Charon.Windows
 
 				GUI.enabled = !GUI.enabled;
 
-				if (GUILayout.Button("Cancel", GUI.skin.button, GUILayout.Width(80), GUILayout.Height(25)))
+				if (GUILayout.Button(legacyPluginPresent ? "Cancel" : "Close", GUI.skin.button, GUILayout.Width(80), GUILayout.Height(25)))
 				{
 					this.RaiseCancel();
 					this.Close();

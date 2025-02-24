@@ -152,7 +152,7 @@ namespace Editor.GameDevWare.Charon.Windows
 			GUILayout.Space(5);
 
 			EditorGUILayout.BeginHorizontal();
-			GUILayout.Label(this.progressStatus, EditorStyles.label);
+			GUILayout.Label(this.progressStatus, EditorStyles.label, GUILayout.MaxWidth(Math.Max(this.position.width - 60, 60)));
 			EditorGUILayout.Space();
 
 			GUI.enabled = true;

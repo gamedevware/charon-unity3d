@@ -77,13 +77,14 @@ namespace Editor.GameDevWare.Charon.Cli
 			string gameDataPath,
 			int port,
 			string lockFilePath = null,
-			CharonLogLevel logsVerbosity = CharonLogLevel.Normal,
+			CharonLogLevel? logsVerbosity = null,
 			Action<string, float> progressCallback = null
 		)
 		{
 			if (string.IsNullOrEmpty(gameDataPath)) throw new ArgumentException("Value cannot be null or empty.", nameof(gameDataPath));
 			if (port <= 0 || port > ushort.MaxValue) throw new ArgumentOutOfRangeException(nameof(port));
 
+			logsVerbosity ??= CharonEditorModule.Instance.Settings.LogLevel;
 			gameDataPath = Path.GetFullPath(gameDataPath);
 			if (File.Exists(gameDataPath) == false) throw new IOException($"File '{gameDataPath}' doesn't exists.");
 
@@ -148,10 +149,12 @@ namespace Editor.GameDevWare.Charon.Cli
 		public static async Task InitGameDataAsync
 		(
 			string gameDataPath,
-			CharonLogLevel logsVerbosity = CharonLogLevel.Normal,
+			CharonLogLevel? logsVerbosity = null,
 			Action<ToolRunOptions> configureTool = null
 		)
 		{
+			if (gameDataPath == null) throw new ArgumentNullException(nameof(gameDataPath));
+
 			using var _ = await RunCharonAsync
 			(
 				string.Empty, logsVerbosity,
@@ -178,10 +181,14 @@ namespace Editor.GameDevWare.Charon.Cli
 			string apiKey,
 			string schemaNameOrId,
 			JsonObject document,
-			CharonLogLevel logsVerbosity = CharonLogLevel.Normal,
+			CharonLogLevel? logsVerbosity = null,
 			Action<ToolRunOptions> configureTool = null
 		)
 		{
+			if (gameDataUrl == null) throw new ArgumentNullException(nameof(gameDataUrl));
+			if (schemaNameOrId == null) throw new ArgumentNullException(nameof(schemaNameOrId));
+			if (document == null) throw new ArgumentNullException(nameof(document));
+
 			var inputFileName = WriteJsonInput(document);
 			var outputFileName = CreateTemporaryFile("json");
 
@@ -220,10 +227,14 @@ namespace Editor.GameDevWare.Charon.Cli
 			string schemaNameOrId,
 			JsonObject document,
 			string id = null,
-			CharonLogLevel logsVerbosity = CharonLogLevel.Normal,
+			CharonLogLevel? logsVerbosity = null,
 			Action<ToolRunOptions> configureTool = null
 		)
 		{
+			if (gameDataUrl == null) throw new ArgumentNullException(nameof(gameDataUrl));
+			if (schemaNameOrId == null) throw new ArgumentNullException(nameof(schemaNameOrId));
+			if (document == null) throw new ArgumentNullException(nameof(document));
+
 			var inputFileName = WriteJsonInput(document);
 			var outputFileName = CreateTemporaryFile("json");
 
@@ -261,10 +272,14 @@ namespace Editor.GameDevWare.Charon.Cli
 			string apiKey,
 			string schemaNameOrId,
 			JsonObject document,
-			CharonLogLevel logsVerbosity = CharonLogLevel.Normal,
+			CharonLogLevel? logsVerbosity = null,
 			Action<ToolRunOptions> configureTool = null
 		)
 		{
+			if (gameDataUrl == null) throw new ArgumentNullException(nameof(gameDataUrl));
+			if (schemaNameOrId == null) throw new ArgumentNullException(nameof(schemaNameOrId));
+			if (document == null) throw new ArgumentNullException(nameof(document));
+
 			var outputFileName = CreateTemporaryFile("json");
 
 			var id = document["Id"]?.ToString();
@@ -305,10 +320,14 @@ namespace Editor.GameDevWare.Charon.Cli
 			string apiKey,
 			string schemaNameOrId,
 			string id,
-			CharonLogLevel logsVerbosity = CharonLogLevel.Normal,
+			CharonLogLevel? logsVerbosity = null,
 			Action<ToolRunOptions> configureTool = null
 		)
 		{
+			if (gameDataUrl == null) throw new ArgumentNullException(nameof(gameDataUrl));
+			if (schemaNameOrId == null) throw new ArgumentNullException(nameof(schemaNameOrId));
+			if (id == null) throw new ArgumentNullException(nameof(id));
+
 			var outputFileName = CreateTemporaryFile("json");
 
 			using var _ = await RunCharonAsync
@@ -343,10 +362,14 @@ namespace Editor.GameDevWare.Charon.Cli
 			string apiKey,
 			string schemaNameOrId,
 			string id,
-			CharonLogLevel logsVerbosity = CharonLogLevel.Normal,
+			CharonLogLevel? logsVerbosity = null,
 			Action<ToolRunOptions> configureTool = null
 		)
 		{
+			if (gameDataUrl == null) throw new ArgumentNullException(nameof(gameDataUrl));
+			if (schemaNameOrId == null) throw new ArgumentNullException(nameof(schemaNameOrId));
+			if (id == null) throw new ArgumentNullException(nameof(id));
+
 			var outputFileName = CreateTemporaryFile("json");
 
 			using var _ = await RunCharonAsync
@@ -384,15 +407,18 @@ namespace Editor.GameDevWare.Charon.Cli
 			string gameDataUrl,
 			string apiKey,
 			string schemaNameOrId,
-			IReadOnlyList<ListFilter> filters,
-			IReadOnlyList<ListSorter> sorters,
+			IReadOnlyList<ListFilter> filters = null,
+			IReadOnlyList<ListSorter> sorters = null,
 			string path = null,
 			uint? skip = null,
 			uint? take = null,
-			CharonLogLevel logsVerbosity = CharonLogLevel.Normal,
+			CharonLogLevel? logsVerbosity = null,
 			Action<ToolRunOptions> configureTool = null
 		)
 		{
+			if (gameDataUrl == null) throw new ArgumentNullException(nameof(gameDataUrl));
+			if (schemaNameOrId == null) throw new ArgumentNullException(nameof(schemaNameOrId));
+
 			var outputFileName = CreateTemporaryFile("json");
 
 			var filtersList = new List<string>();
@@ -427,8 +453,8 @@ namespace Editor.GameDevWare.Charon.Cli
 					filtersList,
 					sortersList,
 					string.IsNullOrEmpty(path) ? EmptyParameters : new[] { "--path", path },
-					skip == 0 ? EmptyParameters : new[] { "--skip", skip.ToString() },
-					take == 0 ? EmptyParameters : new[] { "--take", take.ToString() },
+					skip.GetValueOrDefault() == 0 ? EmptyParameters : new[] { "--skip", skip.ToString() },
+					take == null ? EmptyParameters : new[] { "--take", take.ToString() },
 					"--output", outputFileName,
 					"--outputFormat", "json"
 				),
@@ -455,10 +481,14 @@ namespace Editor.GameDevWare.Charon.Cli
 			IReadOnlyList<string> schemaNamesOrIds,
 			JsonObject documentsBySchemaNameOrId,
 			ImportMode importMode,
-			CharonLogLevel logsVerbosity = CharonLogLevel.Normal,
+			CharonLogLevel? logsVerbosity = null,
 			Action<ToolRunOptions> configureTool = null
 		)
 		{
+			if (gameDataUrl == null) throw new ArgumentNullException(nameof(gameDataUrl));
+			if (schemaNamesOrIds == null) throw new ArgumentNullException(nameof(schemaNamesOrIds));
+			if (documentsBySchemaNameOrId == null) throw new ArgumentNullException(nameof(documentsBySchemaNameOrId));
+
 			var inputFileName = WriteJsonInput(documentsBySchemaNameOrId);
 
 			using var _ = await RunCharonAsync
@@ -494,10 +524,14 @@ namespace Editor.GameDevWare.Charon.Cli
 			ImportMode importMode,
 			string documentsBySchemaNameOrIdFilePath,
 			ExportFormat format = ExportFormat.Json,
-			CharonLogLevel logsVerbosity = CharonLogLevel.Normal,
+			CharonLogLevel? logsVerbosity = null,
 			Action<ToolRunOptions> configureTool = null
 		)
 		{
+			if (gameDataUrl == null) throw new ArgumentNullException(nameof(gameDataUrl));
+			if (schemaNamesOrIds == null) throw new ArgumentNullException(nameof(schemaNamesOrIds));
+			if (documentsBySchemaNameOrIdFilePath == null) throw new ArgumentNullException(nameof(documentsBySchemaNameOrIdFilePath));
+
 			using var _ = await RunCharonAsync
 			(
 				apiKey, logsVerbosity,
@@ -532,10 +566,15 @@ namespace Editor.GameDevWare.Charon.Cli
 			IReadOnlyList<string> properties,
 			IReadOnlyList<string> languages,
 			ExportMode exportMode,
-			CharonLogLevel logsVerbosity = CharonLogLevel.Normal,
+			CharonLogLevel? logsVerbosity = null,
 			Action<ToolRunOptions> configureTool = null
 		)
 		{
+			if (gameDataUrl == null) throw new ArgumentNullException(nameof(gameDataUrl));
+			if (schemaNamesOrIds == null) throw new ArgumentNullException(nameof(schemaNamesOrIds));
+			if (properties == null) throw new ArgumentNullException(nameof(properties));
+			if (languages == null) throw new ArgumentNullException(nameof(languages));
+
 			var outputFileName = CreateTemporaryFile("json");
 
 			using var _ = await RunCharonAsync
@@ -579,10 +618,16 @@ namespace Editor.GameDevWare.Charon.Cli
 			ExportMode exportMode,
 			string exportedDocumentsFilePath,
 			ExportFormat format = ExportFormat.Json,
-			CharonLogLevel logsVerbosity = CharonLogLevel.Normal,
+			CharonLogLevel? logsVerbosity = null,
 			Action<ToolRunOptions> configureTool = null
 		)
 		{
+			if (gameDataUrl == null) throw new ArgumentNullException(nameof(gameDataUrl));
+			if (schemaNamesOrIds == null) throw new ArgumentNullException(nameof(schemaNamesOrIds));
+			if (properties == null) throw new ArgumentNullException(nameof(properties));
+			if (languages == null) throw new ArgumentNullException(nameof(languages));
+			if (exportedDocumentsFilePath == null) throw new ArgumentNullException(nameof(exportedDocumentsFilePath));
+
 			using var _ = await RunCharonAsync
 			(
 				apiKey, logsVerbosity,
@@ -616,10 +661,15 @@ namespace Editor.GameDevWare.Charon.Cli
 			IReadOnlyList<string> schemaNamesOrIds,
 			IReadOnlyList<string> languages,
 			JsonObject documentsBySchemaNameOrId,
-			CharonLogLevel logsVerbosity = CharonLogLevel.Normal,
+			CharonLogLevel? logsVerbosity = null,
 			Action<ToolRunOptions> configureTool = null
 		)
 		{
+			if (gameDataUrl == null) throw new ArgumentNullException(nameof(gameDataUrl));
+			if (schemaNamesOrIds == null) throw new ArgumentNullException(nameof(schemaNamesOrIds));
+			if (languages == null) throw new ArgumentNullException(nameof(languages));
+			if (documentsBySchemaNameOrId == null) throw new ArgumentNullException(nameof(documentsBySchemaNameOrId));
+
 			var inputFileName = WriteJsonInput(documentsBySchemaNameOrId);
 
 			using var _ = await RunCharonAsync
@@ -655,10 +705,15 @@ namespace Editor.GameDevWare.Charon.Cli
 			IReadOnlyList<string> languages,
 			string documentsBySchemaNameOrIdFilePath,
 			ExportFormat format = ExportFormat.Json,
-			CharonLogLevel logsVerbosity = CharonLogLevel.Normal,
+			CharonLogLevel? logsVerbosity = null,
 			Action<ToolRunOptions> configureTool = null
 		)
 		{
+			if (gameDataUrl == null) throw new ArgumentNullException(nameof(gameDataUrl));
+			if (schemaNamesOrIds == null) throw new ArgumentNullException(nameof(schemaNamesOrIds));
+			if (languages == null) throw new ArgumentNullException(nameof(languages));
+			if (documentsBySchemaNameOrIdFilePath == null) throw new ArgumentNullException(nameof(documentsBySchemaNameOrIdFilePath));
+
 			using var _ = await RunCharonAsync
 			(
 				apiKey, logsVerbosity,
@@ -691,19 +746,24 @@ namespace Editor.GameDevWare.Charon.Cli
 			IReadOnlyList<string> schemaNamesOrIds,
 			string sourceLanguage,
 			string targetLanguage,
-			CharonLogLevel logsVerbosity = CharonLogLevel.Normal,
+			CharonLogLevel? logsVerbosity = null,
 			Action<ToolRunOptions> configureTool = null
 		)
 		{
+			if (gameDataUrl == null) throw new ArgumentNullException(nameof(gameDataUrl)); ;
+			if (schemaNamesOrIds == null) throw new ArgumentNullException(nameof(schemaNamesOrIds));
+			if (sourceLanguage == null) throw new ArgumentNullException(nameof(sourceLanguage));
+			if (targetLanguage == null) throw new ArgumentNullException(nameof(targetLanguage));
+
 			var outputFileName = CreateTemporaryFile("json");
-			var languages = new[] { sourceLanguage, targetLanguage };
 			using var _ = await RunCharonAsync
 			(
 				apiKey, logsVerbosity,
 				ToolRunOptions.FlattenArguments(
 					"DATA", "I18N", "EXPORT", gameDataUrl,
 					schemaNamesOrIds.Count == 0 ? EmptyParameters : "--schemas", schemaNamesOrIds,
-					"--languages", languages,
+					"--sourceLanguage", sourceLanguage,
+					"--targetLanguage", targetLanguage,
 					"--output", outputFileName,
 					"--outputFormat", "json"
 				),
@@ -734,18 +794,24 @@ namespace Editor.GameDevWare.Charon.Cli
 			string targetLanguage,
 			string exportedDocumentsFilePath,
 			ExportFormat format = ExportFormat.Json,
-			CharonLogLevel logsVerbosity = CharonLogLevel.Normal,
+			CharonLogLevel? logsVerbosity = null,
 			Action<ToolRunOptions> configureTool = null
 		)
 		{
-			var languages = new[] { sourceLanguage, targetLanguage };
+			if (gameDataUrl == null) throw new ArgumentNullException(nameof(gameDataUrl));
+			if (schemaNamesOrIds == null) throw new ArgumentNullException(nameof(schemaNamesOrIds));
+			if (sourceLanguage == null) throw new ArgumentNullException(nameof(sourceLanguage));
+			if (targetLanguage == null) throw new ArgumentNullException(nameof(targetLanguage));
+			if (exportedDocumentsFilePath == null) throw new ArgumentNullException(nameof(exportedDocumentsFilePath));
+
 			using var _ = await RunCharonAsync
 			(
 				apiKey, logsVerbosity,
 				ToolRunOptions.FlattenArguments(
 					"DATA", "I18N", "EXPORT", gameDataUrl,
 					schemaNamesOrIds.Count == 0 ? EmptyParameters : "--schemas", schemaNamesOrIds,
-					"--languages", languages,
+					"--sourceLanguage", sourceLanguage,
+					"--targetLanguage", targetLanguage,
 					"--output", exportedDocumentsFilePath,
 					"--outputFormat", format.GetFormatName()
 				),
@@ -766,10 +832,13 @@ namespace Editor.GameDevWare.Charon.Cli
 			string gameDataUrl,
 			string apiKey,
 			string[] languages,
-			CharonLogLevel logsVerbosity = CharonLogLevel.Normal,
+			CharonLogLevel? logsVerbosity = null,
 			Action<ToolRunOptions> configureTool = null
 		)
 		{
+			if (gameDataUrl == null) throw new ArgumentNullException(nameof(gameDataUrl));
+			if (languages == null) throw new ArgumentNullException(nameof(languages));
+
 			using var _ = await RunCharonAsync
 			(
 				apiKey, logsVerbosity,
@@ -795,10 +864,13 @@ namespace Editor.GameDevWare.Charon.Cli
 			string gameDataUrl1,
 			string gameDataUrl2,
 			string apiKey,
-			CharonLogLevel logsVerbosity = CharonLogLevel.Normal,
+			CharonLogLevel? logsVerbosity = null,
 			Action<ToolRunOptions> configureTool = null
 		)
 		{
+			if (gameDataUrl1 == null) throw new ArgumentNullException(nameof(gameDataUrl1));
+			if (gameDataUrl2 == null) throw new ArgumentNullException(nameof(gameDataUrl2));
+
 			var outputFileName = CreateTemporaryFile("json");
 
 			using var _ = await RunCharonAsync
@@ -833,10 +905,14 @@ namespace Editor.GameDevWare.Charon.Cli
 			string apiKey,
 			string exportedDocumentsFilePath,
 			BackupFormat format = BackupFormat.Json,
-			CharonLogLevel logsVerbosity = CharonLogLevel.Normal,
+			CharonLogLevel? logsVerbosity = null,
 			Action<ToolRunOptions> configureTool = null
 		)
 		{
+			if (gameDataUrl1 == null) throw new ArgumentNullException(nameof(gameDataUrl1));
+			if (gameDataUrl2 == null) throw new ArgumentNullException(nameof(gameDataUrl2));
+			if (exportedDocumentsFilePath == null) throw new ArgumentNullException(nameof(exportedDocumentsFilePath));
+
 			using var _ = await RunCharonAsync
 			(
 				apiKey, logsVerbosity,
@@ -862,10 +938,13 @@ namespace Editor.GameDevWare.Charon.Cli
 			string gameDataUrl,
 			string apiKey,
 			JsonObject gameDataPatch,
-			CharonLogLevel logsVerbosity = CharonLogLevel.Normal,
+			CharonLogLevel? logsVerbosity = null,
 			Action<ToolRunOptions> configureTool = null
 		)
 		{
+			if (gameDataUrl == null) throw new ArgumentNullException(nameof(gameDataUrl));
+			if (gameDataPatch == null) throw new ArgumentNullException(nameof(gameDataPatch));
+
 			var inputFileName = WriteJsonInput(gameDataPatch);
 
 			using var _ = await RunCharonAsync
@@ -895,10 +974,13 @@ namespace Editor.GameDevWare.Charon.Cli
 			string apiKey,
 			string gameDataPatchFilePath,
 			BackupFormat format = BackupFormat.Json,
-			CharonLogLevel logsVerbosity = CharonLogLevel.Normal,
+			CharonLogLevel? logsVerbosity = null,
 			Action<ToolRunOptions> configureTool = null
 		)
 		{
+			if (gameDataUrl == null) throw new ArgumentNullException(nameof(gameDataUrl));
+			if (gameDataPatchFilePath == null) throw new ArgumentNullException(nameof(gameDataPatchFilePath));
+
 			using var _ = await RunCharonAsync
 			(
 				apiKey, logsVerbosity,
@@ -923,10 +1005,12 @@ namespace Editor.GameDevWare.Charon.Cli
 		(
 			string gameDataUrl,
 			string apiKey,
-			CharonLogLevel logsVerbosity = CharonLogLevel.Normal,
+			CharonLogLevel? logsVerbosity = null,
 			Action<ToolRunOptions> configureTool = null
 		)
 		{
+			if (gameDataUrl == null) throw new ArgumentNullException(nameof(gameDataUrl));
+
 			var outputFileName = CreateTemporaryFile("json");
 
 			using var _ = await RunCharonAsync
@@ -958,10 +1042,13 @@ namespace Editor.GameDevWare.Charon.Cli
 			string apiKey,
 			string gameDataFilePath,
 			BackupFormat format = BackupFormat.Json,
-			CharonLogLevel logsVerbosity = CharonLogLevel.Normal,
+			CharonLogLevel? logsVerbosity = null,
 			Action<ToolRunOptions> configureTool = null
 		)
 		{
+			if (gameDataUrl == null) throw new ArgumentNullException(nameof(gameDataUrl));
+			if (gameDataFilePath == null) throw new ArgumentNullException(nameof(gameDataFilePath));
+
 			using var _ = await RunCharonAsync
 			(
 				apiKey, logsVerbosity,
@@ -987,10 +1074,13 @@ namespace Editor.GameDevWare.Charon.Cli
 			string gameDataUrl,
 			string apiKey,
 			JsonObject gameData,
-			CharonLogLevel logsVerbosity = CharonLogLevel.Normal,
+			CharonLogLevel? logsVerbosity = null,
 			Action<ToolRunOptions> configureTool = null
 		)
 		{
+			if (gameDataUrl == null) throw new ArgumentNullException(nameof(gameDataUrl));
+			if (gameData == null) throw new ArgumentNullException(nameof(gameData));
+
 			var inputFileName = WriteJsonInput(gameData);
 
 			using var _ = await RunCharonAsync
@@ -1020,10 +1110,13 @@ namespace Editor.GameDevWare.Charon.Cli
 			string apiKey,
 			string gameDataFilePath,
 			BackupFormat format = BackupFormat.Json,
-			CharonLogLevel logsVerbosity = CharonLogLevel.Normal,
+			CharonLogLevel? logsVerbosity = null,
 			Action<ToolRunOptions> configureTool = null
 		)
 		{
+			if (gameDataUrl == null) throw new ArgumentNullException(nameof(gameDataUrl));
+			if (gameDataFilePath == null) throw new ArgumentNullException(nameof(gameDataFilePath));
+
 			using var _ = await RunCharonAsync
 			(
 				apiKey, logsVerbosity,
@@ -1050,10 +1143,12 @@ namespace Editor.GameDevWare.Charon.Cli
 			string gameDataUrl,
 			string apiKey,
 			ValidationOptions validationOptions,
-			CharonLogLevel logsVerbosity = CharonLogLevel.Normal,
+			CharonLogLevel? logsVerbosity = null,
 			Action<ToolRunOptions> configureTool = null
 		)
 		{
+			if (gameDataUrl == null) throw new ArgumentNullException(nameof(gameDataUrl));
+
 			var outputFileName = CreateTemporaryFile("json");
 
 			using var _ = await RunCharonAsync
@@ -1102,10 +1197,16 @@ namespace Editor.GameDevWare.Charon.Cli
 			SourceCodeLineEndings sourceCodeLineEndings = SourceCodeLineEndings.Windows,
 			bool clearOutputDirectory = true,
 			bool splitFiles = false,
-			CharonLogLevel logsVerbosity = CharonLogLevel.Normal,
+			CharonLogLevel? logsVerbosity = null,
 			Action<ToolRunOptions> configureTool = null
 		)
 		{
+			if (gameDataUrl == null) throw new ArgumentNullException(nameof(gameDataUrl));
+			if (outputDirectory == null) throw new ArgumentNullException(nameof(outputDirectory));
+			if (documentClassName == null) throw new ArgumentNullException(nameof(documentClassName));
+			if (gameDataClassName == null) throw new ArgumentNullException(nameof(gameDataClassName));
+			if (gameDataNamespace == null) throw new ArgumentNullException(nameof(gameDataNamespace));
+
 			sourceCodeGenerationOptimizations |= SourceCodeGenerationOptimizations.DisableFormulaCompilation;
 
 			var optimizationsList = new List<string>();
@@ -1150,6 +1251,8 @@ namespace Editor.GameDevWare.Charon.Cli
 		/// <param name="configureTool">Optional configuration delegate for tool process.</param>
 		public static async Task DumpTemplatesAsync(string outputDirectory, Action<ToolRunOptions> configureTool = null)
 		{
+			if (outputDirectory == null) throw new ArgumentNullException(nameof(outputDirectory));
+
 			using var _ = await RunCharonAsync
 			(
 				apiKey: string.Empty, CharonLogLevel.Normal,
@@ -1194,10 +1297,12 @@ namespace Editor.GameDevWare.Charon.Cli
 		(
 			string gameDataUrl,
 			string apiKey,
-			CharonLogLevel logsVerbosity = CharonLogLevel.Normal,
+			CharonLogLevel? logsVerbosity = null,
 			Action<ToolRunOptions> configureTool = null
 		)
 		{
+			if (gameDataUrl == null) throw new ArgumentNullException(nameof(gameDataUrl));
+
 			using var runResult = await RunCharonAsync(
 				apiKey: apiKey, logsVerbosity,
 				arguments: ToolRunOptions.FlattenArguments
@@ -1229,11 +1334,13 @@ namespace Editor.GameDevWare.Charon.Cli
 		public static Task<ToolRunResult> RunCharonAsync
 		(
 			string[] commandsAndOptions,
-			string apiKey = "",
-			CharonLogLevel logsVerbosity = CharonLogLevel.Normal,
+			string apiKey,
+			CharonLogLevel? logsVerbosity = null,
 			Action<ToolRunOptions> configureTool = null
 		)
 		{
+			if (commandsAndOptions == null) throw new ArgumentNullException(nameof(commandsAndOptions));
+
 			return RunCharonAsync
 			(
 				apiKey: apiKey, logsVerbosity,
@@ -1279,12 +1386,14 @@ namespace Editor.GameDevWare.Charon.Cli
 			Action<ToolRunOptions> configureTool = null
 		)
 		{
+			if (templateFile == null) throw new ArgumentNullException(nameof(templateFile));
+
 			var t4Path = EnsureCharonRunScript("RunT4");
 
 			var arguments = new List<string>();
 			if (!string.IsNullOrEmpty(outputFile))
 			{
-				arguments.Add("-o=" + outputFile);
+				arguments.Add("--out=" + outputFile);
 			}
 			foreach (var referencedAssembly in referencedAssemblies ?? Array.Empty<string>())
 			{
@@ -1364,10 +1473,13 @@ namespace Editor.GameDevWare.Charon.Cli
 			}
 		}
 
-		private static async Task<ToolRunResult> RunCharonAsync(string apiKey, CharonLogLevel logsVerbosity, string[] arguments, Action<ToolRunOptions> configureTool)
+		private static async Task<ToolRunResult> RunCharonAsync(string apiKey, CharonLogLevel? logsVerbosity, string[] arguments, Action<ToolRunOptions> configureTool)
 		{
+			if (arguments == null) throw new ArgumentNullException(nameof(arguments));
+
 			var charonPath = EnsureCharonRunScript("RunCharon");
 
+			logsVerbosity ??= CharonEditorModule.Instance.Settings.LogLevel;
 			arguments = arguments.Concat(new[] { logsVerbosity == CharonLogLevel.Verbose ? "--verbose" : "" }).ToArray();
 
 			var runOptions = new ToolRunOptions(charonPath, arguments) {

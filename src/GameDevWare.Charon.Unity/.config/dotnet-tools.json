@@ -3,9 +3,16 @@
   "isRoot": true,
   "tools": {
     "dotnet-charon": {
-      "version": "2025.0.0",
+      "version": "2025.1.1",
       "commands": [
         "charon"
+      ],
+      "rollForward": false
+    },
+    "dotnet-t4": {
+      "version": "3.0.0",
+      "commands": [
+        "t4"
       ],
       "rollForward": false
     }

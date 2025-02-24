@@ -149,6 +149,8 @@ namespace Editor.GameDevWare.Charon.Routines
 								$"now is '{gameDataAsset.GetType().Name}' type.");
 						}
 
+						logger.Log(LogType.Assert, $"Pushing content of '{gameDataPath}' into '{gameDataAssetPath}'({AssetDatabase.AssetPathToGUID(gameDataAssetPath)}) asset with '{publishFormat}' format.");
+
 						gameDataAsset.Save(fileStream, publishFormat);
 					}
 
