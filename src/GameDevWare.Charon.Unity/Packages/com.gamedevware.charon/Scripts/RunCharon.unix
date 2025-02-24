@@ -37,23 +37,26 @@ check_dotnet_version() {
 
 # Install/Update charon tool
 install_update_charon_tool() {
-    pushd "$SCRIPT_DIR" > /dev/null || exit 1
-    if ! dotnet tool install dotnet-charon --local --create-manifest-if-needed > /dev/null 2>&1; then
-        echo "Failed to execute the 'dotnet tool install dotnet-charon' command to retrieve the latest package version from NuGet." >&2
-        echo "Ensure that the 'dotnet' tool is installed and available in the 'PATH'." >&2
-        echo "Check https://dotnet.microsoft.com/en-us/download for the installer." >&2
-        popd > /dev/null || exit 1
-        exit 1
+	# Check if dotnet-charon is installed locally
+    if dotnet tool list --local | grep -q 'dotnet-charon'; then
+		pushd "$SCRIPT_DIR" > /dev/null || exit 1
+		if ! dotnet tool update dotnet-charon --local > /dev/null 2>&1; then
+			echo "Failed to execute the 'dotnet tool update dotnet-charon' command to retrieve the latest package version from NuGet." >&2
+			popd > /dev/null || exit 1
+			exit 1
+		fi
+		popd > /dev/null || exit 1
+    else
+		pushd "$SCRIPT_DIR" > /dev/null || exit 1
+		if ! dotnet tool install dotnet-charon --local --create-manifest-if-needed > /dev/null 2>&1; then
+			echo "Failed to execute the 'dotnet tool install dotnet-charon' command to retrieve the latest package version from NuGet." >&2
+			echo "Ensure that the 'dotnet' tool is installed and available in the 'PATH'." >&2
+			echo "Check https://dotnet.microsoft.com/en-us/download for the installer." >&2
+			popd > /dev/null || exit 1
+			exit 1
+		fi
+		popd > /dev/null || exit 1
     fi
-    popd > /dev/null || exit 1
-    
-    pushd "$SCRIPT_DIR" > /dev/null || exit 1
-    if ! dotnet tool update dotnet-charon --local > /dev/null 2>&1; then
-        echo "Failed to execute the 'dotnet tool update dotnet-charon' command to retrieve the latest package version from NuGet." >&2
-        popd > /dev/null || exit 1
-        exit 1
-    fi
-    popd > /dev/null || exit 1
 }
 
 # Run charon tool with specified parameters

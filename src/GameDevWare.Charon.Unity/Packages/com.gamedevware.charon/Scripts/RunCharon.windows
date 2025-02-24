@@ -32,18 +32,21 @@ if %major_version% lss 8 (
 :: Install/Update charon tool
 :Install_Update_Charon_Tool
 
-pushd "%SCRIPT_DIR%"
-dotnet tool install dotnet-charon --local --create-manifest-if-needed >nul
-popd
+:: Check if dotnet-charon is installed locally
+dotnet tool list --local | findstr /i /c:"dotnet-charon" >nul 2>&1
+	if %errorlevel% equ 0 (
+	pushd "%SCRIPT_DIR%"
+	dotnet tool update dotnet-charon --local >nul
+	popd
 
-if "%ERRORLEVEL%" NEQ "0" goto Exit_Failure_Dotnet_Restore_Failed
+	if "%ERRORLEVEL%" NEQ "0" goto Exit_Failure_Dotnet_Restore_Failed
+) else (
+	pushd "%SCRIPT_DIR%"
+	dotnet tool install dotnet-charon --local --create-manifest-if-needed >nul
+	popd
 
-
-pushd "%SCRIPT_DIR%"
-dotnet tool update dotnet-charon --local >nul
-popd
-
-if "%ERRORLEVEL%" NEQ "0" goto Exit_Failure_Dotnet_Restore_Failed
+	if "%ERRORLEVEL%" NEQ "0" goto Exit_Failure_Dotnet_Restore_Failed
+)
 
 :: Run charon tool with specified parameters
 :Run_Tool
