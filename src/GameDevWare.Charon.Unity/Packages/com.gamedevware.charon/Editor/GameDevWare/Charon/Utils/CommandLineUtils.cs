@@ -22,6 +22,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -37,6 +38,20 @@ namespace Editor.GameDevWare.Charon.Utils
 				options.StartInfo.RedirectStandardError = true;
 			if (options.CaptureStandardOutput)
 				options.StartInfo.RedirectStandardOutput = true;
+
+			if (options.CaptureStandardError || options.CaptureStandardOutput)
+			{
+#if UNITY_EDITOR_WIN
+				options.StartInfo.UseShellExecute = false;
+				options.StartInfo.Arguments = $"/c \"\"{options.StartInfo.FileName}\" {options.StartInfo.Arguments}\"";
+				options.StartInfo.FileName = "cmd.exe";
+#else
+				options.StartInfo.UseShellExecute = false;
+				options.StartInfo.Arguments = $" -- \"{options.StartInfo.FileName}\" {options.StartInfo.Arguments}";
+				options.StartInfo.FileName = "/usr/bin/env";
+#endif
+			}
+
 
 			var logger = CharonEditorModule.Instance.Logger;
 			logger.Log(LogType.Assert, $"Starting process '{options.StartInfo.FileName}' at '{options.StartInfo.WorkingDirectory}' with arguments '{options.StartInfo.Arguments}'.");
