@@ -50,6 +50,8 @@ namespace Editor.GameDevWare.Charon
 		internal readonly DeferredAssetImporter AssetImporter;
 		internal readonly CharonLogger Logger;
 		internal readonly UnityResourceServer ResourceServer;
+		internal readonly LegacyPluginMigrator LegacyPluginMigrator;
+
 
 		/// <summary>
 		/// API key storage of current user.
@@ -89,6 +91,7 @@ namespace Editor.GameDevWare.Charon
 			this.Processes = new CharonProcessList();
 			this.ResourceServer = new UnityResourceServer(this.Logger);
 			this.AssetImporter = new DeferredAssetImporter(this.Logger);
+			this.LegacyPluginMigrator = new LegacyPluginMigrator(this.Logger);
 		}
 
 		private void Initialize()
@@ -103,6 +106,7 @@ namespace Editor.GameDevWare.Charon
 			this.AssetImporter.Initialize();
 			this.ResourceServer.Initialize();
 			this.LogArchiver.Initialize();
+			this.LegacyPluginMigrator.Initialize();
 
 			AssemblyReloadEvents.beforeAssemblyReload += this.Dispose;
 			AppDomain.CurrentDomain.DomainUnload += (_, _) => this.Dispose();

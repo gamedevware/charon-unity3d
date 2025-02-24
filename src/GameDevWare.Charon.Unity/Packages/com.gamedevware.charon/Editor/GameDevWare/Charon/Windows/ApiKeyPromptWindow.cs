@@ -70,10 +70,10 @@ namespace Editor.GameDevWare.Charon.Windows
 			this.titleContent = new GUIContent("API Key Prompt");
 			this.minSize = new Vector2(480, 230);
 			this.position = new Rect(
-				(Screen.width - this.maxSize.x) / 2,
-				(Screen.height - this.maxSize.y) / 2,
-				this.maxSize.x,
-				this.maxSize.y
+				(Screen.width - this.minSize.x) / 2,
+				(Screen.height - this.minSize.y) / 2,
+				this.minSize.x,
+				this.minSize.y
 			);
 			this.apiKey = string.Empty;
 			this.projectFound = null;

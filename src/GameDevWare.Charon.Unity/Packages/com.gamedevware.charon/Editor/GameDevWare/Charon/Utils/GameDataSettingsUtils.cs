@@ -40,7 +40,7 @@ namespace Editor.GameDevWare.Charon.Utils
 				indentation = (int)SourceCodeIndentation.Tabs,
 				gameDataFileGuid = gameDataFileGuid,
 				codeGenerationPath = "",
-				gameDataClassName = Path.GetFileNameWithoutExtension(gameDataPath).Trim('.', '_'),
+				gameDataClassName = Path.GetFileNameWithoutExtension(Path.GetFileName(gameDataPath)).Trim('.', '_'),
 				gameDataNamespace = (Path.GetDirectoryName(gameDataPath) ?? "").Replace("\\", ".").Replace("/", "."),
 				gameDataDocumentClassName = "Document",
 				optimizations = 0 // none,

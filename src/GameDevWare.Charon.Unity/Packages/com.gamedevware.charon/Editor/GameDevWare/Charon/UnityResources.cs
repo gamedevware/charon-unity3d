@@ -71,11 +71,13 @@ namespace Editor.GameDevWare.Charon {
 		public const string UI_UNITYPLUGIN_PROGRESS_PROCESSING_GAMEDATA = "Processing game data at {0}";
 		public const string UI_UNITYPLUGIN_PROGRESS_AUTHENTICATING = "Authenticating...";
 		public const string UI_UNITYPLUGIN_PROGRESS_IMPORTING = "Importing...";
+		public const string UI_UNITYPLUGIN_PROGRESS_MIGRATING = "Migrating...";
 		public const string UI_UNITYPLUGIN_PROGRESS_DONE = "Done";
 		public const string UI_UNITYPLUGIN_PROGRESS_RUNNING_PRE_TASKS = "Running custom pre-operation tasks...";
 		public const string UI_UNITYPLUGIN_PROGRESS_RUNNING_POST_TASKS = "Running custom post-operation tasks...";
 		public const string UI_UNITYPLUGIN_PROGRESS_DOWNLOADING = "Downloading '{2}' ({0:F2}/{1:F2} MiB)...";
 		public const string UI_UNITYPLUGIN_PROGRESS_UPLOADING = "Uploading '{2}' ({0:F2}/{1:F2} MiB)...";
+		public const string UI_UNITYPLUGIN_PROGRESS_DELETING_FILES = "Deleting files...";
 		public const string UI_UNITYPLUGIN_SPECIFY_EXTRACTION_LOC_TITLE = "Specify Extraction Location...";
 		public const string UI_UNITYPLUGIN_T4_EXTRACTION_COMPLETE = "T4 Template extracted successfully.";
 		public const string UI_UNITYPLUGIN_T4_EXTRACTION_FAILED = "T4 Template extraction failed due to errors: {0}.";

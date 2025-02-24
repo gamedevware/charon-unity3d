@@ -58,12 +58,11 @@ namespace Editor.GameDevWare.Charon.Windows
 		{
 			this.titleContent = new GUIContent(Resources.UI_UNITYPLUGIN_CREATE_GAMEDATA_WINDOW_TITLE);
 			this.minSize = new Vector2(600, 400);
-			this.maxSize = new Vector2(800, 600);
 			this.position = new Rect(
-				(Screen.width - this.maxSize.x),
-				(Screen.height - this.maxSize.y) / 2,
-				this.maxSize.x,
-				this.maxSize.y
+				(Screen.width - this.minSize.x),
+				(Screen.height - this.minSize.y) / 2,
+				this.minSize.x,
+				this.minSize.y
 			);
 			this.closeSource = new CancellationTokenSource();
 			this.autoClose = true;
@@ -160,7 +159,7 @@ namespace Editor.GameDevWare.Charon.Windows
 					this.lastError = null;
 					this.progressStatus = null;
 
-					if (ValidateCreationOptions(this.folder, this.gameDataName, out this.lastError))
+					if (ReimportAssetsRoutine.ValidateCreationOptions(this.folder, this.gameDataName, out this.lastError))
 					{
 						this.gameDataCreationTask = CharonEditorModule.Instance.Routines.Schedule(this.CreateGameDataAsync, this.closeSource.Token);
 						this.gameDataCreationTask.LogFaultAsError();
@@ -192,32 +191,6 @@ namespace Editor.GameDevWare.Charon.Windows
 			EditorLayoutUtils.AutoSize(this);
 		}
 
-		public static bool ValidateCreationOptions(UnityObject folder, string gameDataName, out string errorMessage)
-		{
-			var gameDataDirectory = GetBaseDirectory(folder);
-			var isStreamingAssetsDirectory = gameDataDirectory.StartsWith(Path.GetFullPath(Path.Combine("Assets", "StreamingAssets")), StringComparison.OrdinalIgnoreCase);
-			if (isStreamingAssetsDirectory)
-			{
-				errorMessage = Resources.UI_UNITYPLUGIN_CREATING_GAME_DATA_NO_STREAMING_ASSETS;
-				return false;
-			}
-
-			if (!GameDataAssetUtils.IsValidName(gameDataName))
-			{
-				errorMessage = Resources.UI_UNITYPLUGIN_CREATING_GAME_DATA_INVALID_NAME;
-				return false;
-			}
-
-			var collidedAssetPath = GameDataAssetUtils.FindNameCollision(gameDataName);
-			if (collidedAssetPath != null)
-			{
-				errorMessage = string.Format(Resources.UI_UNITYPLUGIN_CREATING_GAME_DATA_IS_USED, collidedAssetPath);
-			}
-
-			errorMessage = null;
-			return true;
-		}
-
 		private async Task CreateGameDataAsync()
 		{
 			var progressCallback = new Action<string, float>((message, progress) =>
@@ -233,7 +206,7 @@ namespace Editor.GameDevWare.Charon.Windows
 				this.closeSource.Token.ThrowIfCancellationRequested();
 				this.closeSource.Token.ThrowIfScriptsCompiling();
 
-				var gameDataDirectory = GetBaseDirectory(this.folder);
+				var gameDataDirectory = ReimportAssetsRoutine.GetBaseDirectory(this.folder);
 
 				progressCallback(Resources.UI_UNITYPLUGIN_CREATING_PROGRESS_INIT_GAMEDATA, 0.01f);
 
@@ -298,20 +271,6 @@ namespace Editor.GameDevWare.Charon.Windows
 			{
 				EditorApplication.UnlockReloadAssemblies();
 			}
-		}
-		private static string GetBaseDirectory(UnityObject folder)
-		{
-			var gameDataDirectory = "Assets";
-			if (folder != null)
-			{
-				gameDataDirectory = AssetDatabase.GetAssetPath(folder);
-				if (File.Exists(gameDataDirectory))
-				{
-					gameDataDirectory = Path.GetDirectoryName(gameDataDirectory) ?? gameDataDirectory;
-				}
-			}
-
-			return gameDataDirectory;
 		}
 
 		private void RaiseDone()

@@ -21,6 +21,7 @@
 */
 
 using System.Threading;
+using Editor.GameDevWare.Charon.Routines;
 using Editor.GameDevWare.Charon.Utils;
 using UnityEditor;
 using UnityEditor.AssetImporters;
@@ -52,7 +53,7 @@ namespace Editor.GameDevWare.Charon.Windows
 			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_INSPECTOR_REIMPORT_BUTTON, GUI.skin.button, GUILayout.Width(80), GUILayout.Height(25)))
 			{
 				var progressCallback = ProgressUtils.ShowProgressBar(Resources.UI_UNITYPLUGIN_PROGRESS_IMPORTING);
-				var importTask = CharonEditorModule.Instance.Routines.Schedule(() => GameDataAssetInspector.RunImportAsync(assetTarget, progressCallback), CancellationToken.None);
+				var importTask = ReimportAssetsRoutine.ScheduleAsync(new[] { AssetDatabase.GetAssetPath(assetTarget) }, progressCallback, CancellationToken.None);
 				importTask.ContinueWithHideProgressBar();
 				importTask.LogFaultAsError();
 			}
