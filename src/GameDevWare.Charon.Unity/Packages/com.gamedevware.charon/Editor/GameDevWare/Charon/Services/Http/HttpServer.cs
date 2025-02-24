@@ -138,7 +138,8 @@ namespace Editor.GameDevWare.Charon.Services.Http
 
 			await using var httpStream = new NetworkStream(requestSocket, ownsSocket: true);
 			await using var _ = cancellationToken.Register(state => ((IDisposable)state).Dispose(), requestSocket);
-			var remoteEndpoint = requestSocket.RemoteEndPoint;
+			var remoteEndpoint = GetRemoteEndpoint(requestSocket);
+
 			var stage = STAGE_RECEIVING_REQUEST_HEADERS;
 			var incomingRequestStream = this.GetMemoryStream();
 			var buffer = this.GetBuffer();
@@ -235,6 +236,18 @@ namespace Editor.GameDevWare.Charon.Services.Http
 			{
 				this.ReturnMemoryStream(incomingRequestStream);
 				this.ReturnBuffer(buffer);
+			}
+
+			static string GetRemoteEndpoint(Socket socket)
+			{
+				try
+				{
+					return socket.RemoteEndPoint.ToString();
+				}
+				catch
+				{
+					return "<unknown>";
+				}
 			}
 		}
 

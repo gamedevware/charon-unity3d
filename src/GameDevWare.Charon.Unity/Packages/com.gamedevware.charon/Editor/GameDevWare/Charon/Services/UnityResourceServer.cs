@@ -59,7 +59,7 @@ namespace Editor.GameDevWare.Charon.Services
 
 			this.cancellationTokenSource = new CancellationTokenSource();
 			this.formulaTypeIndexer = new FormulaTypeIndexer();
-			this.Port = 10000 + Process.GetCurrentProcess().Id % 65000;
+			this.Port = 10000 + Process.GetCurrentProcess().Id % 55000;
 			this.logger = logger;
 			this.receiveTask = Task.CompletedTask;
 			this.uiTaskScheduler = TaskScheduler.FromCurrentSynchronizationContext();
