@@ -21,6 +21,7 @@ media/
 .vs
 bin/
 obj/
+dotnet-tools.json
 
 AssetStoreTools*
 .DS_Store
