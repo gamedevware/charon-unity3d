@@ -1,7 +1,7 @@
 {
 	"name": "com.gamedevware.charon",
 	"displayName": "Charon: Game Data Editor",
-	"version": "2025.0.1",
+	"version": "2025.0.2",
 	"unity": "2021.3",
 	"description": "Charon is a powerful game development tool that streamlines the game development process. It provides a structured approach to designing and modeling game data, with automatic source code generation that reduces the load on programmers and eliminates human errors.",
 	"repository":"https://github.com/gamedevware/charon-unity3d",
