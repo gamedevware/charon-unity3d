@@ -99,6 +99,48 @@ namespace Editor.CharonExamples
 			}
 		}
 
+		[MenuItem("Tools/RPG Game/Import Hero")]
+		private static async void ImportHero()
+		{
+			Debug.Log("Creating Hero document from JObject...");
+
+			var importData = new JObject {
+				{
+					"Collections", new JObject {
+						{
+							"Hero", new JArray {
+
+								new JObject
+								{
+									{ "Id", "SuperBoy" },
+									{ "Name", "Super Boy" },
+									{ "Religious", false },
+								},
+								new JObject
+								{
+									{ "Id", "WounderBobby" },
+									{ "Name", "Wounder Boy" },
+									{ "Religious", true },
+								}
+							}
+						}
+					}
+				}
+			};
+
+			var gameDataPath = Path.GetFullPath("Assets/StreamingAssets/RpgGameData.gdjs");
+			await CharonCli.ImportAsync(
+				gameDataPath,
+				apiKey: string.Empty,
+				schemaNamesOrIds: new []{ "*" },
+				importData,
+				ImportMode.CreateAndUpdate
+			);
+
+			Debug.Log("Successfully imported documents.");
+
+		}
+
 		[MenuItem("Tools/RPG Game/Create Hero")]
 		private static async void CreateHero()
 		{
