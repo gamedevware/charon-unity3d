@@ -14,7 +14,7 @@ set "SCRIPT_DIR=%DRIVE_LETTER%%~p0"
 :Check_Dotnet
 
 where dotnet >nul 2>&1
-if %errorlevel% neq 0 (
+if %ERRORLEVEL% NEQ 0 (
     goto Exit_No_Dotnet_Installed
 )
 
@@ -22,29 +22,32 @@ if %errorlevel% neq 0 (
 for /f "tokens=*" %%i in ('dotnet --version') do set "DOTNET_VERSION=%%i"
 
 :: Extract the major version number
-for /f "tokens=1 delims=." %%a in ("%DOTNET_VERSION%") do set "major_version=%%a"
+for /f "tokens=1 delims=." %%a in ("%DOTNET_VERSION%") do set "MAJOR_VERSION=%%a"
 
 :: Check if the major version is 8 or later
-if %major_version% lss 8 (
+if %MAJOR_VERSION% LSS 8 (
     goto Old_Dotnet_Installed
 )
 
 :: Install/Update charon tool
 :Install_Update_Charon_Tool
 
-:: Check if dotnet-charon is installed locally
+pushd "%SCRIPT_DIR%"
 dotnet tool list --local | findstr /i /c:"dotnet-charon" >nul 2>&1
-	if %errorlevel% equ 0 (
-	pushd "%SCRIPT_DIR%"
+if %ERRORLEVEL% EQU 0 (
 	dotnet tool update dotnet-charon --local >nul
-	popd
 ) else (
-	pushd "%SCRIPT_DIR%"
-	dotnet tool install dotnet-charon --local --create-manifest-if-needed >nul
-	popd
+	if not exist ".config\dotnet-tools.json" (
+		dotnet new tool-manifest -o . >nul
+	)
+	dotnet tool install dotnet-charon --local >nul
 
-	if "%ERRORLEVEL%" NEQ "0" goto Exit_Failure_Dotnet_Restore_Failed
+	if %ERRORLEVEL% NEQ 0 (
+		popd
+		goto Exit_Failure_Dotnet_Restore_Failed
+	)
 )
+popd
 
 :: Run charon tool with specified parameters
 :Run_Tool
@@ -54,7 +57,7 @@ dotnet charon %*
 set EXITCODE=%ERRORLEVEL%
 popd
 
-if "%EXITCODE%" NEQ "0" (
+if %EXITCODE% NEQ 0 (
     goto Exit_Failure
 ) else (
     goto Exit_Success

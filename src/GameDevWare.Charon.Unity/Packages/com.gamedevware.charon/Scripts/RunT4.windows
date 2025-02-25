@@ -14,7 +14,7 @@ set "SCRIPT_DIR=%DRIVE_LETTER%%~p0"
 :Check_Dotnet
 
 where dotnet >nul 2>&1
-if %errorlevel% neq 0 (
+if %ERRORLEVEL% NEQ 0 (
     goto Exit_No_Dotnet_Installed
 )
 
@@ -22,10 +22,10 @@ if %errorlevel% neq 0 (
 for /f "tokens=*" %%i in ('dotnet --version') do set "DOTNET_VERSION=%%i"
 
 :: Extract the major version number
-for /f "tokens=1 delims=." %%a in ("%DOTNET_VERSION%") do set "major_version=%%a"
+for /f "tokens=1 delims=." %%a in ("%DOTNET_VERSION%") do set "MAJOR_VERSION=%%a"
 
 :: Check if the major version is 8 or later
-if %major_version% lss 8 (
+if %MAJOR_VERSION% LSS 8 (
     goto Old_Dotnet_Installed
 )
 
@@ -33,17 +33,21 @@ if %major_version% lss 8 (
 :Install_Update_T4_Tool
 
 pushd "%SCRIPT_DIR%"
-dotnet tool install dotnet-t4 --local --create-manifest-if-needed >nul
+dotnet tool list --local | findstr /i /c:"dotnet-t4" >nul 2>&1
+if %ERRORLEVEL% EQU 0 (
+	dotnet tool update dotnet-t4 --local >nul
+) else (
+	if not exist ".config\dotnet-tools.json" (
+		dotnet new tool-manifest -o . >nul
+	)
+	dotnet tool install dotnet-t4 --local >nul
+
+	if %ERRORLEVEL% NEQ 0 (
+		popd
+		goto Exit_Failure_Dotnet_Restore_Failed
+	)
+)
 popd
-
-if "%ERRORLEVEL%" NEQ "0" goto Exit_Failure_Dotnet_Restore_Failed
-
-
-pushd "%SCRIPT_DIR%"
-dotnet tool update dotnet-t4 --local >nul
-popd
-
-if "%ERRORLEVEL%" NEQ "0" goto Exit_Failure_Dotnet_Restore_Failed
 
 :: Run charon tool with specified parameters
 :Run_Tool
@@ -53,7 +57,7 @@ dotnet t4 %*
 set EXITCODE=%ERRORLEVEL%
 popd
 
-if "%EXITCODE%" NEQ "0" (
+if %EXITCODE% NEQ 0 (
     goto Exit_Failure
 ) else (
     goto Exit_Success
