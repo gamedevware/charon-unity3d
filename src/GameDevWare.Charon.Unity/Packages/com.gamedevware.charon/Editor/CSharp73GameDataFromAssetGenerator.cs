@@ -7,7 +7,7 @@
 //     the code is regenerated.
 // </auto-generated>
 // ------------------------------------------------------------------------------
-namespace Editor.GameDevWare.Charon
+namespace GameDevWare.Charon.Editor
 {
     using System;
     

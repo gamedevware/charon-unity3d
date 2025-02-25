@@ -55,6 +55,7 @@ namespace GameDevWare.Charon.Editor.Routines
 				return false;
 			}
 
+			gameDataAssetPath = AssetDatabase.GetAssetPath(gameDataAsset);
 			var reference = ValidationError.GetReference(exceptionId);
 			LoadEditorTaskCancellationSource?.Cancel();
 			var cancellationSource = LoadEditorTaskCancellationSource = new CancellationTokenSource();
@@ -170,7 +171,7 @@ namespace GameDevWare.Charon.Editor.Routines
 		}
 		private static async Task LaunchCharonAndOpenWindowAsync(GameDataSettings gameDataSettings, string reference, Action<string, float> progressCallback, CancellationToken cancellation)
 		{
-			var randomPort = new Random().Next(10000, 65000);
+			var randomPort = new Random().Next(10000, 60000);
 			var gameDataEditorUrl = new Uri("http://localhost:" + randomPort + "/");
 
 			var gameDataPath = Path.GetFullPath(AssetDatabase.GUIDToAssetPath(gameDataSettings.gameDataFileGuid) ?? "");

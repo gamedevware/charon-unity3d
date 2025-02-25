@@ -182,7 +182,11 @@ namespace GameDevWare.Charon.Editor.Services
 			EditorUtility.SetDirty(gameDataAsset);
 			AssetDatabase.SaveAssetIfDirty(gameDataAsset);
 
-			await SynchronizeAssetsRoutine.ScheduleAsync(new[] { gameDataAssetPath }).ConfigureAwait(false);
+			var reportCallback = ProgressUtils.ShowProgressBar(Resources.UI_UNITYPLUGIN_PROGRESS_IMPORTING);
+			var synchronizeAssetsTask = SynchronizeAssetsRoutine.ScheduleAsync(new[] { gameDataAssetPath }, reportCallback);
+			synchronizeAssetsTask.ContinueWithHideProgressBar();
+
+			await synchronizeAssetsTask.ConfigureAwait(false);
 
 			response.StatusCode = HttpStatusCode.NoContent;
 			return response;
@@ -207,7 +211,10 @@ namespace GameDevWare.Charon.Editor.Services
 				return response;
 			}
 
-			await GenerateSourceCodeRoutine.ScheduleAsync(new[] { gameDataAssetPath }).ConfigureAwait(false);
+			var reportCallback = ProgressUtils.ShowProgressBar(Resources.UI_UNITYPLUGIN_GENERATING_SOURCE_CODE);
+			var generateSourceCodeTask = GenerateSourceCodeRoutine.ScheduleAsync(new[] { gameDataAssetPath }, reportCallback);
+			generateSourceCodeTask.ContinueWithHideProgressBar();
+			await generateSourceCodeTask.ConfigureAwait(false);
 
 			response.StatusCode = HttpStatusCode.NoContent;
 			return response;

@@ -27,7 +27,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Editor.GameDevWare.Charon;
 using GameDevWare.Charon.Editor.Cli;
 using GameDevWare.Charon.Editor.Utils;
 using GameDevWare.Charon.Editor.Windows;
