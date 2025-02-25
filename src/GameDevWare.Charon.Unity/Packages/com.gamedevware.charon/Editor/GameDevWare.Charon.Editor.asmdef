@@ -1,5 +1,6 @@
 ﻿{
 	"name": "gamedevware-charon-editor",
+	"rootNamespace": "GameDevWare.Charon",
 	"references": ["GUID:8108250f010648b497e862e8f33c24fc"],
 	"includePlatforms": [
 		"Editor"

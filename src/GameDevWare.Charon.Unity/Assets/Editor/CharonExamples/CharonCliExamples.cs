@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Editor.GameDevWare.Charon.Cli;
+using GameDevWare.Charon.Editor.Cli;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEditor;
