@@ -33,13 +33,13 @@ if %MAJOR_VERSION% LSS 8 (
 :Install_Update_Charon_Tool
 
 pushd "%SCRIPT_DIR%"
+if NOT EXIST ".config\dotnet-tools.json" (
+	dotnet new tool-manifest -o . >nul
+)
 dotnet tool list --local | findstr /i /c:"dotnet-charon" >nul 2>&1
 if %ERRORLEVEL% EQU 0 (
 	dotnet tool update dotnet-charon --local >nul
 ) else (
-	if not exist ".config\dotnet-tools.json" (
-		dotnet new tool-manifest -o . >nul
-	)
 	dotnet tool install dotnet-charon --local >nul
 
 	if %ERRORLEVEL% NEQ 0 (

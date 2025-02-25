@@ -34,12 +34,12 @@ if %MAJOR_VERSION% LSS 8 (
 
 pushd "%SCRIPT_DIR%"
 dotnet tool list --local | findstr /i /c:"dotnet-t4" >nul 2>&1
+if NOT EXIST ".config\dotnet-tools.json" (
+	dotnet new tool-manifest -o . >nul
+)
 if %ERRORLEVEL% EQU 0 (
 	dotnet tool update dotnet-t4 --local >nul
 ) else (
-	if not exist ".config\dotnet-tools.json" (
-		dotnet new tool-manifest -o . >nul
-	)
 	dotnet tool install dotnet-t4 --local >nul
 
 	if %ERRORLEVEL% NEQ 0 (
