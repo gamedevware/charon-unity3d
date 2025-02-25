@@ -35,17 +35,17 @@ if %MAJOR_VERSION% LSS 8 (
 pushd "%SCRIPT_DIR%"
 dotnet tool list --local | findstr /i /c:"dotnet-t4" >nul 2>&1
 if NOT EXIST ".config\dotnet-tools.json" (
-	dotnet new tool-manifest -o . >nul
+    dotnet new tool-manifest -o . >nul
 )
 if %ERRORLEVEL% EQU 0 (
-	dotnet tool update dotnet-t4 --local >nul
+    dotnet tool update dotnet-t4 --local --tool-manifest .config/dotnet-tools.json >nul
 ) else (
-	dotnet tool install dotnet-t4 --local >nul
+    dotnet tool install dotnet-t4 --local --tool-manifest .config/dotnet-tools.json >nul
 
-	if %ERRORLEVEL% NEQ 0 (
-		popd
-		goto Exit_Failure_Dotnet_Restore_Failed
-	)
+    if %ERRORLEVEL% NEQ 0 (
+        popd
+        goto Exit_Failure_Dotnet_Restore_Failed
+    )
 )
 popd
 

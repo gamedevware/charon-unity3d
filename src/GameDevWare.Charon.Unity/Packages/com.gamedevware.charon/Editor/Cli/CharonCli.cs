@@ -1614,25 +1614,33 @@ namespace GameDevWare.Charon.Editor.Cli
 
 				if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 				{
-					Chmod(targetFilePath, "+x");
+					Chmod(targetFilePath, "+x", deleteFileOnFail: true);
 				}
 			}
 		}
 
-		private static void Chmod(string filePath, string permissions)
+		private static void Chmod(string filePath, string permissions, bool deleteFileOnFail)
 		{
-			var processStartInfo = new ProcessStartInfo
+			try
 			{
-				FileName = "chmod",
-				Arguments = $"\"{permissions}\" \"{filePath}\"",
-				UseShellExecute = true,
-				CreateNoWindow = true,
-			};
+				var processStartInfo = new ProcessStartInfo
+				{
+					FileName = "chmod",
+					Arguments = $"\"{permissions}\" \"{filePath}\"",
+					UseShellExecute = true,
+					CreateNoWindow = true,
+				};
 
-			using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(30));
-			using var process = Process.Start(processStartInfo)!;
-			timeout.Token.Register(process.EndGracefully);
-			process.WaitForExit();
+				using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+				using var process = Process.Start(processStartInfo)!;
+				timeout.Token.Register(process.EndGracefully);
+				process.WaitForExit();
+			}
+			catch
+			{
+				CharonFileUtils.SafeFileDelete(filePath); // delete file because it doesn't have proper permissions
+				throw;
+			}
 		}
 	}
 }

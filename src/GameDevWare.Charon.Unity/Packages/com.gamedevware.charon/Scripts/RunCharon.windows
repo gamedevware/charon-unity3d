@@ -34,18 +34,18 @@ if %MAJOR_VERSION% LSS 8 (
 
 pushd "%SCRIPT_DIR%"
 if NOT EXIST ".config\dotnet-tools.json" (
-	dotnet new tool-manifest -o . >nul
+    dotnet new tool-manifest -o . >nul
 )
 dotnet tool list --local | findstr /i /c:"dotnet-charon" >nul 2>&1
 if %ERRORLEVEL% EQU 0 (
-	dotnet tool update dotnet-charon --local >nul
+    dotnet tool update dotnet-charon --local --tool-manifest .config/dotnet-tools.json >nul
 ) else (
-	dotnet tool install dotnet-charon --local >nul
+    dotnet tool install dotnet-charon --local --tool-manifest .config/dotnet-tools.json >nul
 
-	if %ERRORLEVEL% NEQ 0 (
-		popd
-		goto Exit_Failure_Dotnet_Restore_Failed
-	)
+    if %ERRORLEVEL% NEQ 0 (
+        popd
+        goto Exit_Failure_Dotnet_Restore_Failed
+    )
 )
 popd
 
