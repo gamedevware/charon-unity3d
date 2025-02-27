@@ -158,7 +158,7 @@ namespace GameDevWare.Charon.Editor.Windows
 					this.lastError = null;
 					this.progressStatus = null;
 
-					if (ReimportAssetsRoutine.ValidateCreationOptions(this.folder, this.gameDataName, out this.lastError))
+					if (ReimportAssetsRoutine.ValidateCreationOptions(GetBaseDirectory(this.folder), this.gameDataName, out this.lastError))
 					{
 						this.gameDataCreationTask = CharonEditorModule.Instance.Routines.Schedule(this.CreateGameDataAsync, this.closeSource.Token);
 						this.gameDataCreationTask.LogFaultAsError();
@@ -205,7 +205,7 @@ namespace GameDevWare.Charon.Editor.Windows
 				this.closeSource.Token.ThrowIfCancellationRequested();
 				this.closeSource.Token.ThrowIfScriptsCompiling();
 
-				var gameDataDirectory = ReimportAssetsRoutine.GetBaseDirectory(this.folder);
+				var gameDataDirectory = GetBaseDirectory(this.folder);
 
 				progressCallback(Resources.UI_UNITYPLUGIN_CREATING_PROGRESS_INIT_GAMEDATA, 0.01f);
 
@@ -323,6 +323,21 @@ namespace GameDevWare.Charon.Editor.Windows
 			window.Focus();
 
 			return taskCompletionSource.Task;
+		}
+
+		private static string GetBaseDirectory(UnityObject folder)
+		{
+			var gameDataDirectory = "Assets";
+			if (folder != null)
+			{
+				gameDataDirectory = AssetDatabase.GetAssetPath(folder);
+				if (File.Exists(gameDataDirectory))
+				{
+					gameDataDirectory = Path.GetDirectoryName(gameDataDirectory) ?? gameDataDirectory;
+				}
+			}
+
+			return gameDataDirectory;
 		}
 	}
 }

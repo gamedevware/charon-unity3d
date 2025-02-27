@@ -1,7 +1,30 @@
 fileFormatVersion: 2
 guid: ecc4a4a75587d60448213374b5a346b2
-DefaultImporter:
+ScriptedImporter:
+  internalIDToNameTable: []
   externalObjects: {}
+  serializedVersion: 2
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+  script: {fileID: 11500000, guid: f0e49fd118724bbf95155212238d3d7a, type: 3}
+  lastImportSettings:
+    codeGenerationPath: Assets/Scripts
+    gameDataFileGuid: ecc4a4a75587d60448213374b5a346b2
+    gameDataClassName: RpgGameData
+    gameDataNamespace: Assets.Scripts
+    gameDataDocumentClassName: Document
+    defineConstants: 
+    publishLanguages: []
+    publishFormat: 0
+    optimizations: 0
+    lineEnding: 0
+    indentation: 0
+    splitSourceCodeFiles: 0
+    clearOutputDirectory: 0
+    serverAddress: 
+    projectId: 
+    projectName: 
+    branchName: 
+    branchId: 
+  lastImportAssetPath: Assets/Resources/RpgGameData.asset

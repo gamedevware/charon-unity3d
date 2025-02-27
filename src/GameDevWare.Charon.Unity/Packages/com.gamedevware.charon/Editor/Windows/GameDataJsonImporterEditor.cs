@@ -45,12 +45,20 @@ namespace GameDevWare.Charon.Editor.Windows
 		public static void InspectorGUI(ScriptedImporterEditor editor, UnityObject assetTarget)
 		{
 			editor.serializedObject.Update();
+			var importer = (GameDataImporter)editor.target;
+			var gameDataAsset = string.IsNullOrEmpty(importer.lastImportAssetPath) ? null :
+				AssetDatabase.LoadAssetAtPath<ScriptableObject>(importer.lastImportAssetPath);
+
+			EditorGUILayout.BeginHorizontal();
+
+			GUI.enabled = false;
+
+			_ = EditorGUILayout.ObjectField(Resources.UI_UNITYPLUGIN_INSPECTOR_LAST_GENERATED_ASSET_LABEL, gameDataAsset, typeof(ScriptableObject), allowSceneObjects: false);
 
 			GUI.enabled = !CharonEditorModule.Instance.Routines.IsRunning && !EditorApplication.isCompiling;
 
-			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.Space();
-			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_INSPECTOR_REIMPORT_BUTTON, GUI.skin.button, GUILayout.Width(80), GUILayout.Height(25)))
+			if (GUILayout.Button(Resources.UI_UNITYPLUGIN_INSPECTOR_REIMPORT_BUTTON, GUI.skin.button, GUILayout.Width(80), GUILayout.Height(20)))
 			{
 				var progressCallback = ProgressUtils.ShowProgressBar(Resources.UI_UNITYPLUGIN_PROGRESS_IMPORTING);
 				var importTask = ReimportAssetsRoutine.ScheduleAsync(new[] { AssetDatabase.GetAssetPath(assetTarget) }, progressCallback, CancellationToken.None);

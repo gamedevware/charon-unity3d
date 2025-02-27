@@ -158,6 +158,8 @@ namespace GameDevWare.Charon.Editor.Routines
 					EditorUtility.SetDirty(gameDataAsset);
 					AssetDatabase.SaveAssetIfDirty(gameDataAsset);
 
+					UpdateAssetImporterPaths(gameDataPath, gameDataAssetPath, gameDataAsset);
+
 					logger.Log(LogType.Assert, $"Asset generation of game data at '{gameDataAssetPath}' is finished " +
 						$"successfully in '{startTime.Elapsed}'.");
 
@@ -180,6 +182,26 @@ namespace GameDevWare.Charon.Editor.Routines
 			progressCallback?.Invoke(Resources.UI_UNITYPLUGIN_GENERATE_REFRESHING_ASSETS, 0.99f);
 			AssetDatabase.Refresh(ImportAssetOptions.Default);
 			progressCallback?.Invoke(Resources.UI_UNITYPLUGIN_PROGRESS_DONE, 1);
+		}
+
+		private static void UpdateAssetImporterPaths(string gameDataPath, string gameDataAssetPath, GameDataBase gameDataAsset)
+		{
+			// update gameDataImporter info in case of compilation error
+			var gameDataImporter = AssetImporter.GetAtPath(gameDataPath) as GameDataImporter;
+			if (gameDataImporter == null) return;
+
+			gameDataImporter.lastImportAssetPath = AssetDatabase.GetAssetPath(gameDataAsset);
+			gameDataImporter.lastImportSettings = new GameDataSettings();
+			EditorUtility.CopySerializedManagedFieldsOnly(gameDataAsset.settings, gameDataImporter.lastImportSettings);
+
+			var monoScript = MonoScript.FromScriptableObject(gameDataAsset);
+			if (monoScript != null)
+			{
+				gameDataImporter.lastImportSettings.codeGenerationPath = Path.GetDirectoryName(AssetDatabase.GetAssetPath(monoScript) ?? "")?.Replace("\\", "/");
+			}
+
+			EditorUtility.SetDirty(gameDataImporter);
+			gameDataImporter.SaveAndReimport();
 		}
 
 		private static async Task SynchronizeAssetIfNeededAsync

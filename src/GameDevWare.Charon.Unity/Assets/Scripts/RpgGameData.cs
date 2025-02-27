@@ -39,6 +39,9 @@ namespace Assets.Scripts
 	[GeneratedCode(RpgGameData.GeneratorName, RpgGameData.GeneratorVersion)]
 	public sealed partial class ProjectSetting : Document, IEquatable<ProjectSetting>, IComparable, IComparable<ProjectSetting>
 	{
+		public static readonly string SchemaId = "55a4f32faca22e191098f3d9";
+		public static readonly string SchemaName = "ProjectSettings";
+
 		private readonly int hashCode;
 
 		/// <summary>
@@ -217,6 +220,9 @@ namespace Assets.Scripts
 	[GeneratedCode(RpgGameData.GeneratorName, RpgGameData.GeneratorVersion)]
 	public sealed partial class Parameter : Document, IEquatable<Parameter>, IComparable, IComparable<Parameter>
 	{
+		public static readonly string SchemaId = "59f5b0a730bb84165c06b547";
+		public static readonly string SchemaName = "Parameter";
+
 		private readonly int hashCode;
 
 		/// <summary>
@@ -397,6 +403,9 @@ namespace Assets.Scripts
 	[GeneratedCode(RpgGameData.GeneratorName, RpgGameData.GeneratorVersion)]
 	public sealed partial class ParameterValue : Document, IEquatable<ParameterValue>, IComparable, IComparable<ParameterValue>
 	{
+		public static readonly string SchemaId = "59f5b11030bb84165c06b54e";
+		public static readonly string SchemaName = "ParameterValue";
+
 		private readonly int hashCode;
 
 		/// <summary>
@@ -561,6 +570,9 @@ namespace Assets.Scripts
 	[GeneratedCode(RpgGameData.GeneratorName, RpgGameData.GeneratorVersion)]
 	public sealed partial class Provision : Document, IEquatable<Provision>, IComparable, IComparable<Provision>
 	{
+		public static readonly string SchemaId = "59f5b1c830bb84165c06b556";
+		public static readonly string SchemaName = "Provision";
+
 		private readonly int hashCode;
 
 		/// <summary>
@@ -716,6 +728,9 @@ namespace Assets.Scripts
 	[GeneratedCode(RpgGameData.GeneratorName, RpgGameData.GeneratorVersion)]
 	public sealed partial class Hero : Document, IEquatable<Hero>, IComparable, IComparable<Hero>
 	{
+		public static readonly string SchemaId = "59f5b29330bb84165c06b55c";
+		public static readonly string SchemaName = "Hero";
+
 		private readonly int hashCode;
 
 		/// <summary>
@@ -1020,6 +1035,9 @@ namespace Assets.Scripts
 	[GeneratedCode(RpgGameData.GeneratorName, RpgGameData.GeneratorVersion)]
 	public sealed partial class Item : Document, IEquatable<Item>, IComparable, IComparable<Item>
 	{
+		public static readonly string SchemaId = "59f5b3f130bb84165c06b56b";
+		public static readonly string SchemaName = "Item";
+
 		private readonly int hashCode;
 
 		/// <summary>
@@ -1201,6 +1219,9 @@ namespace Assets.Scripts
 	[GeneratedCode(RpgGameData.GeneratorName, RpgGameData.GeneratorVersion)]
 	public sealed partial class Location : Document, IEquatable<Location>, IComparable, IComparable<Location>
 	{
+		public static readonly string SchemaId = "59f5b57530bb84165c06b579";
+		public static readonly string SchemaName = "Location";
+
 		private readonly int hashCode;
 
 		/// <summary>
@@ -1356,6 +1377,9 @@ namespace Assets.Scripts
 	[GeneratedCode(RpgGameData.GeneratorName, RpgGameData.GeneratorVersion)]
 	public sealed partial class Trinket : Document, IEquatable<Trinket>, IComparable, IComparable<Trinket>
 	{
+		public static readonly string SchemaId = "59f5b61630bb84165c06b57f";
+		public static readonly string SchemaName = "Trinket";
+
 		private readonly int hashCode;
 
 		/// <summary>
@@ -1538,6 +1562,9 @@ namespace Assets.Scripts
 	[GeneratedCode(RpgGameData.GeneratorName, RpgGameData.GeneratorVersion)]
 	public sealed partial class Monster : Document, IEquatable<Monster>, IComparable, IComparable<Monster>
 	{
+		public static readonly string SchemaId = "59f5b7f330bb84165c06b58a";
+		public static readonly string SchemaName = "Monster";
+
 		private readonly int hashCode;
 
 		/// <summary>
@@ -1719,6 +1746,9 @@ namespace Assets.Scripts
 	[GeneratedCode(RpgGameData.GeneratorName, RpgGameData.GeneratorVersion)]
 	public sealed partial class Loot : Document, IEquatable<Loot>, IComparable, IComparable<Loot>
 	{
+		public static readonly string SchemaId = "59f5b9dd30bb84165c06b59a";
+		public static readonly string SchemaName = "Loot";
+
 		private readonly int hashCode;
 
 		/// <summary>
@@ -1873,6 +1903,9 @@ namespace Assets.Scripts
 	[GeneratedCode(RpgGameData.GeneratorName, RpgGameData.GeneratorVersion)]
 	public sealed partial class CombatEffect : Document, IEquatable<CombatEffect>, IComparable, IComparable<CombatEffect>
 	{
+		public static readonly string SchemaId = "59f5baaa30bb84165c06b5a0";
+		public static readonly string SchemaName = "CombatEffect";
+
 		private readonly int hashCode;
 
 		/// <summary>
@@ -2036,6 +2069,9 @@ namespace Assets.Scripts
 	[GeneratedCode(RpgGameData.GeneratorName, RpgGameData.GeneratorVersion)]
 	public sealed partial class CurioCleansingOption : Document, IEquatable<CurioCleansingOption>, IComparable, IComparable<CurioCleansingOption>
 	{
+		public static readonly string SchemaId = "59f5bac130bb84165c06b5a4";
+		public static readonly string SchemaName = "CurioCleansingOption";
+
 		private readonly int hashCode;
 
 		/// <summary>
@@ -2233,6 +2269,9 @@ namespace Assets.Scripts
 	[GeneratedCode(RpgGameData.GeneratorName, RpgGameData.GeneratorVersion)]
 	public sealed partial class Curio : Document, IEquatable<Curio>, IComparable, IComparable<Curio>
 	{
+		public static readonly string SchemaId = "59f5bbc230bb84165c06b5ae";
+		public static readonly string SchemaName = "Curio";
+
 		private readonly int hashCode;
 
 		/// <summary>
@@ -2423,6 +2462,9 @@ namespace Assets.Scripts
 	[GeneratedCode(RpgGameData.GeneratorName, RpgGameData.GeneratorVersion)]
 	public sealed partial class Disease : Document, IEquatable<Disease>, IComparable, IComparable<Disease>
 	{
+		public static readonly string SchemaId = "59f5d3a7983a361970003662";
+		public static readonly string SchemaName = "Disease";
+
 		private readonly int hashCode;
 
 		/// <summary>
@@ -2579,6 +2621,9 @@ namespace Assets.Scripts
 	[GeneratedCode(RpgGameData.GeneratorName, RpgGameData.GeneratorVersion)]
 	public sealed partial class Quirk : Document, IEquatable<Quirk>, IComparable, IComparable<Quirk>
 	{
+		public static readonly string SchemaId = "59f5d728983a361970003684";
+		public static readonly string SchemaName = "Quirk";
+
 		private readonly int hashCode;
 
 		/// <summary>
@@ -2743,6 +2788,9 @@ namespace Assets.Scripts
 	[GeneratedCode(RpgGameData.GeneratorName, RpgGameData.GeneratorVersion)]
 	public sealed partial class Condition : Document, IEquatable<Condition>, IComparable, IComparable<Condition>
 	{
+		public static readonly string SchemaId = "59f5dedf983a361970003697";
+		public static readonly string SchemaName = "Conditions";
+
 		private readonly int hashCode;
 
 		/// <summary>
@@ -2906,6 +2954,9 @@ namespace Assets.Scripts
 	[GeneratedCode(RpgGameData.GeneratorName, RpgGameData.GeneratorVersion)]
 	public sealed partial class Weapon : Document, IEquatable<Weapon>, IComparable, IComparable<Weapon>
 	{
+		public static readonly string SchemaId = "59f9e745983a364298db5e22";
+		public static readonly string SchemaName = "Weapon";
+
 		private readonly int hashCode;
 
 		/// <summary>
@@ -3085,6 +3136,9 @@ namespace Assets.Scripts
 	[GeneratedCode(RpgGameData.GeneratorName, RpgGameData.GeneratorVersion)]
 	public sealed partial class Armor : Document, IEquatable<Armor>, IComparable, IComparable<Armor>
 	{
+		public static readonly string SchemaId = "59f9e7b6983a364298db5e2c";
+		public static readonly string SchemaName = "Armor";
+
 		private readonly int hashCode;
 
 		/// <summary>
@@ -3248,6 +3302,9 @@ namespace Assets.Scripts
 	[GeneratedCode(RpgGameData.GeneratorName, RpgGameData.GeneratorVersion)]
 	public sealed partial class ItemWithCount : Document, IEquatable<ItemWithCount>, IComparable, IComparable<ItemWithCount>
 	{
+		public static readonly string SchemaId = "5a1d78d107ff9a7b889cba7d";
+		public static readonly string SchemaName = "ItemWithCount";
+
 		private readonly int hashCode;
 
 		/// <summary>
@@ -3403,6 +3460,9 @@ namespace Assets.Scripts
 	[GeneratedCode(RpgGameData.GeneratorName, RpgGameData.GeneratorVersion)]
 	public sealed partial class StartingSet : Document, IEquatable<StartingSet>, IComparable, IComparable<StartingSet>
 	{
+		public static readonly string SchemaId = "5a1d78de07ff9a7b889cba83";
+		public static readonly string SchemaName = "StartingSet";
+
 		private readonly int hashCode;
 
 		/// <summary>
@@ -4854,7 +4914,7 @@ namespace Assets.Scripts
 	public partial class RpgGameData
 	{
 		public const string GeneratorName = "Charon";
-		public const string GeneratorVersion = "2025.1.1.0";
+		public const string GeneratorVersion = "2025.0.2.0";
 
 		private class DocumentCollections
 		{

@@ -42,12 +42,23 @@ namespace GameDevWare.Charon.Editor.Routines
 				var gameDataAsset = GameDataAssetUtils.GetAssociatedGameDataAsset(gameDataFile);
 				var gameDataPath = AssetDatabase.GetAssetPath(gameDataFile);
 				var gameDataFileGuid = AssetDatabase.AssetPathToGUID(gameDataPath);
+				var gameDataImporter = AssetImporter.GetAtPath(gameDataPath) as GameDataImporter;
 
 				var gameDataAssetPath = string.Empty;
-				if (gameDataAsset == null) // crate new asset and code
+				if (gameDataAsset == null && gameDataImporter?.lastImportSettings != null) // re-create asset at point of last asset import
 				{
 					pathSpecificProgress?.Invoke(Resources.UI_UNITYPLUGIN_CREATING_GAMEDATA_ASSET, 0.05f);
-					gameDataAssetPath = CreateNewGameDataAsset(gameDataFile, gameDataPath, gameDataFileGuid);
+					gameDataAssetPath = gameDataImporter.lastImportAssetPath;
+					_ =	CreateNewGameDataAsset(gameDataAssetPath, gameDataPath, gameDataFileGuid);
+					EditorUtility.CopySerializedManagedFieldsOnly(gameDataImporter.lastImportSettings, gameDataAsset.settings);
+				}
+				else if (gameDataAsset == null) // crate new asset and code
+				{
+					pathSpecificProgress?.Invoke(Resources.UI_UNITYPLUGIN_CREATING_GAMEDATA_ASSET, 0.05f);
+					gameDataAssetPath = CharonFileUtils.GetProjectRelativePath(Path.Combine(Path.GetDirectoryName(gameDataPath) ?? "",
+						Path.GetFileNameWithoutExtension(gameDataPath) + ".asset"));
+
+					_ =	CreateNewGameDataAsset(gameDataAssetPath, gameDataPath, gameDataFileGuid);
 				}
 				else
 				{
@@ -66,23 +77,21 @@ namespace GameDevWare.Charon.Editor.Routines
 			).ConfigureAwait(true);
 		}
 
-		public static string CreateNewGameDataAsset(Object creationFolder, string gameDataPath, string gameDataFileGuid)
+		public static GameDataBase CreateNewGameDataAsset(string gameDataAssetPath, string gameDataPath, string gameDataFileGuid)
 		{
-			if (!ValidateCreationOptions(creationFolder, Path.GetFileNameWithoutExtension(gameDataPath), out var errorMessage))
+			if (!ValidateCreationOptions(gameDataAssetPath, Path.GetFileNameWithoutExtension(gameDataPath), out var errorMessage))
 			{
 				throw new InvalidOperationException(errorMessage);
 			}
 
-			var newGameDataAssetPath = CharonFileUtils.GetProjectRelativePath(Path.Combine(Path.GetDirectoryName(gameDataPath) ?? "",
-				Path.GetFileNameWithoutExtension(gameDataPath) + ".asset"));
 			var gameDataAsset = ScriptableObject.CreateInstance<GameDataBase>();
 			gameDataAsset.settings = GameDataSettingsUtils.CreateDefault(gameDataPath, gameDataFileGuid);
-			AssetDatabase.CreateAsset(gameDataAsset, newGameDataAssetPath);
-			return newGameDataAssetPath;
+			AssetDatabase.CreateAsset(gameDataAsset, gameDataAssetPath);
+			return gameDataAsset;
 		}
-		public static bool ValidateCreationOptions(Object folder, string gameDataName, out string errorMessage)
+		public static bool ValidateCreationOptions(string gameDataAssetPath, string gameDataName, out string errorMessage)
 		{
-			var gameDataDirectory = GetBaseDirectory(folder);
+			var gameDataDirectory = Path.GetDirectoryName(gameDataAssetPath) ?? "";
 			var isStreamingAssetsDirectory =
 				gameDataDirectory.StartsWith(Path.GetFullPath(Path.Combine("Assets", "StreamingAssets")), StringComparison.OrdinalIgnoreCase);
 			if (isStreamingAssetsDirectory)
@@ -105,20 +114,6 @@ namespace GameDevWare.Charon.Editor.Routines
 
 			errorMessage = null;
 			return true;
-		}
-		public static string GetBaseDirectory(Object folder)
-		{
-			var gameDataDirectory = "Assets";
-			if (folder != null)
-			{
-				gameDataDirectory = AssetDatabase.GetAssetPath(folder);
-				if (File.Exists(gameDataDirectory))
-				{
-					gameDataDirectory = Path.GetDirectoryName(gameDataDirectory) ?? gameDataDirectory;
-				}
-			}
-
-			return gameDataDirectory;
 		}
 	}
 }

@@ -27,13 +27,18 @@ using UnityEngine;
 namespace GameDevWare.Charon.Editor
 {
 	[ScriptedImporter(1, "gdjs")]
-	public class GameDataJsonImporter : ScriptedImporter
+	public class GameDataJsonImporter : GameDataImporter
 	{
 		/// <inheritdoc />
 		public override void OnImportAsset(AssetImportContext ctx) => ImportAsset(ctx);
 
 		public static void ImportAsset(AssetImportContext ctx)
 		{
+			if (ctx.mainObject is TextAsset)
+			{
+				return;
+			}
+
 			var gameDataPath = ctx.assetPath ?? "";
 			if (string.IsNullOrEmpty(gameDataPath) || !File.Exists(gameDataPath))
 			{

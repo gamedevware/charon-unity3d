@@ -1,7 +1,7 @@
 { 
-	"ToolsVersion": "2025.1.1.0", 
-	"RevisionHash": "67bc7efcf508941098c42791", 
-	"ChangeNumber": 5, 
+	"ToolsVersion": "2025.0.1.0", 
+	"RevisionHash": "67bf36bc26224e70f0f30ddd", 
+	"ChangeNumber": 7, 
 	"Collections": { 
 		"ProjectSettings": [ 
 			{ 
@@ -9,7 +9,7 @@
 				"Name": "Quite Dark Cavern", 
 				"PrimaryLanguage": "en-US", 
 				"Languages": null, 
-				"Copyright": "Copyright 2024 (c) GameDevWare", 
+				"Copyright": "Copyright 2025 (c) GameDevWare", 
 				"Version": "1.0.0.0" 
 			} 
 		], 

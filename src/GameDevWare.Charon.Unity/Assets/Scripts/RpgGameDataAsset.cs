@@ -52,9 +52,9 @@ namespace Assets.Scripts
 		public Assets.Scripts.RpgGameData GameData;
 
 		/// <inheritdoc />
-		public override string RevisionHash => this.GameData.RevisionHash;
+		public override string RevisionHash => this.GameData?.RevisionHash;
 		/// <inheritdoc />
-		public override string GameDataVersion => this.GameData.GameDataVersion;
+		public override string GameDataVersion => this.GameData?.GameDataVersion;
 
 		private RpgGameDataAsset()
 		{
@@ -64,10 +64,13 @@ namespace Assets.Scripts
 		/// <inheritdoc />
 		void ISerializationCallbackReceiver.OnBeforeSerialize()
 		{
+			this.OnBeforeSerialize();
 		}
 		/// <inheritdoc />
 		void ISerializationCallbackReceiver.OnAfterDeserialize()
 		{
+			this.OnAfterDeserialize();
+
 			if (this.gameDataBytes == null || this.gameDataBytes.Length == 0)
 			{
 				return;
@@ -85,6 +88,8 @@ namespace Assets.Scripts
 		{
 			if (gameDataStream == null) throw new ArgumentNullException(nameof(gameDataStream));
 
+			this.OnBeforeSave(ref gameDataStream, ref format);
+
 			this.format = format;
 			this.gameDataBytes = new byte[(int)gameDataStream.Length];
 			gameDataStream.Position = 0;
@@ -99,6 +104,8 @@ namespace Assets.Scripts
 
 			if (offset != this.gameDataBytes.Length) throw new InvalidOperationException("Failed to read whole stream into byte array.");
 
+			this.OnAfterSave();
+
 			using var gameDataMemoryStream = new MemoryStream(this.gameDataBytes, 0, this.gameDataBytes.Length, writable: false);
 			if (!this.TryLoad(gameDataMemoryStream, this.format))
 			{
@@ -111,18 +118,28 @@ namespace Assets.Scripts
 		{
 			if (gameDataStream == null) throw new ArgumentNullException(nameof(gameDataStream));
 
+			this.OnBeforeSave(ref gameDataStream, ref format);
+
+			var success = false;
 			switch (format)
 			{
 				case GameDataFormat.Json:
 					this.GameData = new Assets.Scripts.RpgGameData(gameDataStream, new Formatters.GameDataLoadOptions { Format = Formatters.GameDataFormat.Json });
-					return true;
+					success = true;
+					break;
 				case GameDataFormat.MessagePack:
 					this.GameData = new Assets.Scripts.RpgGameData(gameDataStream, new Formatters.GameDataLoadOptions { Format = Formatters.GameDataFormat.MessagePack });
-					return true;
+					success = true;
+					break;
 				default:
-					return false;
+					success = false;
+					break;
 			}
+
+			this.OnAfterLoad(ref success);
+			return success;
 		}
+
 		/// <inheritdoc />
 		public override object FindGameDataDocumentById(string schemaNameOrId, string id)
 		{
@@ -142,6 +159,41 @@ namespace Assets.Scripts
 		{
 			return this.GameData.GetDocumentSchemaNames();
 		}
+
+		/// <summary>
+		/// Extension method invoked at the start of the <see cref="Save"/> method.
+		/// </summary>
+		/// <param name="gameDataStream">The data stream used to save the asset. Must be a seekable stream with a known length.</param>
+		/// <param name="format">The format of the game data stream.</param>
+		partial void OnBeforeSave(ref Stream gameDataStream, ref GameDataFormat format);
+
+		/// <summary>
+		/// Extension method invoked at the end of the <see cref="Save"/> method.
+		/// </summary>
+		partial void OnAfterSave();
+
+		/// <summary>
+		/// Extension method invoked at the start of the <see cref="TryLoad"/> method.
+		/// </summary>
+		/// <param name="gameDataStream">The data stream used to load the asset. Must be a seekable stream with a known length.</param>
+		/// <param name="format">The format of the game data stream.</param>
+		partial void OnBeforeLoad(ref Stream gameDataStream, ref GameDataFormat format);
+
+		/// <summary>
+		/// Extension method invoked at the end of the <see cref="TryLoad"/> method.
+		/// </summary>
+		/// <param name="success">A flag indicating whether the load operation was successful.</param>
+		partial void OnAfterLoad(ref bool success);
+
+		/// <summary>
+		/// Extension method invoked at the end of the <see cref="ISerializationCallbackReceiver.OnAfterDeserialize"/> method.
+		/// </summary>
+		partial void OnAfterDeserialize();
+
+		/// <summary>
+		/// Extension method invoked at the end of the <see cref="ISerializationCallbackReceiver.OnBeforeSerialize"/> method.
+		/// </summary>
+		partial void OnBeforeSerialize();
 	}
 }
 

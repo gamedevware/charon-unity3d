@@ -25,7 +25,7 @@ using UnityEditor.AssetImporters;
 namespace GameDevWare.Charon.Editor
 {
 	[ScriptedImporter(1, "gdmp")]
-	public class GameDataMessagePackImporter : ScriptedImporter
+	public class GameDataMessagePackImporter : GameDataImporter
 	{
 		/// <inheritdoc />
 		public override void OnImportAsset(AssetImportContext ctx)

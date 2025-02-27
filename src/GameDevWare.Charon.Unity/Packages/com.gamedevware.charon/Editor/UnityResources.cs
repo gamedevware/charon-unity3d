@@ -46,6 +46,7 @@ namespace GameDevWare.Charon.Editor {
 		public const string UI_UNITYPLUGIN_INSPECTOR_GAME_DATA_VERSION_LABEL = "Game Data Version";
 		public const string UI_UNITYPLUGIN_INSPECTOR_CODE_GENERATION_LABEL = "C# Code Generation Settings";
 		public const string UI_UNITYPLUGIN_INSPECTOR_ASSET_IMPORT_SETTINGS_LABEL = "Asset Import Settings";
+		public const string UI_UNITYPLUGIN_INSPECTOR_LAST_GENERATED_ASSET_LABEL = "Last Generated Asset";
 		public const string UI_UNITYPLUGIN_INSPECTOR_PUBLICATION_LANGUAGES_LABEL = "Languages";
 		public const string UI_UNITYPLUGIN_INSPECTOR_PUBLICATION_FORMAT_LABEL = "Format";
 		public const string UI_UNITYPLUGIN_INSPECTOR_CODE_GENERATION_PATH = "Generation Path";
