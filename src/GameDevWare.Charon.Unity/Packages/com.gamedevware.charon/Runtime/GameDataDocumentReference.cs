@@ -23,6 +23,7 @@
 using System;
 using System.Linq;
 using JetBrains.Annotations;
+using UnityEditor;
 
 // ReSharper disable once SuspiciousTypeConversion.Global
 
@@ -36,6 +37,11 @@ namespace GameDevWare.Charon
 	[PublicAPI, Serializable]
 	public class GameDataDocumentReference
 	{
+		/// <summary>
+		/// Name which should be used by inheriting types to define constant value for schemaNameOrId field.
+		/// </summary>
+		public const string PREDEFINED_SCHEMA_NAME_OR_ID_NAME = "predefinedSchemaNameOrId";
+
 		/// <summary>
 		/// The identifier of the referenced document.
 		/// </summary>
@@ -74,7 +80,7 @@ namespace GameDevWare.Charon
 		/// <typeparam name="T">The type of the document.</typeparam>
 		/// <returns>The referenced document if valid; otherwise, null.</returns>
 		[CanBeNull]
-		public object GetReferencedDocument<T>() where T : class
+		public T GetReferencedDocument<T>() where T : class
 		{
 			if (this.IsEmpty)
 			{

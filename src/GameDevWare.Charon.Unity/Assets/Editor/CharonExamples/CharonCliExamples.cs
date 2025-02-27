@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Assets.Scripts;
 using GameDevWare.Charon.Editor.Cli;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -349,8 +350,8 @@ namespace Editor.CharonExamples
 			}
 		}
 
-		[MenuItem("Tools/RPG Game/Transform T4 Template")]
-		private static async void RunT4Template()
+		[MenuItem("Tools/RPG Game/Transform FileList.tt Template")]
+		private static async void RunFileListTemplate()
 		{
 			Debug.Log("Running T4 template ...");
 
@@ -376,8 +377,8 @@ namespace Editor.CharonExamples
 			File.Delete(templateResultPath);
 		}
 
-		[MenuItem("Tools/RPG Game/Preprocess T4 Template")]
-		private static async void GetT4TemplateGenerator()
+		[MenuItem("Tools/RPG Game/Preprocess FileList.tt Template")]
+		private static async void GetFileListTemplateGenerator()
 		{
 			Debug.Log("Running T4 tool to get generator's source code ...");
 
@@ -398,6 +399,48 @@ namespace Editor.CharonExamples
 				Debug.Log($"T4 tool run succeed. Source Code: {await File.ReadAllTextAsync(outputFilePath)},\r\n Captured Output: {toolRunResult.GetOutputData()},\r\n Captured Error: {toolRunResult.GetErrorData()}.");
 			}
 			File.Delete(outputFilePath);
+		}
+
+		[MenuItem("Tools/RPG Game/Transform TypedDocumentReferences.tt Template")]
+		private static async void RunTypedDocumentReferencesTemplate()
+		{
+			Debug.Log("Running T4 template ...");
+
+			var templatePath = Path.GetFullPath("Assets/Editor/CharonExamples/TypedDocumentReferences.tt");
+			var templateResultPath = Path.GetFullPath("Assets/Editor/CharonExamples/TypedDocumentReferences.cs");
+			try
+			{
+				var documentTypes = typeof(Document).Assembly.GetTypes().Where(type => type.BaseType == typeof(Document)).Select(type => type.FullName);
+				var toolRunResult = await CharonCli.RunT4Async(
+					templatePath,
+					parameters: new Dictionary<string, string> {
+						{ "documentsTypes", string.Join(",", documentTypes) },
+					}
+				);
+
+				if (toolRunResult.ExitCode != 0)
+				{
+					Debug.LogWarning($"T4 tool run failed. Captured Output: {toolRunResult.GetOutputData()},\r\n Captured Error: {toolRunResult.GetErrorData()}.");
+				}
+				else
+				{
+					Debug.Log($"T4 tool run succeed. Generated Text: {await File.ReadAllTextAsync(templateResultPath)},\r\n Captured Output: {toolRunResult.GetOutputData()},\r\n Captured Error: {toolRunResult.GetErrorData()}.");
+				}
+
+				var targetFilePath = Path.GetFullPath("Assets/Scripts/TypedDocumentReferences.cs");
+				if (File.Exists(targetFilePath))
+				{
+					File.Delete(targetFilePath);
+				}
+				File.Move(templateResultPath, targetFilePath);
+			}
+			finally
+			{
+				if (File.Exists(templateResultPath))
+				{
+					File.Delete(templateResultPath);
+				}
+			}
 		}
 	}
 }

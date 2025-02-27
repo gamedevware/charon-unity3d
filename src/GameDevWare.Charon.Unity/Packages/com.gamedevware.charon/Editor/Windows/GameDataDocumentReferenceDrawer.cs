@@ -21,13 +21,15 @@
 */
 
 using System;
+using System.Collections.Concurrent;
 using System.Linq;
+using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
 namespace GameDevWare.Charon.Editor.Windows
 {
-	[CustomPropertyDrawer(typeof(GameDataDocumentReference))]
+	[CustomPropertyDrawer(typeof(GameDataDocumentReference), useForChildren: true)]
 	public class GameDataDocumentReferenceDrawer : PropertyDrawer
 	{
 		private const int FIELD_HEIGHT = 20;
@@ -43,11 +45,13 @@ namespace GameDevWare.Charon.Editor.Windows
 			var idField = property.FindPropertyRelative(nameof(GameDataDocumentReference.id));
 			var schemaNameOrIdField = property.FindPropertyRelative(nameof(GameDataDocumentReference.schemaNameOrId));
 			var gameDataField = property.FindPropertyRelative(nameof(GameDataDocumentReference.gameData));
+			var schemaNameOrIdPredefineField = property.FindPropertyRelative(GameDataDocumentReference.PREDEFINED_SCHEMA_NAME_OR_ID_NAME);
+			var showSchemaNameOrIdField = schemaNameOrIdPredefineField == null;
 
 			var foldoutRect = new Rect(position.x, position.y, position.width - 10, FIELD_HEIGHT - 2);
 			var gameDataRect = new Rect(position.x + 10, position.y + FIELD_HEIGHT, position.width - 10, FIELD_HEIGHT - 2);
-			var schemaRect = new Rect(position.x + 10, position.y + FIELD_HEIGHT * 2, position.width - 10, FIELD_HEIGHT - 2);
-			var idRect = new Rect(position.x + 10, position.y + FIELD_HEIGHT * 3, position.width - 10, FIELD_HEIGHT - 2);
+			var schemaRect = new Rect(position.x + 10, position.y + FIELD_HEIGHT * (1 + (showSchemaNameOrIdField ? 1 : 0)), position.width - 10, FIELD_HEIGHT - 2);
+			var idRect = new Rect(position.x + 10, position.y + FIELD_HEIGHT * (2 + (showSchemaNameOrIdField ? 1 : 0)), position.width - 10, FIELD_HEIGHT - 2);
 
 			this.UpdateCachedLists(gameDataField, schemaNameOrIdField);
 
@@ -55,7 +59,6 @@ namespace GameDevWare.Charon.Editor.Windows
 			if (property.isExpanded = EditorGUI.Foldout(foldoutRect, property.isExpanded, label, toggleOnLabelClick: true))
 			{
 				GUI.changed = false;
-
 				EditorGUI.PropertyField(gameDataRect, gameDataField);
 
 				if (GUI.changed)
@@ -65,25 +68,35 @@ namespace GameDevWare.Charon.Editor.Windows
 					schemaNameOrIdField.stringValue = string.Empty;
 				}
 
-				// Schema
-				GUI.enabled = this.schemaNames.Length > 0;
-				schemaRect = EditorGUI.PrefixLabel(schemaRect, new GUIContent("Schema"));
-				var selectedIndex = Array.IndexOf(this.schemaNames, schemaNameOrIdField.stringValue ?? string.Empty);
-				var newSelectedIndex = selectedIndex;
-				var isInvalid = !string.IsNullOrEmpty(schemaNameOrIdField.stringValue) && selectedIndex < 0;
-				if (isInvalid)
-				{
-					schemaNameOrIdField.stringValue = EditorGUI.TextField(schemaRect, schemaNameOrIdField.stringValue);
+				var selectedIndex = -1;
+				var newSelectedIndex = -1;
+				var isInvalid = false;
 
-					var highlightRect = new Rect(idRect.x - 2, idRect.y - 2, idRect.width + 4, idRect.height + 4);
-					EditorGUI.DrawRect(highlightRect, new Color(1f, 0f, 0f, 0.2f)); // Semi-transparent red
-				}
-				else
+				// Schema
+				if (showSchemaNameOrIdField)
 				{
-					newSelectedIndex = EditorGUI.Popup(schemaRect, selectedIndex, this.schemaNames);
-					schemaNameOrIdField.stringValue = this.schemaNames.ElementAtOrDefault(newSelectedIndex);
+					GUI.enabled = this.schemaNames.Length > 0;
+					schemaRect = EditorGUI.PrefixLabel(schemaRect, new GUIContent("Schema"));
+					selectedIndex = Array.IndexOf(this.schemaNames, schemaNameOrIdField.stringValue ?? string.Empty);
+					newSelectedIndex = selectedIndex;
+					isInvalid = !string.IsNullOrEmpty(schemaNameOrIdField.stringValue) && selectedIndex < 0;
+					if (isInvalid)
+					{
+						schemaNameOrIdField.stringValue = EditorGUI.TextField(schemaRect, schemaNameOrIdField.stringValue);
+
+						var highlightRect = new Rect(idRect.x - 2, idRect.y - 2, idRect.width + 4, idRect.height + 4);
+						EditorGUI.DrawRect(highlightRect, new Color(1f, 0f, 0f, 0.2f)); // Semi-transparent red
+					}
+					else
+					{
+						newSelectedIndex = EditorGUI.Popup(schemaRect, selectedIndex, this.schemaNames);
+						schemaNameOrIdField.stringValue = this.schemaNames.ElementAtOrDefault(newSelectedIndex);
+					}
 				}
-				GUI.enabled = true;
+				else if (schemaNameOrIdField.stringValue != schemaNameOrIdPredefineField.stringValue)
+				{
+					schemaNameOrIdField.stringValue = schemaNameOrIdPredefineField.stringValue;
+				}
 
 				if (GUI.changed)
 				{
