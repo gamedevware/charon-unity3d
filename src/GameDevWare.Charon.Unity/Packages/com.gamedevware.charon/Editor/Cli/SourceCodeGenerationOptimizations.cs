@@ -25,8 +25,12 @@ using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Editor.Cli
 {
+	/// <summary>
+	/// Source code generation optimization for <see cref="CharonCli.GenerateCSharpCodeAsync"/> operation.
+	/// See https://gamedevware.github.io/charon/advanced/commands/generate_csharp_code.html for detailed information.
+	/// </summary>
 	[Flags]
-	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
+	[PublicAPI]
 	public enum SourceCodeGenerationOptimizations
 	{
 		/// <summary>

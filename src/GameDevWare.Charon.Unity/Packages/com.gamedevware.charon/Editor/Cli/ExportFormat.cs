@@ -22,6 +22,9 @@
 
 namespace GameDevWare.Charon.Editor.Cli
 {
+	/// <summary>
+	/// Format for <see cref="CharonCli.ExportAsync"/> and <see cref="CharonCli.ImportAsync"/> operations.
+	/// </summary>
 	public enum ExportFormat
 	{
 		Json,

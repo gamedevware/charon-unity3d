@@ -29,16 +29,34 @@ using UnityEngine;
 
 namespace GameDevWare.Charon.Editor.Cli
 {
+	/// <summary>
+	/// Currently running Charon Editor process.
+	/// </summary>
 	public class CharonServerProcess : IDisposable
 	{
 		private readonly ToolRunResult toolRunResult;
 		private readonly ILogger logger;
 
+		/// <summary>
+		/// Process instance.
+		/// </summary>
 		public readonly Process Process;
+		/// <summary>
+		/// Path to game data file which is used to start process.
+		/// </summary>
 		public readonly string GameDataFilePath;
+		/// <summary>
+		/// Address of UI page of the Charon Editor.
+		/// </summary>
 		public readonly Uri ListenAddress;
+		/// <summary>
+		/// Path to .lock file of the process. Used to track it's liveness and prevent running multiple processes on same <see cref="GameDataFilePath"/> file.
+		/// </summary>
 		public readonly string LockFilePath;
 
+		/// <summary>
+		/// Create new charon server process.
+		/// </summary>
 		public CharonServerProcess(ToolRunResult toolRunResult, string gameDataFilePath, Uri listenAddress, string lockFilePath)
 		{
 			if (toolRunResult == null) throw new ArgumentNullException(nameof(toolRunResult));
@@ -53,6 +71,9 @@ namespace GameDevWare.Charon.Editor.Cli
 			this.GameDataFilePath = gameDataFilePath;
 		}
 
+		/// <summary>
+		/// Gracefully end this process. If it is not responding in time, then terminate it.
+		/// </summary>
 		public void EndGracefully()
 		{
 			var stopError = default(Exception);
@@ -84,6 +105,9 @@ namespace GameDevWare.Charon.Editor.Cli
 			}
 		}
 
+		/// <summary>
+		/// Find process associated with <paramref name="lockFilePath"/> file and  gracefully end it. If it is not responding in time, then terminate it.
+		/// </summary>
 		public static void FindAndEndGracefully(string lockFilePath)
 		{
 			if (File.Exists(lockFilePath) == false)
@@ -129,11 +153,14 @@ namespace GameDevWare.Charon.Editor.Cli
 			}
 		}
 
-		public static string GetLockFileNameFor(string fileName)
+		/// <summary>
+		/// Get unique lock file name for specified game data file path.
+		/// </summary>
+		public static string GetLockFileNameFor(string gameDataPath)
 		{
-			if (fileName == null) throw new ArgumentNullException(nameof(fileName));
+			if (gameDataPath == null) throw new ArgumentNullException(nameof(gameDataPath));
 
-			var bytes = Encoding.UTF8.GetBytes(fileName.ToLowerInvariant());
+			var bytes = Encoding.UTF8.GetBytes(gameDataPath.ToLowerInvariant());
 			using var hash = System.Security.Cryptography.MD5.Create();
 			return BitConverter.ToString(hash.ComputeHash(bytes)).Replace("-", "").ToLowerInvariant() + ".lock";
 		}

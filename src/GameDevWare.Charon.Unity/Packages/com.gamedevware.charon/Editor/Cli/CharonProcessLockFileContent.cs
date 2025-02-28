@@ -27,7 +27,7 @@ using GameDevWare.Charon.Editor.Utils;
 
 namespace GameDevWare.Charon.Editor.Cli
 {
-	public class CharonProcessLockFileContent
+	internal class CharonProcessLockFileContent
 	{
 		public readonly int ProcessId;
 		public readonly Uri ListenAddress;

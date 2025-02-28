@@ -25,8 +25,12 @@ using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Editor.Cli
 {
+	/// <summary>
+	/// Document validation options for <see cref="CharonCli.ValidateAsync"/> operation.
+	/// See https://gamedevware.github.io/charon/advanced/commands/data_validate.html for detailed information.
+	/// </summary>
 	[Flags]
-	[PublicAPI, UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
+	[PublicAPI]
 	public enum ValidationOptions
 	{
 		None = 0x0,

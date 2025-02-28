@@ -24,8 +24,11 @@ using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Editor.Cli
 {
+	/// <summary>
+	/// Mode of <see cref="CharonCli.ImportAsync"/> operation.
+	/// See https://gamedevware.github.io/charon/advanced/commands/data_import.html for detailed description.
+	/// </summary>
 	[PublicAPI]
-	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	public enum ImportMode
 	{
 		Default = 0,

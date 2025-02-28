@@ -213,7 +213,7 @@ namespace GameDevWare.Charon.Editor
 			if (!CreateGameDataAssetCheck()) return;
 
 
-			CreateGameDataWindow.ShowAsync(Selection.activeObject ?? AssetDatabase.LoadAssetAtPath<Object>("Assets/")).LogFaultAsError();
+			CreateGameDataWindow.ShowAsync(Selection.activeObject ?? AssetDatabase.LoadAssetAtPath<Object>("Assets/")).LogFaultAsAssert();
 		}
 		[MenuItem("Assets/Create/Game Data", true)]
 		private static bool CreateGameDataAssetCheck()

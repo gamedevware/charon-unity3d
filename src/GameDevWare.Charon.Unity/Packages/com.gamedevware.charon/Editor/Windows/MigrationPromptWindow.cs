@@ -72,13 +72,17 @@ namespace GameDevWare.Charon.Editor.Windows
 
 			EditorGUILayout.BeginVertical();
 			{
+				var boxStyle = new GUIStyle(GUI.skin.label) {
+					wordWrap = true
+				};
+
 				if (legacyPluginPresent)
 				{
-					GUILayout.Box("An old version of the plugin was found [<2025.1.0]. Do you want to automatically migrate your data to the new version?", GUI.skin.box);
+					GUILayout.Box("An old version of the plugin was found [<2025.1.0]. Do you want to automatically migrate your data to the new version?", boxStyle);
 				}
 				else
 				{
-					GUILayout.Box("The old version of the plugin has been removed. You can Close this window now.", GUI.skin.box);
+					GUILayout.Box("The old version of the plugin has been removed. You can Close this window now.", boxStyle);
 				}
 			}
 			EditorGUILayout.EndVertical();

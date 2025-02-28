@@ -25,8 +25,11 @@ using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Editor.Cli
 {
+	/// <summary>
+	/// Mode of <see cref="CharonCli.ExportAsync"/> operation.
+	/// See https://gamedevware.github.io/charon/advanced/commands/data_export.html for detailed description.
+	/// </summary>
 	[PublicAPI]
-	[UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 	public enum ExportMode
 	{
 		Normal = 0,

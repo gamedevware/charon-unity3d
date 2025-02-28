@@ -22,6 +22,9 @@
 
 namespace GameDevWare.Charon.Editor.Cli
 {
+	/// <summary>
+	/// Format for <see cref="CharonCli.BackupAsync"/> and <see cref="CharonCli.RestoreAsync"/> operations.
+	/// </summary>
 	public enum BackupFormat
 	{
 		Json,

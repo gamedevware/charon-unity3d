@@ -124,5 +124,21 @@ namespace GameDevWare.Charon.Editor.Utils
 				TaskScheduler.Current
 			);
 		}
+		public static void LogFaultAsAssert(this Task task, string message = null, [CallerMemberName] string memberName = "Task", [CallerFilePath] string sourceFilePath = "<no file>", [CallerLineNumber] int sourceLineNumber = 0)
+		{
+			if (task == null) throw new ArgumentNullException(nameof(task));
+
+			var sourceFileName = sourceFilePath != null ? Path.GetFileName(sourceFilePath) : "<no file>";
+			task.ContinueWith(faultedTask =>
+				{
+					CharonEditorModule.Instance.Logger.Log(LogType.Assert, $"[{sourceFileName}:{Convert.ToString(sourceLineNumber, CultureInfo.InvariantCulture)}, {memberName}] {message ?? "An error occurred while performing task"}.");
+					CharonEditorModule.Instance.Logger.Log(LogType.Assert, faultedTask.Exception?.Unwrap());
+					CharonEditorMenu.FocusConsoleWindow();
+				},
+				CancellationToken.None,
+				TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously,
+				TaskScheduler.Current
+			);
+		}
 	}
 }

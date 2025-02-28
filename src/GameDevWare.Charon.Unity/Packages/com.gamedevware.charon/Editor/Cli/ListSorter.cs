@@ -21,14 +21,29 @@
 */
 
 using System;
+using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Editor.Cli
 {
+	/// <summary>
+	/// List sorter for <see cref="CharonCli.ListDocumentsAsync"/> operation.
+	/// See https://gamedevware.github.io/charon/advanced/commands/data_list.html for detailed documentation.
+	/// </summary>
+	[PublicAPI]
 	public class ListSorter
 	{
+		/// <summary>
+		/// Property name of path separated by dots to sort on.
+		/// </summary>
 		public string PropertyName;
+		/// <summary>
+		/// Sort direction.
+		/// </summary>
 		public ListSorterDirection Direction;
 
+		/// <summary>
+		/// Create new list sorter.
+		/// </summary>
 		public ListSorter(string propertyName, ListSorterDirection direction)
 		{
 			if (propertyName == null) throw new ArgumentNullException(nameof(propertyName));
@@ -37,7 +52,7 @@ namespace GameDevWare.Charon.Editor.Cli
 			this.Direction = direction;
 		}
 
-		public string GetDirectionName()
+		internal string GetDirectionName()
 		{
 			switch (this.Direction)
 			{

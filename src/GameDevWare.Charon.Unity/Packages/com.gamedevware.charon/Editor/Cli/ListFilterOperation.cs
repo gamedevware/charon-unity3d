@@ -20,8 +20,15 @@
 	THE SOFTWARE.
 */
 
+using JetBrains.Annotations;
+
 namespace GameDevWare.Charon.Editor.Cli
 {
+	/// <summary>
+	/// List filter operation for <see cref="CharonCli.ListDocumentsAsync"/> operation.
+	/// See https://gamedevware.github.io/charon/advanced/commands/data_list.html for detailed documentation.
+	/// </summary>
+	[PublicAPI]
 	public enum ListFilterOperation
 	{
 		GreaterThan,

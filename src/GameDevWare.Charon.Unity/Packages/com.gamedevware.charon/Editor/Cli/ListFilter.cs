@@ -21,15 +21,33 @@
 */
 
 using System;
+using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Editor.Cli
 {
+	/// <summary>
+	/// List filter for <see cref="CharonCli.ListDocumentsAsync"/> operation.
+	/// See https://gamedevware.github.io/charon/advanced/commands/data_list.html for detailed documentation.
+	/// </summary>
+	[PublicAPI]
 	public class ListFilter
 	{
+		/// <summary>
+		/// Property name of path separated by dots to sort on. Use "*" to try to apply filter on each field.
+		/// </summary>
 		public string PropertyName;
+		/// <summary>
+		/// Filter operation.
+		/// </summary>
 		public ListFilterOperation Operation;
+		/// <summary>
+		/// Value to apply filter operation.
+		/// </summary>
 		public string Value;
 
+		/// <summary>
+		/// Create list filter.
+		/// </summary>
 		public ListFilter(string propertyName, ListFilterOperation operation, string value)
 		{
 			if (propertyName == null) throw new ArgumentNullException(nameof(propertyName));
@@ -40,7 +58,7 @@ namespace GameDevWare.Charon.Editor.Cli
 			this.Value = value;
 		}
 
-		public string GetOperationName()
+		internal string GetOperationName()
 		{
 			switch (this.Operation)
 			{
@@ -56,7 +74,7 @@ namespace GameDevWare.Charon.Editor.Cli
 			}
 		}
 
-		public string GetValueQuoted()
+		internal string GetValueQuoted()
 		{
 			bool isQuoted = this.Value.StartsWith("\"") && this.Value.EndsWith("\"");
 			bool bHasInvalidChars = !isQuoted && (this.Value.IndexOf(" ", StringComparison.Ordinal) >= 0 || this.Value.IndexOf("\"", StringComparison.Ordinal) > 0);
