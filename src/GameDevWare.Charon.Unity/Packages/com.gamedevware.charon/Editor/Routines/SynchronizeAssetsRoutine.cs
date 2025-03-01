@@ -124,7 +124,7 @@ namespace GameDevWare.Charon.Editor.Routines
 					logger.Log(LogType.Assert, $"Exporting game data from '{gameDataPath}' into temporary file '{publishFilePath}'[format: {publishFormat}].");
 
 					await CharonCli.ExportToFileAsync(Path.GetFullPath(gameDataPath), apiKey: null, exportedDocumentsFilePath: publishFilePath, format: exportPublicationFormat,
-						schemaNamesOrIds: Array.Empty<string>(), properties: Array.Empty<string>(), languages: gameDataAsset.settings.publishLanguages ?? Array.Empty<string>(),
+						schemaNamesOrIds: new [] { "*" }, properties: Array.Empty<string>(), languages: gameDataAsset.settings.publishLanguages ?? Array.Empty<string>(),
 						exportMode: ExportMode.Publication, logsVerbosity: CharonEditorModule.Instance.Settings.LogLevel).ConfigureAwait(true);
 
 					pathSpecificProgress?.Invoke(null, 0.70f);

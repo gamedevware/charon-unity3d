@@ -96,38 +96,24 @@ namespace GameDevWare.Charon.Editor.Routines
 				throw new InvalidOperationException($"Unable to start editor for '{gameDataAssetPath}'. File is not a game data file.");
 			}
 
-			reference = AppendUnityResourceServerParams(gameDataAssetPath, reference);
+			var resourceServerParams = GetUnityResourceServerParams(gameDataAssetPath, reference);
 
 			if (gameDataSettings.IsConnected)
 			{
-				await RemoteAuthenticateAndOpenWindowAsync(gameDataSettings, reference, progressCallback.Sub(0.50f, 1.00f), cancellation).ConfigureAwait(true);
+				await RemoteAuthenticateAndOpenWindowAsync(gameDataSettings, reference, resourceServerParams, progressCallback.Sub(0.50f, 1.00f), cancellation).ConfigureAwait(true);
 			}
-			else if (!await TryJoinExistingEditorAsync(gameDataSettings, reference, progressCallback, cancellation).ConfigureAwait(true))
+			else if (!await TryJoinExistingEditorAsync(gameDataSettings, reference, resourceServerParams, progressCallback, cancellation).ConfigureAwait(true))
 			{
-				await LaunchCharonAndOpenWindowAsync(gameDataSettings, reference, progressCallback, cancellation).ConfigureAwait(true);
+				await LaunchCharonAndOpenWindowAsync(gameDataSettings, reference, resourceServerParams, progressCallback, cancellation).ConfigureAwait(true);
 			}
 		}
 
-		private static string AppendUnityResourceServerParams(string gameDataAssetPath, string reference)
+		private static string GetUnityResourceServerParams(string gameDataAssetPath, string reference)
 		{
-			var unityResourceServerParams = $"unityPort={CharonEditorModule.Instance.ResourceServer.Port}&unityAssetId={Uri.EscapeDataString(AssetDatabase.AssetPathToGUID(gameDataAssetPath))}";
-			if (string.IsNullOrEmpty(reference))
-			{
-				reference = "?" + unityResourceServerParams;
-			}
-			else if (reference.IndexOf('?') > 0)
-			{
-				reference += "&" + unityResourceServerParams;
-			}
-			else
-			{
-				reference += "?" + unityResourceServerParams;
-			}
-
-			return reference;
+			return $"unityPort={CharonEditorModule.Instance.ResourceServer.Port}&unityAssetId={Uri.EscapeDataString(AssetDatabase.AssetPathToGUID(gameDataAssetPath))}";
 		}
 
-		private static async Task RemoteAuthenticateAndOpenWindowAsync(GameDataSettings gameDataSettings, string reference, Action<string, float> progressCallback, CancellationToken cancellation)
+		private static async Task RemoteAuthenticateAndOpenWindowAsync(GameDataSettings gameDataSettings, string reference, string resourceServerParams, Action<string, float> progressCallback, CancellationToken cancellation)
 		{
 			if (gameDataSettings == null) throw new ArgumentNullException(nameof(gameDataSettings));
 			if (progressCallback == null) throw new ArgumentNullException(nameof(progressCallback));
@@ -144,7 +130,7 @@ namespace GameDevWare.Charon.Editor.Routines
 			var serverApiClient = new ServerApiClient(gameDataEditorUrl);
 			var apiKeyPath = new Uri(gameDataEditorUrl, "/" + gameDataSettings.projectId);
 			var apiKey = CharonEditorModule.Instance.KeyCryptoStorage.GetKey(apiKeyPath);
-			var navigateUrl = new Uri(gameDataEditorUrl, reference);
+			var navigateUrl = new Uri(gameDataEditorUrl, AppendQueryParameters(reference, resourceServerParams));
 
 			if (!string.IsNullOrEmpty(apiKey))
 			{
@@ -157,7 +143,7 @@ namespace GameDevWare.Charon.Editor.Routines
 				if (string.IsNullOrEmpty(loginCode) == false)
 				{
 					var loginParameters = $"?loginCode={Uri.EscapeDataString(loginCode)}&returnUrl={Uri.EscapeDataString(reference)}";
-					navigateUrl = new Uri(gameDataEditorUrl, "view/sign-in" + loginParameters);
+					navigateUrl = new Uri(gameDataEditorUrl, AppendQueryParameters("view/sign-in" + loginParameters, resourceServerParams));
 				}
 
 				progressCallback(Resources.UI_UNITYPLUGIN_PROGRESS_AUTHENTICATING, 0.3f);
@@ -169,7 +155,7 @@ namespace GameDevWare.Charon.Editor.Routines
 
 			NavigateTo(navigateUrl);
 		}
-		private static async Task LaunchCharonAndOpenWindowAsync(GameDataSettings gameDataSettings, string reference, Action<string, float> progressCallback, CancellationToken cancellation)
+		private static async Task LaunchCharonAndOpenWindowAsync(GameDataSettings gameDataSettings, string reference, string resourceServerParams, Action<string, float> progressCallback, CancellationToken cancellation)
 		{
 			var randomPort = new Random().Next(10000, 60000);
 			var gameDataEditorUrl = new Uri("http://localhost:" + randomPort + "/");
@@ -185,11 +171,11 @@ namespace GameDevWare.Charon.Editor.Routines
 			cancellation.ThrowIfScriptsCompiling();
 			cancellation.ThrowIfCancellationRequested();
 
-			var navigateUrl = new Uri(gameDataEditorUrl, reference);
+			var navigateUrl = new Uri(gameDataEditorUrl, AppendQueryParameters(reference, resourceServerParams));
 			NavigateTo(navigateUrl);
 		}
 
-		private static async Task<bool> TryJoinExistingEditorAsync(GameDataSettings gameDataSettings, string reference, Action<string,float> progressCallback, CancellationToken cancellation)
+		private static async Task<bool> TryJoinExistingEditorAsync(GameDataSettings gameDataSettings, string reference, string resourceServerParams, Action<string,float> progressCallback, CancellationToken cancellation)
 		{
 			var gameDataPath = Path.GetFullPath(AssetDatabase.GUIDToAssetPath(gameDataSettings.gameDataFileGuid) ?? "");
 			if (!CharonProcessLockFileContent.TryReadLockFile(gameDataPath, out var lockFileContent))
@@ -205,7 +191,7 @@ namespace GameDevWare.Charon.Editor.Routines
 				return false;
 			}
 
-			var navigateUrl = new Uri(lockFileContent.ListenAddress, reference);
+			var navigateUrl = new Uri(lockFileContent.ListenAddress, AppendQueryParameters(reference, resourceServerParams));
 			NavigateTo(navigateUrl);
 			return true;
 		}
@@ -321,6 +307,22 @@ namespace GameDevWare.Charon.Editor.Routines
 					break;
 				default:
 					throw new ArgumentOutOfRangeException($"Unexpected value '{settings.EditorApplication}' for '{typeof(CharonEditorApplication)}' enum.");
+			}
+		}
+
+		private static string AppendQueryParameters(string reference, string resourceServerParams)
+		{
+			if (string.IsNullOrEmpty(resourceServerParams))
+			{
+				return reference;
+			}
+			if (reference.IndexOf('?') < 0)
+			{
+				return reference + "?" + resourceServerParams;
+			}
+			else
+			{
+				return reference + "&" + resourceServerParams;
 			}
 		}
 	}
