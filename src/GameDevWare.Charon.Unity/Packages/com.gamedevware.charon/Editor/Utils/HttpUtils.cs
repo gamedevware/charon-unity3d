@@ -126,6 +126,12 @@ namespace GameDevWare.Charon.Editor.Utils
 
 			try
 			{
+				if (requestHeaders == null || string.IsNullOrEmpty(requestHeaders["Accept"]))
+				{
+					requestHeaders = requestHeaders != null ? new NameValueCollection(requestHeaders) : new NameValueCollection();
+					requestHeaders.Add("Accept", "application/json");
+				}
+
 				await RequestToAsync("GET", url, responseStream, Stream.Null, LEAVE_OPEN, requestHeaders, downloadProgressCallback, timeout, cancellation);
 
 				responseStream.Position = 0;
@@ -153,6 +159,12 @@ namespace GameDevWare.Charon.Editor.Utils
 			const bool LEAVE_OPEN = true;
 			try
 			{
+				if (requestHeaders == null || string.IsNullOrEmpty(requestHeaders["Content-Type"]))
+				{
+					requestHeaders = requestHeaders != null ? new NameValueCollection(requestHeaders) : new NameValueCollection();
+					requestHeaders.Add("Content-Type", "application/json");
+				}
+
 				await RequestToAsync("POST", url, responseStream, requestStream, LEAVE_OPEN, requestHeaders, downloadProgressCallback, timeout, cancellation);
 
 				responseStream.Position = 0;
@@ -233,22 +245,27 @@ namespace GameDevWare.Charon.Editor.Utils
 							request.SetRequestHeader(header, headerValue);
 						}
 					}
+				}
 
-					if (string.IsNullOrEmpty(requestHeaders["Accept"]))
-					{
-						request.SetRequestHeader("Accept", "*/*");
-					}
+				if (requestHeaders == null || string.IsNullOrEmpty(requestHeaders["Accept"]))
+				{
+					request.SetRequestHeader("Accept", "*/*");
+				}
 
-					if (string.IsNullOrEmpty(requestHeaders["User-Agent"]))
-					{
-						request.SetRequestHeader("User-Agent", UserAgentHeaderValue);
-					}
+				if (requestHeaders == null || string.IsNullOrEmpty(requestHeaders["User-Agent"]))
+				{
+					request.SetRequestHeader("User-Agent", UserAgentHeaderValue);
 				}
 
 				logger.Log(LogType.Assert, $"Staring new request to [{request.method}]'{request.uri}'.");
 
 				if (uploadStream != Stream.Null && uploadStream.Length > 0)
 				{
+					if (requestHeaders == null || string.IsNullOrEmpty(requestHeaders["Content-Type"]))
+					{
+						request.SetRequestHeader("Content-Type", "application/octet-stream");
+					}
+
 					request.disposeUploadHandlerOnDispose = true;
 					if (uploadStream is FileStream fileStream && fileStream.Position == 0)
 					{
