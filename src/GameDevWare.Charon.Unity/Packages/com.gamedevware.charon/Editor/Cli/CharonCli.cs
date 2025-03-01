@@ -1216,11 +1216,10 @@ namespace GameDevWare.Charon.Editor.Cli
 				{
 					optimizationsList.Add(optimization.ToString());
 				}
-
-				if (optimizationsList.Count > 0)
-				{
-					optimizationsList.Insert(0, "--optimizations");
-				}
+			}
+			if (optimizationsList.Count > 0)
+			{
+				optimizationsList.Insert(0, "--optimizations");
 			}
 
 			using var _ = await RunCharonAsync
