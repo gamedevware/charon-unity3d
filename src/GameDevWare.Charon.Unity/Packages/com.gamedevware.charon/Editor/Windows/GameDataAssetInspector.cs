@@ -62,13 +62,13 @@ namespace GameDevWare.Charon.Editor.Windows
 		[NonSerialized]
 		private DateTime lastGameDataFileRevisionHashCheckTime;
 		[SerializeField]
-		private bool codeGenerationFold;
+		private bool codeGenerationFold = true;
 		[SerializeField]
-		private bool connectionFold;
+		private bool connectionFold = true;
 		[SerializeField]
-		private bool publicationFold;
+		private bool publicationFold = true;
 		[SerializeField]
-		private bool publicationLanguagesFold;
+		private bool publicationLanguagesFold = true;
 		[SerializeField]
 		private Vector2 scrollPosition;
 
@@ -120,20 +120,29 @@ namespace GameDevWare.Charon.Editor.Windows
 			EditorGUILayout.EndHorizontal();
 			EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_INSPECTOR_GAME_DATA_VERSION_LABEL, gameDataAsset.GameDataVersion);
 
-			this.OnCodeGenerationSettingsGUI(gameDataAsset);
+			GUI.enabled = true;
 
-			GUI.enabled = !CharonEditorModule.Instance.Routines.IsRunning &&
-				!EditorApplication.isCompiling;
+			this.codeGenerationFold = EditorGUILayout.BeginFoldoutHeaderGroup(this.codeGenerationFold, Resources.UI_UNITYPLUGIN_INSPECTOR_CODE_GENERATION_LABEL);
+			if (this.codeGenerationFold)
+			{
+				this.OnCodeGenerationSettingsGUI(gameDataAsset);
+			}
+			EditorGUILayout.EndFoldoutHeaderGroup();
 
-			EditorGUILayout.Space();
+			this.publicationFold = EditorGUILayout.BeginFoldoutHeaderGroup(this.publicationFold, Resources.UI_UNITYPLUGIN_INSPECTOR_ASSET_IMPORT_SETTINGS_LABEL);
+			if (this.publicationFold)
+			{
+				this.OnAssetImportSettingsGUI(gameDataAsset);
+			}
+			EditorGUILayout.EndFoldoutHeaderGroup();
 
-			this.OnAssetImportSettingsGUI(gameDataAsset);
 
-			EditorGUILayout.Space();
-
-			this.OnConnectionGUI(gameDataAsset);
-
-			EditorGUILayout.Space();
+			this.connectionFold = EditorGUILayout.BeginFoldoutHeaderGroup(this.connectionFold, this.lastServerAddress);
+			if (this.connectionFold)
+			{
+				this.OnConnectionGUI(gameDataAsset);
+			}
+			EditorGUILayout.EndFoldoutHeaderGroup();
 
 			GUILayout.Label(Resources.UI_UNITYPLUGIN_INSPECTOR_ACTIONS_GROUP, EditorStyles.boldLabel);
 
@@ -177,9 +186,6 @@ namespace GameDevWare.Charon.Editor.Windows
 		}
 		private void OnConnectionGUI(GameDataBase gameDataAsset)
 		{
-			this.connectionFold = EditorGUI.Foldout(EditorGUILayout.GetControlRect(), this.connectionFold, this.lastServerAddress, toggleOnLabelClick: true);
-			if (!this.connectionFold) return;
-
 			EditorGUI.indentLevel++;
 
 			if (gameDataAsset.settings.IsConnected)
@@ -229,9 +235,6 @@ namespace GameDevWare.Charon.Editor.Windows
 		}
 		private void OnCodeGenerationSettingsGUI(GameDataBase gameDataAsset)
 		{
-			this.codeGenerationFold = EditorGUI.Foldout(EditorGUILayout.GetControlRect(), this.codeGenerationFold, Resources.UI_UNITYPLUGIN_INSPECTOR_CODE_GENERATION_LABEL, toggleOnLabelClick: true);
-			if (!this.codeGenerationFold) return;
-
 			EditorGUI.indentLevel++;
 			GUI.enabled = !CharonEditorModule.Instance.Routines.IsRunning && !EditorApplication.isCompiling;
 
@@ -273,8 +276,6 @@ namespace GameDevWare.Charon.Editor.Windows
 		}
 		private void OnAssetImportSettingsGUI(GameDataBase gameDataAsset)
 		{
-			this.publicationFold = EditorGUI.Foldout(EditorGUILayout.GetControlRect(), this.publicationFold, Resources.UI_UNITYPLUGIN_INSPECTOR_ASSET_IMPORT_SETTINGS_LABEL, toggleOnLabelClick: true);
-			if (!this.publicationFold) return;
 			EditorGUI.indentLevel++;
 
 			gameDataAsset.settings.publishFormat = Convert.ToInt32(EditorGUILayout.EnumPopup(Resources.UI_UNITYPLUGIN_INSPECTOR_PUBLICATION_FORMAT_LABEL,
