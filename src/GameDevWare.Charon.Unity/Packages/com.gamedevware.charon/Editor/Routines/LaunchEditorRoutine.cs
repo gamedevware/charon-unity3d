@@ -316,7 +316,7 @@ namespace GameDevWare.Charon.Editor.Routines
 			{
 				return reference;
 			}
-			if (reference.IndexOf('?') < 0)
+			if (reference == null || reference.IndexOf('?') < 0)
 			{
 				return reference + "?" + resourceServerParams;
 			}
