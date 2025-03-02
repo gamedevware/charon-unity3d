@@ -177,7 +177,7 @@ namespace GameDevWare.Charon.Editor.Windows
 		}
 		private void OnConnectionGUI(GameDataBase gameDataAsset)
 		{
-			this.connectionFold = EditorGUILayout.Foldout(this.connectionFold, this.lastServerAddress);
+			this.connectionFold = EditorGUI.Foldout(EditorGUILayout.GetControlRect(), this.connectionFold, this.lastServerAddress, toggleOnLabelClick: true);
 			if (!this.connectionFold) return;
 
 			EditorGUI.indentLevel++;
@@ -229,7 +229,7 @@ namespace GameDevWare.Charon.Editor.Windows
 		}
 		private void OnCodeGenerationSettingsGUI(GameDataBase gameDataAsset)
 		{
-			this.codeGenerationFold = EditorGUILayout.Foldout(this.codeGenerationFold, Resources.UI_UNITYPLUGIN_INSPECTOR_CODE_GENERATION_LABEL);
+			this.codeGenerationFold = EditorGUI.Foldout(EditorGUILayout.GetControlRect(), this.codeGenerationFold, Resources.UI_UNITYPLUGIN_INSPECTOR_CODE_GENERATION_LABEL, toggleOnLabelClick: true);
 			if (!this.codeGenerationFold) return;
 
 			EditorGUI.indentLevel++;
@@ -273,7 +273,7 @@ namespace GameDevWare.Charon.Editor.Windows
 		}
 		private void OnAssetImportSettingsGUI(GameDataBase gameDataAsset)
 		{
-			this.publicationFold = EditorGUILayout.Foldout(this.publicationFold, Resources.UI_UNITYPLUGIN_INSPECTOR_ASSET_IMPORT_SETTINGS_LABEL);
+			this.publicationFold = EditorGUI.Foldout(EditorGUILayout.GetControlRect(), this.publicationFold, Resources.UI_UNITYPLUGIN_INSPECTOR_ASSET_IMPORT_SETTINGS_LABEL, toggleOnLabelClick: true);
 			if (!this.publicationFold) return;
 			EditorGUI.indentLevel++;
 
@@ -281,7 +281,7 @@ namespace GameDevWare.Charon.Editor.Windows
 				(GameDataFormat)gameDataAsset.settings.publishFormat));
 
 			var publishLanguages = gameDataAsset.settings.publishLanguages ?? Array.Empty<string>();
-			this.publicationLanguagesFold = EditorGUILayout.Foldout(this.publicationLanguagesFold, Resources.UI_UNITYPLUGIN_INSPECTOR_PUBLICATION_LANGUAGES_LABEL + $" [{publishLanguages.Length}]");
+			this.publicationLanguagesFold = EditorGUI.Foldout(EditorGUILayout.GetControlRect(), this.publicationLanguagesFold, Resources.UI_UNITYPLUGIN_INSPECTOR_PUBLICATION_LANGUAGES_LABEL + $" [{publishLanguages.Length}]", toggleOnLabelClick: true);
 			if (!this.publicationLanguagesFold)
 			{
 				EditorGUI.indentLevel--;
