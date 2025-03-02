@@ -33,9 +33,10 @@ using System.Threading.Tasks;
 using GameDevWare.Charon.Editor.Services.ServerApi;
 using GameDevWare.Charon.Editor.Utils;
 using JetBrains.Annotations;
-using Newtonsoft.Json;
 using UnityEngine;
+
 #if JSON_NET_3_0_2_OR_NEWER
+using Newtonsoft.Json;
 using JsonObject = Newtonsoft.Json.Linq.JObject;
 using JsonValue = Newtonsoft.Json.Linq.JToken;
 #else
