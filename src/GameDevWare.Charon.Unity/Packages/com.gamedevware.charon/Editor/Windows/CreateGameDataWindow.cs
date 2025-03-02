@@ -103,7 +103,7 @@ namespace GameDevWare.Charon.Editor.Windows
 				{
 					EditorGUILayout.BeginHorizontal();
 					EditorGUILayout.Space();
-					GUILayout.Label(EditorGUIUtility.IconContent("cs Script Icon"));
+					GUILayout.Label(EditorGUIUtility.IconContent("cs Script Icon"), GUILayout.Width(64), GUILayout.Height(64));
 					EditorGUILayout.Space();
 					EditorGUILayout.EndHorizontal();
 
@@ -115,7 +115,7 @@ namespace GameDevWare.Charon.Editor.Windows
 				{
 					EditorGUILayout.BeginHorizontal();
 					EditorGUILayout.Space();
-					GUILayout.Label(EditorGUIUtility.IconContent("cs Script Icon"));
+					GUILayout.Label(EditorGUIUtility.IconContent("cs Script Icon"), GUILayout.Width(64), GUILayout.Height(64));
 					EditorGUILayout.Space();
 					EditorGUILayout.EndHorizontal();
 
@@ -127,7 +127,7 @@ namespace GameDevWare.Charon.Editor.Windows
 				{
 					EditorGUILayout.BeginHorizontal();
 					EditorGUILayout.Space();
-					GUILayout.Label(EditorGUIUtility.IconContent("TextAsset Icon"));
+					GUILayout.Label(EditorGUIUtility.IconContent("TextAsset Icon"), GUILayout.Width(64), GUILayout.Height(64));
 					EditorGUILayout.Space();
 					EditorGUILayout.EndHorizontal();
 
@@ -139,7 +139,7 @@ namespace GameDevWare.Charon.Editor.Windows
 				{
 					EditorGUILayout.BeginHorizontal();
 					EditorGUILayout.Space();
-					GUILayout.Label(EditorGUIUtility.IconContent("Prefab Icon"));
+					GUILayout.Label(EditorGUIUtility.IconContent("Prefab Icon"), GUILayout.Width(64), GUILayout.Height(64));
 					EditorGUILayout.Space();
 					EditorGUILayout.EndHorizontal();
 
