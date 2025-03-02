@@ -34,6 +34,7 @@ using GameDevWare.Charon.Editor.Routines;
 using GameDevWare.Charon.Editor.Utils;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityObject = UnityEngine.Object;
 
 namespace GameDevWare.Charon.Editor.Windows
@@ -44,6 +45,11 @@ namespace GameDevWare.Charon.Editor.Windows
 		private static readonly Regex RevisionHashRegex = new Regex("\"RevisionHash\"\\s*:\\s*\"([a-fA-F0-9\\-]+)\"");
 		private static readonly KeyValuePair<string, string>[] AllLanguagesWithId = CultureInfo.GetCultures(CultureTypes.SpecificCultures)
 			.OrderBy(c => c.Name).Select(c => new KeyValuePair<string, string>($"{{{c.Name}}}", $"[{c.Name}] {c.EnglishName}")).ToArray();
+
+		private bool? cachedCodeGenerationFold;
+		private bool? cachedConnectionFold;
+		private bool? cachedPublicationFold;
+		private bool? cachedPublicationLanguagesFold;
 
 		[NonSerialized]
 		private GameDataBase lastGameDataAsset;
@@ -62,15 +68,28 @@ namespace GameDevWare.Charon.Editor.Windows
 		[NonSerialized]
 		private DateTime lastGameDataFileRevisionHashCheckTime;
 		[SerializeField]
-		private bool codeGenerationFold = true;
-		[SerializeField]
-		private bool connectionFold = true;
-		[SerializeField]
-		private bool publicationFold = true;
-		[SerializeField]
-		private bool publicationLanguagesFold = true;
-		[SerializeField]
 		private Vector2 scrollPosition;
+
+		private bool CodeGenerationFold
+		{
+			get => EditorPrefsUtils.GetPrefsValue(nameof(this.CodeGenerationFold), true, ref this.cachedCodeGenerationFold);
+			set => EditorPrefsUtils.SetPrefsValue(nameof(this.CodeGenerationFold), value, ref this.cachedCodeGenerationFold);
+		}
+		private bool ConnectionFold
+		{
+			get => EditorPrefsUtils.GetPrefsValue(nameof(this.ConnectionFold), true, ref this.cachedConnectionFold);
+			set => EditorPrefsUtils.SetPrefsValue(nameof(this.ConnectionFold), value, ref this.cachedConnectionFold);
+		}
+		private bool PublicationFold
+		{
+			get => EditorPrefsUtils.GetPrefsValue(nameof(this.PublicationFold), true, ref this.cachedPublicationFold);
+			set => EditorPrefsUtils.SetPrefsValue(nameof(this.PublicationFold), value, ref this.cachedPublicationFold);
+		}
+		private bool PublicationLanguagesFold
+		{
+			get => EditorPrefsUtils.GetPrefsValue(nameof(this.PublicationLanguagesFold), true, ref this.cachedPublicationLanguagesFold);
+			set => EditorPrefsUtils.SetPrefsValue(nameof(this.PublicationLanguagesFold), value, ref this.cachedPublicationLanguagesFold);
+		}
 
 		/// <inheritdoc />
 		// ReSharper disable once FunctionComplexityOverflow
@@ -122,23 +141,23 @@ namespace GameDevWare.Charon.Editor.Windows
 
 			GUI.enabled = true;
 
-			this.codeGenerationFold = EditorGUILayout.BeginFoldoutHeaderGroup(this.codeGenerationFold, Resources.UI_UNITYPLUGIN_INSPECTOR_CODE_GENERATION_LABEL);
-			if (this.codeGenerationFold)
+			this.CodeGenerationFold = EditorGUILayout.BeginFoldoutHeaderGroup(this.CodeGenerationFold, Resources.UI_UNITYPLUGIN_INSPECTOR_CODE_GENERATION_LABEL);
+			if (this.CodeGenerationFold)
 			{
 				this.OnCodeGenerationSettingsGUI(gameDataAsset);
 			}
 			EditorGUILayout.EndFoldoutHeaderGroup();
 
-			this.publicationFold = EditorGUILayout.BeginFoldoutHeaderGroup(this.publicationFold, Resources.UI_UNITYPLUGIN_INSPECTOR_ASSET_IMPORT_SETTINGS_LABEL);
-			if (this.publicationFold)
+			this.PublicationFold = EditorGUILayout.BeginFoldoutHeaderGroup(this.PublicationFold, Resources.UI_UNITYPLUGIN_INSPECTOR_ASSET_IMPORT_SETTINGS_LABEL);
+			if (this.PublicationFold)
 			{
 				this.OnAssetImportSettingsGUI(gameDataAsset);
 			}
 			EditorGUILayout.EndFoldoutHeaderGroup();
 
 
-			this.connectionFold = EditorGUILayout.BeginFoldoutHeaderGroup(this.connectionFold, this.lastServerAddress);
-			if (this.connectionFold)
+			this.ConnectionFold = EditorGUILayout.BeginFoldoutHeaderGroup(this.ConnectionFold, this.lastServerAddress);
+			if (this.ConnectionFold)
 			{
 				this.OnConnectionGUI(gameDataAsset);
 			}
@@ -282,8 +301,8 @@ namespace GameDevWare.Charon.Editor.Windows
 				(GameDataFormat)gameDataAsset.settings.publishFormat));
 
 			var publishLanguages = gameDataAsset.settings.publishLanguages ?? Array.Empty<string>();
-			this.publicationLanguagesFold = EditorGUI.Foldout(EditorGUILayout.GetControlRect(), this.publicationLanguagesFold, Resources.UI_UNITYPLUGIN_INSPECTOR_PUBLICATION_LANGUAGES_LABEL + $" [{publishLanguages.Length}]", toggleOnLabelClick: true);
-			if (!this.publicationLanguagesFold)
+			this.PublicationLanguagesFold = EditorGUI.Foldout(EditorGUILayout.GetControlRect(), this.PublicationLanguagesFold, Resources.UI_UNITYPLUGIN_INSPECTOR_PUBLICATION_LANGUAGES_LABEL + $" [{publishLanguages.Length}]", toggleOnLabelClick: true);
+			if (!this.PublicationLanguagesFold)
 			{
 				EditorGUI.indentLevel--;
 				return;

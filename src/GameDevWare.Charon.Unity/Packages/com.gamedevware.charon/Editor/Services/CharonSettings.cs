@@ -23,13 +23,13 @@
 using System;
 using System.Globalization;
 using GameDevWare.Charon.Editor.Cli;
+using GameDevWare.Charon.Editor.Utils;
 using UnityEditor;
 
 namespace GameDevWare.Charon.Editor.Services
 {
 	public sealed class CharonSettings
 	{
-		private static readonly string PreferencesPrefix = typeof(CharonSettings).Assembly.GetName().Name + "::" + nameof(CharonSettings);
 		private const string DEFAULT_SERVER_ADDRESS = "https://charon.live/";
 
 		private CharonLogLevel? cachedLogLevel;
@@ -40,28 +40,28 @@ namespace GameDevWare.Charon.Editor.Services
 
 		public CharonEditorApplication EditorApplication
 		{
-			get => this.GetPrefsValue(nameof(this.EditorApplication), CharonEditorApplication.DefaultBrowser, ref this.cachedEditorApplication);
-			set => this.SetPrefsValue(nameof(this.EditorApplication), value, ref this.cachedEditorApplication);
+			get => EditorPrefsUtils.GetPrefsValue(nameof(this.EditorApplication), CharonEditorApplication.DefaultBrowser, ref this.cachedEditorApplication);
+			set => EditorPrefsUtils.SetPrefsValue(nameof(this.EditorApplication), value, ref this.cachedEditorApplication);
 		}
 		public string CustomEditorApplicationPath
 		{
-			get => this.GetPrefsValueRef(nameof(this.CustomEditorApplicationPath), string.Empty, ref this.cachedCustomEditorApplicationPath);
-			set => this.SetPrefsValueRef(nameof(this.CustomEditorApplicationPath), value, ref this.cachedCustomEditorApplicationPath);
+			get => EditorPrefsUtils.GetPrefsValueRef(nameof(this.CustomEditorApplicationPath), string.Empty, ref this.cachedCustomEditorApplicationPath);
+			set => EditorPrefsUtils.SetPrefsValueRef(nameof(this.CustomEditorApplicationPath), value, ref this.cachedCustomEditorApplicationPath);
 		}
 		public string ServerAddress
 		{
-			get => this.GetPrefsValueRef(nameof(this.ServerAddress), DEFAULT_SERVER_ADDRESS, ref this.cachedServerAddress);
-			set => this.SetPrefsValueRef(nameof(this.ServerAddress), value, ref this.cachedServerAddress);
+			get => EditorPrefsUtils.GetPrefsValueRef(nameof(this.ServerAddress), DEFAULT_SERVER_ADDRESS, ref this.cachedServerAddress);
+			set => EditorPrefsUtils.SetPrefsValueRef(nameof(this.ServerAddress), value, ref this.cachedServerAddress);
 		}
 		public TimeSpan IdleCloseTimeout
 		{
-			get => this.GetPrefsValue(nameof(this.IdleCloseTimeout), TimeSpan.FromSeconds(60), ref this.cachedIdleCloseTimeout);
-			set => this.SetPrefsValue(nameof(this.IdleCloseTimeout), value, ref this.cachedIdleCloseTimeout);
+			get => EditorPrefsUtils.GetPrefsValue(nameof(this.IdleCloseTimeout), TimeSpan.FromSeconds(60), ref this.cachedIdleCloseTimeout);
+			set => EditorPrefsUtils.SetPrefsValue(nameof(this.IdleCloseTimeout), value, ref this.cachedIdleCloseTimeout);
 		}
 		public CharonLogLevel LogLevel
 		{
-			get => this.GetPrefsValue(nameof(this.LogLevel), CharonLogLevel.Normal, ref this.cachedLogLevel);
-			set => this.SetPrefsValue(nameof(this.LogLevel), value, ref this.cachedLogLevel);
+			get => EditorPrefsUtils.GetPrefsValue(nameof(this.LogLevel), CharonLogLevel.Normal, ref this.cachedLogLevel);
+			set => EditorPrefsUtils.SetPrefsValue(nameof(this.LogLevel), value, ref this.cachedLogLevel);
 		}
 
 		internal Uri GetServerAddressUrl()
@@ -89,89 +89,6 @@ namespace GameDevWare.Charon.Editor.Services
 			_ = this.ServerAddress;
 			_ = this.IdleCloseTimeout;
 			_ = this.LogLevel;
-		}
-
-		private T GetPrefsValue<T>(string keyName, T defaultValue, ref T? cachedValue) where T: struct
-		{
-			if (cachedValue.HasValue)
-			{
-				return cachedValue.Value;
-			}
-
-			var prefsValue = EditorPrefs.GetString(PreferencesPrefix + "::" + keyName);
-			if (string.IsNullOrEmpty(prefsValue))
-			{
-				cachedValue = defaultValue;
-				return defaultValue;
-			}
-
-			try
-			{
-				if (typeof(T).IsEnum)
-				{
-					cachedValue = (T)Enum.Parse(typeof(T), prefsValue, ignoreCase: true);
-				}
-				else if (typeof(T) == typeof(TimeSpan))
-				{
-					cachedValue = (T)(object)TimeSpan.Parse(prefsValue, CultureInfo.InvariantCulture);
-				}
-				else
-				{
-					cachedValue = (T)Convert.ChangeType(prefsValue, typeof(T), CultureInfo.InvariantCulture);
-				}
-				return cachedValue.Value;
-			}
-			catch
-			{
-				cachedValue = defaultValue;
-				return defaultValue;
-			}
-		}
-		private void SetPrefsValue<T>(string keyName, T value, ref T? cachedValue) where T: struct
-		{
-			if (cachedValue.HasValue && value.Equals(cachedValue.Value))
-			{
-				return; // same
-			}
-
-			cachedValue = value;
-			var stringValue = Convert.ToString(value, CultureInfo.InvariantCulture);
-			EditorPrefs.SetString(PreferencesPrefix + "::" + keyName, stringValue);
-		}
-		private T GetPrefsValueRef<T>(string keyName, T defaultValue, ref T cachedValue) where T: class
-		{
-			if (cachedValue != null)
-			{
-				return cachedValue;
-			}
-
-			var prefsValue = EditorPrefs.GetString(PreferencesPrefix + "::" + keyName);
-			if (string.IsNullOrEmpty(prefsValue))
-			{
-				cachedValue = defaultValue;
-				return defaultValue;
-			}
-
-			try
-			{
-				cachedValue = (T)Convert.ChangeType(prefsValue, typeof(T), CultureInfo.InvariantCulture);
-				return cachedValue;
-			}
-			catch
-			{
-				cachedValue = defaultValue;
-				return defaultValue;
-			}
-		}
-		private void SetPrefsValueRef<T>(string keyName, T value, ref T cachedValue) where T: class
-		{
-			if (ReferenceEquals(cachedValue, value) || (value != null && value.Equals(cachedValue)))
-			{
-				return; // same
-			}
-			cachedValue = value;
-			var stringValue = Convert.ToString(value, CultureInfo.InvariantCulture);
-			EditorPrefs.SetString(PreferencesPrefix + "::" + keyName, stringValue);
 		}
 	}
 }
