@@ -94,7 +94,7 @@ namespace GameDevWare.Charon.Editor.Routines
 					}
 					if (string.IsNullOrEmpty(codeGenerationPath))
 					{
-						codeGenerationPath = "Assets" + Path.DirectorySeparatorChar;
+						codeGenerationPath = Path.GetDirectoryName(gameDataAssetPath);
 					}
 
 					var optimizations = (SourceCodeGenerationOptimizations)gameDataSettings.optimizations;
