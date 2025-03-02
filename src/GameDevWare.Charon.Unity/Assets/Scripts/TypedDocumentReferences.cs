@@ -18,322 +18,262 @@ namespace Assets.Scripts
 	[PublicAPI, Serializable]
 	public class ProjectSettingDocumentReference: GameDataDocumentReference
 	{
+		[SerializeField]
 		public string predefinedSchemaNameOrId = Assets.Scripts.ProjectSetting.SchemaName;
 
 		[CanBeNull]
 		public Assets.Scripts.ProjectSetting GetReferencedDocument()
 		{
-			if (this.IsEmpty)
-			{
-				return null;
-			}
-
-			return (Assets.Scripts.ProjectSetting)this.gameData?.FindGameDataDocumentById(this.schemaNameOrId, this.id);
+			return this.GetReferencedDocument<Assets.Scripts.ProjectSetting>();
 		}
 	}
+
 	[PublicAPI, Serializable]
 	public class ParameterDocumentReference: GameDataDocumentReference
 	{
+		[SerializeField]
 		public string predefinedSchemaNameOrId = Assets.Scripts.Parameter.SchemaName;
 
 		[CanBeNull]
 		public Assets.Scripts.Parameter GetReferencedDocument()
 		{
-			if (this.IsEmpty)
-			{
-				return null;
-			}
-
-			return (Assets.Scripts.Parameter)this.gameData?.FindGameDataDocumentById(this.schemaNameOrId, this.id);
+			return this.GetReferencedDocument<Assets.Scripts.Parameter>();
 		}
 	}
+
 	[PublicAPI, Serializable]
 	public class ParameterValueDocumentReference: GameDataDocumentReference
 	{
+		[SerializeField]
 		public string predefinedSchemaNameOrId = Assets.Scripts.ParameterValue.SchemaName;
 
 		[CanBeNull]
 		public Assets.Scripts.ParameterValue GetReferencedDocument()
 		{
-			if (this.IsEmpty)
-			{
-				return null;
-			}
-
-			return (Assets.Scripts.ParameterValue)this.gameData?.FindGameDataDocumentById(this.schemaNameOrId, this.id);
+			return this.GetReferencedDocument<Assets.Scripts.ParameterValue>();
 		}
 	}
+
 	[PublicAPI, Serializable]
 	public class ProvisionDocumentReference: GameDataDocumentReference
 	{
+		[SerializeField]
 		public string predefinedSchemaNameOrId = Assets.Scripts.Provision.SchemaName;
 
 		[CanBeNull]
 		public Assets.Scripts.Provision GetReferencedDocument()
 		{
-			if (this.IsEmpty)
-			{
-				return null;
-			}
-
-			return (Assets.Scripts.Provision)this.gameData?.FindGameDataDocumentById(this.schemaNameOrId, this.id);
+			return this.GetReferencedDocument<Assets.Scripts.Provision>();
 		}
 	}
+
 	[PublicAPI, Serializable]
 	public class HeroDocumentReference: GameDataDocumentReference
 	{
+		[SerializeField]
 		public string predefinedSchemaNameOrId = Assets.Scripts.Hero.SchemaName;
 
 		[CanBeNull]
 		public Assets.Scripts.Hero GetReferencedDocument()
 		{
-			if (this.IsEmpty)
-			{
-				return null;
-			}
-
-			return (Assets.Scripts.Hero)this.gameData?.FindGameDataDocumentById(this.schemaNameOrId, this.id);
+			return this.GetReferencedDocument<Assets.Scripts.Hero>();
 		}
 	}
+
 	[PublicAPI, Serializable]
 	public class ItemDocumentReference: GameDataDocumentReference
 	{
+		[SerializeField]
 		public string predefinedSchemaNameOrId = Assets.Scripts.Item.SchemaName;
 
 		[CanBeNull]
 		public Assets.Scripts.Item GetReferencedDocument()
 		{
-			if (this.IsEmpty)
-			{
-				return null;
-			}
-
-			return (Assets.Scripts.Item)this.gameData?.FindGameDataDocumentById(this.schemaNameOrId, this.id);
+			return this.GetReferencedDocument<Assets.Scripts.Item>();
 		}
 	}
+
 	[PublicAPI, Serializable]
 	public class LocationDocumentReference: GameDataDocumentReference
 	{
+		[SerializeField]
 		public string predefinedSchemaNameOrId = Assets.Scripts.Location.SchemaName;
 
 		[CanBeNull]
 		public Assets.Scripts.Location GetReferencedDocument()
 		{
-			if (this.IsEmpty)
-			{
-				return null;
-			}
-
-			return (Assets.Scripts.Location)this.gameData?.FindGameDataDocumentById(this.schemaNameOrId, this.id);
+			return this.GetReferencedDocument<Assets.Scripts.Location>();
 		}
 	}
+
 	[PublicAPI, Serializable]
 	public class TrinketDocumentReference: GameDataDocumentReference
 	{
+		[SerializeField]
 		public string predefinedSchemaNameOrId = Assets.Scripts.Trinket.SchemaName;
 
 		[CanBeNull]
 		public Assets.Scripts.Trinket GetReferencedDocument()
 		{
-			if (this.IsEmpty)
-			{
-				return null;
-			}
-
-			return (Assets.Scripts.Trinket)this.gameData?.FindGameDataDocumentById(this.schemaNameOrId, this.id);
+			return this.GetReferencedDocument<Assets.Scripts.Trinket>();
 		}
 	}
+
 	[PublicAPI, Serializable]
 	public class MonsterDocumentReference: GameDataDocumentReference
 	{
+		[SerializeField]
 		public string predefinedSchemaNameOrId = Assets.Scripts.Monster.SchemaName;
 
 		[CanBeNull]
 		public Assets.Scripts.Monster GetReferencedDocument()
 		{
-			if (this.IsEmpty)
-			{
-				return null;
-			}
-
-			return (Assets.Scripts.Monster)this.gameData?.FindGameDataDocumentById(this.schemaNameOrId, this.id);
+			return this.GetReferencedDocument<Assets.Scripts.Monster>();
 		}
 	}
+
 	[PublicAPI, Serializable]
 	public class LootDocumentReference: GameDataDocumentReference
 	{
+		[SerializeField]
 		public string predefinedSchemaNameOrId = Assets.Scripts.Loot.SchemaName;
 
 		[CanBeNull]
 		public Assets.Scripts.Loot GetReferencedDocument()
 		{
-			if (this.IsEmpty)
-			{
-				return null;
-			}
-
-			return (Assets.Scripts.Loot)this.gameData?.FindGameDataDocumentById(this.schemaNameOrId, this.id);
+			return this.GetReferencedDocument<Assets.Scripts.Loot>();
 		}
 	}
+
 	[PublicAPI, Serializable]
 	public class CombatEffectDocumentReference: GameDataDocumentReference
 	{
+		[SerializeField]
 		public string predefinedSchemaNameOrId = Assets.Scripts.CombatEffect.SchemaName;
 
 		[CanBeNull]
 		public Assets.Scripts.CombatEffect GetReferencedDocument()
 		{
-			if (this.IsEmpty)
-			{
-				return null;
-			}
-
-			return (Assets.Scripts.CombatEffect)this.gameData?.FindGameDataDocumentById(this.schemaNameOrId, this.id);
+			return this.GetReferencedDocument<Assets.Scripts.CombatEffect>();
 		}
 	}
+
 	[PublicAPI, Serializable]
 	public class CurioCleansingOptionDocumentReference: GameDataDocumentReference
 	{
+		[SerializeField]
 		public string predefinedSchemaNameOrId = Assets.Scripts.CurioCleansingOption.SchemaName;
 
 		[CanBeNull]
 		public Assets.Scripts.CurioCleansingOption GetReferencedDocument()
 		{
-			if (this.IsEmpty)
-			{
-				return null;
-			}
-
-			return (Assets.Scripts.CurioCleansingOption)this.gameData?.FindGameDataDocumentById(this.schemaNameOrId, this.id);
+			return this.GetReferencedDocument<Assets.Scripts.CurioCleansingOption>();
 		}
 	}
+
 	[PublicAPI, Serializable]
 	public class CurioDocumentReference: GameDataDocumentReference
 	{
+		[SerializeField]
 		public string predefinedSchemaNameOrId = Assets.Scripts.Curio.SchemaName;
 
 		[CanBeNull]
 		public Assets.Scripts.Curio GetReferencedDocument()
 		{
-			if (this.IsEmpty)
-			{
-				return null;
-			}
-
-			return (Assets.Scripts.Curio)this.gameData?.FindGameDataDocumentById(this.schemaNameOrId, this.id);
+			return this.GetReferencedDocument<Assets.Scripts.Curio>();
 		}
 	}
+
 	[PublicAPI, Serializable]
 	public class DiseaseDocumentReference: GameDataDocumentReference
 	{
+		[SerializeField]
 		public string predefinedSchemaNameOrId = Assets.Scripts.Disease.SchemaName;
 
 		[CanBeNull]
 		public Assets.Scripts.Disease GetReferencedDocument()
 		{
-			if (this.IsEmpty)
-			{
-				return null;
-			}
-
-			return (Assets.Scripts.Disease)this.gameData?.FindGameDataDocumentById(this.schemaNameOrId, this.id);
+			return this.GetReferencedDocument<Assets.Scripts.Disease>();
 		}
 	}
+
 	[PublicAPI, Serializable]
 	public class QuirkDocumentReference: GameDataDocumentReference
 	{
+		[SerializeField]
 		public string predefinedSchemaNameOrId = Assets.Scripts.Quirk.SchemaName;
 
 		[CanBeNull]
 		public Assets.Scripts.Quirk GetReferencedDocument()
 		{
-			if (this.IsEmpty)
-			{
-				return null;
-			}
-
-			return (Assets.Scripts.Quirk)this.gameData?.FindGameDataDocumentById(this.schemaNameOrId, this.id);
+			return this.GetReferencedDocument<Assets.Scripts.Quirk>();
 		}
 	}
+
 	[PublicAPI, Serializable]
 	public class ConditionDocumentReference: GameDataDocumentReference
 	{
+		[SerializeField]
 		public string predefinedSchemaNameOrId = Assets.Scripts.Condition.SchemaName;
 
 		[CanBeNull]
 		public Assets.Scripts.Condition GetReferencedDocument()
 		{
-			if (this.IsEmpty)
-			{
-				return null;
-			}
-
-			return (Assets.Scripts.Condition)this.gameData?.FindGameDataDocumentById(this.schemaNameOrId, this.id);
+			return this.GetReferencedDocument<Assets.Scripts.Condition>();
 		}
 	}
+
 	[PublicAPI, Serializable]
 	public class WeaponDocumentReference: GameDataDocumentReference
 	{
+		[SerializeField]
 		public string predefinedSchemaNameOrId = Assets.Scripts.Weapon.SchemaName;
 
 		[CanBeNull]
 		public Assets.Scripts.Weapon GetReferencedDocument()
 		{
-			if (this.IsEmpty)
-			{
-				return null;
-			}
-
-			return (Assets.Scripts.Weapon)this.gameData?.FindGameDataDocumentById(this.schemaNameOrId, this.id);
+			return this.GetReferencedDocument<Assets.Scripts.Weapon>();
 		}
 	}
+
 	[PublicAPI, Serializable]
 	public class ArmorDocumentReference: GameDataDocumentReference
 	{
+		[SerializeField]
 		public string predefinedSchemaNameOrId = Assets.Scripts.Armor.SchemaName;
 
 		[CanBeNull]
 		public Assets.Scripts.Armor GetReferencedDocument()
 		{
-			if (this.IsEmpty)
-			{
-				return null;
-			}
-
-			return (Assets.Scripts.Armor)this.gameData?.FindGameDataDocumentById(this.schemaNameOrId, this.id);
+			return this.GetReferencedDocument<Assets.Scripts.Armor>();
 		}
 	}
+
 	[PublicAPI, Serializable]
 	public class ItemWithCountDocumentReference: GameDataDocumentReference
 	{
+		[SerializeField]
 		public string predefinedSchemaNameOrId = Assets.Scripts.ItemWithCount.SchemaName;
 
 		[CanBeNull]
 		public Assets.Scripts.ItemWithCount GetReferencedDocument()
 		{
-			if (this.IsEmpty)
-			{
-				return null;
-			}
-
-			return (Assets.Scripts.ItemWithCount)this.gameData?.FindGameDataDocumentById(this.schemaNameOrId, this.id);
+			return this.GetReferencedDocument<Assets.Scripts.ItemWithCount>();
 		}
 	}
+
 	[PublicAPI, Serializable]
 	public class StartingSetDocumentReference: GameDataDocumentReference
 	{
+		[SerializeField]
 		public string predefinedSchemaNameOrId = Assets.Scripts.StartingSet.SchemaName;
 
 		[CanBeNull]
 		public Assets.Scripts.StartingSet GetReferencedDocument()
 		{
-			if (this.IsEmpty)
-			{
-				return null;
-			}
-
-			return (Assets.Scripts.StartingSet)this.gameData?.FindGameDataDocumentById(this.schemaNameOrId, this.id);
+			return this.GetReferencedDocument<Assets.Scripts.StartingSet>();
 		}
 	}
+
 
 }

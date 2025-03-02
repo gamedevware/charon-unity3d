@@ -24,6 +24,7 @@ using System;
 using System.Linq;
 using JetBrains.Annotations;
 using UnityEditor;
+using UnityEngine;
 
 // ReSharper disable once SuspiciousTypeConversion.Global
 
@@ -42,18 +43,21 @@ namespace GameDevWare.Charon
 		/// </summary>
 		public const string PREDEFINED_SCHEMA_NAME_OR_ID_NAME = "predefinedSchemaNameOrId";
 
+		[CanBeNull, NonSerialized]
+		private object lastDocumentValue;
+		[CanBeNull, NonSerialized]
+		private string lastRevisionHash;
+
 		/// <summary>
 		/// The identifier of the referenced document.
 		/// </summary>
 		[CanBeNull]
 		public string id;
-
 		/// <summary>
 		/// The schema or type of the referenced document.
 		/// </summary>
 		[CanBeNull]
 		public string schemaNameOrId;
-
 		/// <summary>
 		/// The game data asset containing the referenced document.
 		/// </summary>
@@ -75,7 +79,8 @@ namespace GameDevWare.Charon
 			this.gameData.GetDocumentIds(this.schemaNameOrId).Contains(this.id, StringComparer.Ordinal);
 
 		/// <summary>
-		/// Retrieves the document of type <typeparamref name="T"/> referenced by this instance.
+		/// Retrieves the document of type <typeparamref name="T"/> of <see cref="schemaNameOrId"/> schema with id equals to <see cref="id"/>.
+		/// Returned value is cached and reused till <see cref="GameDataBase.RevisionHash"/> of <see cref="gameData"/> changes.
 		/// </summary>
 		/// <typeparam name="T">The type of the document.</typeparam>
 		/// <returns>The referenced document if valid; otherwise, null.</returns>
@@ -87,7 +92,22 @@ namespace GameDevWare.Charon
 				return null;
 			}
 
-			return (T)this.gameData?.FindGameDataDocumentById(this.schemaNameOrId, this.id);
+			if (this.lastRevisionHash == null ||
+				!string.Equals(this.gameData?.RevisionHash, this.lastRevisionHash, StringComparison.Ordinal))
+			{
+				this.lastDocumentValue = (T)this.gameData?.FindGameDataDocumentById(this.schemaNameOrId, this.id);
+				this.lastRevisionHash = this.gameData?.RevisionHash;
+			}
+			return (T)this.lastDocumentValue;
+		}
+
+		/// <summary>
+		/// Reset currently cached document. Call this method when you change <see cref="id"/> or <see cref="schemaNameOrId"/> fields.
+		/// </summary>
+		public void ResetCachedValue()
+		{
+			this.lastRevisionHash = null;
+			this.lastDocumentValue = null;
 		}
 
 		/// <inheritdoc />

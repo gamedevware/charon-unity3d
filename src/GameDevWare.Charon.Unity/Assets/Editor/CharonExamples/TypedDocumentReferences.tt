@@ -32,17 +32,13 @@ namespace Assets.Scripts
 	[PublicAPI, Serializable]
 	public class <#= typeName #>DocumentReference: GameDataDocumentReference
 	{
+		[SerializeField]
 		public string predefinedSchemaNameOrId = <#= fullTypeName #>.SchemaName;
 
 		[CanBeNull]
 		public <#= fullTypeName #> GetReferencedDocument()
 		{
-			if (this.IsEmpty)
-			{
-				return null;
-			}
-
-			return (<#= fullTypeName #>)this.gameData?.FindGameDataDocumentById(this.schemaNameOrId, this.id);
+			return this.GetReferencedDocument<<#= fullTypeName #>>();
 		}
 	}
 
