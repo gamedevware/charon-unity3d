@@ -30,7 +30,7 @@ using GameDevWare.Charon.Editor.Windows;
 using UnityEditor;
 using UnityEditor.PackageManager.UI;
 using UnityEngine;
-using Object = UnityEngine.Object;
+using UnityObject = UnityEngine.Object;
 
 // ReSharper disable UnusedMember.Local
 namespace GameDevWare.Charon.Editor
@@ -212,8 +212,19 @@ namespace GameDevWare.Charon.Editor
 		{
 			if (!CreateGameDataAssetCheck()) return;
 
+			if (!TryGetActiveFolderPath(out var currentFolderPath))
+			{
+				currentFolderPath = "Assets";
+			}
 
-			CreateGameDataWindow.ShowAsync(Selection.activeObject ?? AssetDatabase.LoadAssetAtPath<Object>("Assets/")).LogFaultAsAssert();
+			var currentFolder = default(UnityObject);
+			if (Selection.assetGUIDs.Length > 0)
+			{
+				currentFolder = AssetDatabase.LoadAssetAtPath<UnityObject>(AssetDatabase.GUIDToAssetPath(Selection.assetGUIDs[0]));
+			}
+			currentFolder ??= AssetDatabase.LoadAssetAtPath<UnityObject>(currentFolderPath);
+
+			CreateGameDataWindow.ShowAsync(currentFolder).LogFaultAsAssert();
 		}
 		[MenuItem("Assets/Create/Game Data", true)]
 		private static bool CreateGameDataAssetCheck()
@@ -230,6 +241,21 @@ namespace GameDevWare.Charon.Editor
 			var consoleWindow = EditorWindow.GetWindow(consoleWindowType);
 			if (consoleWindow != null)
 				consoleWindow.Focus();
+		}
+
+		private static bool TryGetActiveFolderPath(out string path)
+		{
+			var tryGetActiveFolderPath = typeof(ProjectWindowUtil).GetMethod( "TryGetActiveFolderPath", BindingFlags.Static | BindingFlags.NonPublic );
+			if (tryGetActiveFolderPath == null)
+			{
+				path = null;
+				return false;
+			}
+
+			var args = new object[] { null };
+			var found = (bool)tryGetActiveFolderPath.Invoke( null, args );
+			path = (string)args[0];
+			return found;
 		}
 	}
 }
