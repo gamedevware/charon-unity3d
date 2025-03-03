@@ -116,7 +116,7 @@ namespace GameDevWare.Charon.Editor {
 		public const string UI_UNITYPLUGIN_CREATE_GAMEDATA_FOLDER_LABEL = "Folder";
 		public const string UI_UNITYPLUGIN_CREATE_GAMEDATA_CREATE_BUTTON = "Create";
 		public const string UI_UNITYPLUGIN_CREATING_GAME_DATA_NO_STREAMING_ASSETS = "Game data cannot be created in the 'StreamingAssets' folder because source code cannot be placed there. The JSON/MessagePack data file can be moved there manually if necessary.";
-		public const string UI_UNITYPLUGIN_CREATING_GAME_DATA_INVALID_NAME = "Invalid game data name. The name must consist only of Latin letters and underscores, contain no spaces, and must not start with a number or an underscore.";
+		public const string UI_UNITYPLUGIN_CREATING_GAME_DATA_INVALID_NAME = "Invalid game data name '{0}'. The name must consist only of Latin letters and underscores, contain no spaces, and must not start with a number or an underscore.";
 		public const string UI_UNITYPLUGIN_CREATING_GAME_DATA_IS_USED = "This name is already in use for an asset at '{0}'.";
 		public const string UI_UNITYPLUGIN_CREATING_PROGRESS_INIT_GAMEDATA = "Initializing the game data file. This may take time initially.";
 		public const string UI_UNITYPLUGIN_CREATING_GAMEDATA_ASSET = "Creating a game data asset file.";

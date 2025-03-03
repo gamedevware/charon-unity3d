@@ -102,7 +102,7 @@ namespace GameDevWare.Charon.Editor.Routines
 
 			if (!GameDataAssetUtils.IsValidName(gameDataName))
 			{
-				errorMessage = Resources.UI_UNITYPLUGIN_CREATING_GAME_DATA_INVALID_NAME;
+				errorMessage = string.Format(Resources.UI_UNITYPLUGIN_CREATING_GAME_DATA_INVALID_NAME, gameDataName);
 				return false;
 			}
 

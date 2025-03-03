@@ -22,6 +22,8 @@
 
 using System;
 using System.IO;
+using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using GameDevWare.Charon.Editor.Cli;
@@ -97,6 +99,7 @@ namespace GameDevWare.Charon.Editor.Windows
 			GUI.enabled = this.folder != null && !string.IsNullOrEmpty(this.gameDataName) &&
 				!someOperationPending && !CharonEditorModule.Instance.Routines.IsRunning;
 
+			var fixedGameDataName = FixGameDataName(this.gameDataName);
 			EditorGUILayout.BeginHorizontal(GUI.skin.box);
 			{
 				EditorGUILayout.BeginVertical();
@@ -107,7 +110,7 @@ namespace GameDevWare.Charon.Editor.Windows
 					EditorGUILayout.Space();
 					EditorGUILayout.EndHorizontal();
 
-					GUILayout.Label(this.gameDataName + ".cs", GUILayout.MaxWidth((this.position.width - 60) / 4));
+					GUILayout.Label(fixedGameDataName + ".cs", GUILayout.MaxWidth((this.position.width - 60) / 4));
 				}
 				EditorGUILayout.EndVertical();
 				GUILayout.FlexibleSpace();
@@ -119,7 +122,7 @@ namespace GameDevWare.Charon.Editor.Windows
 					EditorGUILayout.Space();
 					EditorGUILayout.EndHorizontal();
 
-					GUILayout.Label(this.gameDataName + "Asset.cs", GUILayout.MaxWidth((this.position.width - 60) / 4));
+					GUILayout.Label(fixedGameDataName + "Asset.cs", GUILayout.MaxWidth((this.position.width - 60) / 4));
 				}
 				EditorGUILayout.EndVertical();
 				GUILayout.FlexibleSpace();
@@ -131,7 +134,7 @@ namespace GameDevWare.Charon.Editor.Windows
 					EditorGUILayout.Space();
 					EditorGUILayout.EndHorizontal();
 
-					GUILayout.Label(this.gameDataName + this.format.GetExtensionFromGameDataFormat(), GUILayout.MaxWidth((this.position.width - 60) / 4));
+					GUILayout.Label(fixedGameDataName + this.format.GetExtensionFromGameDataFormat(), GUILayout.MaxWidth((this.position.width - 60) / 4));
 				}
 				EditorGUILayout.EndVertical();
 				GUILayout.FlexibleSpace();
@@ -143,7 +146,7 @@ namespace GameDevWare.Charon.Editor.Windows
 					EditorGUILayout.Space();
 					EditorGUILayout.EndHorizontal();
 
-					GUILayout.Label(this.gameDataName + ".asset", GUILayout.MaxWidth((this.position.width - 60) / 4));
+					GUILayout.Label(fixedGameDataName + ".asset", GUILayout.MaxWidth((this.position.width - 60) / 4));
 				}
 				EditorGUILayout.EndVertical();
 			}
@@ -158,7 +161,7 @@ namespace GameDevWare.Charon.Editor.Windows
 					this.lastError = null;
 					this.progressStatus = null;
 
-					if (ReimportAssetsRoutine.ValidateCreationOptions(GetBaseDirectory(this.folder), this.gameDataName, out this.lastError))
+					if (ReimportAssetsRoutine.ValidateCreationOptions(GetBaseDirectory(this.folder), fixedGameDataName, out this.lastError))
 					{
 						this.gameDataCreationTask = CharonEditorModule.Instance.Routines.Schedule(this.CreateGameDataAsync, this.closeSource.Token);
 						this.gameDataCreationTask.LogFaultAsError();
@@ -210,7 +213,7 @@ namespace GameDevWare.Charon.Editor.Windows
 				progressCallback(Resources.UI_UNITYPLUGIN_CREATING_PROGRESS_INIT_GAMEDATA, 0.01f);
 
 				var extension = this.format.GetExtensionFromGameDataFormat();
-				var gameDataPath = Path.Combine(gameDataDirectory, this.gameDataName + extension);
+				var gameDataPath = Path.Combine(gameDataDirectory, FixGameDataName(this.gameDataName) + extension);
 
 				this.logger.Log(LogType.Assert, $"Initializing blank game data file at {gameDataPath}...");
 
@@ -323,6 +326,44 @@ namespace GameDevWare.Charon.Editor.Windows
 			window.Focus();
 
 			return taskCompletionSource.Task;
+		}
+
+		private static string FixGameDataName(string gameDataName)
+		{
+			if (string.IsNullOrWhiteSpace(gameDataName))
+			{
+				return gameDataName;
+			}
+
+			gameDataName = gameDataName.Trim();
+			if (gameDataName.Length > 0 && (char.IsDigit(gameDataName[0]) || !gameDataName.All(IsValidNameCharacter)))
+			{
+				var nameBuilder = new StringBuilder(gameDataName);
+
+				if (char.IsDigit(nameBuilder[0]))
+					nameBuilder.Insert(0, '_');
+
+				for (var i = 0; i < nameBuilder.Length; i++)
+				{
+					if (IsValidNameCharacter(nameBuilder[i])) continue;
+
+					nameBuilder[i] = '_';
+				}
+
+				if (nameBuilder[0] == '_')
+				{
+					nameBuilder[0] = 'x';
+				}
+
+				gameDataName = nameBuilder.ToString();
+			}
+
+			return gameDataName;
+
+			static bool IsValidNameCharacter(char value)
+			{
+				return value >= 'a' && value <= 'z' || value >= 'A' && value <= 'Z' || value == '_' || value >= '0' && value <= '9';
+			}
 		}
 
 		private static string GetBaseDirectory(UnityObject folder)
