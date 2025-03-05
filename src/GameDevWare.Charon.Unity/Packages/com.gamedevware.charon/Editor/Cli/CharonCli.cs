@@ -825,7 +825,7 @@ namespace GameDevWare.Charon.Editor.Cli
 		/// </summary>
 		/// <param name="gameDataUrl">The URL of the GameData file or server.</param>
 		/// <param name="apiKey">Authentication credentials if GameDataUrl is a server, otherwise empty.</param>
-		/// <param name="languages">Language tags (BCP 47) to include in the export of localized text. Can be empty or '*' to export all languages.</param>
+		/// <param name="languages">Language tags (BCP 47) to add in project's translation language list.</param>
 		/// <param name="logsVerbosity">The verbosity level of logs. Defaults to CharonLogLevel.Normal.</param>
 		/// <param name="configureTool">Optional configuration delegate for tool process.</param>
 		public static async Task I18NAddLanguageAsync
@@ -1195,7 +1195,7 @@ namespace GameDevWare.Charon.Editor.Cli
 			string defineConstants = null,
 			SourceCodeGenerationOptimizations sourceCodeGenerationOptimizations = default,
 			SourceCodeIndentation sourceCodeIndentation = SourceCodeIndentation.Tabs,
-			SourceCodeLineEndings sourceCodeLineEndings = SourceCodeLineEndings.Windows,
+			SourceCodeLineEndings sourceCodeLineEndings = SourceCodeLineEndings.OsDefault,
 			bool clearOutputDirectory = true,
 			bool splitFiles = false,
 			CharonLogLevel? logsVerbosity = null,
@@ -1209,6 +1209,12 @@ namespace GameDevWare.Charon.Editor.Cli
 			if (gameDataNamespace == null) throw new ArgumentNullException(nameof(gameDataNamespace));
 
 			sourceCodeGenerationOptimizations |= SourceCodeGenerationOptimizations.DisableFormulaCompilation;
+
+			if (sourceCodeLineEndings == SourceCodeLineEndings.OsDefault)
+			{
+				sourceCodeLineEndings = SystemInfo.operatingSystemFamily == OperatingSystemFamily.Windows ?
+					SourceCodeLineEndings.Windows : SourceCodeLineEndings.Unix;
+			}
 
 			var optimizationsList = new List<string>();
 			foreach (SourceCodeGenerationOptimizations optimization in Enum.GetValues(typeof(SourceCodeGenerationOptimizations)))
@@ -1350,7 +1356,7 @@ namespace GameDevWare.Charon.Editor.Cli
 		}
 
 		/// <summary>
-		/// dotnet-t4 is a command-line tool for processing T4 templates, a general-purpose way to generate text or code files using C#.
+		/// Run dotnet-t4 command-line tool for processing T4 templates. It is a general-purpose way to generate text or code files using C#.
 		/// https://github.com/mono/t4/blob/main/dotnet-t4/readme.md
 		/// </summary>
 		/// <param name="templateFile">The path of the template .tt file.</param>

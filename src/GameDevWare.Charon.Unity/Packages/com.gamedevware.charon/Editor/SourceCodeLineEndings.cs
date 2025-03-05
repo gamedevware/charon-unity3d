@@ -28,6 +28,7 @@ namespace GameDevWare.Charon.Editor
 	public enum SourceCodeLineEndings
 	{
 		Windows = 0,
-		Unix
+		Unix,
+		OsDefault
 	}
 }

@@ -35,7 +35,7 @@ namespace GameDevWare.Charon.Editor.Utils
 			var settings = new GameDataSettings {
 				clearOutputDirectory = false,
 				splitSourceCodeFiles =  false,
-				lineEnding = (int)SourceCodeLineEndings.Windows,
+				lineEnding = (int)SourceCodeLineEndings.OsDefault,
 				indentation = (int)SourceCodeIndentation.Tabs,
 				gameDataFileGuid = gameDataFileGuid,
 				codeGenerationPath = "",
@@ -60,7 +60,7 @@ namespace GameDevWare.Charon.Editor.Utils
 			if (Enum.IsDefined(typeof(SourceCodeIndentation), (SourceCodeIndentation)gameDataSettings.indentation) == false)
 				gameDataSettings.indentation = (int)SourceCodeIndentation.Tabs;
 			if (Enum.IsDefined(typeof(SourceCodeLineEndings), (SourceCodeLineEndings)gameDataSettings.lineEnding) == false)
-				gameDataSettings.lineEnding = (int)SourceCodeLineEndings.Windows;
+				gameDataSettings.lineEnding = (int)SourceCodeLineEndings.OsDefault;
 		}
 	}
 }
