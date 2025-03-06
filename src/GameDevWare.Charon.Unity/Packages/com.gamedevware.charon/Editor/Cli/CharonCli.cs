@@ -142,6 +142,7 @@ namespace GameDevWare.Charon.Editor.Cli
 
 		/// <summary>
 		/// Init the specified GameData file.
+		/// https://gamedevware.github.io/charon/advanced/commands/init.html
 		/// </summary>
 		/// <param name="gameDataPath">The path of the GameData file.</param>
 		/// <param name="logsVerbosity">The verbosity level of logs. Defaults to CharonLogLevel.Normal.</param>
@@ -168,6 +169,7 @@ namespace GameDevWare.Charon.Editor.Cli
 
 		/// <summary>
 		/// Creates a document in the specified GameData URL.
+		/// https://gamedevware.github.io/charon/advanced/commands/data_create.html
 		/// </summary>
 		/// <param name="gameDataUrl">The URL of the GameData file or server.</param>
 		/// <param name="apiKey">Authentication credentials if GameDataUrl is a server, otherwise empty.</param>
@@ -212,6 +214,7 @@ namespace GameDevWare.Charon.Editor.Cli
 
 		/// <summary>
 		/// Updates a document in the specified GameData URL.
+		/// https://gamedevware.github.io/charon/advanced/commands/data_update.html
 		/// </summary>
 		/// <param name="gameDataUrl">The URL of the GameData file or server.</param>
 		/// <param name="apiKey">Authentication credentials if GameDataUrl is a server, otherwise empty.</param>
@@ -259,6 +262,7 @@ namespace GameDevWare.Charon.Editor.Cli
 
 		/// <summary>
 		/// Deletes a document in the specified GameData URL.
+		/// https://gamedevware.github.io/charon/advanced/commands/data_delete.html
 		/// </summary>
 		/// <param name="gameDataUrl">The URL of the GameData file or server.</param>
 		/// <param name="apiKey">Authentication credentials if GameDataUrl is a server, otherwise empty.</param>
@@ -307,6 +311,7 @@ namespace GameDevWare.Charon.Editor.Cli
 
 		/// <summary>
 		/// Deletes a document in the specified GameData URL by ID.
+		/// https://gamedevware.github.io/charon/advanced/commands/data_delete.html
 		/// </summary>
 		/// <param name="gameDataUrl">The URL of the GameData file or server.</param>
 		/// <param name="apiKey">Authentication credentials if GameDataUrl is a server, otherwise empty.</param>
@@ -349,6 +354,7 @@ namespace GameDevWare.Charon.Editor.Cli
 
 		/// <summary>
 		/// Finds a document in the specified GameData URL by ID.
+		/// https://gamedevware.github.io/charon/advanced/commands/data_find.html
 		/// </summary>
 		/// <param name="gameDataUrl">The URL of the GameData file or server.</param>
 		/// <param name="apiKey">Authentication credentials if GameDataUrl is a server, otherwise empty.</param>
@@ -391,6 +397,7 @@ namespace GameDevWare.Charon.Editor.Cli
 
 		/// <summary>
 		/// Lists documents in the specified GameData URL.
+		/// https://gamedevware.github.io/charon/advanced/commands/data_list.html
 		/// </summary>
 		/// <param name="gameDataUrl">The URL of the GameData file or server.</param>
 		/// <param name="apiKey">Authentication credentials if GameDataUrl is a server, otherwise empty.</param>
@@ -467,6 +474,7 @@ namespace GameDevWare.Charon.Editor.Cli
 
 		/// <summary>
 		/// Imports documents grouped by schema into a specified GameDataUrl file or server.
+		/// https://gamedevware.github.io/charon/advanced/commands/data_import.html
 		/// </summary>
 		/// <param name="gameDataUrl">The URL of the GameData file or server.</param>
 		/// <param name="apiKey">Authentication credentials if GameDataUrl is a server, otherwise empty.</param>
@@ -508,6 +516,7 @@ namespace GameDevWare.Charon.Editor.Cli
 
 		/// <summary>
 		/// Imports documents from a file into a specified GameDataUrl file or server.
+		/// https://gamedevware.github.io/charon/advanced/commands/data_import.html
 		/// </summary>
 		/// <param name="gameDataUrl">The URL of the GameData file or server.</param>
 		/// <param name="apiKey">Authentication credentials if GameDataUrl is a server, otherwise empty.</param>
@@ -549,6 +558,7 @@ namespace GameDevWare.Charon.Editor.Cli
 
 		/// <summary>
 		/// Exports documents from a GameDataUrl file or server.
+		/// https://gamedevware.github.io/charon/advanced/commands/data_export.html
 		/// </summary>
 		/// <param name="gameDataUrl">The URL of the GameData file or server.</param>
 		/// <param name="apiKey">Authentication credentials if GameDataUrl is a server, otherwise empty.</param>
@@ -598,6 +608,7 @@ namespace GameDevWare.Charon.Editor.Cli
 
 		/// <summary>
 		/// Exports documents from a GameDataUrl file or server to a file.
+		/// https://gamedevware.github.io/charon/advanced/commands/data_export.html
 		/// </summary>
 		/// <param name="gameDataUrl">The URL of the GameData file or server.</param>
 		/// <param name="apiKey">Authentication credentials if GameDataUrl is a server, otherwise empty.</param>
@@ -647,6 +658,7 @@ namespace GameDevWare.Charon.Editor.Cli
 
 		/// <summary>
 		/// Imports translated documents grouped by schema into a specified GameDataUrl file or server.
+		/// https://gamedevware.github.io/charon/advanced/commands/data_i18n_import.html
 		/// </summary>
 		/// <param name="gameDataUrl">The URL of the GameData file or server.</param>
 		/// <param name="apiKey">Authentication credentials if GameDataUrl is a server, otherwise empty.</param>
@@ -689,6 +701,7 @@ namespace GameDevWare.Charon.Editor.Cli
 
 		/// <summary>
 		/// Imports documents from a file into a specified GameDataUrl file or server.
+		/// https://gamedevware.github.io/charon/advanced/commands/data_i18n_import.html
 		/// </summary>
 		/// <param name="gameDataUrl">The URL of the GameData file or server.</param>
 		/// <param name="apiKey">Authentication credentials if GameDataUrl is a server, otherwise empty.</param>
@@ -731,6 +744,7 @@ namespace GameDevWare.Charon.Editor.Cli
 
 		/// <summary>
 		/// Exports documents from a GameDataUrl file or server.
+		/// https://gamedevware.github.io/charon/advanced/commands/data_i18n_export.html
 		/// </summary>
 		/// <param name="gameDataUrl">The URL of the GameData file or server.</param>
 		/// <param name="apiKey">Authentication credentials if GameDataUrl is a server, otherwise empty.</param>
@@ -776,6 +790,7 @@ namespace GameDevWare.Charon.Editor.Cli
 
 		/// <summary>
 		/// Exports documents from a GameDataUrl file or server to a file.
+		/// https://gamedevware.github.io/charon/advanced/commands/data_i18n_export.html
 		/// </summary>
 		/// <param name="gameDataUrl">The URL of the GameData file or server.</param>
 		/// <param name="apiKey">Authentication credentials if GameDataUrl is a server, otherwise empty.</param>
@@ -822,6 +837,7 @@ namespace GameDevWare.Charon.Editor.Cli
 
 		/// <summary>
 		/// Add translation language to a GameDataUrl file or server.
+		/// https://gamedevware.github.io/charon/advanced/commands/data_i18n_add_language.html
 		/// </summary>
 		/// <param name="gameDataUrl">The URL of the GameData file or server.</param>
 		/// <param name="apiKey">Authentication credentials if GameDataUrl is a server, otherwise empty.</param>
@@ -853,6 +869,7 @@ namespace GameDevWare.Charon.Editor.Cli
 
 		/// <summary>
 		/// Compares all documents in two GameData URLs and creates a patch representing the difference.
+		/// https://gamedevware.github.io/charon/advanced/commands/data_create_patch.html
 		/// </summary>
 		/// <param name="gameDataUrl1">The first GameData URL for comparison.</param>
 		/// <param name="gameDataUrl2">The second GameData URL for comparison.</param>
@@ -890,6 +907,7 @@ namespace GameDevWare.Charon.Editor.Cli
 
 		/// <summary>
 		/// Compares all documents in two GameData URLs and creates a patch representing the difference.
+		/// https://gamedevware.github.io/charon/advanced/commands/data_create_patch.html
 		/// </summary>
 		/// <param name="gameDataUrl1">The first GameData URL for comparison.</param>
 		/// <param name="gameDataUrl2">The second GameData URL for comparison.</param>
@@ -928,6 +946,7 @@ namespace GameDevWare.Charon.Editor.Cli
 
 		/// <summary>
 		/// Applies a patch created by CreatePatch to a specified GameData URL.
+		/// https://gamedevware.github.io/charon/advanced/commands/data_apply_patch.html
 		/// </summary>
 		/// <param name="gameDataUrl">The GameData URL to apply the patch to.</param>
 		/// <param name="apiKey">Authentication credentials if GameDataUrl is a server, otherwise empty.</param>
@@ -962,6 +981,7 @@ namespace GameDevWare.Charon.Editor.Cli
 
 		/// <summary>
 		/// Applies a patch created by CreatePatch to a specified GameData URL.
+		/// https://gamedevware.github.io/charon/advanced/commands/data_apply_patch.html
 		/// </summary>
 		/// <param name="gameDataUrl">The GameData URL to apply the patch to.</param>
 		/// <param name="apiKey">Authentication credentials if GameDataUrl is a server, otherwise empty.</param>
@@ -996,6 +1016,7 @@ namespace GameDevWare.Charon.Editor.Cli
 
 		/// <summary>
 		/// Backups game data with all documents and their metadata.
+		/// https://gamedevware.github.io/charon/advanced/commands/data_backup.html
 		/// </summary>
 		/// <param name="gameDataUrl">The GameData URL to backup.</param>
 		/// <param name="apiKey">Authentication credentials if GameDataUrl is a server, otherwise empty.</param>
@@ -1030,6 +1051,7 @@ namespace GameDevWare.Charon.Editor.Cli
 
 		/// <summary>
 		/// Backups game data to a file with all documents and their metadata.
+		/// https://gamedevware.github.io/charon/advanced/commands/data_backup.html
 		/// </summary>
 		/// <param name="gameDataUrl">The GameData URL to backup.</param>
 		/// <param name="apiKey">Authentication credentials if GameDataUrl is a server, otherwise empty.</param>
@@ -1064,6 +1086,7 @@ namespace GameDevWare.Charon.Editor.Cli
 
 		/// <summary>
 		/// Restores game data with all documents and their metadata.
+		/// https://gamedevware.github.io/charon/advanced/commands/data_restore.html
 		/// </summary>
 		/// <param name="gameDataUrl">The GameData URL to restore.</param>
 		/// <param name="apiKey">Authentication credentials if GameDataUrl is a server, otherwise empty.</param>
@@ -1098,6 +1121,7 @@ namespace GameDevWare.Charon.Editor.Cli
 
 		/// <summary>
 		/// Restores game data from a file with all documents and their metadata.
+		/// https://gamedevware.github.io/charon/advanced/commands/data_restore.html
 		/// </summary>
 		/// <param name="gameDataUrl">The GameData URL to restore.</param>
 		/// <param name="apiKey">Authentication credentials if GameDataUrl is a server, otherwise empty.</param>
@@ -1132,6 +1156,7 @@ namespace GameDevWare.Charon.Editor.Cli
 
 		/// <summary>
 		/// Checks all documents in the specified GameData URL and returns a report with any issues.
+		/// https://gamedevware.github.io/charon/advanced/commands/data_validate.html
 		/// </summary>
 		/// <param name="gameDataUrl">The GameData URL to validate.</param>
 		/// <param name="apiKey">Authentication credentials if GameDataUrl is a server, otherwise empty.</param>
@@ -1169,6 +1194,7 @@ namespace GameDevWare.Charon.Editor.Cli
 
 		/// <summary>
 		/// Generates C# source code for loading game data from a GameDataUrl into a game's runtime.
+		/// https://gamedevware.github.io/charon/advanced/commands/generate_csharp_code.html
 		/// </summary>
 		/// <param name="gameDataUrl">The GameData URL from which to generate source code.</param>
 		/// <param name="apiKey">Authentication credentials if GameDataUrl is a server, otherwise empty.</param>
@@ -1252,6 +1278,7 @@ namespace GameDevWare.Charon.Editor.Cli
 
 		/// <summary>
 		/// Dumps T4 code generation templates used to generate source code into a specified directory.
+		/// https://gamedevware.github.io/charon/advanced/commands/generate_templates.html
 		/// </summary>
 		/// <param name="outputDirectory">The directory where the templates will be dumped.</param>
 		/// <param name="configureTool">Optional configuration delegate for tool process.</param>
@@ -1273,6 +1300,7 @@ namespace GameDevWare.Charon.Editor.Cli
 
 		/// <summary>
 		/// Gets the version number of the charon tool executable.
+		/// https://gamedevware.github.io/charon/advanced/commands/version.html
 		/// </summary>
 		/// <param name="configureTool">Optional configuration delegate for tool process.</param>
 		/// <returns>The version number as a string.</returns>
@@ -1322,6 +1350,7 @@ namespace GameDevWare.Charon.Editor.Cli
 
 		/// <summary>
 		/// Run specified command with charon tool.
+		/// https://gamedevware.github.io/charon/advanced/command_line.html
 		/// Example:
 		/// <code>
 		/// var runResult = await CharonCli.RunAsync

@@ -46,9 +46,9 @@ namespace GameDevWare.Charon.Editor.Cli
 		/// </summary>
 		RawLocalizedStrings = 1 << 2,
 		/// <summary>
-		/// Enumeration value - disableStringOptimization.
+		/// Enumeration value - disableStringPooling.
 		/// </summary>
-		DisableStringOptimization = 1 << 3,
+		DisableStringPooling = 1 << 3,
 		/// <summary>
 		/// Enumeration value - disableJsonSerialization.
 		/// </summary>
