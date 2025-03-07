@@ -10,27 +10,26 @@ namespace Editor.CharonExamples
 {
 	public partial class CharonCliExamples
 	{
-		[MenuItem("Tools/RPG Game/Import Hero")]
-		private static async void ImportHero()
+		[MenuItem("Tools/RPG Game/Bulk Delete Heroes")]
+		private static async void BulkDeleteHeroes()
 		{
-			Debug.Log("Creating Hero document from JObject...");
+			Debug.Log("Bulk deleting hero documents...");
 
 			var importData = new JObject {
 				{
 					"Collections", new JObject {
 						{
 							"Hero", new JArray {
-								new JObject {
-									{ "Id", "SuperBoy" },
-									{ "Name", "Super Boy" },
-									{ "Religious", false },
-								},
-								new JObject {
-									{ "Id", "WounderBobby" },
-									{ "Name", "Wounder Boy" },
-									{ "Religious", true },
-								}
+								// only Ids are required for mass delete
+								new JObject { { "Id", "Crossbower" } },
+								new JObject { { "Id", "Monstrosity" } },
+								new JObject { { "Id", "Zealot" } },
 							}
+
+							// You can delete multiple document types in one ImportAsync command
+							// "Items": [
+							// ...
+							// ]
 						}
 					}
 				}
@@ -47,10 +46,10 @@ namespace Editor.CharonExamples
 				apiKey: string.Empty,
 				schemaNamesOrIds: new[] { "*" },
 				importData,
-				ImportMode.CreateAndUpdate
+				ImportMode.Delete
 			);
 
-			Debug.Log("Successfully imported documents.");
+			Debug.Log("Successfully bulk deleted documents.");
 		}
 	}
 }
