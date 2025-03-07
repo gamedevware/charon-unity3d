@@ -44,8 +44,10 @@ install_update_charon_tool() {
     if dotnet tool list --local | grep -q 'dotnet-charon'; then
         dotnet tool update dotnet-charon --local --tool-manifest .config/dotnet-tools.json > /dev/null 2>&1;
     else
-        if ! dotnet tool install dotnet-charon --local --tool-manifest .config/dotnet-tools.json > /dev/null 2>&1; then
-            echo "Failed to execute the 'dotnet tool install dotnet-charon' command to retrieve the latest package version from NuGet." >&2
+      dotnet tool install dotnet-charon --local --tool-manifest .config/dotnet-tools.json > /dev/null 2>&1;
+      
+       if [ $? -ne 0 ] && [ $? -ne 1 ];
+            echo "Failed to execute the 'dotnet tool install dotnet-charon' command (exit code: $?) to retrieve the latest package version from NuGet." >&2
             echo "Ensure that the 'dotnet' tool is installed and available in the 'PATH'." >&2
             echo "Check https://dotnet.microsoft.com/en-us/download for the installer." >&2
             popd > /dev/null || exit 1
