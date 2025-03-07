@@ -1,4 +1,26 @@
-﻿using System.Collections.Generic;
+﻿/*
+	Copyright (c) 2025 GameDevWare, Denis Zykov
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in
+	all copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+	THE SOFTWARE.
+*/
+
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Assets.Scripts;
@@ -15,7 +37,7 @@ namespace Editor.CharonExamples
 		[MenuItem("Tools/RPG Game/Transform TypedDocumentReferences.tt Template")]
 		private static async void RunTypedDocumentReferencesTemplate()
 		{
-			Debug.Log("Running T4 template ...");
+			Debug.Log("Running T4 template...");
 
 			var templatePath = Path.GetFullPath("Assets/Editor/CharonExamples/TypedDocumentReferences.tt");
 			var templateResultPath = Path.GetFullPath("Assets/Editor/CharonExamples/TypedDocumentReferences.cs");
@@ -31,12 +53,12 @@ namespace Editor.CharonExamples
 
 				if (toolRunResult.ExitCode != 0)
 				{
-					Debug.LogWarning($"T4 tool run failed. Captured Output: {toolRunResult.GetOutputData()},\r\n Captured Error: {toolRunResult.GetErrorData()}.");
+					Debug.LogWarning($"T4 tool run failed. Captured Output: {toolRunResult.GetOutputData()},\r\nCaptured Error: {toolRunResult.GetErrorData()}.");
 				}
 				else
 				{
 					Debug.Log(
-						$"T4 tool run succeed. Generated Text: {await File.ReadAllTextAsync(templateResultPath)},\r\n Captured Output: {toolRunResult.GetOutputData()},\r\n Captured Error: {toolRunResult.GetErrorData()}.");
+						$"T4 tool run succeeded. Generated Text: {await File.ReadAllTextAsync(templateResultPath)},\r\nCaptured Output: {toolRunResult.GetOutputData()},\r\nCaptured Error: {toolRunResult.GetErrorData()}.");
 				}
 
 				var targetFilePath = Path.GetFullPath("Assets/Scripts/TypedDocumentReferences.cs");
