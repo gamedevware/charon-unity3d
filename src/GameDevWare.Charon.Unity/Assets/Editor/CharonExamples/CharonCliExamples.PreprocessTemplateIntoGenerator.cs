@@ -8,7 +8,7 @@ namespace Editor.CharonExamples
 	public partial class CharonCliExamples
 	{
 		[MenuItem("Tools/RPG Game/Preprocess FileList.tt Template")]
-		private static async void GetFileListTemplateGenerator()
+		private static async void PreprocessTemplateIntoGenerator()
 		{
 			Debug.Log("Running T4 tool to get generator's source code ...");
 
