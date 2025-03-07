@@ -1389,12 +1389,10 @@ namespace GameDevWare.Charon.Editor.Cli
 		/// https://github.com/mono/t4/blob/main/dotnet-t4/readme.md
 		/// </summary>
 		/// <param name="templateFile">The path of the template .tt file.</param>
-		/// <param name="outputFile">The name or path of the output file. It defaults to the input filename with its extension changed to .txt, or to match the generated code when preprocessing, and may be overridden by template settings. Use - instead of a filename to write to stdout.</param>
 		/// <param name="referencedAssemblies">An assembly reference by path or assembly name. It will be resolved from the framework and assembly directories.</param>
 		/// <param name="usings">A namespace imports which generate a using statement in template source code.</param>
 		/// <param name="includeDirectories">A directory to be searched when resolving included files.</param>
 		/// <param name="assemblyLookupDirectories">A directory to be searched when resolving assemblies.</param>
-		/// <param name="templateClassName">Preprocess the template into class name for use as a runtime template. The class name may include a namespace.</param>
 		/// <param name="parameters">Set session parameter <see cref="KeyValuePair{TKey,TValue}.Key"/> to <see cref="KeyValuePair{TKey,TValue}.Value"/>.
 		/// The value is accessed from the template's Session dictionary, or from a property declared with a parameter directive: &lt;#@ parameter name='[name]' type='[type]' #&gt;.
 		/// If the name matches a parameter with a non-string type, the value will be converted to that type.
@@ -1408,12 +1406,10 @@ namespace GameDevWare.Charon.Editor.Cli
 		public static Task<ToolRunResult> RunT4Async
 		(
 			string templateFile,
-			string outputFile = null,
 			IEnumerable<string> referencedAssemblies = null,
 			IEnumerable<string> usings = null,
 			IEnumerable<string> includeDirectories = null,
 			IEnumerable<string> assemblyLookupDirectories = null,
-			string templateClassName = null,
 			IEnumerable<KeyValuePair<string, string>> parameters = null,
 			bool useRelativeLinePragmas = false,
 			bool debugMode = false,
@@ -1426,10 +1422,6 @@ namespace GameDevWare.Charon.Editor.Cli
 			var t4Path = EnsureCharonRunScript("RunT4");
 
 			var arguments = new List<string>();
-			if (!string.IsNullOrEmpty(outputFile))
-			{
-				arguments.Add("--out=" + outputFile);
-			}
 			foreach (var referencedAssembly in referencedAssemblies ?? Array.Empty<string>())
 			{
 				arguments.Add("-r=" + referencedAssembly);
@@ -1446,13 +1438,76 @@ namespace GameDevWare.Charon.Editor.Cli
 			{
 				arguments.Add("-P=" + assemblyLookupDirectory);
 			}
-			if (!string.IsNullOrEmpty(templateClassName))
-			{
-				arguments.Add("-c=" + templateClassName);
-			}
 			foreach (var parameter in parameters ?? Array.Empty<KeyValuePair<string, string>>())
 			{
 				arguments.Add($"-p={parameter.Key}={parameter.Value}");
+			}
+			if (useRelativeLinePragmas)
+			{
+				arguments.Add("-l");
+			}
+			if (debugMode)
+			{
+				arguments.Add("--debug");
+			}
+			if (verboseLogs)
+			{
+				arguments.Add("--verbose");
+			}
+			arguments.Add(templateFile);
+
+			var runOptions = new ToolRunOptions(t4Path, arguments.ToArray()) {
+				CaptureStandardOutput = true,
+				CaptureStandardError = true,
+				ExecutionTimeout = TimeSpan.FromSeconds(30),
+				WaitForExit = true
+			};
+			configureTool?.Invoke(runOptions);
+			return CommandLineUtils.RunAsync(runOptions);
+		}
+
+		/// <summary>
+		/// Run dotnet-t4 command-line tool for processing T4 templates. It is a general-purpose way to generate text or code files using C#.
+		/// https://github.com/mono/t4/blob/main/dotnet-t4/readme.md
+		/// </summary>
+		/// <param name="templateFile">The path of the template .tt file.</param>
+		/// <param name="outputFile">The name or path of the output file. It defaults to the input filename with its extension changed to .txt, or to match the generated code when preprocessing, and may be overridden by template settings. Use - instead of a filename to write to stdout.</param>
+		/// <param name="usings">A namespace imports which generate a using statement in template source code.</param>
+		/// <param name="templateClassName">Preprocess the template into class name for use as a runtime template. The class name may include a namespace.</param>
+		/// <param name="useRelativeLinePragmas">Use relative paths in line pragmas.</param>
+		/// <param name="debugMode">Generate debug symbols and keep temporary files.</param>
+		/// <param name="verboseLogs">Output additional diagnostic information to stdout.</param>
+		/// <param name="configureTool">Optional configuration delegate for tool process.</param>
+		/// <returns>Instance of running tool process. Check <see cref="ToolRunResult.ExitCode"/> for 0 to assess results.</returns>
+		// ReSharper disable once FunctionComplexityOverflow
+		public static Task<ToolRunResult> PreprocessT4Async
+		(
+			string templateFile,
+			string outputFile,
+			string templateClassName,
+			IEnumerable<string> usings = null,
+			bool useRelativeLinePragmas = false,
+			bool debugMode = false,
+			bool verboseLogs = false,
+			Action<ToolRunOptions> configureTool = null
+		)
+		{
+			if (templateFile == null) throw new ArgumentNullException(nameof(templateFile));
+
+			var t4Path = EnsureCharonRunScript("RunT4");
+
+			var arguments = new List<string>();
+			if (!string.IsNullOrEmpty(outputFile))
+			{
+				arguments.Add("--out=" + outputFile);
+			}
+			foreach (var usingStatement in usings ?? Array.Empty<string>())
+			{
+				arguments.Add("-u=" + usingStatement);
+			}
+			if (!string.IsNullOrEmpty(templateClassName))
+			{
+				arguments.Add("-c=" + templateClassName);
 			}
 			if (useRelativeLinePragmas)
 			{

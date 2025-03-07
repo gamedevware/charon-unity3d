@@ -14,7 +14,7 @@ namespace Editor.CharonExamples
 
 			var outputFilePath = Path.GetTempFileName();
 			var templatePath = Path.GetFullPath("Assets/Editor/CharonExamples/FileList.tt");
-			var toolRunResult = await CharonCli.RunT4Async(
+			var toolRunResult = await CharonCli.PreprocessT4Async(
 				templatePath,
 				outputFile: outputFilePath,
 				templateClassName: "FileList"
