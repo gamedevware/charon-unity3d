@@ -1,7 +1,7 @@
 {
 	"name": "com.gamedevware.charon",
 	"displayName": "Charon: Game Data Editor",
-	"version": "2025.1.1",
+	"version": "2025.1.2",
 	"unity": "2021.3",
 	"description": "Charon is a powerful data-driven game development tool designed to streamline the creation and management of static game data within Unity. It allows both developers and game designers to efficiently model and edit game entities such as characters, items, missions, quests, and more, directly within the Unity environment. Charon simplifies the process of data manipulation, offering a user-friendly interface and automatic source code generation, which significantly reduces development time and minimizes manual coding errors.\r\n Why Choose Charon?\nCharon replaces traditional spreadsheets or config files with an in-game database, offering a structured and efficient way to manage game data. It allows developers to focus on creating engaging gameplay experiences without worrying about the technical details of data management. \r\n\n ***** This package requires .NET 8 or later to be installed. ***** ",
 	"repository":"https://github.com/gamedevware/charon-unity3d",
