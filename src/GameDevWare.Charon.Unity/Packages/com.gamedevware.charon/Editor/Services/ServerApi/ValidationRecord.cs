@@ -23,18 +23,15 @@
 using System;
 using System.Runtime.Serialization;
 using JetBrains.Annotations;
+using UnityEngine.Serialization;
 
 namespace GameDevWare.Charon.Editor.Services.ServerApi
 {
-	[Serializable, UsedImplicitly(ImplicitUseTargetFlags.WithMembers), PublicAPI]
+	[Serializable, PublicAPI]
 	public class ValidationRecord
 	{
 		[DataMember(Name = "id")]
-		public object Id;
-		[DataMember(Name = "entityName"), Obsolete]
-		public string EntityName;
-		[DataMember(Name = "entityId"), Obsolete]
-		public string EntityId;
+		public string Id;
 		[DataMember(Name = "schemaName")]
 		public string SchemaName;
 		[DataMember(Name = "schemaId")]

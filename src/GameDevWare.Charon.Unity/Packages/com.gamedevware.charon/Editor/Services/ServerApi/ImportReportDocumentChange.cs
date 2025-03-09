@@ -21,41 +21,29 @@
 */
 
 using System;
-using System.Linq;
 using System.Runtime.Serialization;
 using JetBrains.Annotations;
 
 namespace GameDevWare.Charon.Editor.Services.ServerApi
 {
-	[Serializable, PublicAPI]
-	public class ValidationReport
+	[Serializable,  PublicAPI]
+	public class ImportReportDocumentChange
 	{
-		[DataMember(Name = "records")]
-		public ValidationRecord[] Records;
-		[DataMember(Name = "metadataHash")]
-		public string MetadataHash;
-		[DataMember(Name = "revisionHash")]
-		public string RevisionHash;
+		[DataMember(Name = "id")]
+		public string Id;
+		[DataMember(Name = "newId")]
+		public string NewId;
+		[DataMember(Name = "schemaName")]
+		public string SchemaName;
+		[DataMember(Name = "schemaId")]
+		public string SchemaId;
+		[DataMember(Name = "status")]
+		public ImportReportDocumentChangeStatus Status;
+		[DataMember(Name = "comment")]
+		public string Comment;
+		[DataMember(Name = "errors")]
+		public ValidationError[] Errors;
 
-		public bool HasErrors
-		{
-			get { return this.Records != null && this.Records.Length > 0 && this.Records.Any(r => !r.HasErrors); }
-		}
-
-		public static ValidationReport CreateErrorReport(string message)
-		{
-			return new ValidationReport
-			{
-				Records = new ValidationRecord[] {
-					new ValidationRecord {
-						Errors = new ValidationError[] {
-							new ValidationError {
-								Message = message
-							}
-						}
-					}
-				}
-			};
-		}
+		public bool HasErrors => this.Errors == null || this.Errors.Length == 0;
 	}
 }

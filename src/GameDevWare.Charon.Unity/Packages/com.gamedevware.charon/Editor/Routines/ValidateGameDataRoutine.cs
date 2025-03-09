@@ -28,7 +28,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GameDevWare.Charon.Editor.Cli;
-using GameDevWare.Charon.Editor.Json;
 using GameDevWare.Charon.Editor.Services.ServerApi;
 using GameDevWare.Charon.Editor.Utils;
 using GameDevWare.Charon.Editor.Windows;
@@ -163,10 +162,8 @@ namespace GameDevWare.Charon.Editor.Routines
 							continue;
 						}
 
-						var id = record.Id is JsonPrimitive ? Convert.ToString(((JsonPrimitive)record.Id).Value) : Convert.ToString(record.Id);
-#pragma warning disable CS0612
-						var schemaName = record.EntityName ?? record.SchemaName;
-#pragma warning restore CS0612
+						var id =record.Id;
+						var schemaName = record.SchemaName;
 
 						var validationException = new ValidationError(gameDataPath, projectId, branchId, id, schemaName, error.Path, error.Message);
 

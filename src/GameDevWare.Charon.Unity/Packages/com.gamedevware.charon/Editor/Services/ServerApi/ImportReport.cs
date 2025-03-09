@@ -28,10 +28,10 @@ using JetBrains.Annotations;
 namespace GameDevWare.Charon.Editor.Services.ServerApi
 {
 	[Serializable, PublicAPI]
-	public class ValidationReport
+	public class ImportReport
 	{
-		[DataMember(Name = "records")]
-		public ValidationRecord[] Records;
+		[DataMember(Name = "changes")]
+		public ImportReportDocumentChange[] Changes;
 		[DataMember(Name = "metadataHash")]
 		public string MetadataHash;
 		[DataMember(Name = "revisionHash")]
@@ -39,23 +39,7 @@ namespace GameDevWare.Charon.Editor.Services.ServerApi
 
 		public bool HasErrors
 		{
-			get { return this.Records != null && this.Records.Length > 0 && this.Records.Any(r => !r.HasErrors); }
-		}
-
-		public static ValidationReport CreateErrorReport(string message)
-		{
-			return new ValidationReport
-			{
-				Records = new ValidationRecord[] {
-					new ValidationRecord {
-						Errors = new ValidationError[] {
-							new ValidationError {
-								Message = message
-							}
-						}
-					}
-				}
-			};
+			get { return this.Changes != null && this.Changes.Length > 0 && this.Changes.Any(r => !r.HasErrors); }
 		}
 	}
 }

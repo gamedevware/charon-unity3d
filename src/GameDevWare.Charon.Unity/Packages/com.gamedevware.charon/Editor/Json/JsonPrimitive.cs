@@ -267,5 +267,10 @@ namespace GameDevWare.Charon.Editor.Json
 				throw new FormatException($"Failed to convert '{value}' to {type.Name} type.", formatException);
 			}
 		}
+		/// <inheritdoc />
+		public override string ToString()
+		{
+			return Convert.ToString(this.Value, CultureInfo.InvariantCulture) ?? string.Empty;
+		}
 	}
 }

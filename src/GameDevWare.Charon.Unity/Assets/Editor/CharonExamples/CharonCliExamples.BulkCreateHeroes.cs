@@ -70,7 +70,7 @@ namespace Editor.CharonExamples
 			// Documentation for the Import command and its parameters:
 			// https://gamedevware.github.io/charon/advanced/commands/data_import.html
 			//
-			await CharonCli.ImportAsync(
+		 	var importReport = await CharonCli.ImportAsync(
 				gameDataPath,
 				apiKey: string.Empty,
 				schemaNamesOrIds: new[] { "*" },
@@ -78,7 +78,7 @@ namespace Editor.CharonExamples
 				ImportMode.CreateAndUpdate
 			);
 
-			Debug.Log("Successfully created hero documents.");
+			Debug.Log($"Successfully created {importReport.Changes.Length} hero documents.");
 		}
 	}
 }

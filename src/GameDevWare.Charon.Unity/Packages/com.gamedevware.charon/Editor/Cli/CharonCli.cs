@@ -483,7 +483,7 @@ namespace GameDevWare.Charon.Editor.Cli
 		/// <param name="importMode">The mode of import operation, see ImportMode for details.</param>
 		/// <param name="logsVerbosity">The verbosity level of logs. Defaults to CharonLogLevel.Normal.</param>
 		/// <param name="configureTool">Optional configuration delegate for tool process.</param>
-		public static async Task ImportAsync
+		public static async Task<ImportReport> ImportAsync
 		(
 			string gameDataUrl,
 			string apiKey,
@@ -499,6 +499,7 @@ namespace GameDevWare.Charon.Editor.Cli
 			if (documentsBySchemaNameOrId == null) throw new ArgumentNullException(nameof(documentsBySchemaNameOrId));
 
 			var inputFileName = WriteJsonInput(documentsBySchemaNameOrId);
+			var outputFileName = CreateTemporaryFile("json");
 
 			using var _ = await RunCharonAsync
 			(
@@ -508,10 +509,14 @@ namespace GameDevWare.Charon.Editor.Cli
 					"--schemas", schemaNamesOrIds,
 					"--mode", (int)importMode,
 					"--input", inputFileName,
-					"--inputFormat", "json"
+					"--inputFormat", "json",
+					"--output", outputFileName,
+					"--outputFormat", "json"
 				),
 				configureTool
 			);
+
+			return ReadOutputJson(outputFileName).ToObject<ImportReport>();
 		}
 
 		/// <summary>
@@ -526,7 +531,7 @@ namespace GameDevWare.Charon.Editor.Cli
 		/// <param name="format">The format of the imported documents ('json', 'bson', 'msgpack', 'xlsx').</param>
 		/// <param name="logsVerbosity">The verbosity level of logs. Defaults to CharonLogLevel.Normal.</param>
 		/// <param name="configureTool">Optional configuration delegate for tool process.</param>
-		public static async Task ImportFromFileAsync
+		public static async Task<ImportReport> ImportFromFileAsync
 		(
 			string gameDataUrl,
 			string apiKey,
@@ -542,6 +547,8 @@ namespace GameDevWare.Charon.Editor.Cli
 			if (schemaNamesOrIds == null) throw new ArgumentNullException(nameof(schemaNamesOrIds));
 			if (documentsBySchemaNameOrIdFilePath == null) throw new ArgumentNullException(nameof(documentsBySchemaNameOrIdFilePath));
 
+			var outputFileName = CreateTemporaryFile("json");
+
 			using var _ = await RunCharonAsync
 			(
 				apiKey, logsVerbosity,
@@ -550,10 +557,14 @@ namespace GameDevWare.Charon.Editor.Cli
 					"--schemas", schemaNamesOrIds,
 					"--mode", (int)importMode,
 					"--input", documentsBySchemaNameOrIdFilePath,
-					"--inputFormat", format.GetFormatName()
+					"--inputFormat", format.GetFormatName(),
+					"--output", outputFileName,
+					"--outputFormat", "json"
 				),
 				configureTool
 			);
+
+			return ReadOutputJson(outputFileName).ToObject<ImportReport>();
 		}
 
 		/// <summary>
@@ -667,7 +678,7 @@ namespace GameDevWare.Charon.Editor.Cli
 		/// <param name="documentsBySchemaNameOrId">The documents to be imported, grouped by schema name or ID.</param>
 		/// <param name="logsVerbosity">The verbosity level of logs. Defaults to CharonLogLevel.Normal.</param>
 		/// <param name="configureTool">Optional configuration delegate for tool process.</param>
-		public static async Task I18NImportAsync
+		public static async Task<ImportReport> I18NImportAsync
 		(
 			string gameDataUrl,
 			string apiKey,
@@ -684,6 +695,7 @@ namespace GameDevWare.Charon.Editor.Cli
 			if (documentsBySchemaNameOrId == null) throw new ArgumentNullException(nameof(documentsBySchemaNameOrId));
 
 			var inputFileName = WriteJsonInput(documentsBySchemaNameOrId);
+			var outputFileName = CreateTemporaryFile("json");
 
 			using var _ = await RunCharonAsync
 			(
@@ -693,10 +705,14 @@ namespace GameDevWare.Charon.Editor.Cli
 					"--schemas", schemaNamesOrIds,
 					languages.Count == 0 ? EmptyParameters : "--languages", languages,
 					"--input", inputFileName,
-					"--inputFormat", "json"
+					"--inputFormat", "json",
+					"--output", outputFileName,
+					"--outputFormat", "json"
 				),
 				configureTool
 			);
+
+			return ReadOutputJson(outputFileName).ToObject<ImportReport>();
 		}
 
 		/// <summary>
@@ -711,7 +727,7 @@ namespace GameDevWare.Charon.Editor.Cli
 		/// <param name="format">The format of the imported documents ('xliff', 'xliff2', 'xliff1', 'xlsx', 'json').</param>
 		/// <param name="logsVerbosity">The verbosity level of logs. Defaults to CharonLogLevel.Normal.</param>
 		/// <param name="configureTool">Optional configuration delegate for tool process.</param>
-		public static async Task I18NImportFromFileAsync
+		public static async Task<ImportReport> I18NImportFromFileAsync
 		(
 			string gameDataUrl,
 			string apiKey,
@@ -728,6 +744,8 @@ namespace GameDevWare.Charon.Editor.Cli
 			if (languages == null) throw new ArgumentNullException(nameof(languages));
 			if (documentsBySchemaNameOrIdFilePath == null) throw new ArgumentNullException(nameof(documentsBySchemaNameOrIdFilePath));
 
+			var outputFileName = CreateTemporaryFile("json");
+
 			using var _ = await RunCharonAsync
 			(
 				apiKey, logsVerbosity,
@@ -736,10 +754,14 @@ namespace GameDevWare.Charon.Editor.Cli
 					"--schemas", schemaNamesOrIds,
 					languages.Count == 0 ? EmptyParameters : "--languages", languages,
 					"--input", documentsBySchemaNameOrIdFilePath,
-					"--inputFormat", format.GetFormatName()
+					"--inputFormat", format.GetFormatName(),
+					"--output", outputFileName,
+					"--outputFormat", "json"
 				),
 				configureTool
 			);
+
+			return ReadOutputJson(outputFileName).ToObject<ImportReport>();
 		}
 
 		/// <summary>
