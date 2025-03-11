@@ -2,13 +2,12 @@
 
 # Introduction
 
-haron is a versatile plugin tailored for Unity, designed to facilitate data-driven game design
-by allowing both developers and game designers to efficiently manage static game data,
-like units, items, missions, quests, and other. Charon elevates the experience by offering
-an editing UI directly in your web browser, enabling the modeling of diverse data structures
-suited to any game genre. It provides a user-friendly interface that requires no special skills
-for game designers, simplifying the process of data manipulation. For programmers, Charon streamlines
-development workflows by generating code to load game data seamlessly into the game.
+Charon is a Unity plugin designed to address common challenges in game  development, such as inefficient management of
+static game  data—like skills, items, missions, dialogues, and quests—often handled through
+error-prone spreadsheets or manual config files. It provides a  browser-based editing UI that supports the creation of diverse data
+structures for any game genre, offering a user-friendly interface for  designers and automated code generation for developers to streamline
+workflows. By replacing traditional data management methods with a  structured in-game database, Charon reduces technical overhead, enabling
+teams to focus on crafting engaging gameplay experiences.
 
 # Installation
 
