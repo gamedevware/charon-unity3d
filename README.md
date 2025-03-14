@@ -2,19 +2,19 @@
 
 # Introduction
 
-haron is a versatile plugin tailored for Unity, designed to facilitate data-driven game design
+Charon is a versatile plugin tailored for Unity, designed to facilitate data-driven game design
 by allowing both developers and game designers to efficiently manage static game data,
-like units, items, missions, quests, and other. Charon elevates the experience by offering
-an editing UI directly in your web browser, enabling the modeling of diverse data structures
-suited to any game genre. It provides a user-friendly interface that requires no special skills
+like units, items, missions, quests, and other. It provides a user-friendly interface that requires no special skills
 for game designers, simplifying the process of data manipulation. For programmers, Charon streamlines
-development workflows by generating code to load game data seamlessly into the game.
+development workflows by generating c# code to load game data seamlessly into the game.
+
+<img width="800" alt="editor ui" src="https://raw.githubusercontent.com/gamedevware/charon/refs/heads/main/docs/assets/editor_screenshot.png"/>  
 
 # Installation
 
 Prerequisites
 ---------------
-Unity plugin uses `dotnet charon` tool, which is a .NET Core application built for .NET 8.
+Unity plugin uses `dotnet charon` tool, which is a .NET Core application built for [.NET 8](https://dotnet.microsoft.com/en-us/download/dotnet/8.0).
 
 Installation from OpenUPM (recommended)
 ---------------------------------------
