@@ -20,9 +20,9 @@
 	THE SOFTWARE.
 */
 
-using System;
 using System.IO;
 using GameDevWare.Charon.Editor.Cli;
+using Newtonsoft.Json.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -32,37 +32,44 @@ namespace Editor.CharonExamples
 {
 	public partial class CharonCliExamples
 	{
-		[MenuItem("Tools/RPG Game/Export Localizable Data")]
-		private static async void ExportLocalizableData()
+		[MenuItem("Tools/RPG Game/Import Localizable Data")]
+		private static async void ImportLocalizableData()
 		{
-			Debug.Log("Exporting localizable data to XLSX file...");
+			Debug.Log("Importing multiple hero documents...");
 
-			var xlsxFilePath = Path.Combine(Path.GetTempPath(), $"en_US_TO_es_ES_{Guid.NewGuid():N}.xlsx");
+			var importData = new JObject {
+				{
+					"Collections", new JObject {
+						{
+							"Hero", new JArray {
+								new JObject {
+									{ "Id", "SuperBoy" },
+									{ "Name", new JObject {
+										{ "en-US",  "Crossbower" },
+										{ "es-ES",  "Ballestero" },
+									}},
+								},
+							}
+						}
+					}
+				}
+			};
+
 			var gameDataPath = Path.GetFullPath("Assets/StreamingAssets/RpgGameData.gdjs");
 
 			//
-			// Documentation for the I18NExport command and its parameters:
-			// https://gamedevware.github.io/charon/advanced/commands/data_i18n_export.html
+			// Documentation for the I18NImport command and its parameters:
+			// https://gamedevware.github.io/charon/advanced/commands/data_i18n_import.html
 			//
-			await CharonCli.I18NExportToFileAsync(
+		 	var importReport = await CharonCli.I18NImportAsync(
 				gameDataPath,
 				apiKey: string.Empty,
 				schemaNamesOrIds: new[] { "*" },
-				sourceLanguage: "en-US",
-				targetLanguage: "es-ES",
-				exportedDocumentsFilePath: xlsxFilePath,
-				format: ExportFormat.Xslx
+				languages: new[] { "es-ES" },
+				importData
 			);
 
-			if (File.Exists(xlsxFilePath))
-			{
-				Debug.Log($"Localizable data successfully exported to the file ({new FileInfo(xlsxFilePath).Length} bytes): {xlsxFilePath}");
-				File.Delete(xlsxFilePath);
-			}
-
-			//
-			// Use CharonCli.I18NImportFromFileAsync to import translated texts back.
-			//
+			Debug.Log($"Successfully updated {importReport.Changes.Length} hero documents.");
 		}
 	}
 }

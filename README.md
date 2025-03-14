@@ -45,6 +45,31 @@ Installation from Unity Asset Store
 
 [Charon Documentation](https://gamedevware.github.io/charon/) • [Unity Plugin Documentation](https://gamedevware.github.io/charon/unity/overview.html)
 
+# Examples
+- [Example Project](https://github.com/gamedevware/charon-unity3d/tree/master/src/GameDevWare.Charon.Unity)
+- [Editor Extensions](https://github.com/gamedevware/charon-unity3d/tree/master/src/GameDevWare.Charon.Unity/Assets/Editor)
+  - [CharonCli -> Bulk Create Documents](https://github.com/gamedevware/charon-unity3d/blob/master/src/GameDevWare.Charon.Unity/Assets/Editor/CharonExamples/CharonCliExamples.BulkCreateHeroes.cs)
+  - [CharonCli -> Bulk Delete Documents](https://github.com/gamedevware/charon-unity3d/blob/master/src/GameDevWare.Charon.Unity/Assets/Editor/CharonExamples/CharonCliExamples.BulkDeleteHeroes.cs)
+  - [CharonCli -> Find Document](https://github.com/gamedevware/charon-unity3d/blob/master/src/GameDevWare.Charon.Unity/Assets/Editor/CharonExamples/CharonCliExamples.FindHeroById.cs)
+  - [CharonCli -> Update Document](https://github.com/gamedevware/charon-unity3d/blob/master/src/GameDevWare.Charon.Unity/Assets/Editor/CharonExamples/CharonCliExamples.UpdateHero.cs)
+  - [CharonCli -> Create Document](https://github.com/gamedevware/charon-unity3d/blob/master/src/GameDevWare.Charon.Unity/Assets/Editor/CharonExamples/CharonCliExamples.CreateHero.cs)
+  - [CharonCli -> Delete Document](https://github.com/gamedevware/charon-unity3d/blob/master/src/GameDevWare.Charon.Unity/Assets/Editor/CharonExamples/CharonCliExamples.DeleteHero.cs)
+  - [CharonCli -> Delete Document By Id](https://github.com/gamedevware/charon-unity3d/blob/master/src/GameDevWare.Charon.Unity/Assets/Editor/CharonExamples/CharonCliExamples.DeleteHeroById.cs)
+  - [CharonCli -> Export Documents](https://github.com/gamedevware/charon-unity3d/blob/master/src/GameDevWare.Charon.Unity/Assets/Editor/CharonExamples/CharonCliExamples.ExportHeroes.cs)
+  - [CharonCli -> List All Documents](https://github.com/gamedevware/charon-unity3d/blob/master/src/GameDevWare.Charon.Unity/Assets/Editor/CharonExamples/CharonCliExamples.ListItems.cs)
+  - [CharonCli -> List Documents With Criteria](https://github.com/gamedevware/charon-unity3d/blob/master/src/GameDevWare.Charon.Unity/Assets/Editor/CharonExamples/CharonCliExamples.ListReligiousHeroes.cs)
+  - [CharonCli -> Validating Game Data File](https://github.com/gamedevware/charon-unity3d/blob/master/src/GameDevWare.Charon.Unity/Assets/Editor/CharonExamples/CharonCliExamples.ValidateGameData.cs)  
+  - [I18N -> List Translation Languages](https://github.com/gamedevware/charon-unity3d/blob/master/src/GameDevWare.Charon.Unity/Assets/Editor/CharonExamples/CharonCliExamples.ListTranslationLanguages.cs)
+  - [I18N -> Export Localizable Data](https://github.com/gamedevware/charon-unity3d/blob/master/src/GameDevWare.Charon.Unity/Assets/Editor/CharonExamples/CharonCliExamples.ExportLocalizableData.cs)
+  - [I18N -> Add Translation Language](https://github.com/gamedevware/charon-unity3d/blob/master/src/GameDevWare.Charon.Unity/Assets/Editor/CharonExamples/CharonCliExamples.AddTranslationLanguage.cs)
+  - [I18N -> Import Localizable Data](https://github.com/gamedevware/charon-unity3d/blob/master/src/GameDevWare.Charon.Unity/Assets/Editor/CharonExamples/CharonCliExamples.ImportLocalizableData.cs)
+  - [T4 -> Preprocess Template](https://github.com/gamedevware/charon-unity3d/blob/master/src/GameDevWare.Charon.Unity/Assets/Editor/CharonExamples/CharonCliExamples.PreprocessTemplateIntoGenerator.cs)
+  - [T4 -> Run Text Template](https://github.com/gamedevware/charon-unity3d/blob/master/src/GameDevWare.Charon.Unity/Assets/Editor/CharonExamples/CharonCliExamples.RunT4Template.cs)
+  - [T4 -> Run C# Code Template](https://github.com/gamedevware/charon-unity3d/blob/master/src/GameDevWare.Charon.Unity/Assets/Editor/CharonExamples/CharonCliExamples.RunT4Template2.cs)
+
+# Change Log
+[Change Log](https://github.com/gamedevware/charon-unity3d/blob/master/src/GameDevWare.Charon.Unity/Packages/com.gamedevware.charon/CHANGELOG.md)
+
 # Collaboration
 
 [Discord](https://discord.gg/2quB5vXryd) • [Plugin Issues](https://github.com/gamedevware/charon-unity3d/issues) • [support@gamedevware.com](mailto:support@gamedevware.com)

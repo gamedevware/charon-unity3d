@@ -20,9 +20,10 @@
 	THE SOFTWARE.
 */
 
-using System;
 using System.IO;
+using System.Linq;
 using GameDevWare.Charon.Editor.Cli;
+using Newtonsoft.Json.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -32,37 +33,23 @@ namespace Editor.CharonExamples
 {
 	public partial class CharonCliExamples
 	{
-		[MenuItem("Tools/RPG Game/Export Localizable Data")]
-		private static async void ExportLocalizableData()
+		[MenuItem("Tools/RPG Game/List Translation Languages")]
+		private static async void ListTranslationLanguages()
 		{
-			Debug.Log("Exporting localizable data to XLSX file...");
+			Debug.Log("Listing translation languages...");
 
-			var xlsxFilePath = Path.Combine(Path.GetTempPath(), $"en_US_TO_es_ES_{Guid.NewGuid():N}.xlsx");
 			var gameDataPath = Path.GetFullPath("Assets/StreamingAssets/RpgGameData.gdjs");
 
 			//
-			// Documentation for the I18NExport command and its parameters:
-			// https://gamedevware.github.io/charon/advanced/commands/data_i18n_export.html
+			// Documentation for the I18NListLanguages command and its parameters:
+			// https://gamedevware.github.io/charon/advanced/commands/data_i18n_languages.html
 			//
-			await CharonCli.I18NExportToFileAsync(
+			var languageList = await CharonCli.I18NListLanguagesAsync(
 				gameDataPath,
-				apiKey: string.Empty,
-				schemaNamesOrIds: new[] { "*" },
-				sourceLanguage: "en-US",
-				targetLanguage: "es-ES",
-				exportedDocumentsFilePath: xlsxFilePath,
-				format: ExportFormat.Xslx
+				apiKey: string.Empty
 			);
 
-			if (File.Exists(xlsxFilePath))
-			{
-				Debug.Log($"Localizable data successfully exported to the file ({new FileInfo(xlsxFilePath).Length} bytes): {xlsxFilePath}");
-				File.Delete(xlsxFilePath);
-			}
-
-			//
-			// Use CharonCli.I18NImportFromFileAsync to import translated texts back.
-			//
+			Debug.Log($"Found translation languages in game data [{languageList.Length}]: " + string.Join(", ", languageList));
 		}
 	}
 }
