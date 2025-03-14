@@ -14,14 +14,14 @@ development workflows by generating code to load game data seamlessly into the g
 
 Prerequisites
 ---------------
-Unity plugin uses ``dotnet charon`` tool, which is a .NET Core application built for .NET 8.
+Unity plugin uses `dotnet charon` tool, which is a .NET Core application built for .NET 8.
 
 Installation from OpenUPM (recommended)
 ---------------------------------------
 
 1. Install the required software for your operating system.
 2. Ensure your Unity version is 2021.3 or later.
-3. Open the `OpenUPM <https://openupm.com/packages/com.gamedevware.charon/>`_ page for the plugin.
+3. Open the [OpenUPM](https://openupm.com/packages/com.gamedevware.charon/) page for the plugin.
 4. Click the **Manual Installation** button in the upper right corner and follow the instructions.
 
 
@@ -30,7 +30,7 @@ Installation from Unity Asset Store
 
 1. Install the required software for your operating system.
 2. Ensure your Unity version is 2021.3 or later.
-3. Open the `Charon plugin <https://assetstore.unity.com/packages/tools/visual-scripting/game-data-editor-charon-95117>`_ in the Unity Asset Store.
+3. Open the [Charon plugin](https://assetstore.unity.com/packages/tools/visual-scripting/game-data-editor-charon-95117) in the Unity Asset Store.
 4. Click **Add To My Assets**.
 5. Open the Unity Package Manager by navigating to **Window → Package Manager**.
 6. Wait for the package manager to populate the list.
