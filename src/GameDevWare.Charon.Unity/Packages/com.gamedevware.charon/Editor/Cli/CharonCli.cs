@@ -890,6 +890,39 @@ namespace GameDevWare.Charon.Editor.Cli
 		}
 
 		/// <summary>
+		/// List translation languages in a GameDataUrl file or server.
+		/// https://gamedevware.github.io/charon/advanced/commands/data_i18n_languages.html
+		/// </summary>
+		/// <param name="gameDataUrl">The URL of the GameData file or server.</param>
+		/// <param name="apiKey">Authentication credentials if GameDataUrl is a server, otherwise empty.</param>
+		/// <param name="logsVerbosity">The verbosity level of logs. Defaults to CharonLogLevel.Normal.</param>
+		/// <param name="configureTool">Optional configuration delegate for tool process.</param>
+		public static async Task<string[]> I18NListLanguagesAsync
+		(
+			string gameDataUrl,
+			string apiKey,
+			CharonLogLevel? logsVerbosity = null,
+			Action<ToolRunOptions> configureTool = null
+		)
+		{
+			if (gameDataUrl == null) throw new ArgumentNullException(nameof(gameDataUrl));
+
+			var outputFileName = CreateTemporaryFile("text");
+			using var _ = await RunCharonAsync
+			(
+				apiKey, logsVerbosity,
+				ToolRunOptions.FlattenArguments(
+					"DATA", "I18N", "LANGUAGES", gameDataUrl,
+					"--output", outputFileName,
+					"--outputFormat", "list"
+				),
+				configureTool
+			);
+
+			return (await File.ReadAllTextAsync(outputFileName)).Split(" ", StringSplitOptions.RemoveEmptyEntries);
+		}
+
+		/// <summary>
 		/// Compares all documents in two GameData URLs and creates a patch representing the difference.
 		/// https://gamedevware.github.io/charon/advanced/commands/data_create_patch.html
 		/// </summary>
