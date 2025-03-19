@@ -28,7 +28,7 @@ Installation from OpenUPM (recommended)
 Installation from Unity Asset Store
 -----------------------------------
 
-1. Install the required software for your operating system.
+1. Install the [.NET 8 or later](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) software for your operating system.
 2. Ensure your Unity version is 2021.3 or later.
 3. Open the [Charon plugin](https://assetstore.unity.com/packages/tools/visual-scripting/game-data-editor-charon-95117) in the Unity Asset Store.
 4. Click **Add To My Assets**.
