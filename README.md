@@ -14,7 +14,9 @@ development workflows by generating c# code to load game data seamlessly into th
 
 Prerequisites
 ---------------
-Unity plugin uses `dotnet charon` tool, which is a .NET Core application built for [.NET 8](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) and it runs wherever Unity can run.
+Unity Editor plugin uses `dotnet charon` tool, which is a .NET Core application built for [.NET 8](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) and it runs wherever Unity Editor can run.  
+
+The generated code and data do not require any additional dependencies for your game's runtime.  
 
 Installation from OpenUPM (recommended)
 ---------------------------------------
