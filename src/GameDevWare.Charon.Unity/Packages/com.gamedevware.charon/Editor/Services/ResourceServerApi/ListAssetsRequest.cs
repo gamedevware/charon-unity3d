@@ -25,12 +25,17 @@ using System.Runtime.Serialization;
 namespace GameDevWare.Charon.Editor.Services.ResourceServerApi
 {
 	[DataContract]
-	internal class ListFormulaTypesResponse
+	internal class ListAssetsRequest
 	{
+		[DataMember(Name = "gameDataAssetId")]
+		public string GameDataAssetId;
+		[DataMember(Name = "skip")]
+		public int Skip;
+		[DataMember(Name = "take")]
+		public int Take;
+		[DataMember(Name = "query")]
+		public string Query;
 		[DataMember(Name = "types")]
-		public FormulaType[] Types;
-
-		[DataMember(Name = "total")]
-		public int Total;
+		public string[] Types;
 	}
 }

@@ -20,17 +20,21 @@
 	THE SOFTWARE.
 */
 
+using System;
 using System.Runtime.Serialization;
 
 namespace GameDevWare.Charon.Editor.Services.ResourceServerApi
 {
 	[DataContract]
-	internal class ListFormulaTypesResponse
+	internal class GameAsset
 	{
-		[DataMember(Name = "types")]
-		public FormulaType[] Types;
-
-		[DataMember(Name = "total")]
-		public int Total;
+		[DataMember(Name = "name")]
+		public string Name;
+		[DataMember(Name = "hasThumbnail")]
+		public bool HasThumbnail;
+		[DataMember(Name = "type")]
+		public string Type;
+		[DataMember(Name = "path")]
+		public string Path;
 	}
 }

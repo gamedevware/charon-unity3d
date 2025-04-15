@@ -20,6 +20,7 @@
 	THE SOFTWARE.
 */
 
+using System;
 using System.Runtime.Serialization;
 
 namespace GameDevWare.Charon.Editor.Services.ResourceServerApi
@@ -27,7 +28,9 @@ namespace GameDevWare.Charon.Editor.Services.ResourceServerApi
 	[DataContract]
 	internal class GenerateSourceCodeRequest
 	{
-		[DataMember(Name = "unityAssetId")]
+		[DataMember(Name = "unityAssetId"), Obsolete]
+		public string UnityAssetId;
+		[DataMember(Name = "gameDataAssetId")]
 		public string GameDataAssetId;
 	}
 }

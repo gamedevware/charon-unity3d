@@ -20,6 +20,7 @@
 	THE SOFTWARE.
 */
 
+using System;
 using System.Runtime.Serialization;
 
 namespace GameDevWare.Charon.Editor.Services.ResourceServerApi
@@ -27,8 +28,10 @@ namespace GameDevWare.Charon.Editor.Services.ResourceServerApi
 	[DataContract]
 	internal class ListFormulaTypesRequest
 	{
-		[DataMember(Name = "unityAssetId")]
+		[DataMember(Name = "gameDataAssetId")]
 		public string GameDataAssetId;
+		[DataMember(Name = "unityAssetId"), Obsolete]
+		public string UnityAssetId;
 		[DataMember(Name = "skip")]
 		public int Skip;
 		[DataMember(Name = "take")]

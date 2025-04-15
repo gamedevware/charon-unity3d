@@ -42,6 +42,7 @@ namespace GameDevWare.Charon.Editor.Services
 	internal class UnityResourceServer : HttpMessageHandler
 	{
 		private readonly FormulaTypeIndexer formulaTypeIndexer;
+		private readonly AssetIndexer assetIndexer;
 		private readonly CancellationTokenSource cancellationTokenSource;
 		private readonly CharonSettings settings;
 		private readonly CharonLogger logger;
@@ -58,6 +59,7 @@ namespace GameDevWare.Charon.Editor.Services
 
 			this.cancellationTokenSource = new CancellationTokenSource();
 			this.formulaTypeIndexer = new FormulaTypeIndexer();
+			this.assetIndexer = new AssetIndexer();
 			this.Port = 10000 + Process.GetCurrentProcess().Id % 55000;
 			this.logger = logger;
 			this.receiveTask = Task.CompletedTask;
@@ -132,6 +134,14 @@ namespace GameDevWare.Charon.Editor.Services
 			{
 				response = await this.OnListFormulaTypesAsync(request).ConfigureAwait(false);
 			}
+			else if (localPath.StartsWith("/api/assets/list", StringComparison.OrdinalIgnoreCase))
+			{
+				response = await this.OnListAssetsAsync(request).ConfigureAwait(false);
+			}
+			else if (localPath.StartsWith("/api/assets/thumbnail", StringComparison.OrdinalIgnoreCase))
+			{
+				response = await this.OnGetAssetThumbnailAsync(request).ConfigureAwait(false);
+			}
 			else
 			{
 				response = new HttpResponseMessage(HttpStatusCode.NotFound) { RequestMessage = request };
@@ -161,7 +171,11 @@ namespace GameDevWare.Charon.Editor.Services
 
 			await this.uiTaskScheduler.SwitchTo();
 
-			var gameDataAssetPath = AssetDatabase.GUIDToAssetPath(publishRequest.GameDataAssetId);
+			var gameDataAssetPath = AssetDatabase.GUIDToAssetPath(publishRequest.GameDataAssetId ??
+#pragma warning disable CS0612 // Type or member is obsolete
+				publishRequest.UnityAssetId
+#pragma warning restore CS0612 // Type or member is obsolete
+			);
 			var gameDataAsset = AssetDatabase.LoadAssetAtPath<GameDataBase>(gameDataAssetPath);
 			if (gameDataAsset == null)
 			{
@@ -203,7 +217,12 @@ namespace GameDevWare.Charon.Editor.Services
 
 			await this.uiTaskScheduler.SwitchTo();
 
-			var gameDataAssetPath = AssetDatabase.GUIDToAssetPath(generateSourceCodeRequest.GameDataAssetId);
+			var gameDataAssetPath = AssetDatabase.GUIDToAssetPath(generateSourceCodeRequest.GameDataAssetId ??
+#pragma warning disable CS0612 // Type or member is obsolete
+				generateSourceCodeRequest.UnityAssetId
+#pragma warning restore CS0612 // Type or member is obsolete
+
+			);
 			var gameDataAsset = AssetDatabase.LoadAssetAtPath<GameDataBase>(gameDataAssetPath);
 			if (gameDataAsset == null)
 			{
@@ -234,10 +253,65 @@ namespace GameDevWare.Charon.Editor.Services
 				listFormulaTypesRequest.Skip,
 				listFormulaTypesRequest.Take,
 				listFormulaTypesRequest.Query
+
 			);
 
 			response.StatusCode = HttpStatusCode.OK;
 			this.WriteResponseBody(listFormulaTypesResponse, response);
+			return response;
+		}
+		private async Task<HttpResponseMessage> OnGetAssetThumbnailAsync(HttpRequestMessage request)
+		{
+			if (!string.Equals(request.Method.Method, "POST", StringComparison.OrdinalIgnoreCase))
+				throw new InvalidOperationException($"POST method is expected for [{request.Method}]{request.RequestUri} endpoint.");
+
+			var getAssetThumbnailRequest = await ReadRequestBodyAsync<GetAssetThumbnailRequest>(request).ConfigureAwait(true);
+
+			var response = new HttpResponseMessage(HttpStatusCode.OK);
+			this.AddCorsHeaders(request, response);
+
+			var thumbnailBytes = this.assetIndexer.GetAssetThumbnail
+			(
+				getAssetThumbnailRequest.Path,
+				getAssetThumbnailRequest.Size
+			);
+
+			if (thumbnailBytes == null)
+			{
+				response.StatusCode = HttpStatusCode.NotFound;
+			}
+			else
+			{
+				response.StatusCode = HttpStatusCode.OK;
+				response.Content = new ByteArrayContent(thumbnailBytes) {
+					Headers = {
+						ContentType = MediaTypeHeaderValue.Parse("image/png")
+					}
+				};
+			}
+
+			return response;
+		}
+		private async Task<HttpResponseMessage> OnListAssetsAsync(HttpRequestMessage request)
+		{
+			if (!string.Equals(request.Method.Method, "POST", StringComparison.OrdinalIgnoreCase))
+				throw new InvalidOperationException($"POST method is expected for [{request.Method}]{request.RequestUri} endpoint.");
+
+			var listAssetsRequest = await ReadRequestBodyAsync<ListAssetsRequest>(request).ConfigureAwait(true);
+
+			var response = new HttpResponseMessage(HttpStatusCode.OK);
+			this.AddCorsHeaders(request, response);
+
+			var listAssetsResponse = this.assetIndexer.ListAssets
+			(
+				listAssetsRequest.Skip,
+				listAssetsRequest.Take,
+				listAssetsRequest.Query,
+				listAssetsRequest.Types
+			);
+
+			response.StatusCode = HttpStatusCode.OK;
+			this.WriteResponseBody(listAssetsResponse, response);
 			return response;
 		}
 

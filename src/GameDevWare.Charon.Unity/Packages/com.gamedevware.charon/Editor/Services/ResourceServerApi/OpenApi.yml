@@ -1,0 +1,295 @@
+openapi: 3.0.4
+info:
+    title: Charon Game Data Editor - Resource Server API
+    description: >-
+        API for the Charon game data editor's resource server, providing functionality for:
+        - Source code generation
+        - Game data publishing
+        - Formula type management
+        - Asset management
+    contact:
+        email: support@gamedevware.com
+    license:
+        name: MIT
+    version: 1.0.0
+
+tags:
+    - name: commands
+      description: Operations for executing system commands
+    - name: formulaTypes
+      description: Operations for managing formula types and classes
+    - name: assets
+      description: Operations for managing game assets
+
+paths:
+    '/api/commands/generate-code':
+        post:
+            tags: [commands]
+            summary: Generate source code from game data
+            description: >-
+                Initiates source code generation process for the specified game data asset.
+                The operation is asynchronous and returns immediately upon successful initiation.
+            operationId: generateSourceCode
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/GenerateSourceCodeRequest'
+            responses:
+                '204':
+                    description: Source code generation process started successfully
+
+    '/api/commands/publish':
+        post:
+            tags: [commands]
+            summary: Publish game data
+            description: >-
+                Initiates the publishing process for the specified game data asset.
+                The operation is asynchronous and returns immediately upon successful initiation.
+            operationId: publish
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/PublishRequest'
+            responses:
+                '204':
+                    description: Game data publishing process started successfully
+
+    '/api/formula-types/list':
+        post:
+            tags: [formulaTypes]
+            summary: List available formula types
+            description: >-
+                Retrieves a paginated list of formula types/classes that can be used in game data formulas.
+                Supports filtering by type name and pagination.
+            operationId: listFormulas
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ListFormulaTypesRequest'
+            responses:
+                '200':
+                    description: Paginated list of formula types
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ListFormulaTypesResponse'
+
+    '/api/assets/list':
+        post:
+            tags: [assets]
+            summary: List project assets
+            description: >-
+                Retrieves a paginated list of assets available in the project that can be referenced from game data.
+                Supports filtering by asset type and name, with pagination.
+            operationId: listAssets
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ListAssetsRequest'
+            responses:
+                '200':
+                    description: Paginated list of matching assets
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ListAssetsResponse'
+
+    '/api/assets/thumbnail':
+        post:
+            tags: [assets]
+            summary: Get asset thumbnail
+            description: >-
+                Retrieves a thumbnail image (PNG format) for the specified asset.
+                The asset can be identified by various methods including path, unique ID, or numeric ID.
+            operationId: getAssetThumbnail
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/GetAssetThumbnailRequest'
+            responses:
+                '200':
+                    description: PNG thumbnail image of the requested asset
+                    content:
+                        image/png:
+                            schema:
+                                type: string
+                                format: binary
+                '404':
+                    description: Requested asset not found or has no thumbnail available
+
+components:
+    schemas:
+        # Request Schemas
+        GenerateSourceCodeRequest:
+            type: object
+            required: [gameDataAssetId]
+            properties:
+                gameDataAssetId:
+                    type: string
+                    description: Unique identifier of the game data asset to generate source code from
+
+        PublishRequest:
+            type: object
+            required: [gameDataAssetId]
+            properties:
+                gameDataAssetId:
+                    type: string
+                    description: Unique identifier of the game data asset to publish
+
+        ListFormulaTypesRequest:
+            type: object
+            required: [gameDataAssetId, skip, take, query]
+            properties:
+                gameDataAssetId:
+                    type: string
+                    description: Identifier of the game data asset context
+                skip:
+                    type: integer
+                    format: int32
+                    minimum: 0
+                    default: 0
+                    description: Number of items to skip (pagination offset)
+                take:
+                    type: integer
+                    format: int32
+                    minimum: 1
+                    default: 1000
+                    description: Maximum number of items to return (pagination limit)
+                query:
+                    type: string
+                    description: Search term to filter type names (empty returns all)
+
+        ListAssetsRequest:
+            type: object
+            required: [gameDataAssetId, skip, take, query, types]
+            properties:
+                gameDataAssetId:
+                    type: string
+                    description: Identifier of the game data asset context
+                skip:
+                    type: integer
+                    format: int32
+                    minimum: 0
+                    default: 0
+                    description: Number of items to skip (pagination offset)
+                take:
+                    type: integer
+                    format: int32
+                    minimum: 1
+                    default: 1000
+                    description: Maximum number of items to return (pagination limit)
+                query:
+                    type: string
+                    description: Search term to filter asset names (empty returns all)
+                types:
+                    type: array
+                    items:
+                        type: string
+                    description: Filter by specific asset types (empty returns all)
+
+        GetAssetThumbnailRequest:
+            type: object
+            required: [gameDataAssetId]
+            properties:
+                gameDataAssetId:
+                    type: string
+                    description: Identifier of the game data asset context
+                path:
+                    type: string
+                    nullable: true
+                    description: Project-relative path to the asset
+                size:
+                    type: integer
+                    format: int32
+                    nullable: true
+                    description: Preferred thumbnail dimensions (width x height in pixels)
+
+        # Response Schemas
+        ListFormulaTypesResponse:
+            type: object
+            required: [types, total]
+            properties:
+                types:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/FormulaType'
+                    description: List of matching formula types
+                total:
+                    type: integer
+                    format: int32
+                    nullable: true
+                    description: Total number of available types (before pagination)
+
+        ListAssetsResponse:
+            type: object
+            required: [assets, total]
+            properties:
+                assets:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/GameAsset'
+                    description: List of matching assets
+                total:
+                    type: integer
+                    format: int32
+                    nullable: true
+                    description: Total number of available assets (before pagination)
+
+        # Data Models
+        FormulaType:
+            type: object
+            description: A class/type that can be used in game data formulas
+            required: [sourceCodeLanguage, name, fullName, kind]
+            properties:
+                fullName:
+                    type: string
+                    description: Fully qualified type name (including namespace/package)
+                kind:
+                    $ref: '#/components/schemas/FormulaTypeKind'
+                name:
+                    type: string
+                    description: Display name of the type
+                packageOrNamespaceName:
+                    type: string
+                    nullable: true
+                    description: Namespace/package containing the type
+                moduleName:
+                    type: string
+                    nullable: true
+                    description: Containing module/assembly/library
+                sourceCodeLanguage:
+                    type: string
+                    description: Programming language the type is defined in
+
+        FormulaTypeKind:
+            type: string
+            enum: [class, enum, interface, structure, delegate]
+            description: Classification of formula type
+
+        GameAsset:
+            type: object
+            description: A game asset that can be referenced from game data
+            required: [name, hasThumbnail, type, path]
+            properties:
+                name:
+                    type: string
+                    description: Display name of the asset
+                hasThumbnail:
+                    type: boolean
+                    description: Whether the asset has an available thumbnail
+                type:
+                    type: string
+                    description: Type/category of the asset
+                path:
+                    type: string
+                    description: Project-relative path to the asset

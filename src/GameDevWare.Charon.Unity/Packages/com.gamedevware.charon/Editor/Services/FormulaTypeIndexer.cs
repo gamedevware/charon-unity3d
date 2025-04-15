@@ -22,13 +22,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using GameDevWare.Charon.Editor.Services.ResourceServerApi;
 using WeightedFormulaType = System.Collections.Generic.KeyValuePair<GameDevWare.Charon.Editor.Services.ResourceServerApi.FormulaType, float>;
 
 namespace GameDevWare.Charon.Editor.Services
 {
-	public class FormulaTypeIndexer
+	internal class FormulaTypeIndexer
 	{
 		private readonly IComparer<WeightedFormulaType> weightedTypeInformationComparer;
 		private readonly Dictionary<string, string> aliases;

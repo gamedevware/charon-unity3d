@@ -24,7 +24,7 @@ using System.Runtime.Serialization;
 
 namespace GameDevWare.Charon.Editor.Services.ResourceServerApi
 {
-	public sealed class FormulaType
+	internal sealed class FormulaType
 	{
 		[DataMember(Name = "sourceCodeLanguage")]
 		public string SourceCodeLanguage;

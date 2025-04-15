@@ -24,7 +24,7 @@ using System.Runtime.Serialization;
 
 namespace GameDevWare.Charon.Editor.Services.ResourceServerApi
 {
-	public enum FormulaTypeKind
+	internal enum FormulaTypeKind
 	{
 		[DataMember(Name = "class")]
 		Class = 0,

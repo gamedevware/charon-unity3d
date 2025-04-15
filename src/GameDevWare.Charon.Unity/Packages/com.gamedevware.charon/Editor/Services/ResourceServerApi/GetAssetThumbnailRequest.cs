@@ -25,12 +25,13 @@ using System.Runtime.Serialization;
 namespace GameDevWare.Charon.Editor.Services.ResourceServerApi
 {
 	[DataContract]
-	internal class ListFormulaTypesResponse
+	internal class GetAssetThumbnailRequest
 	{
-		[DataMember(Name = "types")]
-		public FormulaType[] Types;
-
-		[DataMember(Name = "total")]
-		public int Total;
+		[DataMember(Name = "gameDataAssetId")]
+		public string GameDataAssetId;
+		[DataMember(Name = "path")]
+		public string Path;
+		[DataMember(Name = "size")]
+		public int? Size;
 	}
 }
