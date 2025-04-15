@@ -270,6 +270,8 @@ namespace GameDevWare.Charon.Editor.Services
 			var response = new HttpResponseMessage(HttpStatusCode.OK);
 			this.AddCorsHeaders(request, response);
 
+			await this.uiTaskScheduler.SwitchTo();
+
 			var thumbnailBytes = this.assetIndexer.GetAssetThumbnail
 			(
 				getAssetThumbnailRequest.Path,
@@ -301,6 +303,8 @@ namespace GameDevWare.Charon.Editor.Services
 
 			var response = new HttpResponseMessage(HttpStatusCode.OK);
 			this.AddCorsHeaders(request, response);
+
+			await this.uiTaskScheduler.SwitchTo();
 
 			var listAssetsResponse = this.assetIndexer.ListAssets
 			(

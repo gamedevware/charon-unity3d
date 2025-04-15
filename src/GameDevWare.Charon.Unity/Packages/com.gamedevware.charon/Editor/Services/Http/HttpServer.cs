@@ -39,6 +39,7 @@ namespace GameDevWare.Charon.Editor.Services.Http
 	public class HttpServer : IDisposable
 	{
 		private const int DEFAULT_BUFFER_SIZE = 1024 * 64;
+		private const int MAX_CONNECTION_REUSE_COUNT = 200;
 
 #if UNITY_EDITOR_WIN
 		// P/Invoke declarations for SetHandleInformation
@@ -142,31 +143,53 @@ namespace GameDevWare.Charon.Editor.Services.Http
 
 			var stage = STAGE_RECEIVING_REQUEST_HEADERS;
 			var incomingRequestStream = this.GetMemoryStream();
-			var buffer = this.GetBuffer();
+			var requestBuffer = this.GetBuffer();
+			var responseBuffer = this.GetBuffer();
+			var requestNumber = 0;
 			try
 			{
-				var read = 0;
-				var offset = 0;
-				while ((read = await httpStream.ReadAsync(buffer, offset, buffer.Length - offset, CancellationToken.None)) > 0)
+				var requestBufferAvailable = 0;
+				while (true)
 				{
-					offset += read;
-
-					var headersEndIndex = Http11Protocol.GetHeadersEndIndex(buffer.AsSpan(0, offset), skipStartingNewLines: true);
-					if (headersEndIndex < 0)
+					var read = 0;
+					var headersEndIndex = -1;
+					stage = STAGE_RECEIVING_REQUEST_HEADERS;
+					do
 					{
-						if (offset == buffer.Length)
+						requestBufferAvailable += read;
+
+						headersEndIndex = Http11Protocol.GetHeadersEndIndex(requestBuffer.AsSpan(0, requestBufferAvailable), skipStartingNewLines: true);
+						if (headersEndIndex < 0)
 						{
-							throw new WebException($"HTTP request line and headers too long (> {buffer.Length} bytes).", WebExceptionStatus.ReceiveFailure);
+							if (requestBufferAvailable == requestBuffer.Length)
+							{
+								throw new WebException($"HTTP request line and headers too long (> {requestBuffer.Length} bytes).",
+									WebExceptionStatus.ReceiveFailure);
+							}
+
+							continue;
 						}
 
-						continue;
+						break;
+					} while ((read = await httpStream.ReadAsync(requestBuffer, requestBufferAvailable, requestBuffer.Length - requestBufferAvailable, CancellationToken.None)) > 0);
+
+					if (headersEndIndex < 0)
+					{
+						if (requestBufferAvailable > 0)
+						{
+							throw new WebException("Connection is closed while receiving next request.", WebExceptionStatus.ConnectionClosed);
+						}
+
+						break;
 					}
 
-					var requestMessage = this.ReadRequestHead(buffer.AsSpan(0, headersEndIndex), out var requestBody);
+					requestNumber++;
+
+					var requestMessage = this.ReadRequestHead(requestBuffer.AsSpan(0, headersEndIndex), out var requestBody);
 
 					stage = STAGE_RECEIVING_REQUEST_BODY;
 
-					await ReadRequestBodyAsync(httpStream, requestBody, buffer, headersEndIndex, offset - headersEndIndex);
+					requestBufferAvailable = await ReadRequestBodyAsync(httpStream, requestBody, requestBuffer, headersEndIndex, requestBufferAvailable - headersEndIndex);
 
 					stage = STAGE_WAITING_RESPONSE;
 
@@ -184,8 +207,13 @@ namespace GameDevWare.Charon.Editor.Services.Http
 
 					stage = STAGE_SENDING_RESPONSE_HEADERS;
 
+					var isLast = requestNumber == MAX_CONNECTION_REUSE_COUNT ||
+						IsLastRequest(requestMessage.Headers, responseMessage.Headers);
+					var connectionHeader = isLast ? "close" : "keep-alive";
+					var keepAliveHeader = requestNumber == 1 && !isLast ? $"timeout=30, max={MAX_CONNECTION_REUSE_COUNT}" : null;
+
 					await Http11Protocol.WriteResponseHeadAsync(
-						httpStream, buffer,
+						httpStream, responseBuffer,
 						(int)responseMessage.StatusCode,
 						responseMessage.StatusCode.ToString(),
 						this.defaultHeaders,
@@ -193,8 +221,8 @@ namespace GameDevWare.Charon.Editor.Services.Http
 						responseMessage.Content?.Headers,
 						(responseContentStream?.Length ?? 0).ToString(),
 						transferEncoding: null,
-						connectionHeader: "close",
-						keepAliveHeader: null
+						connectionHeader: connectionHeader,
+						keepAliveHeader: keepAliveHeader
 					);
 
 					stage = STAGE_SENDING_RESPONSE_BODY;
@@ -205,13 +233,17 @@ namespace GameDevWare.Charon.Editor.Services.Http
 					}
 
 					await httpStream.FlushAsync(CancellationToken.None).ConfigureAwait(false);
-					requestSocket.Shutdown(SocketShutdown.Send);
 
 					stage = STAGE_SENDING_RESPONSE_DONE;
-					break;
+
+					if (isLast)
+					{
+						break;
+					}
 				}
 
-				while (await httpStream.ReadAsync(buffer, 0, buffer.Length, CancellationToken.None) > 0)
+				requestSocket.Shutdown(SocketShutdown.Send);
+				while (await httpStream.ReadAsync(responseBuffer, 0, responseBuffer.Length, CancellationToken.None) > 0)
 				{
 					// drain socket
 				}
@@ -227,7 +259,7 @@ namespace GameDevWare.Charon.Editor.Services.Http
 					await this.WriteStatusCodeAsync
 					(
 						requestSocket,
-						buffer,
+						responseBuffer,
 						new HttpResponseMessage(HttpStatusCode.InternalServerError)
 					).IgnoreFault().ConfigureAwait(false);
 				}
@@ -235,7 +267,8 @@ namespace GameDevWare.Charon.Editor.Services.Http
 			finally
 			{
 				this.ReturnMemoryStream(incomingRequestStream);
-				this.ReturnBuffer(buffer);
+				this.ReturnBuffer(responseBuffer);
+				this.ReturnBuffer(requestBuffer);
 			}
 
 			static string GetRemoteEndpoint(Socket socket)
@@ -323,6 +356,7 @@ namespace GameDevWare.Charon.Editor.Services.Http
 					string.Equals(headerName, "Last-Modified", StringComparison.OrdinalIgnoreCase);
 			}
 		}
+
 		private static NameValueCollection ReadRequestHeaders(Span<byte> requestLine)
 		{
 			var headers = new NameValueCollection();
@@ -394,7 +428,9 @@ namespace GameDevWare.Charon.Editor.Services.Http
 		{
 			if (requestBody == null)
 			{
-				return offset;
+				// move to the start of buffer
+				Buffer.BlockCopy(buffer, offset, buffer, 0, count);
+				return count; // new count
 			}
 
 			var bodyLength = (int)requestBody.Length;
@@ -406,7 +442,8 @@ namespace GameDevWare.Charon.Editor.Services.Http
 				requestBody.Write(buffer, offset, bodyLength);
 				requestBody.Position = 0;
 
-				return offset + bodyLength;
+				Buffer.BlockCopy(buffer, offset + bodyLength, buffer, 0, count - bodyLength);
+				return count - bodyLength; // new count
 			}
 
 			var toWrite = bodyLength - (int)requestBody.Position;
@@ -423,9 +460,8 @@ namespace GameDevWare.Charon.Editor.Services.Http
 			}
 
 			requestBody.Position = 0;
-			return 0;
+			return 0; // new count
 		}
-
 		private async Task WriteStatusCodeAsync(Socket requestSocket, byte[] buffer, HttpResponseMessage responseMessage)
 		{
 			{
@@ -445,7 +481,6 @@ namespace GameDevWare.Charon.Editor.Services.Http
 			}
 			requestSocket.Shutdown(SocketShutdown.Both);
 		}
-
 		private static WebException ProtocolErrorWebException(HttpParseResult result)
 		{
 			return result switch {
@@ -462,6 +497,37 @@ namespace GameDevWare.Charon.Editor.Services.Http
 				HttpParseResult.Ok => throw new ArgumentException("Invalid parse result value.", nameof(result)),
 				_ => throw new ArgumentOutOfRangeException(nameof(result), result, null)
 			};
+		}
+		private static bool IsLastRequest(HttpRequestHeaders requestMessageHeaders, HttpResponseHeaders responseMessageHeaders)
+		{
+			if (requestMessageHeaders.Contains("Connection"))
+			{
+				foreach (var connectionOption in requestMessageHeaders.GetValues("Connection"))
+				{
+					if (string.Equals(connectionOption, "close", StringComparison.OrdinalIgnoreCase))
+					{
+						return true; // Connection: close in Request
+					}
+					else if (string.Equals(connectionOption, "upgrade", StringComparison.OrdinalIgnoreCase))
+					{
+						return true; // Connection: Upgrade in Request
+					}
+				}
+			}
+
+			if (responseMessageHeaders.Contains("Connection"))
+			{
+				foreach (var connectionOption in responseMessageHeaders.GetValues("Connection"))
+				{
+					if (string.Equals(connectionOption, "close", StringComparison.OrdinalIgnoreCase))
+					{
+						return true; // Connection: close in Response
+					}
+				}
+			}
+
+
+			return false;
 		}
 
 		private MemoryStream GetMemoryStream()
