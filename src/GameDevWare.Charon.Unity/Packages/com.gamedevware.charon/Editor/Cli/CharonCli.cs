@@ -121,6 +121,7 @@ namespace GameDevWare.Charon.Editor.Cli
 					StartInfo = {
 						EnvironmentVariables = {
 							{ "DOTNET_CONTENTROOT", CharonFileUtils.CharonAppContentPath },
+							{ "STANDALONE__GAMEASSETSPATH", Path.GetFullPath("./") },
 
 							//
 							{ "CHARON_API_SERVER", settings.GetServerAddressUrl().OriginalString },
@@ -1637,6 +1638,7 @@ namespace GameDevWare.Charon.Editor.Cli
 						{ "DOTNET_CONTENTROOT", CharonFileUtils.CharonAppContentPath },
 						{ "CHARON_API_KEY", apiKey ?? string.Empty },
 
+						{ "STANDALONE__GAMEASSETSPATH", Path.GetFullPath("./") },
 						{ "SERILOG__WRITETO__0__NAME", "File" }, {
 							"SERILOG__WRITETO__0__ARGS__PATH", Path.GetFullPath(Path.Combine(CharonFileUtils.LibraryCharonLogsPath,
 								$"{DateTime.UtcNow:yyyy_MM_dd_hh}.charon.unity.log"))
