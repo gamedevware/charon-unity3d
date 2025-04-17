@@ -32,6 +32,8 @@ namespace GameDevWare.Charon.Editor.Services.ResourceServerApi
 		public string Name;
 		[DataMember(Name = "hasThumbnail")]
 		public bool HasThumbnail;
+		[DataMember(Name = "thumbnailHash")]
+		public string ThumbnailHash;
 		[DataMember(Name = "type")]
 		public string Type;
 		[DataMember(Name = "path")]

@@ -38,9 +38,11 @@ namespace GameDevWare.Charon.Editor.Services
 					continue;
 				}
 
+				var thumbnail = AssetPreview.GetMiniThumbnail(unityObject);
 				foundAssets.Add(new GameAsset {
 					Name = unityObject.name,
-					HasThumbnail = AssetPreview.GetMiniThumbnail(unityObject) != null,
+					HasThumbnail = thumbnail != null,
+					ThumbnailHash =  thumbnail != null ? thumbnail.GetHashCode().ToString("x8") : "",
 					Path =  assetPath,
 					Type = unityObject.GetType().Name
 				});
