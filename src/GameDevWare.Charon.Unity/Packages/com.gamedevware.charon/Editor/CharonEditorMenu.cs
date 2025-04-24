@@ -174,9 +174,13 @@ namespace GameDevWare.Charon.Editor
 		[MenuItem("Tools/Charon/Check for Updates...", false, 28)]
 		public static void CheckUpdates()
 		{
+#if UNITY_2021_3_OR_NEWER
+			UnityEditor.PackageManager.UI.Window.Open("com.gamedevware.charon");
+#else
 			var packageManagerWindowType = typeof(PackageManagerExtensions).Assembly.GetType("UnityEditor.PackageManager.UI.PackageManagerWindow", throwOnError: true);
 			var openWindowMethod = packageManagerWindowType.GetMethod("OpenPackageManager", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)!;
 			openWindowMethod.Invoke(null, new object[] { "com.gamedevware.charon" });
+#endif
 		}
 
 		[MenuItem("Tools/Charon/Settings...", false, 31)]
