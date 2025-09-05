@@ -20,6 +20,8 @@ tags:
       description: Operations for managing formula types and classes
     - name: assets
       description: Operations for managing game assets
+    - name: server
+      description: Operations related to this resource server.
 
 paths:
     '/api/commands/generate-code':
@@ -126,6 +128,25 @@ paths:
                                 format: binary
                 '404':
                     description: Requested asset not found or has no thumbnail available
+
+    '/api/server/info':
+        post:
+            tags:
+                - server
+            summary: Retrieve asset server metadata and version information
+            description: >-
+                Returns comprehensive information about the asset resource server including
+                software versions, API compatibility, and platform details. This endpoint
+                is essential for client applications to determine compatibility and
+                capabilities when connecting to Unity/Unreal Engine asset servers.
+            operationId: getServerInfo
+            responses:
+                '200':
+                    description: Successful response containing server metadata and version information
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ResourceServerInfo'
 
 components:
     schemas:
@@ -297,3 +318,29 @@ components:
                 path:
                     type: string
                     description: Project-relative path to the asset
+
+        ResourceServerInfo:
+            type: object
+            description: Contains metadata and version information about the asset resource server
+            required: [title, version, apiVersion, platformName, platformVersion]
+            properties:
+                title:
+                    type: string
+                    description: Human-readable identifier for the resource server (typically represents product, project, or user)
+                    example: "MyGame Project Assets"
+                version:
+                    type: string
+                    description: Current version of the resource server software
+                    example: "2.1.4"
+                apiVersion:
+                    type: string
+                    description: Version of the API specification implemented by this server
+                    example: "v1.3.0"
+                platformName:
+                    type: string
+                    description: Name of the runtime platform hosting the resource server
+                    example: "Unity"
+                platformVersion:
+                    type: string
+                    description: Version of the platform runtime environment
+                    example: "2022.3.15f1"
