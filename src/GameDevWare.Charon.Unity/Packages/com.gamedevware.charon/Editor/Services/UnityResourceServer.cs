@@ -142,6 +142,10 @@ namespace GameDevWare.Charon.Editor.Services
 			{
 				response = await this.OnGetAssetThumbnailAsync(request).ConfigureAwait(false);
 			}
+			else if (localPath.StartsWith("/api/server/info", StringComparison.OrdinalIgnoreCase))
+			{
+				response = await this.OnGetServerInfoAsync(request).ConfigureAwait(false);
+			}
 			else
 			{
 				response = new HttpResponseMessage(HttpStatusCode.NotFound) { RequestMessage = request };
@@ -316,6 +320,22 @@ namespace GameDevWare.Charon.Editor.Services
 
 			response.StatusCode = HttpStatusCode.OK;
 			this.WriteResponseBody(listAssetsResponse, response);
+			return response;
+		}
+		private async Task<HttpResponseMessage> OnGetServerInfoAsync(HttpRequestMessage request)
+		{
+			if (!string.Equals(request.Method.Method, "GET", StringComparison.OrdinalIgnoreCase))
+				throw new InvalidOperationException($"GET method is expected for [{request.Method}]{request.RequestUri} endpoint.");
+
+			var response = new HttpResponseMessage(HttpStatusCode.OK);
+			this.AddCorsHeaders(request, response);
+
+			await this.uiTaskScheduler.SwitchTo();
+
+			var resourceServerInfo = ResourceServerInfo.Gather();
+
+			response.StatusCode = HttpStatusCode.OK;
+			this.WriteResponseBody(resourceServerInfo, response);
 			return response;
 		}
 
