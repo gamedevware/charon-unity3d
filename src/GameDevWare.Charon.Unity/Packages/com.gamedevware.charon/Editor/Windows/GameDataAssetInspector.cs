@@ -114,12 +114,15 @@ namespace GameDevWare.Charon.Editor.Windows
 			}
 
 			GUI.enabled = this.gameDataFile == null;
+
 			var newGameDataFile = EditorGUILayout.ObjectField(Resources.UI_UNITYPLUGIN_INSPECTOR_GAME_DATA_FILE, this.gameDataFile, typeof(UnityObject), false);
 			if (newGameDataFile != null && newGameDataFile != this.gameDataFile)
 			{
 				this.gameDataSettings.gameDataFileGuid = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(newGameDataFile));
 				this.gameDataFile = newGameDataFile;
 			}
+
+			EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_WINDOW_CHARON_PLUGIN_VERSION_LABEL, CharonSettingsWindow.CharonPluginVersion);
 
 			GUI.enabled = true;
 
@@ -138,7 +141,6 @@ namespace GameDevWare.Charon.Editor.Windows
 			}
 			EditorGUILayout.EndHorizontal();
 			EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_INSPECTOR_GAME_DATA_VERSION_LABEL, gameDataAsset.GameDataVersion);
-
 			GUI.enabled = true;
 
 			this.CodeGenerationFold = EditorGUILayout.BeginFoldoutHeaderGroup(this.CodeGenerationFold, Resources.UI_UNITYPLUGIN_INSPECTOR_CODE_GENERATION_LABEL);

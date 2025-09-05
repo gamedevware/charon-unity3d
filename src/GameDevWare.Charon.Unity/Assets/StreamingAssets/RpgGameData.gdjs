@@ -1,7 +1,7 @@
 { 
-	"ToolsVersion": "2025.0.1.0", 
-	"RevisionHash": "67bf36bc26224e70f0f30ddd", 
-	"ChangeNumber": 7, 
+	"ToolsVersion": "2025.3.2.0", 
+	"RevisionHash": "6822012dcacd4a60387f420e", 
+	"ChangeNumber": 16, 
 	"Collections": { 
 		"ProjectSettings": [ 
 			{ 
@@ -10,7 +10,8 @@
 				"PrimaryLanguage": "en-US", 
 				"Languages": null, 
 				"Copyright": "Copyright 2025 (c) GameDevWare", 
-				"Version": "1.0.0.0" 
+				"Version": "1.0.0.0", 
+				"Extensions": null 
 			} 
 		], 
 		"Schema": [ 
@@ -21,10 +22,11 @@
 				"Type": 0, 
 				"Description": null, 
 				"IdGenerator": 1, 
-				"Specification": "classgen=skip&icon=blueprint&group=Metadata", 
+				"Specification": "icon=svg%2Fschema&group=Metadata&menuVisibility=hidden", 
 				"Properties": [ 
 					{ 
 						"Id": "53bd34a376a21229219cb156", 
+						"SharedProperty": null, 
 						"Name": "Id", 
 						"DisplayName": "Id", 
 						"Description": null, 
@@ -38,6 +40,7 @@
 					}, 
 					{ 
 						"Id": "3ad672c130f6192149605540", 
+						"SharedProperty": null, 
 						"Name": "Name", 
 						"DisplayName": "Name", 
 						"Description": null, 
@@ -51,6 +54,7 @@
 					}, 
 					{ 
 						"Id": "16e2300bf6a23c488629e69d", 
+						"SharedProperty": null, 
 						"Name": "DisplayName", 
 						"DisplayName": "Display Name", 
 						"Description": null, 
@@ -64,6 +68,7 @@
 					}, 
 					{ 
 						"Id": "59f9e7dc923a364298db5e34", 
+						"SharedProperty": null, 
 						"Name": "Type", 
 						"DisplayName": "Type", 
 						"Description": null, 
@@ -77,6 +82,7 @@
 					}, 
 					{ 
 						"Id": "59088257983a362690093cf4", 
+						"SharedProperty": null, 
 						"Name": "Description", 
 						"DisplayName": "Description", 
 						"Description": null, 
@@ -90,6 +96,7 @@
 					}, 
 					{ 
 						"Id": "41a0a2dd9519fbb5e32c5932", 
+						"SharedProperty": null, 
 						"Name": "IdGenerator", 
 						"DisplayName": "Id Generator", 
 						"Description": null, 
@@ -103,6 +110,7 @@
 					}, 
 					{ 
 						"Id": "356560097834457153bb7b64", 
+						"SharedProperty": null, 
 						"Name": "Specification", 
 						"DisplayName": "Specification", 
 						"Description": null, 
@@ -116,6 +124,7 @@
 					}, 
 					{ 
 						"Id": "cec3d153d20fdb588c1161c9", 
+						"SharedProperty": null, 
 						"Name": "Properties", 
 						"DisplayName": "Properties", 
 						"Description": null, 
@@ -139,10 +148,11 @@
 				"Type": 2, 
 				"Description": null, 
 				"IdGenerator": 1, 
-				"Specification": "icon=gear&type=settings&group=Settings", 
+				"Specification": "icon=svg%2Fsettings&type=settings&group=Settings&menuVisibility=hidden", 
 				"Properties": [ 
 					{ 
 						"Id": "59088258983a362690093d00", 
+						"SharedProperty": null, 
 						"Name": "Id", 
 						"DisplayName": "Id", 
 						"Description": null, 
@@ -156,6 +166,7 @@
 					}, 
 					{ 
 						"Id": "59088258983a362690093d01", 
+						"SharedProperty": null, 
 						"Name": "Name", 
 						"DisplayName": "Project Name", 
 						"Description": null, 
@@ -169,6 +180,7 @@
 					}, 
 					{ 
 						"Id": "59088259983a362690093d0f", 
+						"SharedProperty": null, 
 						"Name": "PrimaryLanguage", 
 						"DisplayName": "Primary Language", 
 						"Description": null, 
@@ -182,6 +194,7 @@
 					}, 
 					{ 
 						"Id": "59088259983a362690093d0d", 
+						"SharedProperty": null, 
 						"Name": "Languages", 
 						"DisplayName": "Languages", 
 						"Description": null, 
@@ -195,6 +208,7 @@
 					}, 
 					{ 
 						"Id": "59088259983a362690093d0b", 
+						"SharedProperty": null, 
 						"Name": "Copyright", 
 						"DisplayName": "Copyright", 
 						"Description": null, 
@@ -208,6 +222,7 @@
 					}, 
 					{ 
 						"Id": "59f9e7dc923a364298db5e33", 
+						"SharedProperty": null, 
 						"Name": "Version", 
 						"DisplayName": "Version", 
 						"Description": null, 
@@ -217,6 +232,20 @@
 						"Requirement": 3, 
 						"ReferenceType": null, 
 						"Size": 16, 
+						"Specification": "" 
+					}, 
+					{ 
+						"Id": "59f9e7dd983a364298db5f3c", 
+						"SharedProperty": null, 
+						"Name": "Extensions", 
+						"DisplayName": "Extensions", 
+						"Description": "", 
+						"DataType": 0, 
+						"DefaultValue": null, 
+						"Uniqueness": 0, 
+						"Requirement": 0, 
+						"ReferenceType": null, 
+						"Size": 4096, 
 						"Specification": "" 
 					} 
 				] 
@@ -232,6 +261,7 @@
 				"Properties": [ 
 					{ 
 						"Id": "59f5b0a730bb84165c06b548", 
+						"SharedProperty": null, 
 						"Name": "Id", 
 						"DisplayName": "Id", 
 						"Description": "", 
@@ -245,6 +275,7 @@
 					}, 
 					{ 
 						"Id": "59f5b0a730bb84165c06b549", 
+						"SharedProperty": null, 
 						"Name": "MinValue", 
 						"DisplayName": "Min Value", 
 						"Description": "Maximal value for this attribute", 
@@ -258,6 +289,7 @@
 					}, 
 					{ 
 						"Id": "59f5b0a730bb84165c06b54a", 
+						"SharedProperty": null, 
 						"Name": "MaxValue", 
 						"DisplayName": "Max Value", 
 						"Description": "Maximal value for this attribute", 
@@ -271,6 +303,7 @@
 					}, 
 					{ 
 						"Id": "59f5be2030bb84165c06b5da", 
+						"SharedProperty": null, 
 						"Name": "MinValueParameter", 
 						"DisplayName": "Min Value Parameter", 
 						"Description": "", 
@@ -287,6 +320,7 @@
 					}, 
 					{ 
 						"Id": "59f5bcec30bb84165c06b5bb", 
+						"SharedProperty": null, 
 						"Name": "MaxValueParameter", 
 						"DisplayName": "Max Value Parameter", 
 						"Description": "", 
@@ -303,6 +337,7 @@
 					}, 
 					{ 
 						"Id": "59f5beb730bb84165c06b5e2", 
+						"SharedProperty": null, 
 						"Name": "ValueKind", 
 						"DisplayName": "Value Kind", 
 						"Description": "", 
@@ -327,6 +362,7 @@
 				"Properties": [ 
 					{ 
 						"Id": "59f5b11030bb84165c06b54f", 
+						"SharedProperty": null, 
 						"Name": "Id", 
 						"DisplayName": "Id", 
 						"Description": null, 
@@ -340,6 +376,7 @@
 					}, 
 					{ 
 						"Id": "59f5b11030bb84165c06b550", 
+						"SharedProperty": null, 
 						"Name": "Parameter", 
 						"DisplayName": "Parameter", 
 						"Description": null, 
@@ -356,6 +393,7 @@
 					}, 
 					{ 
 						"Id": "59f5b11030bb84165c06b551", 
+						"SharedProperty": null, 
 						"Name": "Value", 
 						"DisplayName": "Value", 
 						"Description": null, 
@@ -369,6 +407,7 @@
 					}, 
 					{ 
 						"Id": "59f5dfea983a36197000369d", 
+						"SharedProperty": null, 
 						"Name": "Condition", 
 						"DisplayName": "Condition", 
 						"Description": null, 
@@ -396,6 +435,7 @@
 				"Properties": [ 
 					{ 
 						"Id": "59f5b1c830bb84165c06b557", 
+						"SharedProperty": null, 
 						"Name": "Id", 
 						"DisplayName": "Id", 
 						"Description": "", 
@@ -409,6 +449,7 @@
 					}, 
 					{ 
 						"Id": "59f5b1c830bb84165c06b559", 
+						"SharedProperty": null, 
 						"Name": "Cost", 
 						"DisplayName": "Cost", 
 						"Description": "Cost of provision in gold", 
@@ -422,6 +463,7 @@
 					}, 
 					{ 
 						"Id": "59f5b40530bb84165c06b571", 
+						"SharedProperty": null, 
 						"Name": "Item", 
 						"DisplayName": "Item", 
 						"Description": "", 
@@ -449,6 +491,7 @@
 				"Properties": [ 
 					{ 
 						"Id": "59f5b29330bb84165c06b55d", 
+						"SharedProperty": null, 
 						"Name": "Id", 
 						"DisplayName": "Id", 
 						"Description": null, 
@@ -462,6 +505,7 @@
 					}, 
 					{ 
 						"Id": "59f5b29330bb84165c06b55e", 
+						"SharedProperty": null, 
 						"Name": "Name", 
 						"DisplayName": "Name", 
 						"Description": null, 
@@ -475,6 +519,7 @@
 					}, 
 					{ 
 						"Id": "59f5b29330bb84165c06b55f", 
+						"SharedProperty": null, 
 						"Name": "Bio", 
 						"DisplayName": "Bio", 
 						"Description": null, 
@@ -488,6 +533,7 @@
 					}, 
 					{ 
 						"Id": "59f5b29330bb84165c06b560", 
+						"SharedProperty": null, 
 						"Name": "Religious", 
 						"DisplayName": "Religious", 
 						"Description": null, 
@@ -501,6 +547,7 @@
 					}, 
 					{ 
 						"Id": "59f9e7dd983a364298db5e3e", 
+						"SharedProperty": null, 
 						"Name": "DislikeHeroes", 
 						"DisplayName": "Dislike Heroes", 
 						"Description": "List of heroes which dislikes current hero.", 
@@ -517,6 +564,7 @@
 					}, 
 					{ 
 						"Id": "59f5b29330bb84165c06b561", 
+						"SharedProperty": null, 
 						"Name": "Provisions", 
 						"DisplayName": "Provisions", 
 						"Description": null, 
@@ -533,6 +581,7 @@
 					}, 
 					{ 
 						"Id": "59f9e7dd983a364298db5e3c", 
+						"SharedProperty": null, 
 						"Name": "ProvisionsCount", 
 						"DisplayName": "Provisions Count", 
 						"Description": null, 
@@ -546,6 +595,7 @@
 					}, 
 					{ 
 						"Id": "59f5b29330bb84165c06b562", 
+						"SharedProperty": null, 
 						"Name": "MovementForward", 
 						"DisplayName": "Movement Forward", 
 						"Description": "Maximum possible change in the position of the hero. Direction - forward.", 
@@ -559,6 +609,7 @@
 					}, 
 					{ 
 						"Id": "59f5b29330bb84165c06b563", 
+						"SharedProperty": null, 
 						"Name": "MovementBackward", 
 						"DisplayName": "Movement Backward", 
 						"Description": "Maximum possible change in the position of the hero. Direction - backward.", 
@@ -572,6 +623,7 @@
 					}, 
 					{ 
 						"Id": "59f9e586983a364298db5e1f", 
+						"SharedProperty": null, 
 						"Name": "Protection", 
 						"DisplayName": "Protection", 
 						"Description": "from 0.0 to 1.0 where 0.5 is 50%", 
@@ -585,6 +637,7 @@
 					}, 
 					{ 
 						"Id": "59f9e7dd983a364298db5e3b", 
+						"SharedProperty": null, 
 						"Name": "AccuracyModifier", 
 						"DisplayName": "Accuracy Modifier", 
 						"Description": null, 
@@ -598,6 +651,7 @@
 					}, 
 					{ 
 						"Id": "59f9e7dd983a364298db5e3a", 
+						"SharedProperty": null, 
 						"Name": "StunResistance", 
 						"DisplayName": "Stun Resistance", 
 						"Description": "from 0.0 to 1.0 where 0.5 is 50%", 
@@ -611,6 +665,7 @@
 					}, 
 					{ 
 						"Id": "59f9e7dd983a364298db5e39", 
+						"SharedProperty": null, 
 						"Name": "BlightResistance", 
 						"DisplayName": "Blight Resistance", 
 						"Description": "from 0.0 to 1.0 where 0.5 is 50%", 
@@ -624,6 +679,7 @@
 					}, 
 					{ 
 						"Id": "59f9e7dd983a364298db5e38", 
+						"SharedProperty": null, 
 						"Name": "DiseaseResistance", 
 						"DisplayName": "Disease Resistance", 
 						"Description": "from 0.0 to 1.0 where 0.5 is 50%", 
@@ -637,6 +693,7 @@
 					}, 
 					{ 
 						"Id": "59f9e7dd983a364298db5e37", 
+						"SharedProperty": null, 
 						"Name": "DeathBlowResistance", 
 						"DisplayName": "Death Blow Resistance", 
 						"Description": "from 0.0 to 1.0 where 0.5 is 50%", 
@@ -650,6 +707,7 @@
 					}, 
 					{ 
 						"Id": "59f9e7dd983a364298db5e36", 
+						"SharedProperty": null, 
 						"Name": "MoveResistance", 
 						"DisplayName": "Move Resistance", 
 						"Description": "from 0.0 to 1.0 where 0.5 is 50%", 
@@ -663,6 +721,7 @@
 					}, 
 					{ 
 						"Id": "59f9e7dd983a364298db5e35", 
+						"SharedProperty": null, 
 						"Name": "BleedResistance", 
 						"DisplayName": "Bleed Resistance", 
 						"Description": "from 0.0 to 1.0 where 0.5 is 50%", 
@@ -676,6 +735,7 @@
 					}, 
 					{ 
 						"Id": "59f9e7dc983a364298db5e34", 
+						"SharedProperty": null, 
 						"Name": "DebuffResistance", 
 						"DisplayName": "Debuff Resistance", 
 						"Description": "from 0.0 to 1.0 where 0.5 is 50%", 
@@ -689,6 +749,7 @@
 					}, 
 					{ 
 						"Id": "59f9e7dc983a364298db5e33", 
+						"SharedProperty": null, 
 						"Name": "TrapResistance", 
 						"DisplayName": "Trap Resistance", 
 						"Description": "from 0.0 to 1.0 where 0.5 is 50%", 
@@ -702,6 +763,7 @@
 					}, 
 					{ 
 						"Id": "59f9e7dc983a364298db5e32", 
+						"SharedProperty": null, 
 						"Name": "Armors", 
 						"DisplayName": "Armors", 
 						"Description": null, 
@@ -718,6 +780,7 @@
 					}, 
 					{ 
 						"Id": "59f9e7dd983a364298db5e3d", 
+						"SharedProperty": null, 
 						"Name": "Weapons", 
 						"DisplayName": "Weapons", 
 						"Description": null, 
@@ -745,6 +808,7 @@
 				"Properties": [ 
 					{ 
 						"Id": "59f5b3f130bb84165c06b56c", 
+						"SharedProperty": null, 
 						"Name": "Id", 
 						"DisplayName": "Id", 
 						"Description": "", 
@@ -758,6 +822,7 @@
 					}, 
 					{ 
 						"Id": "59f5b48d30bb84165c06b575", 
+						"SharedProperty": null, 
 						"Name": "Name", 
 						"DisplayName": "Name", 
 						"Description": "", 
@@ -771,6 +836,7 @@
 					}, 
 					{ 
 						"Id": "59f5c37c30bb84165c06b638", 
+						"SharedProperty": null, 
 						"Name": "Description", 
 						"DisplayName": "Description", 
 						"Description": "", 
@@ -784,6 +850,7 @@
 					}, 
 					{ 
 						"Id": "59f5b3f130bb84165c06b56d", 
+						"SharedProperty": null, 
 						"Name": "StackSize", 
 						"DisplayName": "Stack Size", 
 						"Description": "Zero and one mean - non stackable", 
@@ -797,6 +864,7 @@
 					}, 
 					{ 
 						"Id": "59f5b3f130bb84165c06b56f", 
+						"SharedProperty": null, 
 						"Name": "GoldValue", 
 						"DisplayName": "Gold Value", 
 						"Description": "Gold value of treasure. Rewared upon completion of mission.", 
@@ -810,6 +878,7 @@
 					}, 
 					{ 
 						"Id": "59f5f573983a361970003701", 
+						"SharedProperty": null, 
 						"Name": "ActivationEffects", 
 						"DisplayName": "Activation Effects", 
 						"Description": "", 
@@ -837,6 +906,7 @@
 				"Properties": [ 
 					{ 
 						"Id": "59f5b57530bb84165c06b57a", 
+						"SharedProperty": null, 
 						"Name": "Id", 
 						"DisplayName": "Id", 
 						"Description": null, 
@@ -850,6 +920,7 @@
 					}, 
 					{ 
 						"Id": "59f5b57530bb84165c06b57b", 
+						"SharedProperty": null, 
 						"Name": "Name", 
 						"DisplayName": "Name", 
 						"Description": null, 
@@ -863,6 +934,7 @@
 					}, 
 					{ 
 						"Id": "59f5d286983a361970003657", 
+						"SharedProperty": null, 
 						"Name": "Flags", 
 						"DisplayName": "Flags", 
 						"Description": null, 
@@ -887,6 +959,7 @@
 				"Properties": [ 
 					{ 
 						"Id": "59f5b61630bb84165c06b580", 
+						"SharedProperty": null, 
 						"Name": "Id", 
 						"DisplayName": "Id", 
 						"Description": "", 
@@ -900,6 +973,7 @@
 					}, 
 					{ 
 						"Id": "59f5b61630bb84165c06b581", 
+						"SharedProperty": null, 
 						"Name": "Rarity", 
 						"DisplayName": "Rarity", 
 						"Description": "", 
@@ -913,6 +987,7 @@
 					}, 
 					{ 
 						"Id": "59f5b61630bb84165c06b582", 
+						"SharedProperty": null, 
 						"Name": "OriginDungeon", 
 						"DisplayName": "Origin Dungeon", 
 						"Description": "", 
@@ -929,6 +1004,7 @@
 					}, 
 					{ 
 						"Id": "59f5b61630bb84165c06b583", 
+						"SharedProperty": null, 
 						"Name": "HeroRestriction", 
 						"DisplayName": "Hero Restriction", 
 						"Description": "", 
@@ -945,6 +1021,7 @@
 					}, 
 					{ 
 						"Id": "59f5b65c30bb84165c06b586", 
+						"SharedProperty": null, 
 						"Name": "Item", 
 						"DisplayName": "Item", 
 						"Description": "", 
@@ -961,6 +1038,7 @@
 					}, 
 					{ 
 						"Id": "59f5ea78983a3619700036cf", 
+						"SharedProperty": null, 
 						"Name": "Effects", 
 						"DisplayName": "Effects", 
 						"Description": "", 
@@ -988,6 +1066,7 @@
 				"Properties": [ 
 					{ 
 						"Id": "59f5b7f330bb84165c06b58b", 
+						"SharedProperty": null, 
 						"Name": "Id", 
 						"DisplayName": "Id", 
 						"Description": "", 
@@ -1001,6 +1080,7 @@
 					}, 
 					{ 
 						"Id": "59f5b7f330bb84165c06b58c", 
+						"SharedProperty": null, 
 						"Name": "Name", 
 						"DisplayName": "Name", 
 						"Description": "", 
@@ -1014,6 +1094,7 @@
 					}, 
 					{ 
 						"Id": "59f5b7f330bb84165c06b58d", 
+						"SharedProperty": null, 
 						"Name": "Type", 
 						"DisplayName": "Type", 
 						"Description": "", 
@@ -1027,6 +1108,7 @@
 					}, 
 					{ 
 						"Id": "59f60de7983a3609c836dfcb", 
+						"SharedProperty": null, 
 						"Name": "SecondType", 
 						"DisplayName": "Second Type", 
 						"Description": "", 
@@ -1040,6 +1122,7 @@
 					}, 
 					{ 
 						"Id": "59f5b81230bb84165c06b592", 
+						"SharedProperty": null, 
 						"Name": "Parameters", 
 						"DisplayName": "Parameters", 
 						"Description": "", 
@@ -1056,6 +1139,7 @@
 					}, 
 					{ 
 						"Id": "59f5c19930bb84165c06b629", 
+						"SharedProperty": null, 
 						"Name": "Locations", 
 						"DisplayName": "Locations", 
 						"Description": "", 
@@ -1083,6 +1167,7 @@
 				"Properties": [ 
 					{ 
 						"Id": "59f5b9dd30bb84165c06b59b", 
+						"SharedProperty": null, 
 						"Name": "Id", 
 						"DisplayName": "Id", 
 						"Description": "", 
@@ -1096,6 +1181,7 @@
 					}, 
 					{ 
 						"Id": "59f5f304983a3619700036f2", 
+						"SharedProperty": null, 
 						"Name": "Type", 
 						"DisplayName": "Type", 
 						"Description": "", 
@@ -1109,6 +1195,7 @@
 					}, 
 					{ 
 						"Id": "59f5f304983a3619700036f3", 
+						"SharedProperty": null, 
 						"Name": "Amount", 
 						"DisplayName": "Amount", 
 						"Description": "", 
@@ -1133,6 +1220,7 @@
 				"Properties": [ 
 					{ 
 						"Id": "59f5baaa30bb84165c06b5a1", 
+						"SharedProperty": null, 
 						"Name": "Id", 
 						"DisplayName": "Id", 
 						"Description": null, 
@@ -1146,6 +1234,7 @@
 					}, 
 					{ 
 						"Id": "59f5d5cc983a361970003673", 
+						"SharedProperty": null, 
 						"Name": "Changes", 
 						"DisplayName": "Changes", 
 						"Description": null, 
@@ -1162,6 +1251,7 @@
 					}, 
 					{ 
 						"Id": "59f5e09e983a36197000369f", 
+						"SharedProperty": null, 
 						"Name": "Duration", 
 						"DisplayName": "Duration", 
 						"Description": "zero or empty - effect is permanent.", 
@@ -1175,6 +1265,7 @@
 					}, 
 					{ 
 						"Id": "59f5e09e983a3619700036a0", 
+						"SharedProperty": null, 
 						"Name": "DurationUnit", 
 						"DisplayName": "Duration Unit", 
 						"Description": null, 
@@ -1199,6 +1290,7 @@
 				"Properties": [ 
 					{ 
 						"Id": "59f5bac130bb84165c06b5a5", 
+						"SharedProperty": null, 
 						"Name": "Id", 
 						"DisplayName": "Id", 
 						"Description": null, 
@@ -1212,6 +1304,7 @@
 					}, 
 					{ 
 						"Id": "59f5bb6130bb84165c06b5ab", 
+						"SharedProperty": null, 
 						"Name": "Chance", 
 						"DisplayName": "Chance", 
 						"Description": "Chance of happening of this cleansing option relative to other options.", 
@@ -1225,6 +1318,7 @@
 					}, 
 					{ 
 						"Id": "59f5bac130bb84165c06b5a6", 
+						"SharedProperty": null, 
 						"Name": "Item", 
 						"DisplayName": "Item", 
 						"Description": "Cleansing item", 
@@ -1241,6 +1335,7 @@
 					}, 
 					{ 
 						"Id": "59f5bac130bb84165c06b5a7", 
+						"SharedProperty": null, 
 						"Name": "Loot", 
 						"DisplayName": "Loot", 
 						"Description": null, 
@@ -1257,6 +1352,7 @@
 					}, 
 					{ 
 						"Id": "59f5f121983a3619700036e8", 
+						"SharedProperty": null, 
 						"Name": "QuirkChance", 
 						"DisplayName": "Quirk Chance", 
 						"Description": "from 0.0 to 1.0 where 0.5 is 50%. Positive value is for positive quirks and negative for negative quirks.", 
@@ -1270,6 +1366,7 @@
 					}, 
 					{ 
 						"Id": "59f5f121983a3619700036e9", 
+						"SharedProperty": null, 
 						"Name": "DiseaseChance", 
 						"DisplayName": "Disease Chance", 
 						"Description": "from 0.0 to 1.0 where 0.5 is 50%", 
@@ -1283,6 +1380,7 @@
 					}, 
 					{ 
 						"Id": "59f5f121983a3619700036ea", 
+						"SharedProperty": null, 
 						"Name": "Effects", 
 						"DisplayName": "Effects", 
 						"Description": null, 
@@ -1299,6 +1397,7 @@
 					}, 
 					{ 
 						"Id": "59f5bac130bb84165c06b5a9", 
+						"SharedProperty": null, 
 						"Name": "ItemIsConsumed", 
 						"DisplayName": "Item Is Consumed", 
 						"Description": null, 
@@ -1323,6 +1422,7 @@
 				"Properties": [ 
 					{ 
 						"Id": "59f5bbc230bb84165c06b5af", 
+						"SharedProperty": null, 
 						"Name": "Id", 
 						"DisplayName": "Id", 
 						"Description": null, 
@@ -1336,6 +1436,7 @@
 					}, 
 					{ 
 						"Id": "59f5bbc230bb84165c06b5b0", 
+						"SharedProperty": null, 
 						"Name": "Type", 
 						"DisplayName": "Type", 
 						"Description": null, 
@@ -1349,6 +1450,7 @@
 					}, 
 					{ 
 						"Id": "59f5bbc230bb84165c06b5b1", 
+						"SharedProperty": null, 
 						"Name": "Name", 
 						"DisplayName": "Name", 
 						"Description": null, 
@@ -1362,6 +1464,7 @@
 					}, 
 					{ 
 						"Id": "59f5f25f983a3619700036ee", 
+						"SharedProperty": null, 
 						"Name": "Description", 
 						"DisplayName": "Description", 
 						"Description": null, 
@@ -1375,6 +1478,7 @@
 					}, 
 					{ 
 						"Id": "59f5bbc230bb84165c06b5b2", 
+						"SharedProperty": null, 
 						"Name": "CleansingOptions", 
 						"DisplayName": "Cleansing Options", 
 						"Description": "None mean - can't cleanse.", 
@@ -1391,6 +1495,7 @@
 					}, 
 					{ 
 						"Id": "59f5bbc230bb84165c06b5b3", 
+						"SharedProperty": null, 
 						"Name": "PlacementRestictions", 
 						"DisplayName": "Placement Restictions", 
 						"Description": null, 
@@ -1404,6 +1509,7 @@
 					}, 
 					{ 
 						"Id": "59f5c18430bb84165c06b627", 
+						"SharedProperty": null, 
 						"Name": "Locations", 
 						"DisplayName": "Locations", 
 						"Description": null, 
@@ -1431,6 +1537,7 @@
 				"Properties": [ 
 					{ 
 						"Id": "59f5d3a7983a361970003663", 
+						"SharedProperty": null, 
 						"Name": "Id", 
 						"DisplayName": "Id", 
 						"Description": null, 
@@ -1444,6 +1551,7 @@
 					}, 
 					{ 
 						"Id": "59f5d3a7983a361970003664", 
+						"SharedProperty": null, 
 						"Name": "Name", 
 						"DisplayName": "Name", 
 						"Description": null, 
@@ -1457,6 +1565,7 @@
 					}, 
 					{ 
 						"Id": "59f5e825983a3619700036bc", 
+						"SharedProperty": null, 
 						"Name": "Effects", 
 						"DisplayName": "Effects", 
 						"Description": null, 
@@ -1484,6 +1593,7 @@
 				"Properties": [ 
 					{ 
 						"Id": "59f5d728983a361970003685", 
+						"SharedProperty": null, 
 						"Name": "Id", 
 						"DisplayName": "Id", 
 						"Description": null, 
@@ -1497,6 +1607,7 @@
 					}, 
 					{ 
 						"Id": "59f5d728983a361970003686", 
+						"SharedProperty": null, 
 						"Name": "Name", 
 						"DisplayName": "Name", 
 						"Description": null, 
@@ -1510,6 +1621,7 @@
 					}, 
 					{ 
 						"Id": "59f5d728983a361970003687", 
+						"SharedProperty": null, 
 						"Name": "IsPositive", 
 						"DisplayName": "Is Positive", 
 						"Description": null, 
@@ -1523,6 +1635,7 @@
 					}, 
 					{ 
 						"Id": "59f5e48f983a3619700036b2", 
+						"SharedProperty": null, 
 						"Name": "Effects", 
 						"DisplayName": "Effects", 
 						"Description": null, 
@@ -1550,6 +1663,7 @@
 				"Properties": [ 
 					{ 
 						"Id": "59f5dedf983a361970003698", 
+						"SharedProperty": null, 
 						"Name": "Id", 
 						"DisplayName": "Id", 
 						"Description": null, 
@@ -1563,6 +1677,7 @@
 					}, 
 					{ 
 						"Id": "59f5dedf983a361970003699", 
+						"SharedProperty": null, 
 						"Name": "Description", 
 						"DisplayName": "Description", 
 						"Description": null, 
@@ -1576,6 +1691,7 @@
 					}, 
 					{ 
 						"Id": "59f5dedf983a36197000369a", 
+						"SharedProperty": null, 
 						"Name": "Check", 
 						"DisplayName": "Check", 
 						"Description": null, 
@@ -1589,6 +1705,7 @@
 					}, 
 					{ 
 						"Id": "8268c35b36363a980100001c", 
+						"SharedProperty": null, 
 						"Name": "UnboundCheck", 
 						"DisplayName": "Unbound Check", 
 						"Description": null, 
@@ -1613,6 +1730,7 @@
 				"Properties": [ 
 					{ 
 						"Id": "59f9e745983a364298db5e23", 
+						"SharedProperty": null, 
 						"Name": "Id", 
 						"DisplayName": "Id", 
 						"Description": "", 
@@ -1626,6 +1744,7 @@
 					}, 
 					{ 
 						"Id": "59f9e745983a364298db5e24", 
+						"SharedProperty": null, 
 						"Name": "Name", 
 						"DisplayName": "Name", 
 						"Description": "", 
@@ -1639,6 +1758,7 @@
 					}, 
 					{ 
 						"Id": "59f9e745983a364298db5e25", 
+						"SharedProperty": null, 
 						"Name": "DamageFrom", 
 						"DisplayName": "Damage From", 
 						"Description": "", 
@@ -1652,6 +1772,7 @@
 					}, 
 					{ 
 						"Id": "59f9e745983a364298db5e26", 
+						"SharedProperty": null, 
 						"Name": "DamageTo", 
 						"DisplayName": "Damage To", 
 						"Description": "", 
@@ -1665,6 +1786,7 @@
 					}, 
 					{ 
 						"Id": "59f9e745983a364298db5e27", 
+						"SharedProperty": null, 
 						"Name": "CriticalStrikeChance", 
 						"DisplayName": "Critical Strike Chance", 
 						"Description": "from 0.0 to 1.0 where 0.5 is 50%", 
@@ -1678,6 +1800,7 @@
 					}, 
 					{ 
 						"Id": "59f9e745983a364298db5e28", 
+						"SharedProperty": null, 
 						"Name": "Speed", 
 						"DisplayName": "Speed", 
 						"Description": "", 
@@ -1702,6 +1825,7 @@
 				"Properties": [ 
 					{ 
 						"Id": "59f9e7b6983a364298db5e2d", 
+						"SharedProperty": null, 
 						"Name": "Id", 
 						"DisplayName": "Id", 
 						"Description": null, 
@@ -1715,6 +1839,7 @@
 					}, 
 					{ 
 						"Id": "59f9e7b6983a364298db5e2e", 
+						"SharedProperty": null, 
 						"Name": "Name", 
 						"DisplayName": "Name", 
 						"Description": null, 
@@ -1728,6 +1853,7 @@
 					}, 
 					{ 
 						"Id": "59f9e7b6983a364298db5e2f", 
+						"SharedProperty": null, 
 						"Name": "Dodge", 
 						"DisplayName": "Dodge", 
 						"Description": "from 0.0 to 1.0 where 0.5 is 50%", 
@@ -1741,6 +1867,7 @@
 					}, 
 					{ 
 						"Id": "59f9e7b6983a364298db5e30", 
+						"SharedProperty": null, 
 						"Name": "HitPoints", 
 						"DisplayName": "Hit Points", 
 						"Description": null, 
@@ -1765,6 +1892,7 @@
 				"Properties": [ 
 					{ 
 						"Id": "5a1d78d107ff9a7b889cba7e", 
+						"SharedProperty": null, 
 						"Name": "Id", 
 						"DisplayName": "Id", 
 						"Description": "", 
@@ -1778,6 +1906,7 @@
 					}, 
 					{ 
 						"Id": "5a1d78d107ff9a7b889cba7f", 
+						"SharedProperty": null, 
 						"Name": "Item", 
 						"DisplayName": "Item", 
 						"Description": "", 
@@ -1794,6 +1923,7 @@
 					}, 
 					{ 
 						"Id": "5a1d78d107ff9a7b889cba80", 
+						"SharedProperty": null, 
 						"Name": "Count", 
 						"DisplayName": "Count", 
 						"Description": "", 
@@ -1818,6 +1948,7 @@
 				"Properties": [ 
 					{ 
 						"Id": "5a1d78de07ff9a7b889cba84", 
+						"SharedProperty": null, 
 						"Name": "Id", 
 						"DisplayName": "Id", 
 						"Description": null, 
@@ -1831,6 +1962,7 @@
 					}, 
 					{ 
 						"Id": "5a1d78de07ff9a7b889cba85", 
+						"SharedProperty": null, 
 						"Name": "Items", 
 						"DisplayName": "Items", 
 						"Description": null, 
@@ -1847,6 +1979,7 @@
 					}, 
 					{ 
 						"Id": "5a1d794107ff9a7b889cba88", 
+						"SharedProperty": null, 
 						"Name": "Heroes", 
 						"DisplayName": "Heroes", 
 						"Description": null, 
@@ -1863,6 +1996,7 @@
 					}, 
 					{ 
 						"Id": "5a1d797407ff9a7b889cba8b", 
+						"SharedProperty": null, 
 						"Name": "Location", 
 						"DisplayName": "Location", 
 						"Description": null, 
@@ -1883,13 +2017,14 @@
 				"Id": "d40d8eb1a23248b69b252eea", 
 				"Name": "SchemaProperty", 
 				"DisplayName": "Properties", 
-				"Type": 1, 
+				"Type": 0, 
 				"Description": null, 
 				"IdGenerator": 1, 
-				"Specification": "classgen=skip&type=component&group=Design", 
+				"Specification": "type=component&group=Metadata&icon=svg%2Fproperty&menuVisibility=hidden", 
 				"Properties": [ 
 					{ 
 						"Id": "dfd84fc9957e94f02f9f60cc", 
+						"SharedProperty": null, 
 						"Name": "Id", 
 						"DisplayName": "Id", 
 						"Description": null, 
@@ -1902,7 +2037,25 @@
 						"Specification": null 
 					}, 
 					{ 
+						"Id": "59f9e7dd983a364298db2e3d", 
+						"SharedProperty": null, 
+						"Name": "SharedProperty", 
+						"DisplayName": "Shared Property", 
+						"Description": "", 
+						"DataType": 28, 
+						"DefaultValue": null, 
+						"Uniqueness": 0, 
+						"Requirement": 0, 
+						"ReferenceType": { 
+							"Id": "d40d8eb1a23248b69b252eea", 
+							"DisplayName": "Properties" 
+						}, 
+						"Size": 0, 
+						"Specification": "" 
+					}, 
+					{ 
 						"Id": "bd453e1e7f1543a7133d7fb1", 
+						"SharedProperty": null, 
 						"Name": "Name", 
 						"DisplayName": "Name", 
 						"Description": null, 
@@ -1916,6 +2069,7 @@
 					}, 
 					{ 
 						"Id": "993520ecbe361cf06d060f2a", 
+						"SharedProperty": null, 
 						"Name": "DisplayName", 
 						"DisplayName": "Display Name", 
 						"Description": null, 
@@ -1929,6 +2083,7 @@
 					}, 
 					{ 
 						"Id": "59088257983a362690093cf6", 
+						"SharedProperty": null, 
 						"Name": "Description", 
 						"DisplayName": "Description", 
 						"Description": null, 
@@ -1942,6 +2097,7 @@
 					}, 
 					{ 
 						"Id": "7286478a63f200a094a1cdc8", 
+						"SharedProperty": null, 
 						"Name": "DataType", 
 						"DisplayName": "Data Type", 
 						"Description": null, 
@@ -1955,6 +2111,7 @@
 					}, 
 					{ 
 						"Id": "a15529ef753f70deed4af17e", 
+						"SharedProperty": null, 
 						"Name": "DefaultValue", 
 						"DisplayName": "Default Value", 
 						"Description": null, 
@@ -1968,6 +2125,7 @@
 					}, 
 					{ 
 						"Id": "caaa34c8708b5550c95004d9", 
+						"SharedProperty": null, 
 						"Name": "Uniqueness", 
 						"DisplayName": "Uniqueness", 
 						"Description": null, 
@@ -1981,6 +2139,7 @@
 					}, 
 					{ 
 						"Id": "d3e46e75b8a33b2b202f1a45", 
+						"SharedProperty": null, 
 						"Name": "Requirement", 
 						"DisplayName": "Requirement", 
 						"Description": null, 
@@ -1994,6 +2153,7 @@
 					}, 
 					{ 
 						"Id": "e3664a130c8c9f45220f08a7", 
+						"SharedProperty": null, 
 						"Name": "ReferenceType", 
 						"DisplayName": "Reference Type", 
 						"Description": null, 
@@ -2010,6 +2170,7 @@
 					}, 
 					{ 
 						"Id": "8ddc9671536310356d553f7b", 
+						"SharedProperty": null, 
 						"Name": "Size", 
 						"DisplayName": "Size", 
 						"Description": null, 
@@ -2023,6 +2184,7 @@
 					}, 
 					{ 
 						"Id": "f1c2a71b2da0b365a852ae7a", 
+						"SharedProperty": null, 
 						"Name": "Specification", 
 						"DisplayName": "Specification", 
 						"Description": null, 
@@ -5086,7 +5248,8 @@
 					"Id": "Antivenom", 
 					"Name": { 
 						"en-US": "Antivenom", 
-						"notes": null 
+						"notes": { 
+						} 
 					}, 
 					"Description": { 
 						"en-US": "Employed to counteract blights, poisons, and toxins.", 

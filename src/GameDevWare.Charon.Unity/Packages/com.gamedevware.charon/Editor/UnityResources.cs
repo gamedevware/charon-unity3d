@@ -86,7 +86,7 @@ namespace GameDevWare.Charon.Editor {
 		public const string UI_UNITYPLUGIN_VALIDATE_FAILED_DUE_ERRORS = "Validation of '{0}' failed due to errors: {1}.";
 		public const string UI_UNITYPLUGIN_VALIDATE_RUN_FOR = "Executing validation tool for {0}";
 		public const string UI_UNITYPLUGIN_VALIDATING_ASSETS = "Validating Assets...";
-		public const string UI_UNITYPLUGIN_WINDOW_CHARON_EDITOR_VERSION_LABEL = "Charon Editor Version";
+		public const string UI_UNITYPLUGIN_WINDOW_CHARON_PLUGIN_VERSION_LABEL = "Charon Plugin Version";
 		public const string UI_UNITYPLUGIN_ABOUT_IDLE_CLOSE_TIMEOUT_LABEL = "Process Idle Timeout";
 		public const string UI_UNITYPLUGIN_ABOUT_SERVER_ADDRESS_LABEL = "Server Address";
 		public const string UI_UNITYPLUGIN_ABOUT_EDITOR_APPLICATION_TYPE_LABEL = "Editor Application";

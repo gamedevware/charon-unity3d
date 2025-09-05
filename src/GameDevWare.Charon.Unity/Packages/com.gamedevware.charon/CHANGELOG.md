@@ -1,3 +1,6 @@
+# NEXT
+- Added plugin version label to asset's Inspector window. This will help in troubleshooting with screenshots.
+
 # 2025.1.2
 
 - Improved example code with additional comments for better clarity.

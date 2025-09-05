@@ -31,7 +31,7 @@ namespace GameDevWare.Charon.Editor.Windows
 	[Serializable]
 	public static class CharonSettingsWindow
 	{
-		private static string CharonEditorVersion = (typeof(CharonSettingsWindow).Assembly.GetName().Version ?? new Version()).ToString();
+		public static string CharonPluginVersion = (typeof(CharonSettingsWindow).Assembly.GetName().Version ?? new Version()).ToString();
 
 		[SettingsProvider]
 		public static SettingsProvider CreateCharonSettingsProvider()
@@ -44,7 +44,7 @@ namespace GameDevWare.Charon.Editor.Windows
 
 				// Populate the search keywords to enable smart search filtering and label highlighting:
 				keywords = new HashSet<string>(new[] {
-					Resources.UI_UNITYPLUGIN_WINDOW_CHARON_EDITOR_VERSION_LABEL,
+					Resources.UI_UNITYPLUGIN_WINDOW_CHARON_PLUGIN_VERSION_LABEL,
 					Resources.UI_UNITYPLUGIN_ABOUT_IDLE_CLOSE_TIMEOUT_LABEL,
 					Resources.UI_UNITYPLUGIN_ABOUT_SERVER_ADDRESS_LABEL,
 					Resources.UI_UNITYPLUGIN_WINDOW_BROWSER_PATH,
@@ -63,7 +63,7 @@ namespace GameDevWare.Charon.Editor.Windows
 
 			EditorGUILayout.BeginHorizontal();
 			{
-				EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_WINDOW_CHARON_EDITOR_VERSION_LABEL, CharonEditorVersion);
+				EditorGUILayout.LabelField(Resources.UI_UNITYPLUGIN_WINDOW_CHARON_PLUGIN_VERSION_LABEL, CharonPluginVersion);
 				GUILayout.Space(5);
 				if (GUILayout.Button(Resources.UI_UNITYPLUGIN_WINDOW_CHECK_UPDATES_BUTTON, EditorStyles.miniButton, GUILayout.Width(120), GUILayout.Height(18)))
 				{
