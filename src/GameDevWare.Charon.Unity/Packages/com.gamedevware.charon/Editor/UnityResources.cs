@@ -96,6 +96,7 @@ namespace GameDevWare.Charon.Editor {
 		public const string UI_UNITYPLUGIN_WINDOW_EDITOR_LAUNCHING_EXECUTABLE = "Launching editor application...";
 		public const string UI_UNITYPLUGIN_WINDOW_EDITOR_OPENING_BROWSER = "Opening web browser window...";
 		public const string UI_UNITYPLUGIN_WINDOW_FAILED_TO_START_EDITOR_TIMEOUT = "Failed to start the Game Data editor: Operation aborted due to timeout.";
+		public const string UI_UNITYPLUGIN_WINDOW_FAILED_TO_START_EDITOR_EXITED = "Charon editor process '{0}' has unexpectedly exited with error code {1}.";
 		public const string UI_UNITYPLUGIN_WINDOW_INFO_GROUP = "Info:";
 		public const string UI_UNITYPLUGIN_WINDOW_SETTINGS_GROUP = "Settings:";
 		public const string UI_UNITYPLUGIN_WINDOW_CHECK_UPDATES_BUTTON = "Check Updates...";

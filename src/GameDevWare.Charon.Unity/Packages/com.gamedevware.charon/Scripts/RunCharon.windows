@@ -75,12 +75,14 @@ goto Exit_Failure
 
 :Exit_No_Dotnet_Installed
 set EXITCODE=-3
-echo .NET SDK is not installed. 1>&2
+echo .NET SDK 8+ is not installed. 1>&2
+echo Please install .NET from https://dotnet.microsoft.com/en-us/download 1>&2
 goto Exit_Failure
 
 :Old_Dotnet_Installed
 set EXITCODE=-4
-echo ".NET version %DOTNET_VERSION% is installed, but it is not version 8 or later." 1>&2
+echo .NET SDK version %DOTNET_VERSION% is installed, while 8 or later is required. 1>&2
+echo Please install .NET SDK from https://dotnet.microsoft.com/en-us/download 1>&2
 goto Exit_Failure
 
 :Exit_Failure

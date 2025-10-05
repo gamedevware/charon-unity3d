@@ -10,7 +10,7 @@ SCRIPT_DIR=$(cd "`dirname "$0"`" && pwd)
 # Check if dotnet is installed
 check_dotnet() {
     if ! command -v dotnet &> /dev/null; then
-        echo ".NET SDK is not installed." >&2
+        echo ".NET SDK 8+ is not installed." >&2
         echo "Please install .NET SDK from https://dotnet.microsoft.com/en-us/download" >&2
         exit 1
     fi
@@ -29,8 +29,8 @@ get_dotnet_version() {
 # Check if the major version is 8 or later
 check_dotnet_version() {
     if [ "$MAJOR_VERSION" -lt 8 ]; then
-        echo ".NET version $DOTNET_VERSION is installed, but it is not version 8 or later." >&2
-        echo "Please install .NET 8 or later from https://dotnet.microsoft.com/en-us/download" >&2
+        echo ".NET SDK version $DOTNET_VERSION is installed, while 8 or later is required." >&2
+        echo "Please install .NET SDK 8 or later from https://dotnet.microsoft.com/en-us/download" >&2
         exit 1
     fi
 }

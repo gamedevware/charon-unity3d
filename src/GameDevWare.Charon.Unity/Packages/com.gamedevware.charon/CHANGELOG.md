@@ -1,5 +1,6 @@
 # NEXT
 - Added plugin version label to asset's Inspector window. This will help in troubleshooting with screenshots.
+- Made sure that "missing .NET SDK "message goes to Unity logs if editor fails to start.
 
 # 2025.1.2
 

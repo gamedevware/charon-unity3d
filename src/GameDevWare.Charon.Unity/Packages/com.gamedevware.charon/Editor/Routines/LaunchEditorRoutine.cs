@@ -32,6 +32,7 @@ using JetBrains.Annotations;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 using UnityObject = UnityEngine.Object;
 using Random = System.Random;
 
@@ -161,12 +162,12 @@ namespace GameDevWare.Charon.Editor.Routines
 			var gameDataEditorUrl = new Uri("http://localhost:" + randomPort + "/");
 
 			var gameDataPath = Path.GetFullPath(AssetDatabase.GUIDToAssetPath(gameDataSettings.gameDataFileGuid) ?? "");
-			await LaunchLocalCharon(gameDataPath, gameDataEditorUrl, progressCallback, cancellation).ConfigureAwait(true);
+			var charonServerProcess = await LaunchLocalCharon(gameDataPath, gameDataEditorUrl, progressCallback, cancellation).ConfigureAwait(true);
 
 			cancellation.ThrowIfScriptsCompiling();
 			cancellation.ThrowIfCancellationRequested();
 
-			await WaitForStart(gameDataEditorUrl, progressCallback.Sub(0.50f, 1.00f), cancellation).ConfigureAwait(true);
+			await WaitForStart(charonServerProcess, gameDataEditorUrl, progressCallback.Sub(0.50f, 1.00f), cancellation).ConfigureAwait(true);
 
 			cancellation.ThrowIfScriptsCompiling();
 			cancellation.ThrowIfCancellationRequested();
@@ -196,7 +197,7 @@ namespace GameDevWare.Charon.Editor.Routines
 			return true;
 		}
 
-		private static async Task LaunchLocalCharon(string gameDataPath, Uri gameDataEditorUrl, Action<string, float> progressCallback, CancellationToken cancellation)
+		private static async Task<CharonServerProcess> LaunchLocalCharon(string gameDataPath, Uri gameDataEditorUrl, Action<string, float> progressCallback, CancellationToken cancellation)
 		{
 			var logger = CharonEditorModule.Instance.Logger;
 
@@ -225,7 +226,7 @@ namespace GameDevWare.Charon.Editor.Routines
 			if (timeoutTask.IsCompleted)
 			{
 				logger.Log(LogType.Warning, Resources.UI_UNITYPLUGIN_WINDOW_FAILED_TO_START_EDITOR_TIMEOUT);
-				return;
+				return null;
 			}
 			else if (cancellation.IsCancellationRequested)
 			{
@@ -237,8 +238,9 @@ namespace GameDevWare.Charon.Editor.Routines
 
 			var editorProcess = await charonRunTask.ConfigureAwait(true);
 			CharonEditorModule.Instance.Processes.Add(editorProcess);
+			return editorProcess;
 		}
-		private static async Task WaitForStart(Uri gameDataEditorUrl, Action<string, float> progressCallback, CancellationToken cancellation)
+		private static async Task WaitForStart(CharonServerProcess charonServerProcess, Uri gameDataEditorUrl, Action<string, float> progressCallback, CancellationToken cancellation)
 		{
 			// wait until server start to respond
 			var timeout = CharonEditorModule.Instance.Settings.IdleCloseTimeout;
@@ -253,6 +255,24 @@ namespace GameDevWare.Charon.Editor.Routines
 				{
 					throw new TimeoutException(Resources.UI_UNITYPLUGIN_WINDOW_FAILED_TO_START_EDITOR_TIMEOUT);
 				}
+
+				try
+				{
+					charonServerProcess?.Process.Refresh();
+					if (charonServerProcess != null && charonServerProcess.Process.HasExited)
+					{
+						var errorOutput = charonServerProcess.GetErrorData();
+						var error = string.Format(Resources.UI_UNITYPLUGIN_WINDOW_FAILED_TO_START_EDITOR_EXITED, charonServerProcess,
+							charonServerProcess.Process.ExitCode);
+						if (!string.IsNullOrEmpty(errorOutput))
+						{
+							error = " Additional Information: " + errorOutput.TrimEnd('.') + ".";
+						}
+						throw new ApplicationException(error);
+					}
+				}
+				catch (ApplicationException) { throw; }
+				catch  { /* */ }
 
 				await downloadIndexHtmlTask.IgnoreFault().ConfigureAwait(true);
 

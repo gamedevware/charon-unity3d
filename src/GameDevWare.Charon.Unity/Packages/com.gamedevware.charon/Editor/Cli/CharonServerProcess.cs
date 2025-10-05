@@ -23,6 +23,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 using GameDevWare.Charon.Editor.Utils;
 using UnityEngine;
@@ -154,6 +155,24 @@ namespace GameDevWare.Charon.Editor.Cli
 		}
 
 		/// <summary>
+		/// Get process's error output captured during process execution.
+		/// </summary>
+		/// <returns></returns>
+		public string GetErrorData()
+		{
+			return this.toolRunResult.GetErrorData();
+		}
+
+		/// <summary>
+		/// Get process's standard output captured during process execution.
+		/// </summary>
+		/// <returns></returns>
+		public string GetOutputData()
+		{
+			return this.toolRunResult.GetOutputData();
+		}
+
+		/// <summary>
 		/// Get unique lock file name for specified game data file path.
 		/// </summary>
 		public static string GetLockFileNameFor(string gameDataPath)
@@ -170,6 +189,26 @@ namespace GameDevWare.Charon.Editor.Cli
 		{
 			this.EndGracefully();
 			((IDisposable)this.toolRunResult)?.Dispose();
+		}
+
+		/// <inheritdoc />
+		public override string ToString()
+		{
+			try
+			{
+				return $"{this.Process.ProcessName} [pid: {this.Process.Id}]";
+			}
+			catch
+			{
+				try
+				{
+					return $"{this.Process.StartInfo.FileName} [pid: {this.Process.Id}]";
+				}
+				catch
+				{
+					return $"Process #{this.Process.Id}";
+				}
+			}
 		}
 	}
 }

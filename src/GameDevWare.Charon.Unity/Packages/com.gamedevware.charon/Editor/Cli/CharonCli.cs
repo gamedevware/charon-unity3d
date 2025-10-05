@@ -114,7 +114,7 @@ namespace GameDevWare.Charon.Editor.Cli
 						logsVerbosity == CharonLogLevel.Verbose ? "--verbose" : null
 					)
 				) {
-					CaptureStandardError = false,
+					CaptureStandardError = true,
 					CaptureStandardOutput = false,
 					ExecutionTimeout = TimeSpan.Zero,
 					WaitForExit = false,
