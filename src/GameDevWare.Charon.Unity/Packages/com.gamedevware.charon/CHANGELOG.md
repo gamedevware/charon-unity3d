@@ -1,6 +1,8 @@
-# NEXT
-- Added plugin version label to asset's Inspector window. This will help in troubleshooting with screenshots.
-- Made sure that "missing .NET SDK "message goes to Unity logs if editor fails to start.
+# 2025.4.1
+
+- Added a plugin version label to the asset Inspector window to assist with troubleshooting and screenshot reporting.
+- Ensured that a “Missing .NET SDK” message is logged to the Unity Editor console when the editor fails to start.
+- Introduced a Resource Server information endpoint to help identify plugin versions when requesting assets from the Unity Editor.
 
 # 2025.1.2
 
