@@ -1,7 +1,7 @@
 { 
-	"ToolsVersion": "2025.3.2.0", 
-	"RevisionHash": "6822012dcacd4a60387f420e", 
-	"ChangeNumber": 16, 
+	"ToolsVersion": "2025.4.2.0", 
+	"RevisionHash": "68ecf99b1506ee4e7c2a4998", 
+	"ChangeNumber": 20, 
 	"Collections": { 
 		"ProjectSettings": [ 
 			{ 
@@ -485,7 +485,7 @@
 				"Name": "Hero", 
 				"DisplayName": "Heroes", 
 				"Type": 0, 
-				"Description": null, 
+				"Description": "", 
 				"IdGenerator": 0, 
 				"Specification": "icon=user-gray&group=Heroes%20and%20Stuff", 
 				"Properties": [ 
@@ -494,56 +494,70 @@
 						"SharedProperty": null, 
 						"Name": "Id", 
 						"DisplayName": "Id", 
-						"Description": null, 
+						"Description": "", 
 						"DataType": 0, 
 						"DefaultValue": null, 
 						"Uniqueness": 1, 
 						"Requirement": 3, 
 						"ReferenceType": null, 
 						"Size": 256, 
-						"Specification": null 
+						"Specification": "layout.order=2" 
 					}, 
 					{ 
 						"Id": "59f5b29330bb84165c06b55e", 
 						"SharedProperty": null, 
 						"Name": "Name", 
 						"DisplayName": "Name", 
-						"Description": null, 
+						"Description": "", 
 						"DataType": 1, 
 						"DefaultValue": "Translate Me!", 
 						"Uniqueness": 0, 
 						"Requirement": 2, 
 						"ReferenceType": null, 
 						"Size": 120, 
-						"Specification": null 
+						"Specification": "layout.order=3&layout.rowName=row2" 
 					}, 
 					{ 
 						"Id": "59f5b29330bb84165c06b55f", 
 						"SharedProperty": null, 
 						"Name": "Bio", 
 						"DisplayName": "Bio", 
-						"Description": null, 
+						"Description": "", 
 						"DataType": 1, 
 						"DefaultValue": "Translate Me!", 
 						"Uniqueness": 0, 
 						"Requirement": 2, 
 						"ReferenceType": null, 
 						"Size": 1000, 
-						"Specification": "editor=localizedtextareafield" 
+						"Specification": "editor=localizedtextareafield&layout.order=5" 
+					}, 
+					{ 
+						"Id": "68ecf8d11506ee4e7c2a4996", 
+						"SharedProperty": null, 
+						"Name": "Portrait", 
+						"DisplayName": "Portrait", 
+						"Description": null, 
+						"DataType": 0, 
+						"DefaultValue": null, 
+						"Uniqueness": 0, 
+						"Requirement": 2, 
+						"ReferenceType": null, 
+						"Size": 0, 
+						"Specification": "editor=asset&allowMultiple=false&layout.order=1&layout.rowName=picture-row" 
 					}, 
 					{ 
 						"Id": "59f5b29330bb84165c06b560", 
 						"SharedProperty": null, 
 						"Name": "Religious", 
 						"DisplayName": "Religious", 
-						"Description": null, 
+						"Description": "", 
 						"DataType": 5, 
 						"DefaultValue": "false", 
 						"Uniqueness": 0, 
 						"Requirement": 2, 
 						"ReferenceType": null, 
 						"Size": 0, 
-						"Specification": null 
+						"Specification": "layout.order=4&layout.rowName=row2" 
 					}, 
 					{ 
 						"Id": "59f9e7dd983a364298db5e3e", 
@@ -560,14 +574,14 @@
 							"DisplayName": "Heroes" 
 						}, 
 						"Size": 0, 
-						"Specification": null 
+						"Specification": "layout.order=6" 
 					}, 
 					{ 
 						"Id": "59f5b29330bb84165c06b561", 
 						"SharedProperty": null, 
 						"Name": "Provisions", 
 						"DisplayName": "Provisions", 
-						"Description": null, 
+						"Description": "", 
 						"DataType": 28, 
 						"DefaultValue": null, 
 						"Uniqueness": 0, 
@@ -577,21 +591,21 @@
 							"DisplayName": "Provisions" 
 						}, 
 						"Size": 0, 
-						"Specification": null 
+						"Specification": "layout.order=7" 
 					}, 
 					{ 
 						"Id": "59f9e7dd983a364298db5e3c", 
 						"SharedProperty": null, 
 						"Name": "ProvisionsCount", 
 						"DisplayName": "Provisions Count", 
-						"Description": null, 
+						"Description": "", 
 						"DataType": 13, 
 						"DefaultValue": "1", 
 						"Uniqueness": 0, 
 						"Requirement": 2, 
 						"ReferenceType": null, 
 						"Size": 4, 
-						"Specification": null 
+						"Specification": "layout.order=8" 
 					}, 
 					{ 
 						"Id": "59f5b29330bb84165c06b562", 
@@ -605,7 +619,7 @@
 						"Requirement": 2, 
 						"ReferenceType": null, 
 						"Size": 4, 
-						"Specification": null 
+						"Specification": "layout.order=9&layout.rowName=row8" 
 					}, 
 					{ 
 						"Id": "59f5b29330bb84165c06b563", 
@@ -619,7 +633,7 @@
 						"Requirement": 2, 
 						"ReferenceType": null, 
 						"Size": 4, 
-						"Specification": null 
+						"Specification": "layout.order=10&layout.rowName=row8" 
 					}, 
 					{ 
 						"Id": "59f9e586983a364298db5e1f", 
@@ -633,21 +647,21 @@
 						"Requirement": 2, 
 						"ReferenceType": null, 
 						"Size": 4, 
-						"Specification": null 
+						"Specification": "layout.order=11" 
 					}, 
 					{ 
 						"Id": "59f9e7dd983a364298db5e3b", 
 						"SharedProperty": null, 
 						"Name": "AccuracyModifier", 
 						"DisplayName": "Accuracy Modifier", 
-						"Description": null, 
+						"Description": "", 
 						"DataType": 13, 
 						"DefaultValue": "0", 
 						"Uniqueness": 0, 
 						"Requirement": 2, 
 						"ReferenceType": null, 
 						"Size": 4, 
-						"Specification": null 
+						"Specification": "layout.order=12&layout.rowName=row10" 
 					}, 
 					{ 
 						"Id": "59f9e7dd983a364298db5e3a", 
@@ -661,7 +675,7 @@
 						"Requirement": 2, 
 						"ReferenceType": null, 
 						"Size": 4, 
-						"Specification": "displayPrecision=2" 
+						"Specification": "displayPrecision=2&layout.order=14&layout.rowName=row10" 
 					}, 
 					{ 
 						"Id": "59f9e7dd983a364298db5e39", 
@@ -675,7 +689,7 @@
 						"Requirement": 2, 
 						"ReferenceType": null, 
 						"Size": 4, 
-						"Specification": "displayPrecision=2" 
+						"Specification": "displayPrecision=2&layout.order=13&layout.rowName=row10" 
 					}, 
 					{ 
 						"Id": "59f9e7dd983a364298db5e38", 
@@ -689,7 +703,7 @@
 						"Requirement": 2, 
 						"ReferenceType": null, 
 						"Size": 4, 
-						"Specification": "displayPrecision=2" 
+						"Specification": "displayPrecision=2&layout.order=15&layout.rowName=row10" 
 					}, 
 					{ 
 						"Id": "59f9e7dd983a364298db5e37", 
@@ -703,7 +717,7 @@
 						"Requirement": 2, 
 						"ReferenceType": null, 
 						"Size": 4, 
-						"Specification": "displayPrecision=2" 
+						"Specification": "displayPrecision=2&layout.order=16&layout.rowName=row10" 
 					}, 
 					{ 
 						"Id": "59f9e7dd983a364298db5e36", 
@@ -717,7 +731,7 @@
 						"Requirement": 2, 
 						"ReferenceType": null, 
 						"Size": 4, 
-						"Specification": "displayPrecision=2" 
+						"Specification": "displayPrecision=2&layout.order=17&layout.rowName=row11" 
 					}, 
 					{ 
 						"Id": "59f9e7dd983a364298db5e35", 
@@ -731,7 +745,7 @@
 						"Requirement": 2, 
 						"ReferenceType": null, 
 						"Size": 4, 
-						"Specification": "displayPrecision=2" 
+						"Specification": "displayPrecision=2&layout.order=18&layout.rowName=row11" 
 					}, 
 					{ 
 						"Id": "59f9e7dc983a364298db5e34", 
@@ -745,7 +759,7 @@
 						"Requirement": 2, 
 						"ReferenceType": null, 
 						"Size": 4, 
-						"Specification": "displayPrecision=2" 
+						"Specification": "displayPrecision=2&layout.order=19&layout.rowName=row11" 
 					}, 
 					{ 
 						"Id": "59f9e7dc983a364298db5e33", 
@@ -759,14 +773,14 @@
 						"Requirement": 2, 
 						"ReferenceType": null, 
 						"Size": 4, 
-						"Specification": "displayPrecision=2" 
+						"Specification": "displayPrecision=2&layout.order=20&layout.rowName=row11" 
 					}, 
 					{ 
 						"Id": "59f9e7dc983a364298db5e32", 
 						"SharedProperty": null, 
 						"Name": "Armors", 
 						"DisplayName": "Armors", 
-						"Description": null, 
+						"Description": "", 
 						"DataType": 23, 
 						"DefaultValue": null, 
 						"Uniqueness": 0, 
@@ -776,14 +790,14 @@
 							"DisplayName": "Armor" 
 						}, 
 						"Size": 0, 
-						"Specification": null 
+						"Specification": "layout.order=21" 
 					}, 
 					{ 
 						"Id": "59f9e7dd983a364298db5e3d", 
 						"SharedProperty": null, 
 						"Name": "Weapons", 
 						"DisplayName": "Weapons", 
-						"Description": null, 
+						"Description": "", 
 						"DataType": 23, 
 						"DefaultValue": null, 
 						"Uniqueness": 0, 
@@ -793,7 +807,7 @@
 							"DisplayName": "Weapon1" 
 						}, 
 						"Size": 0, 
-						"Specification": null 
+						"Specification": "layout.order=22" 
 					} 
 				] 
 			}, 
@@ -3544,6 +3558,7 @@
 					"en-US": "Enveloped in weighty armor and capable of obliterating adversaries with her colossal crossbow, she is akin to a corporeal manifestation of a cannon. Her existence as a warrior has bestowed upon her numerous aptitudes for the battleground, including designating targets, unleashing a barrage of arrows upon her foes, and deploying bolas to disrupt the enemy's formation. She has also acquired the knowledge to dress and tend to wounds, and can administer makeshift remedies in the midst of battle.\n", 
 					"notes": null 
 				}, 
+				"Portrait": "Assets\/Portraits\/Crossbower.png", 
 				"Religious": false, 
 				"DislikeHeroes": [ 
 				], 
@@ -3679,6 +3694,7 @@
 					"en-US": "Tortured, marked, and incarcerated for unfathomable aeons, this elusive wanderer conceals a harrowing truth. The Eldritch venom surging through his bloodstream has bestowed him with unimaginable might, at a dreadful price. As his physicality mutates, his position in battle alters irrevocably!", 
 					"notes": null 
 				}, 
+				"Portrait": "Assets\/Portraits\/Monstrosity.png", 
 				"Religious": false, 
 				"DislikeHeroes": [ 
 				], 
@@ -3811,6 +3827,7 @@
 					"en-US": "In a world full of darkness and chaos, the Zealot is a zealot whose unwavering devotion to his cause borders on madness. He is a force to be reckoned with, feared by his enemies and revered by his allies. The heavy armor he dons is not just for protection, but also to hide the scars of his tormented past.\n\nWith his holy blade, he cuts down anyone who dares to stand in his way, leaving a trail of blood and carnage in his wake. His mere presence on the battlefield is enough to make his enemies tremble in fear, and his fervent speeches can rouse even the most cowardly of soldiers to fight on.\n\nBut his crusade comes at a heavy cost. The atrocities he has committed in the name of his cause weigh heavily on his conscience, and the burden of his sins has driven him to the brink of madness. Yet, he soldiers on, driven by a sense of duty that borders on obsession, and a belief that his cause is just, no matter the cost.", 
 					"notes": null 
 				}, 
+				"Portrait": null, 
 				"Religious": true, 
 				"DislikeHeroes": [ 
 					{ 
