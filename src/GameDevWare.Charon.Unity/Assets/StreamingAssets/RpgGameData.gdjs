@@ -1,7 +1,7 @@
 { 
-	"ToolsVersion": "2025.4.2.0", 
-	"RevisionHash": "68ecf99b1506ee4e7c2a4998", 
-	"ChangeNumber": 20, 
+	"ToolsVersion": "2025.4.3.0", 
+	"RevisionHash": "69173c27995a0e1dec66898c", 
+	"ChangeNumber": 26, 
 	"Collections": { 
 		"ProjectSettings": [ 
 			{ 
@@ -78,7 +78,7 @@
 						"Requirement": 2, 
 						"ReferenceType": null, 
 						"Size": 4, 
-						"Specification": "pick.Normal=0&pick.Component=1&pick.Settings=2" 
+						"Specification": "pick.Normal=0&pick.Component=1&pick.Settings=2&pick.Union=3" 
 					}, 
 					{ 
 						"Id": "59088257983a362690093cf4", 
@@ -1740,7 +1740,7 @@
 				"Type": 1, 
 				"Description": "", 
 				"IdGenerator": 0, 
-				"Specification": "type=component&group=Heroes%20and%20Stuff", 
+				"Specification": "type=component&group=Heroes%20and%20Stuff&icon=fugue16%2Fhammer-left", 
 				"Properties": [ 
 					{ 
 						"Id": "59f9e745983a364298db5e23", 
@@ -1833,9 +1833,9 @@
 				"Name": "Armor", 
 				"DisplayName": "Armor", 
 				"Type": 1, 
-				"Description": null, 
+				"Description": "", 
 				"IdGenerator": 0, 
-				"Specification": "type=component&group=Heroes%20and%20Stuff", 
+				"Specification": "type=component&group=Heroes%20and%20Stuff&icon=fugue16%2Fcrown", 
 				"Properties": [ 
 					{ 
 						"Id": "59f9e7b6983a364298db5e2d", 
@@ -3558,7 +3558,7 @@
 					"en-US": "Enveloped in weighty armor and capable of obliterating adversaries with her colossal crossbow, she is akin to a corporeal manifestation of a cannon. Her existence as a warrior has bestowed upon her numerous aptitudes for the battleground, including designating targets, unleashing a barrage of arrows upon her foes, and deploying bolas to disrupt the enemy's formation. She has also acquired the knowledge to dress and tend to wounds, and can administer makeshift remedies in the midst of battle.\n", 
 					"notes": null 
 				}, 
-				"Portrait": "Assets\/Portraits\/Crossbower.png", 
+				"Portrait": "Assets\/Portraits\/Crossbower_Portrait.png", 
 				"Religious": false, 
 				"DislikeHeroes": [ 
 				], 
@@ -3694,7 +3694,7 @@
 					"en-US": "Tortured, marked, and incarcerated for unfathomable aeons, this elusive wanderer conceals a harrowing truth. The Eldritch venom surging through his bloodstream has bestowed him with unimaginable might, at a dreadful price. As his physicality mutates, his position in battle alters irrevocably!", 
 					"notes": null 
 				}, 
-				"Portrait": "Assets\/Portraits\/Monstrosity.png", 
+				"Portrait": "Assets\/Portraits\/Monstrosity_Portrait.png", 
 				"Religious": false, 
 				"DislikeHeroes": [ 
 				], 
@@ -3827,7 +3827,7 @@
 					"en-US": "In a world full of darkness and chaos, the Zealot is a zealot whose unwavering devotion to his cause borders on madness. He is a force to be reckoned with, feared by his enemies and revered by his allies. The heavy armor he dons is not just for protection, but also to hide the scars of his tormented past.\n\nWith his holy blade, he cuts down anyone who dares to stand in his way, leaving a trail of blood and carnage in his wake. His mere presence on the battlefield is enough to make his enemies tremble in fear, and his fervent speeches can rouse even the most cowardly of soldiers to fight on.\n\nBut his crusade comes at a heavy cost. The atrocities he has committed in the name of his cause weigh heavily on his conscience, and the burden of his sins has driven him to the brink of madness. Yet, he soldiers on, driven by a sense of duty that borders on obsession, and a belief that his cause is just, no matter the cost.", 
 					"notes": null 
 				}, 
-				"Portrait": null, 
+				"Portrait": "Assets\/Portraits\/Zealot_Portrait.png", 
 				"Religious": true, 
 				"DislikeHeroes": [ 
 					{ 
