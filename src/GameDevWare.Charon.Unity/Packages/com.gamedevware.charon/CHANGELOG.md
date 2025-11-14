@@ -1,3 +1,8 @@
+# 2025.4.3
+
+- Use `#if` to hide `SettingsService` to prevent compilation errors in the 2021 editor.
+- Update example assets
+
 # 2025.4.1
 
 - Added a plugin version label to the asset Inspector window to assist with troubleshooting and screenshot reporting.
