@@ -28,7 +28,6 @@ using GameDevWare.Charon.Editor.Routines;
 using GameDevWare.Charon.Editor.Utils;
 using GameDevWare.Charon.Editor.Windows;
 using UnityEditor;
-using UnityEditor.PackageManager.UI;
 using UnityEngine;
 using UnityObject = UnityEngine.Object;
 
@@ -186,14 +185,13 @@ namespace GameDevWare.Charon.Editor
 		[MenuItem("Tools/Charon/Settings...", false, 31)]
 		private static void ShowSettings()
 		{
-			var settingsService = typeof(EditorApplication).Assembly.GetType("UnityEditor.SettingsService", throwOnError: false, ignoreCase: true);
+#if UNITY_2022_3_OR_NEWER
+			SettingsService.OpenProjectSettings("Project/Charon");
+			return;
+#else
 			var preferencesWindowType = typeof(EditorApplication).Assembly.GetType("UnityEditor.PreferencesWindow", throwOnError: false, ignoreCase: true);
 			var settingsWindowType = typeof(EditorApplication).Assembly.GetType("UnityEditor.SettingsWindow", throwOnError: false, ignoreCase: true);
-			if (settingsService != null)
-			{
-				SettingsService.OpenProjectSettings("Project/Charon");
-			}
-			else if (preferencesWindowType != null)
+			if (preferencesWindowType != null)
 			{
 				var settingsWindow = EditorWindow.GetWindow(preferencesWindowType);
 				settingsWindow.Show();
@@ -209,6 +207,7 @@ namespace GameDevWare.Charon.Editor
 			{
 				CharonEditorModule.Instance.Logger.Log(LogType.Warning, "Unable to locate preferences window. Please open it manually 'Edit -> Preferences...'.");
 			}
+#endif
 		}
 
 		[MenuItem("Assets/Create/Game Data")]
