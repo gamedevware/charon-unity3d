@@ -195,31 +195,27 @@ namespace GameDevWare.Charon.Editor.Json
 
 		public object ToObject()
 		{
-			var jsonPrimitive = this as JsonPrimitive;
-			var jsonArray = this as JsonArray;
-			var jsonObject = this as JsonObject;
-
-			if (jsonPrimitive != null)
+			if (this is JsonPrimitive jsonPrimitive)
 			{
 				return jsonPrimitive.Value;
 			}
-			else if (jsonArray != null)
+			else if (this is JsonArray jsonArray)
 			{
 				var list = new List<object>();
-				foreach (var jsonValue in (JsonArray)this)
+				foreach (var jsonValue in  jsonArray)
 				{
-					list.Add(jsonValue == null ? null : jsonValue.ToObject());
+					list.Add(jsonValue?.ToObject());
 				}
 				return list;
 			}
-			else if (jsonObject != null)
+			else if (this is JsonObject jsonObject)
 			{
 				var dictionary = new Dictionary<string, object>();
 				foreach (var pair in jsonObject)
 				{
 					var key = pair.Key;
 					var jsonValue = pair.Value;
-					dictionary[key] = jsonValue != null ? jsonValue.ToObject() : null;
+					dictionary[key] = jsonValue?.ToObject();
 				}
 				return dictionary;
 			}

@@ -43,7 +43,7 @@ namespace GameDevWare.Charon.Editor.Json
 #else
 	public
 #endif
-	class JsonObject : JsonValue, IDictionary<string, JsonValue>, ICollection<KeyValuePair<string, JsonValue>>
+	class JsonObject : JsonValue, IDictionary<string, JsonValue>
 	{
 		private static readonly Dictionary<Type, Dictionary<string, MemberInfo>> TypeMembers = new Dictionary<Type, Dictionary<string, MemberInfo>>();
 		// Use SortedDictionary to make result of ToString() deterministic
@@ -182,8 +182,7 @@ namespace GameDevWare.Charon.Editor.Json
 
 			foreach (var pair in this.map)
 			{
-				var member = default(MemberInfo);
-				if (members.TryGetValue(pair.Key, out member) == false)
+				if (!members.TryGetValue(pair.Key, out var member))
 					continue;
 
 				var prop = member as PropertyInfo;
@@ -193,14 +192,14 @@ namespace GameDevWare.Charon.Editor.Json
 				{
 					if (prop != null && prop.CanWrite)
 						prop.SetValue(instance, value.ToObject(prop.PropertyType), null);
-					else if (field != null && field.IsInitOnly == false)
+					else if (field != null && !field.IsInitOnly)
 						field.SetValue(instance, value.ToObject(field.FieldType));
 				}
 				else
 				{
 					if (prop != null && prop.CanWrite)
 						prop.SetValue(instance, null, null);
-					else if (field != null && field.IsInitOnly == false)
+					else if (field != null && !field.IsInitOnly)
 						field.SetValue(instance, null);
 				}
 			}
@@ -222,7 +221,7 @@ namespace GameDevWare.Charon.Editor.Json
 				var memberValue = default(object);
 				if (prop != null && prop.CanWrite)
 					memberValue = prop.GetValue(value, null);
-				else if (field != null && field.IsInitOnly == false)
+				else if (field != null && !field.IsInitOnly)
 					memberValue = field.GetValue(value);
 				pairs.Add(new JsonPair(memberKv.Key, JsonValue.From(memberValue)));
 			}
@@ -234,7 +233,7 @@ namespace GameDevWare.Charon.Editor.Json
 			var members = default(Dictionary<string, MemberInfo>);
 			lock (TypeMembers)
 			{
-				if (TypeMembers.TryGetValue(type, out members) == false)
+				if (!TypeMembers.TryGetValue(type, out members))
 				{
 					var props = type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
 					var fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public);
@@ -259,7 +258,7 @@ namespace GameDevWare.Charon.Editor.Json
 		private static string GetMemberName(MemberInfo member)
 		{
 			var jsonMember = member.GetCustomAttributes(typeof(DataMemberAttribute), true).OfType<DataMemberAttribute>().FirstOrDefault();
-			if (jsonMember != null && string.IsNullOrEmpty(jsonMember.Name) == false)
+			if (jsonMember != null && !string.IsNullOrEmpty(jsonMember.Name))
 				return jsonMember.Name;
 			else
 				return member.Name;

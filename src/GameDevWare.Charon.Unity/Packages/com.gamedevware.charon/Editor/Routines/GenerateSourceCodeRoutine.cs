@@ -67,7 +67,7 @@ namespace GameDevWare.Charon.Editor.Routines
 				for (var i = 0; i < paths.Length; i++)
 				{
 					var gameDataAssetPath = paths[i];
-					if (File.Exists(gameDataAssetPath) == false)
+					if (!File.Exists(gameDataAssetPath))
 					{
 						continue;
 					}
@@ -165,6 +165,7 @@ namespace GameDevWare.Charon.Editor.Routines
 
 					try
 					{
+						var defineConstants = gameDataSettings.defineConstants ?? string.Empty;
 						await CharonCli.GenerateCSharpCodeAsync
 						(
 							gameDataLocation,
@@ -173,7 +174,7 @@ namespace GameDevWare.Charon.Editor.Routines
 							documentClassName: gameDataSettings.gameDataDocumentClassName,
 							gameDataClassName: gameDataSettings.gameDataClassName,
 							gameDataNamespace: gameDataSettings.gameDataNamespace,
-							defineConstants: gameDataSettings.defineConstants ?? string.Empty,
+							defineConstants: defineConstants,
 							sourceCodeGenerationOptimizations: optimizations,
 							sourceCodeIndentation: (SourceCodeIndentation)gameDataSettings.indentation,
 							sourceCodeLineEndings: (SourceCodeLineEndings)gameDataSettings.lineEnding,

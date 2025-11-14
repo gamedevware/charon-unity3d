@@ -233,20 +233,17 @@ namespace GameDevWare.Charon.Editor.Json
 			{
 				if (!hasFrac)
 				{
-					int valueInt;
-					if (int.TryParse(sb.ToString(), NumberStyles.Float, CultureInfo.InvariantCulture, out valueInt))
+					if (int.TryParse(sb.ToString(), NumberStyles.Float, CultureInfo.InvariantCulture, out var valueInt))
 						return valueInt;
 
-					long valueLong;
-					if (long.TryParse(sb.ToString(), NumberStyles.Float, CultureInfo.InvariantCulture, out valueLong))
+					if (long.TryParse(sb.ToString(), NumberStyles.Float, CultureInfo.InvariantCulture, out var valueLong))
 						return valueLong;
 
-					ulong valueUlong;
-					if (ulong.TryParse(sb.ToString(), NumberStyles.Float, CultureInfo.InvariantCulture, out valueUlong))
+					if (ulong.TryParse(sb.ToString(), NumberStyles.Float, CultureInfo.InvariantCulture, out var valueUlong))
 						return valueUlong;
 				}
-				decimal valueDecimal;
-				if (decimal.TryParse(sb.ToString(), NumberStyles.Float, CultureInfo.InvariantCulture, out valueDecimal) && valueDecimal != 0)
+
+				if (decimal.TryParse(sb.ToString(), NumberStyles.Float, CultureInfo.InvariantCulture, out var valueDecimal) && valueDecimal != 0)
 					return valueDecimal;
 			}
 			else

@@ -22,7 +22,6 @@
 
 using System;
 using JetBrains.Annotations;
-using UnityObject = UnityEngine.Object;
 
 namespace GameDevWare.Charon
 {
@@ -49,9 +48,9 @@ namespace GameDevWare.Charon
 		public string branchId;
 
 		public bool IsConnected =>
-			string.IsNullOrEmpty(this.serverAddress) == false &&
-			string.IsNullOrEmpty(this.projectId) == false &&
-			string.IsNullOrEmpty(this.branchId) == false;
+			!string.IsNullOrEmpty(this.serverAddress) &&
+			!string.IsNullOrEmpty(this.projectId) &&
+			!string.IsNullOrEmpty(this.branchId);
 
 
 		public Uri MakeDataSourceUrl()

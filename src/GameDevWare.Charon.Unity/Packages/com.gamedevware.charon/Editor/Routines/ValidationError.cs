@@ -49,8 +49,7 @@ namespace GameDevWare.Charon.Editor.Routines
 
 		public static string GetReference(int exceptionId)
 		{
-			var reference = default(string);
-			ReferenceByExceptionId.TryGetValue(exceptionId, out reference);
+			ReferenceByExceptionId.TryGetValue(exceptionId, out var reference);
 			return reference;
 		}
 

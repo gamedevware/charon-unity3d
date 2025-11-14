@@ -125,7 +125,7 @@ namespace GameDevWare.Charon.Editor.Json
 				throw new ArgumentNullException(nameof(stream));
 			stream.WriteByte((byte)'[');
 			var following = false;
-			for (var i = 0; i < this.list.Count; i++)
+			foreach (var item in this.list)
 			{
 				if (following)
 				{
@@ -134,10 +134,9 @@ namespace GameDevWare.Charon.Editor.Json
 				}
 				following = true;
 
-				var v = this.list[i];
-				if (v != null)
+				if (item != null)
 				{
-					v.Save(stream);
+					item.Save(stream);
 				}
 				else
 				{

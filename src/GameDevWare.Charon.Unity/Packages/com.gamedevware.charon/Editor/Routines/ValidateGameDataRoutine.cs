@@ -62,7 +62,7 @@ namespace GameDevWare.Charon.Editor.Routines
 			for (var i = 0; i < paths.Length; i++)
 			{
 				var gameDataAssetPath = paths[i];
-				if (File.Exists(gameDataAssetPath) == false)
+				if (!File.Exists(gameDataAssetPath))
 					continue;
 
 				var pathSpecificProgress = progressCallback?.Sub((float)i / total, i + 1.0f / total);

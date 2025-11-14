@@ -34,7 +34,6 @@ using GameDevWare.Charon.Editor.Routines;
 using GameDevWare.Charon.Editor.Utils;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityObject = UnityEngine.Object;
 
 namespace GameDevWare.Charon.Editor.Windows

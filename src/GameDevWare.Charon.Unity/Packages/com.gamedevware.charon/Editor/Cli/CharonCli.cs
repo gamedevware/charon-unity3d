@@ -48,7 +48,7 @@ using GameDevWare.Charon.Editor.Json;
 namespace GameDevWare.Charon.Editor.Cli
 {
 	/// <summary>
-	/// Provides a convenient interface for running Charon.exe command line operations.
+	/// Provides a convenient interface for running `dotnet charon` command line operations.
 	/// This class encapsulates functionality for creating, updating, deleting, importing, exporting, and finding documents
 	/// within a specified GameData URL, either file-based or server-based. It simplifies interactions
 	/// with the Charon command line tool, offering methods that return tasks representing the operations.
