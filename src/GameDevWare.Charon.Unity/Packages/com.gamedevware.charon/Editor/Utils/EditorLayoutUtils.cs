@@ -50,9 +50,9 @@ namespace GameDevWare.Charon.Editor.Utils
 			if (Event.current.type == EventType.Repaint && GUILayoutUtility.GetLastRect().y > 0)
 			{
 				var newRect = GUILayoutUtility.GetLastRect();
-				editorWindow.position = new Rect(editorWindow.position.position, new Vector2(editorWindow.position.width, newRect.y + 7));
-				editorWindow.minSize = new Vector2(editorWindow.minSize.x, editorWindow.position.height);
-				editorWindow.maxSize = new Vector2(editorWindow.maxSize.x, editorWindow.position.height);
+				var newSize = new Vector2(editorWindow.position.width, newRect.y + 7);
+				editorWindow.minSize = new Vector2(editorWindow.minSize.x, newSize.y);
+				editorWindow.maxSize = new Vector2(editorWindow.maxSize.x, newSize.y);
 			}
 		}
 	}
