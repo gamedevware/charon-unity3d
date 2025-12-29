@@ -235,22 +235,11 @@ namespace GameDevWare.Charon.Editor.Routines
 
 			cancellationToken.ThrowIfCancellationRequested();
 
-			if (File.Exists(gameDataAssetPath) == false)
-				return;
-
 			progressCallback?.Invoke(string.Format(Resources.UI_UNITYPLUGIN_PROGRESS_PROCESSING_GAMEDATA, gameDataAssetPath), 0.01f);
 
 			if (!gameDataSettings.IsConnected)
 			{
 				return; // no sync required
-			}
-
-			var gameDataFormat = FormatsExtensions.GetGameDataFormatForExtension(gameDataAssetPath);
-			if (gameDataFormat == null)
-			{
-				logger.Log(LogType.Warning,
-					$"Skipping synchronization game data at '{gameDataAssetPath}' because storage format '{Path.GetExtension(gameDataAssetPath)}' is not supported.");
-				return;
 			}
 
 			cancellationToken.ThrowIfCancellationRequested();
@@ -269,7 +258,13 @@ namespace GameDevWare.Charon.Editor.Routines
 			var serverApiClient = new ServerApiClient(serverAddress);
 			serverApiClient.UseApiKey(apiKey);
 
-			await serverApiClient.DownloadDataSourceAsync(gameDataSettings.branchId, gameDataFormat.Value, downloadTempPath,
+			var downloadFormat = gameDataSettings.publishFormat switch {
+				(int) GameDataFormat.Json => GameDataFormat.Json,
+				(int) GameDataFormat.MessagePack => GameDataFormat.MessagePack,
+				_ => throw new ArgumentOutOfRangeException($"Unknown {nameof(GameDataFormat)} value '{(GameDataFormat)gameDataSettings.publishFormat}' in settings of '{gameDataAssetPath}' asset.")
+			};
+
+			await serverApiClient.DownloadDataSourceAsync(gameDataSettings.branchId, downloadFormat, downloadTempPath,
 				progressCallback.ToDownloadProgress(Path.GetFileName(downloadTempPath)), cancellation: cancellationToken);
 
 			File.Replace(downloadTempPath, gameDataPath, gameDataPathBak);
