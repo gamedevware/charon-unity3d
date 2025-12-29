@@ -1,3 +1,8 @@
+# 2025.4.6
+
+- Fixed automatic sizing of Unity Editor windows.
+- Updated online synchronization logic to download data into a JSON file instead of directly into a `.asset` file. The JSON file is then re-imported to generate the `.asset` content.
+
 # 2025.4.3
 
 - Use `#if` to hide `SettingsService` to prevent compilation errors in the 2021 editor.
