@@ -258,13 +258,15 @@ namespace GameDevWare.Charon.Editor.Routines
 			var serverApiClient = new ServerApiClient(serverAddress);
 			serverApiClient.UseApiKey(apiKey);
 
-			var downloadFormat = gameDataSettings.publishFormat switch {
-				(int) GameDataFormat.Json => GameDataFormat.Json,
-				(int) GameDataFormat.MessagePack => GameDataFormat.MessagePack,
-				_ => throw new ArgumentOutOfRangeException($"Unknown {nameof(GameDataFormat)} value '{(GameDataFormat)gameDataSettings.publishFormat}' in settings of '{gameDataAssetPath}' asset.")
-			};
+			var gameDataFormat = FormatsExtensions.GetGameDataFormatForExtension(gameDataPath);
+			if (gameDataFormat == null)
+			{
+				logger.Log(LogType.Warning,
+					$"Skipping synchronization game data at '{gameDataPath}' because storage format '{Path.GetExtension(gameDataPath)}' is not supported.");
+				return;
+			}
 
-			await serverApiClient.DownloadDataSourceAsync(gameDataSettings.branchId, downloadFormat, downloadTempPath,
+			await serverApiClient.DownloadDataSourceAsync(gameDataSettings.branchId, gameDataFormat.Value, downloadTempPath,
 				progressCallback.ToDownloadProgress(Path.GetFileName(downloadTempPath)), cancellation: cancellationToken);
 
 			File.Replace(downloadTempPath, gameDataPath, gameDataPathBak);
