@@ -26,6 +26,9 @@ Installation from OpenUPM (recommended)
 3. Open the [OpenUPM](https://openupm.com/packages/com.gamedevware.charon/) page for the plugin.
 4. Click the **Manual Installation** button in the upper right corner and follow the instructions.
 
+#### Unity | Installing the Plugin from OpenUPM
+[![Installation Video Tutorial](https://img.youtube.com/vi/xJLR5lkDYb8/0.jpg)](https://www.youtube.com/watch?v=xJLR5lkDYb8)
+
 
 Installation from Unity Asset Store
 -----------------------------------
@@ -39,9 +42,20 @@ Installation from Unity Asset Store
 7. Select **My Assets** from the dropdown in the top left corner.
 8. Select **Charon** from the list and click **Download**. If it’s already downloaded, you will see an **Import** option.
 
+#### Unity | Installing the Plugin from Asset Store
+[![Installation Video Tutorial](https://img.youtube.com/vi/MoklxNzt_aY/0.jpg)](https://www.youtube.com/watch?v=MoklxNzt_aY)
+
 # How to Use
 
+<figure>
+  
+  <figcaption></figcaption>
+</figure>
+
 - [Working with the Plugin](https://gamedevware.github.io/charon/unity/overview.html#working-with-the-plugin)
+
+#### Unity | First Steps
+[![First Steps](https://img.youtube.com/vi/EZ0oEEVuEug/0.jpg)](https://www.youtube.com/watch?v=EZ0oEEVuEug)
 
 # Documentation
 
