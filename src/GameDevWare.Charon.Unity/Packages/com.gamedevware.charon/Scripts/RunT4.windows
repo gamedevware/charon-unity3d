@@ -46,7 +46,7 @@ if %ERRORLEVEL% EQU 0 (
 ) else (
     dotnet tool install dotnet-t4 --local --tool-manifest .config/dotnet-tools.json >nul
 
-    if %ERRORLEVEL% NEQ 0 (
+    if %ERRORLEVEL% GTR 1 (
         popd
         goto Exit_Failure_Dotnet_Restore_Failed
     )
