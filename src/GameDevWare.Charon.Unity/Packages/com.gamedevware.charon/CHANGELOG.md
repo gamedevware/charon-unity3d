@@ -1,3 +1,6 @@
+# 2026.3.1
+- Fixed HTTP error "Header value contains invalid characters" in the "Connect" function, which was caused by issues with the UnityWebRequest implementation.
+
 # 2025.4.6
 
 - Fixed automatic sizing of Unity Editor windows.
