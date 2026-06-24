@@ -36,7 +36,7 @@ namespace GameDevWare.Charon.Editor.Utils
 {
 	internal static class HttpUtils
 	{
-		public static readonly string UserAgentHeaderValue = string.Format("{0}/{1} (OS: {2}, Unity Version: {3}, Product: {4}, )",
+		public static readonly string UserAgentHeaderValue = string.Format("{0}/{1}  [OS: {2}, Unity Version: {3}, Product: {4}]",
 			typeof(HttpUtils).Assembly.GetName(false).Name, typeof(HttpUtils).Assembly.GetName(false).Version,
 			Application.platform, Application.unityVersion, Application.productName);
 
@@ -287,11 +287,11 @@ namespace GameDevWare.Charon.Editor.Utils
 					case UnityWebRequest.Result.Success:
 						break;
 					case UnityWebRequest.Result.ConnectionError:
-						throw new WebException($"Connection failed for for request [{request.method}]'{url}'.", WebExceptionStatus.ConnectFailure);
+						throw new WebException($"Connection failed for for request [{request.method}]'{url}'. " + request.error, WebExceptionStatus.ConnectFailure);
 					case UnityWebRequest.Result.ProtocolError:
-						throw new WebException($"Protocol error for for request [{request.method}]'{url}'.", WebExceptionStatus.ProtocolError);
+						throw new WebException($"Protocol error for for request [{request.method}]'{url}'. "+ request.error, WebExceptionStatus.ProtocolError);
 					case UnityWebRequest.Result.DataProcessingError:
-						throw new WebException($"Data transfer error for for request [{request.method}]'{url}'.", WebExceptionStatus.ReceiveFailure);
+						throw new WebException($"Data transfer error for for request [{request.method}]'{url}'. "+ request.error, WebExceptionStatus.ReceiveFailure);
 					case UnityWebRequest.Result.InProgress:
 					default:
 						throw new ArgumentOutOfRangeException();
