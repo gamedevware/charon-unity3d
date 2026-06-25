@@ -1,4 +1,4 @@
-﻿/*
+/*
 	Copyright (c) 2025 GameDevWare, Denis Zykov
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,26 +21,44 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using GameDevWare.Charon.Editor.Json;
 using UnityEngine;
-using UnityEngine.Networking;
 
 namespace GameDevWare.Charon.Editor.Utils
 {
 	internal static class HttpUtils
 	{
-		public static readonly string UserAgentHeaderValue = string.Format("{0}/{1}  [OS: {2}, Unity Version: {3}, Product: {4}]",
+		public static readonly string UserAgentHeaderValue = string.Format("{0}/{1} (OS: {2}, Unity Version: {3}, Product: {4})",
 			typeof(HttpUtils).Assembly.GetName(false).Name, typeof(HttpUtils).Assembly.GetName(false).Version,
 			Application.platform, Application.unityVersion, Application.productName);
 
+		private static readonly HashSet<string> ContentHeaders = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+		{
+			"Allow",
+			"Content-Disposition",
+			"Content-Encoding",
+			"Content-Language",
+			"Content-Length",
+			"Content-Location",
+			"Content-MD5",
+			"Content-Range",
+			"Content-Type",
+			"Expires",
+			"Last-Modified",
+		};
+
 		private const int BUFFER_SIZE = 32 * 1024;
+
+		private static readonly HttpClient SharedHttpClient = new HttpClient();
 
 		public static async Task UploadFromFileAsync
 		(
@@ -215,147 +233,95 @@ namespace GameDevWare.Charon.Editor.Utils
 			if (url == null) throw new ArgumentNullException(nameof(url));
 			if (downloadToStream == null) throw new ArgumentNullException(nameof(downloadToStream));
 
-			var request = default(UnityWebRequest);
-			var requestStream = default(Stream);
-			try
+			var logger = CharonEditorModule.Instance.Logger;
+
+			cancellation.ThrowIfCancellationRequested();
+
+			using var requestMessage = new HttpRequestMessage(new HttpMethod(method), url);
+
+			if (requestHeaders == null || string.IsNullOrEmpty(requestHeaders["Accept"]))
+				requestMessage.Headers.TryAddWithoutValidation("Accept", "*/*");
+
+			if (requestHeaders == null || string.IsNullOrEmpty(requestHeaders["User-Agent"]))
+				requestMessage.Headers.TryAddWithoutValidation("User-Agent", UserAgentHeaderValue);
+
+			var pendingContentHeaders = new NameValueCollection();
+			if (requestHeaders != null)
 			{
-				var logger = CharonEditorModule.Instance.Logger;
-
-				cancellation.ThrowIfCancellationRequested();
-
-				request = new UnityWebRequest();
-				request.uri = url;
-				request.method = method;
-				request.useHttpContinue = false;
-				request.disposeCertificateHandlerOnDispose = true;
-				request.disposeDownloadHandlerOnDispose = true;
-				request.disposeUploadHandlerOnDispose = true;
-
-				if (timeout.Ticks > 0)
+				foreach (string header in requestHeaders.Keys)
 				{
-					request.timeout = (int)timeout.TotalSeconds;
-				}
-
-				if (requestHeaders != null)
-				{
-					foreach (string header in requestHeaders.Keys)
+					foreach (var headerValue in requestHeaders.GetValues(header ?? "") ?? Array.Empty<string>())
 					{
-						foreach (var headerValue in requestHeaders.GetValues(header ?? "") ?? Enumerable.Empty<string>())
+						if (ContentHeaders.Contains(header))
+							pendingContentHeaders.Add(header, headerValue);
+						else
+							requestMessage.Headers.TryAddWithoutValidation(header, headerValue);
+					}
+				}
+			}
+
+			if (uploadStream != Stream.Null && uploadStream.Length > 0)
+			{
+				var content = new StreamContent(uploadStream, BUFFER_SIZE);
+				var hasContentType = false;
+
+					foreach (string header in pendingContentHeaders.Keys)
+					{
+						foreach (var headerValue in pendingContentHeaders.GetValues(header ?? "") ?? Array.Empty<string>())
 						{
-							request.SetRequestHeader(header, headerValue);
+							content.Headers.TryAddWithoutValidation(header, headerValue);
+							hasContentType |= string.Equals(header, "Content-Type", StringComparison.OrdinalIgnoreCase);
 						}
 					}
-				}
 
-				if (requestHeaders == null || string.IsNullOrEmpty(requestHeaders["Accept"]))
-				{
-					request.SetRequestHeader("Accept", "*/*");
-				}
+				if (!hasContentType)
+					content.Headers.TryAddWithoutValidation("Content-Type", "application/octet-stream");
+				requestMessage.Content = content;
+			}
 
-				if (requestHeaders == null || string.IsNullOrEmpty(requestHeaders["User-Agent"]))
-				{
-					request.SetRequestHeader("User-Agent", UserAgentHeaderValue);
-				}
+			logger.Log(LogType.Assert, $"Staring new request to [{method}]'{url}'.");
 
-				logger.Log(LogType.Assert, $"Staring new request to [{request.method}]'{request.uri}'.");
+			CancellationTokenSource cts = null;
+			var token = cancellation;
+			if (timeout.Ticks > 0)
+			{
+				cts = CancellationTokenSource.CreateLinkedTokenSource(cancellation);
+				cts.CancelAfter(timeout);
+				token = cts.Token;
+			}
 
-				if (uploadStream != Stream.Null && uploadStream.Length > 0)
-				{
-					if (requestHeaders == null || string.IsNullOrEmpty(requestHeaders["Content-Type"]))
-					{
-						request.SetRequestHeader("Content-Type", "application/octet-stream");
-					}
-
-					request.disposeUploadHandlerOnDispose = true;
-					if (uploadStream is FileStream fileStream && fileStream.Position == 0)
-					{
-						request.uploadHandler = new UploadHandlerFile(fileStream.Name);
-					}
-					else
-					{
-						request.uploadHandler = new UploadHandlerRaw(ReadAllBytes(uploadStream));
-					}
-				}
-
-				var downloadBuffer = new DownloadHandlerBuffer();
-				request.downloadHandler = downloadBuffer;
-
-				await request.SendWebRequest().ToTask();
-
-				switch (request.result)
-				{
-					case UnityWebRequest.Result.Success:
-						break;
-					case UnityWebRequest.Result.ConnectionError:
-						throw new WebException($"Connection failed for for request [{request.method}]'{url}'. " + request.error, WebExceptionStatus.ConnectFailure);
-					case UnityWebRequest.Result.ProtocolError:
-						throw new WebException($"Protocol error for for request [{request.method}]'{url}'. "+ request.error, WebExceptionStatus.ProtocolError);
-					case UnityWebRequest.Result.DataProcessingError:
-						throw new WebException($"Data transfer error for for request [{request.method}]'{url}'. "+ request.error, WebExceptionStatus.ReceiveFailure);
-					case UnityWebRequest.Result.InProgress:
-					default:
-						throw new ArgumentOutOfRangeException();
-				}
+			try
+			{
+				using var response = await SharedHttpClient.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead, token);
 
 				cancellation.ThrowIfCancellationRequested();
 
+				logger.Log(LogType.Assert, $"Got '{(int)response.StatusCode}' response for [{method}]'{url}' request.");
 
-				logger.Log(LogType.Assert, string.Format("Got '{2}' response for [{0}]'{1}' request.", request.method, request.uri, request.responseCode));
+				if (response.StatusCode != HttpStatusCode.OK)
+					throw new WebException($"An unexpected status code '{(int)response.StatusCode}' returned for request [{method}]'{url}'.");
 
-				if (request.responseCode != (int)HttpStatusCode.OK)
+				using var responseStream = await response.Content.ReadAsStreamAsync();
+				var totalBytes = response.Content.Headers.ContentLength ?? -1L;
+				var bytesRead = 0L;
+				var buffer = new byte[BUFFER_SIZE];
+				int read;
+				while ((read = await responseStream.ReadAsync(buffer, 0, buffer.Length, token)) > 0)
 				{
-					throw new WebException($"An unexpected status code '{request.responseCode}' returned for request [{request.method}]'{url}'.");
+					await downloadToStream.WriteAsync(buffer, 0, read, token);
+					bytesRead += read;
+					progressCallback?.Invoke(bytesRead, totalBytes);
 				}
-
-				downloadToStream.Write(downloadBuffer.data);
 			}
 			finally
 			{
+				cts?.Dispose();
 				if (!leaveOpen)
 				{
 					downloadToStream.Dispose();
 					uploadStream.Dispose();
 				}
-
-				if (request != null)
-				{
-					try
-					{
-						request.Abort();
-					}
-					catch
-					{
-						/* ignore close errors*/
-					}
-				}
-
-				if (requestStream != null)
-				{
-					try
-					{
-						requestStream.Dispose();
-					}
-					catch
-					{
-						/* ignore close errors*/
-					}
-				}
 			}
-		}
-
-		private static byte[] ReadAllBytes(Stream uploadStream)
-		{
-			var bytes = new byte[uploadStream.Length - uploadStream.Position];
-			var offset = 0;
-			var read = 0;
-			while ((read = uploadStream.Read(bytes, offset, bytes.Length - offset)) > 0 && offset < bytes.Length)
-			{
-				offset += read;
-			}
-
-			if (offset != bytes.Length) throw new InvalidOperationException("Failed to read whole stream into byte array.");
-
-			return bytes;
 		}
 
 		private static Exception EnrichWebError(Exception error, Uri requestUrl, NameValueCollection requestHeaders, TimeSpan timeout)
