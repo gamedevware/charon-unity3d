@@ -1,3 +1,7 @@
+# 2026.3.4
+- Fixed editor start on Unity 6.5
+- Fixed `Please use GetAssetPath(EntityId) with the EntityId parameter type instead.` compilation error on Unity 6.5
+
 # 2026.3.2
 - Replaced UnityWebRequest to HttpClient for all server API calls inside plugin.
 
