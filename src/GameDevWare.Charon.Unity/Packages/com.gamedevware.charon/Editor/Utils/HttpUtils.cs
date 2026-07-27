@@ -78,7 +78,7 @@ namespace GameDevWare.Charon.Editor.Utils
 			if (requestHeaders == null) requestHeaders = new NameValueCollection();
 			try
 			{
-				await RequestToAsync(method, url, Stream.Null, uploadStream, LEAVE_OPEN, requestHeaders, uploadProgressCallback, timeout, cancellation);
+				await RequestToAsync(method, url, Stream.Null, uploadStream, LEAVE_OPEN, requestHeaders, uploadProgressCallback, timeout, cancellation).ConfigureAwait(false);
 			}
 			catch (Exception requestError)
 			{
@@ -105,7 +105,7 @@ namespace GameDevWare.Charon.Editor.Utils
 			var downloadToStream = new FileStream(downloadToFilePath, FileMode.Create, FileAccess.Write, FileShare.None, BUFFER_SIZE, FileOptions.None);
 			try
 			{
-				await RequestToAsync("GET", url, downloadToStream, Stream.Null, LEAVE_OPEN, requestHeaders, downloadProgressCallback, timeout, cancellation);
+				await RequestToAsync("GET", url, downloadToStream, Stream.Null, LEAVE_OPEN, requestHeaders, downloadProgressCallback, timeout, cancellation).ConfigureAwait(false);
 			}
 			catch (Exception requestError)
 			{
@@ -124,7 +124,7 @@ namespace GameDevWare.Charon.Editor.Utils
 			const bool LEAVE_OPEN = true;
 			try
 			{
-				await RequestToAsync("GET", url, downloadToStream, Stream.Null, LEAVE_OPEN, requestHeaders, downloadProgressCallback, timeout, cancellation);
+				await RequestToAsync("GET", url, downloadToStream, Stream.Null, LEAVE_OPEN, requestHeaders, downloadProgressCallback, timeout, cancellation).ConfigureAwait(false);
 			}
 			catch (Exception requestError)
 			{
@@ -150,7 +150,7 @@ namespace GameDevWare.Charon.Editor.Utils
 					requestHeaders.Add("Accept", "application/json");
 				}
 
-				await RequestToAsync("GET", url, responseStream, Stream.Null, LEAVE_OPEN, requestHeaders, downloadProgressCallback, timeout, cancellation);
+				await RequestToAsync("GET", url, responseStream, Stream.Null, LEAVE_OPEN, requestHeaders, downloadProgressCallback, timeout, cancellation).ConfigureAwait(false);
 
 				responseStream.Position = 0;
 				if (typeof(JsonValue) == typeof(T))
@@ -183,7 +183,7 @@ namespace GameDevWare.Charon.Editor.Utils
 					requestHeaders.Add("Content-Type", "application/json");
 				}
 
-				await RequestToAsync("POST", url, responseStream, requestStream, LEAVE_OPEN, requestHeaders, downloadProgressCallback, timeout, cancellation);
+				await RequestToAsync("POST", url, responseStream, requestStream, LEAVE_OPEN, requestHeaders, downloadProgressCallback, timeout, cancellation).ConfigureAwait(false);
 
 				responseStream.Position = 0;
 				if (typeof(JsonValue) == typeof(ResponseT))
@@ -207,7 +207,7 @@ namespace GameDevWare.Charon.Editor.Utils
 			var memoryStream = new MemoryStream();
 			try
 			{
-				await DownloadToAsync(memoryStream, url, requestHeaders, downloadProgressCallback, timeout, cancellation);
+				await DownloadToAsync(memoryStream, url, requestHeaders, downloadProgressCallback, timeout, cancellation).ConfigureAwait(false);
 
 				memoryStream.Position = 0;
 				return memoryStream;
@@ -292,7 +292,7 @@ namespace GameDevWare.Charon.Editor.Utils
 
 			try
 			{
-				using var response = await SharedHttpClient.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead, token);
+				using var response = await SharedHttpClient.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead, token).ConfigureAwait(false);
 
 				cancellation.ThrowIfCancellationRequested();
 
@@ -301,14 +301,14 @@ namespace GameDevWare.Charon.Editor.Utils
 				if (response.StatusCode != HttpStatusCode.OK)
 					throw new WebException($"An unexpected status code '{(int)response.StatusCode}' returned for request [{method}]'{url}'.");
 
-				using var responseStream = await response.Content.ReadAsStreamAsync();
+				using var responseStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 				var totalBytes = response.Content.Headers.ContentLength ?? -1L;
 				var bytesRead = 0L;
 				var buffer = new byte[BUFFER_SIZE];
 				int read;
-				while ((read = await responseStream.ReadAsync(buffer, 0, buffer.Length, token)) > 0)
+				while ((read = await responseStream.ReadAsync(buffer, 0, buffer.Length, token).ConfigureAwait(false)) > 0)
 				{
-					await downloadToStream.WriteAsync(buffer, 0, read, token);
+					await downloadToStream.WriteAsync(buffer, 0, read, token).ConfigureAwait(false);
 					bytesRead += read;
 					progressCallback?.Invoke(bytesRead, totalBytes);
 				}
