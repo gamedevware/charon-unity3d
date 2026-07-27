@@ -44,7 +44,11 @@ namespace GameDevWare.Charon.Editor.Routines
 		private static CancellationTokenSource LoadEditorTaskCancellationSource;
 
 		[OnOpenAsset(0)]
+#if UNITY_6000_5_OR_NEWER
+		private static bool OnOpenAsset(EntityId instanceID, int exceptionId)
+#else
 		private static bool OnOpenAsset(int instanceID, int exceptionId)
+#endif
 		{
 			var gameDataAssetPath = AssetDatabase.GetAssetPath(instanceID);
 
